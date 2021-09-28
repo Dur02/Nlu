@@ -1,0 +1,42 @@
+@import '~antd/lib/style/themes/default.less';
+
+:global {
+  .ant-layout {
+    overflow-x: hidden;
+  }
+}
+
+.Header {
+  padding: 0 32px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  position: relative;
+}
+
+.Menu {
+  :global(.anticon) {
+    margin-right: 8px;
+  }
+
+  :global(.ant-dropdown-menu-item) {
+    min-width: 160px;
+  }
+}
+
+.Action {
+  cursor: pointer;
+  padding: 0 12px;
+  transition: all 0.3s;
+  height: 100%;
+  float: right;
+
+  > i {
+    font-size: 16px;
+    vertical-align: middle;
+  }
+
+  &:hover,
+  &:global(.ant-popover-open) {
+    background: @primary-1;
+  }
+}

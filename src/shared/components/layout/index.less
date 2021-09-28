@@ -1,0 +1,38 @@
+@import '../varaibles';
+
+.Root {
+  min-height: 100%;
+}
+
+.Title {
+  clear: both;
+  border-bottom: @border-width-base @border-style-base @border-color-split;
+  background: @component-background;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+}
+
+.TitleText {
+  font-size: 20px;
+  font-weight: 500;
+  color: @heading-color;
+  margin: 0;
+
+  a {
+    color: @text-color-secondary;
+
+    &:hover {
+      color: @link-hover-color;
+    }
+  }
+}
+
+.Separator {
+  margin: 0 10px;
+  font-size: 18px;
+}
+
+.SubTitle {
+  font-size: 16px;
+}
