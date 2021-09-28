@@ -8,7 +8,7 @@ export default ({ fetch, apiDomain }) => fetchMiddleware({
     const state = getState();
     return {
       ...(withoutAuth ? {} : {
-        'x-auth-token': getEntity('auth.authorization')(state),
+        Cookie: `JSESSIONID=${getEntity('auth.authorization')(state)}`,
       }),
     };
   },

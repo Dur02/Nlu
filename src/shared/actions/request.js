@@ -14,9 +14,11 @@ const commonFetch = (
     ...prop('headers')(options),
   };
   const body = [];
-  Object.keys(data).forEach((key) => {
-    body.push(`${key}=${data[key]}`);
-  });
+  if (data) {
+    Object.keys(data).forEach((key) => {
+      body.push(`${key}=${data[key]}`);
+    });
+  }
 
   return {
     ...options,

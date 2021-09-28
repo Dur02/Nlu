@@ -9,11 +9,13 @@ import { READ_MINE } from '../actions/user';
 
 export default {
   auth: handleActions({
-    [LOGIN]: () => ({
+    [LOGIN]: (auth) => ({
+      ...auth,
       isLogin: true,
     }),
 
-    [READ_MINE]: () => ({
+    [READ_MINE]: (auth) => ({
+      ...auth,
       isLogin: true,
     }),
 

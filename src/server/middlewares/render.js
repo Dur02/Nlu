@@ -10,6 +10,7 @@ import { flow, reduce, concat, compact } from 'lodash/fp';
 import createRouter from 'relient/create-router';
 import routes from 'modules/routes';
 import i18n from 'relient/i18n';
+import { readMine } from 'shared/actions/user';
 import relientAdminMessageCN from 'relient-admin/messages/cn';
 import createStore from '../create-store';
 import chunks from './chunk-manifest.json'; // eslint-disable-line import/no-unresolved
@@ -38,7 +39,7 @@ export default async (req, res, next) => {
     if (authorization) {
       try {
         dispatch(setAuthorization(authorization));
-        // await dispatch(readProfile());
+        await dispatch(readMine());
       } catch (error) {
         console.error(error);
         dispatch(removeAuthorization());
