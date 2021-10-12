@@ -1,17 +1,17 @@
 import { merge, handleActions, remove, combineActions } from 'relient/reducers';
-import { product } from '../schema';
+import { output } from '../schema';
 import {
   READ_ALL,
   REMOVE,
   READ_ONE,
   CREATE,
   UPDATE,
-} from '../actions/product';
+} from '../actions/output';
 
 export default {
-  product: handleActions({
+  output: handleActions({
     [READ_ALL]: merge({
-      schema: product,
+      schema: output,
       dataKey: 'data.records',
     }),
 
@@ -20,11 +20,11 @@ export default {
       UPDATE,
       CREATE,
     )]: merge({
-      schema: product,
+      schema: output,
       dataKey: 'data',
     }),
 
-    [REMOVE]: remove(product),
+    [REMOVE]: remove(output),
 
   }, {}),
 };

@@ -5,7 +5,7 @@ import {
 import { DEFAULT_CURRENT, DEFAULT_SIZE } from 'shared/constants/pagination';
 import { read, post, del, put } from 'relient/actions/request';
 
-const actionType = actionTypeCreator('actions/product');
+const actionType = actionTypeCreator('actions/words');
 
 export const READ_ALL = actionType('READ_ALL');
 export const READ_ONE = actionType('READ_ONE');
@@ -18,7 +18,7 @@ export const readAll = createAction(
   ({
     current = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
-  } = {}) => read('/nlu/edit/product/all', {
+  } = {}) => read('/nlu/edit/words/all', {
     current,
     size,
   }),
@@ -26,20 +26,35 @@ export const readAll = createAction(
 
 export const readOne = createAction(
   READ_ONE,
-  ({ id }) => read(`/nlu/edit/product/${id}`),
+  ({ id }) => read(`/nlu/edit/words/${id}`),
 );
 
 export const create = createAction(
   CREATE,
-  ({ name, description }) => post('/nlu/edit/product', { name, description }),
+  ({
+    skillId,
+    name,
+    content,
+  }) => post('/nlu/edit/words', {
+    skillId,
+    name,
+    content,
+  }),
 );
 
 export const update = createAction(
   UPDATE,
-  ({ id, name, description }) => put(`/nlu/edit/product/${id}`, { name, description }),
+  ({
+    id,
+    name,
+    content,
+  }) => put(`/nlu/edit/words/${id}`, {
+    name,
+    content,
+  }),
 );
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/nlu/editor/products/${id}`),
+  ({ id }) => del(`/nlu/editor/words/${id}`),
 );

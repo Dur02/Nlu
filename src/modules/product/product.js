@@ -4,7 +4,7 @@ import Layout from 'shared/components/layout';
 import { Table, Drawer, Button, Popconfirm, message, Input } from 'antd';
 import { useLocalTable } from 'relient-admin/hooks';
 import { getEntityArray } from 'relient/selectors';
-import { readByName, remove, create } from 'shared/actions/product';
+import { remove, create } from 'shared/actions/product';
 
 const { TextArea } = Input;
 
@@ -31,7 +31,6 @@ const result = () => {
 
   const onCreate = useCallback(async (values) => {
     await dispatch(create(values));
-    await dispatch(readByName());
   }, []);
 
   const {
@@ -59,7 +58,6 @@ const result = () => {
 
   const onRemove = useCallback(async (id) => {
     await dispatch(remove({ id }));
-    await dispatch(readByName());
     message.success('删除成功');
   }, []);
 

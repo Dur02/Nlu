@@ -8,7 +8,7 @@ const routes = [
   {
     path: '/',
     chunks: ['product'],
-    // requireAuth: true,
+    requireAuth: true,
     load: () => import(/* webpackChunkName: 'product' */ 'modules/product'),
   },
 

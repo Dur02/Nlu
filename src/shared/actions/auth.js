@@ -1,5 +1,5 @@
 import { actionTypeCreator, createAction } from 'relient/actions';
-import { post } from './request';
+import { post } from 'relient/actions/request';
 
 const actionType = actionTypeCreator('actions/auth');
 
@@ -11,7 +11,7 @@ export const REMOVE_AUTHORIZATION = actionType('REMOVE_AUTHORIZATION');
 export const login = createAction(
   LOGIN,
   ({ username, password }) => post(
-    '/user/login',
+    '/nlu/edit/auth/login',
     { username, password },
   ),
   ({ shouldRemember }) => ({ ignoreAuthRedirection: true, shouldRemember }),

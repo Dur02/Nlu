@@ -4,13 +4,21 @@ export default {
     ['lodash', { id: ['lodash'] }],
   ],
   baseUrl: '/',
-  proxy: {
-    from: ['/user', '/nlueditor'],
+  proxies: [{
+    from: ['/images/icons'],
     target: 'http://test-dds.aitekapp.com:8082',
     changeOrigin: true,
     logLevel: 'debug',
     // pathRewrite: {
     //   '^/api': '',
     // },
-  },
+  }, {
+    from: ['/nlu/edit'],
+    target: 'http://localhost:9001',
+    changeOrigin: true,
+    logLevel: 'debug',
+    // pathRewrite: {
+    //   '^/api': '',
+    // },
+  }],
 };

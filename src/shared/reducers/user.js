@@ -8,6 +8,7 @@ export default {
   user: handleActions({
     [READ_MINE]: merge({
       schema: user,
+      dataKey: 'data',
     }),
 
   }, {}),
