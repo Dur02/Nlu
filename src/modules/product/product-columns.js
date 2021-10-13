@@ -9,6 +9,7 @@ export const getColumns = ({
   openEditor,
   onRemove,
   openSkillEditor,
+  openVersion,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -30,7 +31,7 @@ export const getColumns = ({
       &nbsp;&nbsp;
       <Button type="primary" size="small" ghost onClick={() => openSkillEditor(record)}>编辑技能</Button>
       &nbsp;&nbsp;
-      <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>发布</Button>
+      <Button type="primary" size="small" ghost onClick={() => openVersion(record)}>发布</Button>
       &nbsp;&nbsp;
       <Popconfirm
         title="确认删除吗？删除操作不可恢复"
@@ -102,3 +103,24 @@ export const getSkillEditorColumns = ({
     ),
   }];
 };
+
+export const versionColumns = [{
+  title: '版本号',
+  dataIndex: 'versionNum',
+}, {
+  title: '版本名称',
+  dataIndex: 'versionName',
+}, {
+  title: '发布说明',
+  dataIndex: 'description',
+}, {
+  title: '状态',
+  dataIndex: 'pubState',
+  render: (pubState) => (pubState === 0 ? '成功' : '失败'),
+}, {
+  title: '发布人',
+  dataIndex: 'createPerson',
+}, {
+  title: '发布时间',
+  dataIndex: 'createTime',
+}];

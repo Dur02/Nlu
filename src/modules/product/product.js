@@ -4,9 +4,10 @@ import Layout from 'shared/components/layout';
 import { Table, Drawer, message, Input } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
 import { remove, create, update, detachSkills, attachSkills } from 'shared/actions/product';
+import { create as createVersion } from 'shared/actions/product-version';
 import { useAction } from 'relient/actions';
-import { find, propEq } from 'lodash/fp';
-import { getColumns, getSkillEditorColumns } from './product-columns';
+import { find, propEq, flow, prop } from 'lodash/fp';
+import { getColumns, getSkillEditorColumns, versionColumns } from './product-columns';
 
 import selector from './product-selector';
 
@@ -27,6 +28,13 @@ const result = () => {
     detailsItem: skillEditorItem,
   } = useDetails();
 
+  const {
+    detailsVisible: versionVisible,
+    openDetails: openVersion,
+    closeDetails: closeVersion,
+    detailsItem: versionItem,
+  } = useDetails();
+
   const fields = [{
     label: '名称',
     name: 'name',
@@ -39,6 +47,17 @@ const result = () => {
     rules: [{ required: true }],
   }];
 
+  const versionFields = [{
+    label: '版本名称',
+    name: 'versionName',
+    type: 'text',
+    rules: [{ required: true }],
+  }, {
+    label: '发布说明',
+    name: 'description',
+    component: TextArea,
+  }];
+
   const onCreate = useAction(create);
   const onUpdate = useAction(update);
   const onAttach = useCallback(async ({ skillId, productId }) => {
@@ -49,6 +68,10 @@ const result = () => {
     await dispatch(detachSkills({ id: productId, skillIds: [skillId] }));
     message.success('去掉成功');
   }, []);
+  const onCreateVersion = useCallback(
+    (values) => dispatch(createVersion({ ...values, productId: versionItem.id })),
+    [versionItem && versionItem.id],
+  );
 
   const {
     tableHeader,
@@ -94,6 +117,22 @@ const result = () => {
     showReset: true,
   });
 
+  const {
+    tableHeader: versionTableHeader,
+    getDataSource: versionGetDataSource,
+    pagination: versionPagination,
+  } = useLocalTable({
+    creator: {
+      title: '创建版本',
+      onSubmit: onCreateVersion,
+      fields: versionFields,
+      component: Drawer,
+    },
+    createButton: {
+      text: '发布产品',
+    },
+  });
+
   const onRemove = useCallback(async (id) => {
     await dispatch(remove({ id }));
     message.success('删除成功');
@@ -108,6 +147,7 @@ const result = () => {
           openEditor,
           onRemove,
           openSkillEditor,
+          openVersion,
         })}
         rowKey="id"
         pagination={pagination}
@@ -116,7 +156,7 @@ const result = () => {
         <Drawer
           visible={skillEditorVisible}
           onClose={closeSkillEditor}
-          title={`${skillEditorItem.name}编辑技能`}
+          title={`${skillEditorItem.name} 编辑技能`}
           width={600}
         >
           {skillTableHeader}
@@ -129,6 +169,25 @@ const result = () => {
             })}
             rowKey="id"
             pagination={skillPagination}
+          />
+        </Drawer>
+      )}
+      {versionItem && (
+        <Drawer
+          visible={versionVisible}
+          onClose={closeVersion}
+          title={`${versionItem.name} 发布`}
+          width={800}
+        >
+          {versionTableHeader}
+          <Table
+            dataSource={versionGetDataSource(flow(
+              find(propEq('id', versionItem.id)),
+              prop('productVersions'),
+            )(products))}
+            columns={versionColumns}
+            rowKey="id"
+            pagination={versionPagination}
           />
         </Drawer>
       )}
