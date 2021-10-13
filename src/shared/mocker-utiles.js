@@ -15,4 +15,8 @@ export const pagination = (query, others = {}) => (records) => {
   };
 };
 
-export const a = 1;
+export const single = (others = {}) => (data) => ({
+  code: 'SUCCESS',
+  data,
+  ...others,
+});

@@ -1,6 +1,6 @@
 import { random, datatype } from 'faker';
 import { map, range, flow, sample, prop, find, propEq } from 'lodash/fp';
-import { pagination } from 'shared/mocker-utiles';
+import { pagination, single } from 'shared/mocker-utiles';
 import { SEMANTIC } from 'shared/constants/intent-type';
 import { items as skills } from './skill';
 
@@ -21,22 +21,20 @@ export default (router) => {
   });
 
   router.get('/nlu/edit/intent/:id', ({ params: { id } }, response) => {
-    response.status(200).send({
-      data: find(propEq('id', Number(id)))(items),
-    });
+    response.status(200).send(single()(find(propEq('id', Number(id)))(items)));
   });
 
   router.post('/nlu/edit/intent', ({ body }, response) => {
     const item = createItem(body);
     items.push(item);
-    response.status(200).send({ data: item });
+    response.status(200).send(single()(item));
   });
 
   router.put('/nlu/edit/intent/:id', ({ body, params: { id } }, response) => {
-    response.status(200).send({ data: { ...body, id: Number(id) } });
+    response.status(200).send(single()({ ...body, id: Number(id) }));
   });
 
   router.delete('/nlu/edit/intent/:id', (request, response) => {
-    response.status(204).send();
+    response.status(200).send(single()());
   });
 };

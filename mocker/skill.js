@@ -1,6 +1,6 @@
 import { random, datatype } from 'faker';
 import { map, range, sample, flow, prop, find, propEq } from 'lodash/fp';
-import { pagination } from 'shared/mocker-utiles';
+import { pagination, single } from 'shared/mocker-utiles';
 import { skillCategories } from 'shared/constants/skill-category';
 import { iconPaths } from 'shared/constants/icon-path';
 import { items as products } from './product';
@@ -22,20 +22,20 @@ export default (router) => {
   });
 
   router.get('/nlu/edit/skill/:id', ({ params: { id } }, response) => {
-    response.status(200).send({ data: find(propEq('id', Number(id)))(items) });
+    response.status(200).send(single()(find(propEq('id', Number(id)))(items)));
   });
 
   router.post('/nlu/edit/skill', ({ body }, response) => {
     const item = createItem(body);
     items.push(item);
-    response.status(200).send({ data: item });
+    response.status(200).send(single()(item));
   });
 
   router.put('/nlu/edit/skill/:id', ({ body, params: { id } }, response) => {
-    response.status(200).send({ ...body, id: Number(id) });
+    response.status(200).send(single()({ ...body, id: Number(id) }));
   });
 
   router.delete('/nlu/edit/skill/:id', (request, response) => {
-    response.status(204).send();
+    response.status(200).send(single()());
   });
 };

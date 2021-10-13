@@ -1,6 +1,6 @@
 import { datatype } from 'faker';
 import { sample, flow, prop, find, propEq } from 'lodash/fp';
-import { pagination } from 'shared/mocker-utiles';
+import { pagination, single } from 'shared/mocker-utiles';
 import { outputComponents } from 'shared/constants/output-component';
 import { outputResources } from 'shared/constants/output-resource';
 import { items as intents } from './intent';
@@ -21,20 +21,20 @@ export default (router) => {
   });
 
   router.get('/nlu/edit/output/:id', ({ params: { id } }, response) => {
-    response.status(200).send({ data: find(propEq('id', Number(id)))(items) });
+    response.status(200).send(single()(find(propEq('id', Number(id)))(items)));
   });
 
   router.post('/nlu/edit/output', ({ body }, response) => {
     const item = createItem(body);
     items.push(item);
-    response.status(200).send({ data: item });
+    response.status(200).send(single()(item));
   });
 
   router.put('/nlu/edit/output/:id', ({ body, params: { id } }, response) => {
-    response.status(200).send({ data: { ...body, id: Number(id) } });
+    response.status(200).send(single()({ ...body, id: Number(id) }));
   });
 
   router.delete('/nlu/edit/output/:id', (request, response) => {
-    response.status(204).send();
+    response.status(200).send(single()());
   });
 };

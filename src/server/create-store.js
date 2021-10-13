@@ -1,5 +1,4 @@
 import { createStore, applyMiddleware } from 'redux';
-import { serverError } from 'relient/middlewares';
 import reducers from 'shared/reducers';
 import { AUTHORIZATION } from 'shared/constants/cookie';
 import fetchMiddleware from 'shared/middlewares/fetch';
@@ -12,8 +11,9 @@ export default ({ res, initialState = {} }) => createStore(
   reducers,
   initialState,
   applyMiddleware(
-    fetchMiddleware({ fetch, apiDomain: getConfig('serverAPIDomain') }),
-    serverError({
+    fetchMiddleware({
+      fetch,
+      apiDomain: getConfig('serverAPIDomain'),
       onUnauthorized: () => {
         res.clearCookie(AUTHORIZATION);
         res.redirect(302, getWithBaseUrl('/auth/login', getConfig('baseUrl')));
