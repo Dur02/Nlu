@@ -6,6 +6,8 @@ import skill from './skill';
 import words from './words';
 import output from './output';
 import user from './user';
+import productVersion from './product-version';
+import skillVersion from './skill-version';
 
 export default combineReducers({
   ...createReducer([
@@ -15,5 +17,7 @@ export default combineReducers({
     words,
     output,
     user,
+    productVersion,
+    skillVersion,
   ]),
 });

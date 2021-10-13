@@ -1,4 +1,5 @@
 import { merge, handleActions, remove, combineActions } from 'relient/reducers';
+import { reject, includes } from 'lodash/fp';
 import { product } from '../schema';
 import {
   READ_ALL,
@@ -6,6 +7,8 @@ import {
   READ_ONE,
   CREATE,
   UPDATE,
+  ATTACH_SKILLS,
+  DETACH_SKILLS,
 } from '../actions/product';
 
 export default {
@@ -22,6 +25,22 @@ export default {
     )]: merge({
       schema: product,
       dataKey: 'data',
+    }),
+
+    [ATTACH_SKILLS]: (state, { meta: { id, skillIds } }) => ({
+      ...state,
+      [id]: {
+        ...state[id],
+        skillIds: [...skillIds, ...state[id].skillIds],
+      },
+    }),
+
+    [DETACH_SKILLS]: (state, { meta: { id, skillIds } }) => ({
+      ...state,
+      [id]: {
+        ...state[id],
+        skillIds: reject((skillId) => includes(skillId)(skillIds))(state[id].skillIds),
+      },
     }),
 
     [REMOVE]: remove(product),

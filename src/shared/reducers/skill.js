@@ -6,7 +6,7 @@ import {
   READ_ONE,
   CREATE,
   UPDATE,
-} from '../actions/product';
+} from '../actions/skill';
 
 export default {
   skill: handleActions({

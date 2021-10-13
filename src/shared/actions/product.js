@@ -12,6 +12,8 @@ export const READ_ONE = actionType('READ_ONE');
 export const CREATE = actionType('CREATE');
 export const REMOVE = actionType('REMOVE');
 export const UPDATE = actionType('UPDATE');
+export const ATTACH_SKILLS = actionType('ATTACH_SKILLS');
+export const DETACH_SKILLS = actionType('DETACH_SKILLS');
 
 export const readAll = createAction(
   READ_ALL,
@@ -42,4 +44,14 @@ export const update = createAction(
 export const remove = createAction(
   REMOVE,
   ({ id }) => del(`/nlu/edit/product/${id}`),
+);
+
+export const attachSkills = createAction(
+  ATTACH_SKILLS,
+  ({ id, skillIds }) => post(`/nlu/edit/product/${id}/skill`, { skillIds }),
+);
+
+export const detachSkills = createAction(
+  DETACH_SKILLS,
+  ({ id, skillIds }) => del(`/nlu/edit/product/${id}/skill`, { skillIds }),
 );

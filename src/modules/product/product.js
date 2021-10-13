@@ -1,21 +1,31 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
-import { Table, Drawer, Button, Popconfirm, message, Input } from 'antd';
-import { useLocalTable } from 'relient-admin/hooks';
-import { getEntityArray } from 'relient/selectors';
-import { remove, create } from 'shared/actions/product';
+import { Table, Drawer, message, Input } from 'antd';
+import { useLocalTable, useDetails } from 'relient-admin/hooks';
+import { remove, create, update, detachSkills, attachSkills } from 'shared/actions/product';
+import { useAction } from 'relient/actions';
+import { find, propEq } from 'lodash/fp';
+import { getColumns, getSkillEditorColumns } from './product-columns';
+
+import selector from './product-selector';
 
 const { TextArea } = Input;
 
 const result = () => {
   const {
     products,
-  } = useSelector((state) => ({
-    products: getEntityArray('product')(state),
-  }));
+    skills,
+  } = useSelector(selector);
 
   const dispatch = useDispatch();
+
+  const {
+    detailsVisible: skillEditorVisible,
+    openDetails: openSkillEditor,
+    closeDetails: closeSkillEditor,
+    detailsItem: skillEditorItem,
+  } = useDetails();
 
   const fields = [{
     label: '名称',
@@ -29,14 +39,22 @@ const result = () => {
     rules: [{ required: true }],
   }];
 
-  const onCreate = useCallback(async (values) => {
-    await dispatch(create(values));
+  const onCreate = useAction(create);
+  const onUpdate = useAction(update);
+  const onAttach = useCallback(async ({ skillId, productId }) => {
+    await dispatch(attachSkills({ id: productId, skillIds: [skillId] }));
+    message.success('添加成功');
+  }, []);
+  const onDetach = useCallback(async ({ skillId, productId }) => {
+    await dispatch(detachSkills({ id: productId, skillIds: [skillId] }));
+    message.success('去掉成功');
   }, []);
 
   const {
     tableHeader,
     getDataSource,
     pagination,
+    openEditor,
   } = useLocalTable({
     query: {
       fields: [{
@@ -54,6 +72,26 @@ const result = () => {
       fields,
       component: Drawer,
     },
+    editor: {
+      title: '编辑产品',
+      onSubmit: onUpdate,
+      fields,
+      component: Drawer,
+    },
+  });
+
+  const {
+    tableHeader: skillTableHeader,
+    getDataSource: skillGetDataSource,
+    pagination: skillPagination,
+  } = useLocalTable({
+    query: {
+      fields: [{
+        dataKey: 'name',
+        label: '名称',
+      }],
+    },
+    showReset: true,
   });
 
   const onRemove = useCallback(async (id) => {
@@ -61,37 +99,39 @@ const result = () => {
     message.success('删除成功');
   }, []);
 
-  const columns = [{
-    title: 'ID',
-    dataIndex: 'id',
-  }, {
-    title: '名称',
-    dataIndex: 'name',
-  }, {
-    title: '创建时间',
-    dataIndex: 'createTime',
-  }, {
-    title: '创建人',
-    dataIndex: 'createPerson',
-  }, {
-    title: '操作',
-    width: 110,
-    render: (record) => (
-      <>
-        <Popconfirm
-          title="确认删除吗？删除操作不可恢复"
-          onConfirm={() => onRemove(record.id)}
-        >
-          <Button type="danger" size="small" ghost>删除</Button>
-        </Popconfirm>
-      </>
-    ),
-  }];
-
   return (
     <Layout>
       {tableHeader}
-      <Table dataSource={getDataSource(products)} columns={columns} rowKey="id" pagination={pagination} />
+      <Table
+        dataSource={getDataSource(products)}
+        columns={getColumns({
+          openEditor,
+          onRemove,
+          openSkillEditor,
+        })}
+        rowKey="id"
+        pagination={pagination}
+      />
+      {skillEditorItem && (
+        <Drawer
+          visible={skillEditorVisible}
+          onClose={closeSkillEditor}
+          title={`${skillEditorItem.name}编辑技能`}
+          width={600}
+        >
+          {skillTableHeader}
+          <Table
+            dataSource={skillGetDataSource(skills)}
+            columns={getSkillEditorColumns({
+              product: find(propEq('id', skillEditorItem.id))(products),
+              detach: onDetach,
+              attach: onAttach,
+            })}
+            rowKey="id"
+            pagination={skillPagination}
+          />
+        </Drawer>
+      )}
     </Layout>
   );
 };

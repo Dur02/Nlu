@@ -8,6 +8,7 @@ export const createItem = (values) => ({
   description: random.words(),
   createPerson: 'wm',
   createTime: date.past(),
+  skillIds: [],
   ...values,
 });
 
@@ -22,6 +23,14 @@ export default (router) => {
     response.status(200).send(single()(find(propEq('id', Number(id)))(items)));
   });
 
+  router.post('/nlu/edit/product/:id/skill', (request, response) => {
+    response.status(200).send(single()());
+  });
+
+  router.delete('/nlu/edit/product/:id/skill', (request, response) => {
+    response.status(200).send(single()());
+  });
+
   router.post('/nlu/edit/product', ({ body }, response) => {
     const item = createItem(body);
     items.push(item);
@@ -33,6 +42,6 @@ export default (router) => {
   });
 
   router.delete('/nlu/edit/product/:id', (request, response) => {
-    response.status(200).send(single({ code: 'a', msg: 'test' })());
+    response.status(200).send(single()());
   });
 };

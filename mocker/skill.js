@@ -11,10 +11,11 @@ export const createItem = (values) => ({
   category: sample(skillCategories),
   iconPath: sample(iconPaths),
   productId: flow(sample, prop('id'))(products),
+  isPublished: sample([true, false]),
   ...values,
 });
 
-export const items = map(createItem)(range(1, 12));
+export const items = map(createItem)(range(1, 40));
 
 export default (router) => {
   router.get('/nlu/edit/skill/all', ({ query }, response) => {
