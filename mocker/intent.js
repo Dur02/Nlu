@@ -13,7 +13,7 @@ export const createItem = (values) => ({
   ...values,
 });
 
-export const items = map(createItem)(range(1, 4));
+export const items = map(createItem)(range(1, 200));
 
 export default (router) => {
   router.get('/nlu/edit/intent/all', ({ query }, response) => {

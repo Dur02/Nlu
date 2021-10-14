@@ -5,6 +5,7 @@ export const getColumns = ({
   openEditor,
   onRemove,
   openVersion,
+  push,
 }) => [{
   title: '图标',
   dataIndex: 'iconPath',
@@ -21,7 +22,9 @@ export const getColumns = ({
   width: 300,
   render: (record) => (
     <>
-      <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
+      <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>基础信息</Button>
+      &nbsp;&nbsp;
+      <Button type="primary" size="small" ghost onClick={() => push(`/skill/${record.id}`)}>编辑技能</Button>
       &nbsp;&nbsp;
       <Button type="primary" size="small" ghost onClick={() => openVersion(record)}>发布</Button>
       &nbsp;&nbsp;

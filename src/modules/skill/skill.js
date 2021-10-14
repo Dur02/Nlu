@@ -6,6 +6,7 @@ import { useLocalTable, useDetails } from 'relient-admin/hooks';
 import { remove, create, update } from 'shared/actions/skill';
 import { create as createVersion } from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
+import { push as pushAction } from 'relient/actions/history';
 import { find, propEq, flow, prop } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import { iconPaths, iconPathOptions } from 'shared/constants/icon-path';
@@ -22,6 +23,7 @@ const result = () => {
   } = useSelector(selector);
 
   const dispatch = useDispatch();
+  const push = useAction(pushAction);
 
   const {
     detailsVisible: versionVisible,
@@ -126,6 +128,7 @@ const result = () => {
           openEditor,
           onRemove,
           openVersion,
+          push,
         })}
         rowKey="id"
         pagination={pagination}
