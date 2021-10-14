@@ -1,3 +1,6 @@
+import React from 'react';
+import { map } from 'lodash/fp';
+
 export const iconPaths = [
   '/images/icons/icon-skill-ico_xiaolv_1.png',
   '/images/icons/icon-skill-ico_life_2.png',
@@ -15,4 +18,7 @@ export const iconPaths = [
   '/images/icons/icon-skill-ico_education_14.png',
 ];
 
-export const a = 1;
+export const iconPathOptions = map((iconPath) => ({
+  label: <img alt="Icon" src={iconPath} style={{ width: 50, marginBottom: 10 }} />,
+  value: iconPath,
+}))(iconPaths);

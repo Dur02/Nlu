@@ -1,19 +1,20 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
-import { Table, Drawer, message, Select, Input } from 'antd';
+import { Table, Drawer, message, Select, Input, Radio } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
 import { remove, create, update } from 'shared/actions/skill';
 import { create as createVersion } from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
 import { find, propEq, flow, prop } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
-import { iconPaths } from 'shared/constants/icon-path';
+import { iconPaths, iconPathOptions } from 'shared/constants/icon-path';
 import { getColumns, versionColumns } from './skill-columns';
 
 import selector from './skill-selector';
 
 const { TextArea } = Input;
+const { Group } = Radio;
 
 const result = () => {
   const {
@@ -33,6 +34,12 @@ const result = () => {
     label: '名称',
     name: 'name',
     type: 'text',
+    rules: [{ required: true }],
+  }, {
+    label: '图标',
+    name: 'iconPath',
+    component: Group,
+    options: iconPathOptions,
     rules: [{ required: true }],
   }];
 
