@@ -1,21 +1,21 @@
 import { merge, handleActions, combineActions } from 'relient/reducers';
-import { productVersion } from '../schema';
+import { skillVersion } from '../schema';
 import {
   READ_ALL,
   CREATE,
-} from '../actions/product-version';
+} from '../actions/skill-version';
 
 export default {
-  productVersion: handleActions({
+  skillVersion: handleActions({
     [READ_ALL]: merge({
-      schema: productVersion,
+      schema: skillVersion,
       dataKey: 'data.records',
     }),
 
     [combineActions(
       CREATE,
     )]: merge({
-      schema: productVersion,
+      schema: skillVersion,
       dataKey: 'data',
     }),
 

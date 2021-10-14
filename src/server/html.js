@@ -5,8 +5,8 @@ import clientConfig from 'relient/config/client-config';
 /* eslint-disable react/no-danger */
 
 const result = ({
-  title = 'NLU',
-  description = 'NLU',
+  title = 'NLU Editor',
+  description = 'NLU Editor',
   styles = [],
   scripts = [],
   messages,

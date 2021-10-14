@@ -16,7 +16,7 @@ const result = ({
     <div className={s.Root}>
       <div className={s.Top}>
         <div className={s.Header}>
-          <span className={s.Title}>NLU</span>
+          <span className={s.Title}>NLU Editor</span>
         </div>
       </div>
       <div className={className}>

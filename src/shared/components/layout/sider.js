@@ -52,7 +52,7 @@ const result = ({ selectedFeatureKeys, features, isCollapsed }) => {
       className={s.Root}
     >
       <div className={s.Title}>
-        {!isCollapsed && <h1>NLU</h1>}
+        {!isCollapsed && <h1>NLU Editor</h1>}
       </div>
 
       <Menu

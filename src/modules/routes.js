@@ -6,6 +6,13 @@ const routes = [
   },
 
   {
+    path: '/skill',
+    chunks: ['skill'],
+    requireAuth: true,
+    load: () => import(/* webpackChunkName: 'skill' */ 'modules/skill'),
+  },
+
+  {
     path: '/',
     chunks: ['product'],
     requireAuth: true,
