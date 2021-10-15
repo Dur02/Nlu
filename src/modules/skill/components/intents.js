@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { array, func, number } from 'prop-types';
-import { Menu, message, Input, Dropdown, Button } from 'antd';
+import { Menu, message, Input, Dropdown, Button, Popconfirm } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { map, flow, filter, identity, includes, every, size, startsWith, find, propEq } from 'lodash/fp';
 import { SEMANTIC } from 'shared/constants/intent-type';
@@ -12,6 +12,7 @@ const { Search } = Input;
 
 const result = ({
   createIntent,
+  removeIntent,
   intents,
   builtinIntents,
   selectedIntentId,
@@ -21,8 +22,8 @@ const result = ({
   useStyles(s);
 
   const [intentSearchText, setIntentSearchText] = useState(null);
-  const onIntentClick = useCallback(({ key }) => setSelectedIntentId(key), []);
-  const onAddIntentClick = useCallback(async ({ key }) => {
+  const onIntentClick = useCallback(({ key }) => setSelectedIntentId(Number(key)), []);
+  const onCreateIntent = useCallback(async ({ key }) => {
     let data;
     if (key === SEMANTIC) {
       const sameNameIntentSize = flow(
@@ -35,7 +36,7 @@ const result = ({
         skillId,
       };
     } else {
-      const builtinIntent = find(propEq('id', key))(builtinIntents);
+      const builtinIntent = find(propEq('id', Number(key)))(builtinIntents);
       data = {
         name: builtinIntent.name,
         type: builtinIntent.type,
@@ -46,23 +47,29 @@ const result = ({
     setSelectedIntentId(id);
     message.success('创建成功');
   }, [skillId]);
+  const onRemoveIntent = useCallback(async (id) => {
+    await removeIntent({ id });
+    message.success('删除成功');
+    setSelectedIntentId(null);
+  }, []);
+
+  const availableBuiltinIntents = filter(
+    ({ name }) => every((intent) => intent.name !== name)(intents),
+  )(builtinIntents);
 
   const intentOptions = (
-    <Menu onClick={onAddIntentClick}>
+    <Menu onClick={onCreateIntent}>
       <Item key={SEMANTIC}>
         自定义意图
       </Item>
       <Item key="tips" disabled>
-        内置意图
+        {size(availableBuiltinIntents) > 0 ? '内置意图' : '无可用内置意图'}
       </Item>
-      {flow(
-        filter(({ name }) => every((intent) => intent.name !== name)(intents)),
-        map(({ name, id }) => (
-          <Item key={id}>
-            {name}
-          </Item>
-        )),
-      )(builtinIntents)}
+      {map(({ name, id }) => (
+        <Item key={id}>
+          {name}
+        </Item>
+      ))(availableBuiltinIntents)}
     </Menu>
   );
 
@@ -89,7 +96,15 @@ const result = ({
             : identity,
           map(({ name, id }) => (
             <Item key={id}>
-              {name}
+              <div className={s.Intent}>
+                {name}
+                <Popconfirm
+                  title="确认删除吗？删除操作不可恢复，包括说法、对话都会被清空"
+                  onConfirm={() => onRemoveIntent(id)}
+                >
+                  <Button ghost size="small" danger>删除</Button>
+                </Popconfirm>
+              </div>
             </Item>
           )),
         )(intents)}
@@ -102,6 +117,7 @@ result.displayName = __filename;
 
 result.propTypes = {
   createIntent: func.isRequired,
+  removeIntent: func.isRequired,
   skillId: number.isRequired,
   intents: array.isRequired,
   builtinIntents: array.isRequired,

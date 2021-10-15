@@ -3,7 +3,10 @@ import { useSelector } from 'react-redux';
 import Layout from 'shared/components/layout';
 import { Tabs, Empty } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { create as createIntentAction } from 'shared/actions/intent';
+import {
+  create as createIntentAction,
+  remove as removeIntentAction,
+} from 'shared/actions/intent';
 import { useAction } from 'relient/actions';
 
 import Intents from './components/intents';
@@ -22,6 +25,7 @@ const result = ({ skillId }) => {
   } = useSelector(selector(skillId));
   const [selectedIntentId, setSelectedIntentId] = useState(null);
   const createIntent = useAction(createIntentAction);
+  const removeIntent = useAction(removeIntentAction);
 
   return (
     <Layout subTitle={skill.name}>
@@ -33,6 +37,7 @@ const result = ({ skillId }) => {
           intents={intents}
           builtinIntents={builtinIntents}
           selectedIntentId={selectedIntentId}
+          removeIntent={removeIntent}
         />
         <div className={s.Content}>
           {selectedIntentId ? (
@@ -40,11 +45,8 @@ const result = ({ skillId }) => {
               <TabPane tab="说法" key="1">
                 说法
               </TabPane>
-              <TabPane tab="发布" key="2">
-                发布
-              </TabPane>
-              <TabPane tab="发布" key="3">
-                发布
+              <TabPane tab="对话" key="2">
+                对话
               </TabPane>
             </Tabs>
           ) : (<Empty description="请选择意图" />)}
