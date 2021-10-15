@@ -15,14 +15,14 @@ const result = ({
   removeIntent,
   intents,
   builtinIntents,
-  selectedIntentId,
-  setSelectedIntentId,
+  intentId,
+  onChangeIntentId,
   skillId,
 }) => {
   useStyles(s);
 
   const [intentSearchText, setIntentSearchText] = useState(null);
-  const onIntentClick = useCallback(({ key }) => setSelectedIntentId(Number(key)), []);
+  const onIntentClick = useCallback(({ key }) => onChangeIntentId(Number(key)), [onChangeIntentId]);
   const onCreateIntent = useCallback(async ({ key }) => {
     let data;
     if (key === SEMANTIC) {
@@ -44,13 +44,13 @@ const result = ({
       };
     }
     const { data: { id } } = await createIntent(data);
-    setSelectedIntentId(id);
+    onChangeIntentId(id);
     message.success('创建成功');
   }, [skillId]);
   const onRemoveIntent = useCallback(async (id) => {
     await removeIntent({ id });
     message.success('删除成功');
-    setSelectedIntentId(null);
+    onChangeIntentId(null);
   }, []);
 
   const availableBuiltinIntents = filter(
@@ -88,7 +88,7 @@ const result = ({
       </div>
       <Menu
         onClick={onIntentClick}
-        selectedKeys={[selectedIntentId && selectedIntentId.toString()]}
+        selectedKeys={[intentId && intentId.toString()]}
       >
         {flow(
           intentSearchText
@@ -121,8 +121,8 @@ result.propTypes = {
   skillId: number.isRequired,
   intents: array.isRequired,
   builtinIntents: array.isRequired,
-  selectedIntentId: number,
-  setSelectedIntentId: func.isRequired,
+  intentId: number,
+  onChangeIntentId: func.isRequired,
 };
 
 export default result;
