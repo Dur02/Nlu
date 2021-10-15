@@ -7,6 +7,7 @@ import { readAll as readAllWords } from 'shared/actions/words';
 import { readMine as readMyUser } from 'shared/actions/user';
 import { readAll as readAllSkillVersion } from 'shared/actions/skill-version';
 import { readAll as readAllProductVersion } from 'shared/actions/product-version';
+import { readAll as readAllRule } from 'shared/actions/rule';
 
 export default (dispatch) => [
   dispatch(readAllProduct()),
@@ -18,4 +19,5 @@ export default (dispatch) => [
   dispatch(readMyUser()),
   dispatch(readAllSkillVersion()),
   dispatch(readAllProductVersion()),
+  dispatch(readAllRule()),
 ];

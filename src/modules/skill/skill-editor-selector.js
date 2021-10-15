@@ -1,12 +1,16 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
-import { flow, find, filter, propEq, map } from 'lodash/fp';
+import { flow, find, filter, propEq, map, orderBy } from 'lodash/fp';
 
 export default (skillId) => (state) => ({
-  builtinIntents: getEntityArray('builtinIntent')(state),
+  builtinIntents: flow(
+    getEntityArray('builtinIntent'),
+    orderBy(['id'], ['desc']),
+  )(state),
   skill: getEntity(`skill.${skillId}`)(state),
   intents: flow(
     getEntityArray('intent'),
     filter(propEq('skillId', skillId)),
+    orderBy(['id'], ['desc']),
     map((intent) => ({
       ...intent,
       output: flow(
@@ -21,6 +25,11 @@ export default (skillId) => (state) => ({
   )(state),
   words: flow(
     getEntityArray('words'),
+    orderBy(['id'], ['desc']),
     filter((words) => words.skillId === 0 || words.skillId === skillId),
+  )(state),
+  rules: flow(
+    getEntityArray('rule'),
+    orderBy(['id'], ['desc']),
   )(state),
 });

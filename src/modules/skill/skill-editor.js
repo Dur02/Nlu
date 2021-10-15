@@ -8,9 +8,15 @@ import {
   remove as removeIntentAction,
   update as updateIntentAction,
 } from 'shared/actions/intent';
+import {
+  create as createRuleAction,
+  remove as removeRuleAction,
+  update as updateRuleAction,
+} from 'shared/actions/rule';
 import { useAction } from 'relient/actions';
-import { find, propEq, flow, prop, eq } from 'lodash/fp';
+import { filter, find, propEq, flow, prop, eq } from 'lodash/fp';
 
+import Rules from './components/rules';
 import Intents from './components/intents';
 import selector from './skill-editor-selector';
 import s from './skill-editor.less';
@@ -26,20 +32,22 @@ const result = ({ skillId }) => {
     intents,
     skill,
     builtinIntents,
+    rules,
   } = useSelector(selector(skillId));
   const [selectedIntentId, setSelectedIntentId] = useState(null);
   const [intentNameText, setIntentNameText] = useState('');
+
   const createIntent = useAction(createIntentAction);
   const removeIntent = useAction(removeIntentAction);
   const updateIntent = useAction(updateIntentAction);
-  const onChangeIntentId = useCallback((id) => {
+  const createRule = useAction(createRuleAction);
+  const removeRule = useAction(removeRuleAction);
+  const updateRule = useAction(updateRuleAction);
+
+  const onChangeIntentId = useCallback(({ id, name }) => {
     setSelectedIntentId(id);
-    flow(
-      find(propEq('id', id)),
-      prop('name'),
-      setIntentNameText,
-    )(intents);
-  }, [intents]);
+    setIntentNameText(name);
+  }, []);
   const onChangeIntentNameText = useCallback(
     ({ target: { value } }) => setIntentNameText(value),
     [],
@@ -86,7 +94,13 @@ const result = ({ skillId }) => {
           {selectedIntentId ? (
             <Tabs>
               <TabPane tab="说法" key="1">
-                说法
+                <Rules
+                  createRule={createRule}
+                  updateRule={updateRule}
+                  removeRule={removeRule}
+                  intentId={selectedIntentId}
+                  rules={filter(propEq('intentId', selectedIntentId))(rules)}
+                />
               </TabPane>
               <TabPane tab="对话" key="2">
                 对话

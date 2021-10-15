@@ -10,6 +10,7 @@ import intent from './intent';
 import builtinIntent from './builtin-intent';
 import productVersion from './product-version';
 import skillVersion from './skill-version';
+import rule from './rule';
 
 export default combineReducers({
   ...createReducer([
@@ -23,5 +24,6 @@ export default combineReducers({
     builtinIntent,
     productVersion,
     skillVersion,
+    rule,
   ]),
 });

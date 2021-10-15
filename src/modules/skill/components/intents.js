@@ -43,15 +43,15 @@ const result = ({
         skillId,
       };
     }
-    const { data: { id } } = await createIntent(data);
-    onChangeIntentId(id);
+    const { data: { id, name } } = await createIntent(data);
+    onChangeIntentId({ id, name });
     message.success('创建成功');
-  }, [skillId]);
+  }, [skillId, onChangeIntentId]);
   const onRemoveIntent = useCallback(async (id) => {
     await removeIntent({ id });
     message.success('删除成功');
-    onChangeIntentId(null);
-  }, []);
+    onChangeIntentId({ id: null, name: '' });
+  }, [onChangeIntentId]);
 
   const availableBuiltinIntents = filter(
     ({ name }) => every((intent) => intent.name !== name)(intents),
