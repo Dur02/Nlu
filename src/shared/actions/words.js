@@ -57,5 +57,5 @@ export const update = createAction(
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/nlu/editor/words/${id}`),
+  ({ id }) => del(`/nlu/edit/words/${id}`),
 );
