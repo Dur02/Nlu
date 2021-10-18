@@ -19,7 +19,7 @@ import {
   update as updateWordsAction,
 } from 'shared/actions/words';
 import { useAction } from 'relient/actions';
-import { filter, find, propEq, flow, prop, eq } from 'lodash/fp';
+import { find, propEq, flow, prop, eq } from 'lodash/fp';
 
 import Rules from './components/rules';
 import Intents from './components/intents';
@@ -37,11 +37,11 @@ const result = ({ skillId }) => {
     intents,
     skill,
     builtinIntents,
-    rules,
     words,
   } = useSelector(selector(skillId));
   const [selectedIntentId, setSelectedIntentId] = useState(null);
   const [intentNameText, setIntentNameText] = useState('');
+  const selectedIntent = find(propEq('id', selectedIntentId))(intents);
 
   const createIntent = useAction(createIntentAction);
   const removeIntent = useAction(removeIntentAction);
@@ -63,14 +63,13 @@ const result = ({ skillId }) => {
   );
   const onSaveIntentNameText = useCallback(async () => {
     if (!flow(
-      find(propEq('id', selectedIntentId)),
       prop('name'),
       eq(setIntentNameText),
-    )(intents)) {
-      await updateIntent({ name: intentNameText, id: selectedIntentId });
+    )(selectedIntent)) {
+      await updateIntent({ name: intentNameText, id: selectedIntent.id });
       message.success('编辑意图名称成功');
     }
-  }, [intentNameText, selectedIntentId]);
+  }, [intentNameText, selectedIntent]);
 
   return (
     <Layout subTitle={skill.name}>
@@ -112,8 +111,8 @@ const result = ({ skillId }) => {
                   removeWords={removeWords}
                   updateIntent={updateIntent}
                   intentId={selectedIntentId}
-                  slots={flow(find(propEq('id', selectedIntentId)), prop('slots'))(intents)}
-                  rules={filter(propEq('intentId', selectedIntentId))(rules)}
+                  slots={selectedIntent.slots}
+                  rules={selectedIntent.rules}
                   skillId={skillId}
                   words={words}
                 />

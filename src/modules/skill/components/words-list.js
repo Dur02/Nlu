@@ -102,14 +102,16 @@ const result = ({
             <Button type="primary" size="small" ghost onClick={() => onAttachWords(record)}>添加绑定</Button>
           )}
         </div>
-        <div className={s.Button}>
-          <Popconfirm
-            title="确认删除吗？删除操作不可恢复"
-            onConfirm={() => onRemoveWords(record)}
-          >
-            <Button type="danger" size="small" ghost>删除</Button>
-          </Popconfirm>
-        </div>
+        {prop('canDelete')(record) && (
+          <div className={s.Button}>
+            <Popconfirm
+              title="确认删除吗？删除操作不可恢复"
+              onConfirm={() => onRemoveWords(record)}
+            >
+              <Button type="danger" size="small" ghost>删除</Button>
+            </Popconfirm>
+          </div>
+        )}
       </>
     ),
   }];

@@ -1,40 +1,57 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
-import { flow, find, filter, propEq, map, orderBy } from 'lodash/fp';
+import { flow, find, filter, propEq, map, orderBy, every, prop, includes } from 'lodash/fp';
 
-export default (skillId) => (state) => ({
-  builtinIntents: flow(
-    getEntityArray('builtinIntent'),
-    orderBy(['id'], ['desc']),
-  )(state),
-  skill: getEntity(`skill.${skillId}`)(state),
-  intents: flow(
+export default (skillId) => (state) => {
+  const intents = flow(
     getEntityArray('intent'),
     filter(propEq('skillId', skillId)),
     orderBy(['id'], ['desc']),
-    map((intent) => ({
-      ...intent,
-      output: flow(
-        getEntityArray('output'),
-        find(propEq('intentId', intent.id)),
-      )(state),
-      rules: flow(
+    map((intent) => {
+      const rules = flow(
         getEntityArray('rule'),
         filter(propEq('intentId', intent.id)),
-      )(state),
-      slots: JSON.parse(intent.slots),
-    })),
-  )(state),
-  words: flow(
-    getEntityArray('words'),
-    orderBy(['id'], ['desc']),
-    filter((words) => words.skillId === 0 || words.skillId === skillId),
-    map((words) => ({
-      ...words,
-      content: map(([word, synonym]) => ({ word, synonym }))(JSON.parse(words.content)),
-    })),
-  )(state),
-  rules: flow(
-    getEntityArray('rule'),
-    orderBy(['id'], ['desc']),
-  )(state),
-});
+        orderBy(['id'], ['desc']),
+        map((rule) => ({
+          ...rule,
+          slots: JSON.parse(rule.slots),
+        })),
+      )(state);
+      return {
+        ...intent,
+        output: flow(
+          getEntityArray('output'),
+          find(propEq('intentId', intent.id)),
+        )(state),
+        rules,
+        slots: map((slot) => ({
+          ...slot,
+          canDelete: every(flow(
+            prop('slots'),
+            every(({ name }) => slot.name !== name),
+          ))(rules),
+        }))(JSON.parse(intent.slots)),
+      };
+    }),
+  )(state);
+  return {
+    builtinIntents: flow(
+      getEntityArray('builtinIntent'),
+      orderBy(['id'], ['desc']),
+    )(state),
+    skill: getEntity(`skill.${skillId}`)(state),
+    intents,
+    words: flow(
+      getEntityArray('words'),
+      orderBy(['id'], ['desc']),
+      filter((words) => words.skillId === 0 || words.skillId === skillId),
+      map((words) => ({
+        ...words,
+        content: map(([word, synonym]) => ({ word, synonym }))(JSON.parse(words.content)),
+        canDelete: skillId !== 0 && every(flow(
+          prop('slots'),
+          every(({ lexiconsNames }) => !includes(words.name)(lexiconsNames)),
+        ))(intents),
+      })),
+    )(state),
+  };
+};

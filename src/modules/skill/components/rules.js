@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
-import { Drawer, Input, message, Table, Switch, Button } from 'antd';
-import { map, join, any, flow, prop, eq } from 'lodash/fp';
+import { Drawer, Input, message, Table, Switch, Button, Popconfirm } from 'antd';
+import { map, join, any, flow, prop, eq, reject, propEq } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { booleanSwitchOptions, getBooleanText } from 'shared/constants/boolean';
@@ -67,6 +67,13 @@ const result = ({
     },
     [intentId, slots],
   );
+  const onRemoveSlot = useCallback(async ({ name }) => {
+    await updateIntent({
+      id: intentId,
+      slots: reject(propEq('name', name))(slots),
+    });
+    message.success('删除成功');
+  }, [intentId, slots]);
 
   const fields = [{
     label: '名称',
@@ -148,12 +155,25 @@ const result = ({
     render: join(', '),
   }, {
     title: '操作',
-    width: 180,
+    width: 80,
     render: (record) => (
       <>
-        <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
-        &nbsp;&nbsp;
-        <Button type="primary" size="small" ghost>绑定槽位</Button>
+        <div className={s.Button}>
+          <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
+        </div>
+        <div className={s.Button}>
+          <Button type="primary" size="small" ghost>绑定槽位</Button>
+        </div>
+        {prop('canDelete')(record) && (
+          <div className={s.Button}>
+            <Popconfirm
+              title="确认删除吗？删除操作不可恢复"
+              onConfirm={() => onRemoveSlot(record)}
+            >
+              <Button type="danger" size="small" ghost>删除</Button>
+            </Popconfirm>
+          </div>
+        )}
       </>
     ),
   }];
