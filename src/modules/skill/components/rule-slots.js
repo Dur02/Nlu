@@ -165,7 +165,7 @@ const result = ({
   }];
 
   return (
-    <div className={s.Words}>
+    <div className={s.Root}>
       {tableHeader}
       <Table
         dataSource={getDataSource(slots)}
