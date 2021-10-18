@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
-import { Button, Input, message, Popconfirm, Table } from 'antd';
+import { Button, Input, message, Popconfirm, Switch, Table } from 'antd';
 import { find, propEq, flow, prop, reject } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { useLocalTable } from 'relient-admin/hooks';
@@ -10,16 +10,12 @@ import s from './rules.less';
 
 const { Search } = Input;
 
-const columns = [{
-  title: '已添加说法',
-  dataIndex: 'sentence',
-}];
-
 const rowExpandable = ({ slots }) => slots && slots.length > 0;
 
 const result = ({
   createRule,
   updateRule,
+  removeRule,
   updateIntent,
   createWords,
   updateWords,
@@ -42,10 +38,47 @@ const result = ({
     message.success('添加说法成功，请设置槽位');
     setNewSentence('');
   }, [newSentence, intentId]);
+  const onUpdateRule = useCallback(async (data) => {
+    await updateRule(data);
+    message.success('编辑成功');
+  }, [newSentence, intentId]);
+  const onRemoveRule = useCallback(async ({ id }) => {
+    await removeRule({ id });
+    message.success('删除成功');
+  });
+
   const onRemoveSlot = useCallback(async ({ index, ruleId }) => {
     const selectedRuleSlots = flow(find(propEq('id', ruleId)), prop('slots'))(rules);
     await updateRule({ id: ruleId, slots: reject(propEq('index', index))(selectedRuleSlots) });
   }, [intentId]);
+
+  const columns = [{
+    title: '已添加说法',
+    dataIndex: 'sentence',
+  }, {
+    title: '操作',
+    width: 120,
+    render: (record) => (
+      <>
+        <div style={{ marginBottom: 8 }}>
+          <Switch
+            checkedChildren="强说法"
+            unCheckedChildren="非强说法"
+            onChange={(checked) => onUpdateRule({ id: record.id, taskClassify: checked })}
+            checked={prop('taskClassify')(record)}
+          />
+        </div>
+        <div>
+          <Popconfirm
+            title="确认删除吗？删除操作不可恢复"
+            onConfirm={() => onRemoveRule(record)}
+          >
+            <Button type="danger" size="small" ghost>删除</Button>
+          </Popconfirm>
+        </div>
+      </>
+    ),
+  }];
 
   const nestedColumns = [{
     title: '语义槽',

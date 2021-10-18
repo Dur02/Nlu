@@ -74,5 +74,5 @@ export const update = createAction(
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/nlu/editor/output/${id}`),
+  ({ id }) => del(`/nlu/edit/output/${id}`),
 );

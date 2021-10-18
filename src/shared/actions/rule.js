@@ -36,10 +36,12 @@ export const create = createAction(
     intentId,
     sentence,
     slots,
+    taskClassify,
   }) => post('/nlu/edit/rule', {
     intentId,
     sentence,
-    slots: map(pick(['pos', 'name', 'value']))(JSON.stringify(slots)),
+    taskClassify,
+    slots: JSON.stringify(map(pick(['pos', 'name', 'value']))(slots)),
   }),
 );
 
@@ -49,13 +51,15 @@ export const update = createAction(
     id,
     sentence,
     slots,
+    taskClassify,
   }) => put(`/nlu/edit/rule/${id}`, {
     sentence,
-    slots: map(pick(['pos', 'name', 'value']))(JSON.stringify(slots)),
+    taskClassify,
+    slots: JSON.stringify(map(pick(['pos', 'name', 'value']))(slots)),
   }),
 );
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/nlu/editor/rule/${id}`),
+  ({ id }) => del(`/nlu/edit/rule/${id}`),
 );

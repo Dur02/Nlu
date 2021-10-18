@@ -6,6 +6,7 @@ import { items as intents } from './intent';
 export const createItem = (values) => ({
   id: datatype.number(),
   sentence: random.words(),
+  taskClassify: datatype.boolean(),
   slots: '[]',
   intentId: flow(sample, prop('id'))(intents),
   ...values,
