@@ -1,15 +1,36 @@
 import { random, datatype } from 'faker';
-import { map, range, sample, flow, prop, find, propEq } from 'lodash/fp';
+import { map, range, find, propEq, join } from 'lodash/fp';
 import { pagination, single } from 'shared/mocker-utiles';
-import { items as skills } from './skill';
 
-export const createItem = (values) => ({
-  id: datatype.number(),
-  name: random.word(),
-  content: [],
-  skillId: flow(sample, prop('id'))(skills),
-  ...values,
-});
+export const createItem = (values) => {
+  const content1 = random.word();
+  const content2 = random.word();
+  return {
+    id: datatype.number(),
+    name: `sys.${random.word()}`,
+    content: JSON.stringify([[
+      content1,
+      join(',')([
+        content1,
+        random.word(),
+        random.word(),
+        random.word(),
+        random.word(),
+      ]),
+    ], [
+      content2,
+      join(',')([
+        content2,
+        random.word(),
+        random.word(),
+        random.word(),
+        random.word(),
+      ]),
+    ]]),
+    skillId: 0,
+    ...values,
+  };
+};
 
 export const items = map(createItem)(range(1, 12));
 

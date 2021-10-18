@@ -13,6 +13,11 @@ import {
   remove as removeRuleAction,
   update as updateRuleAction,
 } from 'shared/actions/rule';
+import {
+  create as createWordsAction,
+  remove as removeWordsAction,
+  update as updateWordsAction,
+} from 'shared/actions/words';
 import { useAction } from 'relient/actions';
 import { filter, find, propEq, flow, prop, eq } from 'lodash/fp';
 
@@ -33,6 +38,7 @@ const result = ({ skillId }) => {
     skill,
     builtinIntents,
     rules,
+    words,
   } = useSelector(selector(skillId));
   const [selectedIntentId, setSelectedIntentId] = useState(null);
   const [intentNameText, setIntentNameText] = useState('');
@@ -43,6 +49,9 @@ const result = ({ skillId }) => {
   const createRule = useAction(createRuleAction);
   const removeRule = useAction(removeRuleAction);
   const updateRule = useAction(updateRuleAction);
+  const createWords = useAction(createWordsAction);
+  const removeWords = useAction(removeWordsAction);
+  const updateWords = useAction(updateWordsAction);
 
   const onChangeIntentId = useCallback(({ id, name }) => {
     setSelectedIntentId(id);
@@ -98,8 +107,15 @@ const result = ({ skillId }) => {
                   createRule={createRule}
                   updateRule={updateRule}
                   removeRule={removeRule}
+                  createWords={createWords}
+                  updateWords={updateWords}
+                  removeWords={removeWords}
+                  updateIntent={updateIntent}
                   intentId={selectedIntentId}
+                  slots={flow(find(propEq('id', selectedIntentId)), prop('slots'))(intents)}
                   rules={filter(propEq('intentId', selectedIntentId))(rules)}
+                  skillId={skillId}
+                  words={words}
                 />
               </TabPane>
               <TabPane tab="对话" key="2">

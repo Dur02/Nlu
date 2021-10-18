@@ -6,7 +6,7 @@ import {
   READ_ONE,
   CREATE,
   UPDATE,
-} from '../actions/product';
+} from '../actions/words';
 
 export default {
   words: handleActions({

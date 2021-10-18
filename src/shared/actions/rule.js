@@ -38,7 +38,7 @@ export const create = createAction(
   }) => post('/nlu/edit/rule', {
     intentId,
     sentence,
-    slots,
+    slots: JSON.stringify(slots),
   }),
 );
 
@@ -50,7 +50,7 @@ export const update = createAction(
     slots,
   }) => put(`/nlu/edit/rule/${id}`, {
     sentence,
-    slots,
+    slots: JSON.stringify(slots),
   }),
 );
 

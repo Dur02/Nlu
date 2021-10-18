@@ -31,12 +31,29 @@ export const readOne = createAction(
 
 export const create = createAction(
   CREATE,
-  ({ name, type, skillId, slots }) => post('/nlu/edit/intent', { name, type, skillId, slots }),
+  ({
+    name,
+    type,
+    skillId,
+    slots,
+  }) => post('/nlu/edit/intent', {
+    name,
+    type,
+    skillId,
+    slots: JSON.stringify(slots),
+  }),
 );
 
 export const update = createAction(
   UPDATE,
-  ({ id, name, slots }) => put(`/nlu/edit/intent/${id}`, { name, slots }),
+  ({
+    id,
+    name,
+    slots,
+  }) => put(`/nlu/edit/intent/${id}`, {
+    name,
+    slots: JSON.stringify(slots),
+  }),
 );
 
 export const remove = createAction(

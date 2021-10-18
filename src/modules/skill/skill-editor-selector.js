@@ -21,12 +21,17 @@ export default (skillId) => (state) => ({
         getEntityArray('rule'),
         filter(propEq('intentId', intent.id)),
       )(state),
+      slots: JSON.parse(intent.slots),
     })),
   )(state),
   words: flow(
     getEntityArray('words'),
     orderBy(['id'], ['desc']),
     filter((words) => words.skillId === 0 || words.skillId === skillId),
+    map((words) => ({
+      ...words,
+      content: JSON.parse(words.content),
+    })),
   )(state),
   rules: flow(
     getEntityArray('rule'),

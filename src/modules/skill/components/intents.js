@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { array, func, number } from 'prop-types';
 import { Menu, message, Input, Dropdown, Button, Popconfirm } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { map, flow, filter, identity, includes, every, size, startsWith, find, propEq } from 'lodash/fp';
+import { map, flow, filter, identity, includes, every, size, startsWith, find, propEq, prop } from 'lodash/fp';
 import { SEMANTIC } from 'shared/constants/intent-type';
 
 import s from './intents.less';
@@ -22,7 +22,16 @@ const result = ({
   useStyles(s);
 
   const [intentSearchText, setIntentSearchText] = useState(null);
-  const onIntentClick = useCallback(({ key }) => onChangeIntentId(Number(key)), [onChangeIntentId]);
+  const onIntentClick = useCallback(
+    ({ key }) => {
+      const id = Number(key);
+      onChangeIntentId({
+        id,
+        name: flow(find(propEq('id', id)), prop('name'))(intents),
+      });
+    },
+    [onChangeIntentId, intents],
+  );
   const onCreateIntent = useCallback(async ({ key }) => {
     let data;
     if (key === SEMANTIC) {
