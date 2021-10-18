@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { array, func, number } from 'prop-types';
 import { Drawer, Button, Table, Popconfirm, message } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { map, flow, filter, reject, eq, includes, first, join, prop } from 'lodash/fp';
+import { map, flow, filter, reject, eq, includes, join, prop } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
 
 import WordsContent from './words-content';
@@ -86,7 +86,7 @@ const result = ({
   }, {
     title: '词条',
     dataIndex: 'content',
-    render: flow(map(first), join(', ')),
+    render: flow(map(prop('word')), join(', ')),
   }, {
     title: '操作',
     width: 80,
@@ -146,6 +146,7 @@ const result = ({
         添加
       </Button>
       <Drawer
+        forceRender
         visible={tableVisible}
         title="选择词库"
         onClose={() => setTableVisible(false)}
@@ -166,7 +167,7 @@ const result = ({
 result.displayName = __filename;
 
 result.propTypes = {
-  onChange: func.isRequired,
+  onChange: func,
   value: array,
   words: array.isRequired,
   createWords: func.isRequired,

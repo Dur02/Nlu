@@ -1,8 +1,11 @@
 import React, { useCallback } from 'react';
 import { array, func } from 'prop-types';
 import { Drawer, Button, Table, Input, message, Popconfirm } from 'antd';
-import { flow, any, reject, first, eq, last } from 'lodash/fp';
+import { flow, any, reject, map, eq, prop } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
+import useStyles from 'isomorphic-style-loader/useStyles';
+
+import s from './words-content.less';
 
 const { TextArea } = Input;
 
@@ -10,25 +13,32 @@ const result = ({
   onChange,
   value,
 }) => {
+  useStyles(s);
+
   const onCreate = useCallback(({ word, synonym }) => {
-    if (any(flow(first, eq(word)))(value)) {
+    if (any(flow(prop('word'), eq(word)))(value)) {
       message.error('取值已存在');
       throw Error('取值已存在');
     }
-    return onChange([[word, synonym], ...value]);
+    return onChange([{ word, synonym }, ...(value || [])]);
   }, [value, onChange]);
   const onUpdate = useCallback(({ word, synonym }, formInstance, editItem) => {
     if (any(flow(
-      first,
+      prop('word'),
       (existingWord) => existingWord !== editItem.word && existingWord === word,
     ))(value)) {
       message.error('取值已存在');
       throw Error('取值已存在');
     }
-    return onChange([[word, synonym], ...value]);
+    return onChange(map((item) => {
+      if (item.word === editItem.word) {
+        return { word, synonym };
+      }
+      return item;
+    })(value));
   }, [value, onChange]);
   const onRemove = useCallback(([word]) => {
-    onChange(reject(flow(first, eq(word)))(value));
+    onChange(reject(flow(prop('word'), eq(word)))(value));
   }, [value, onChange]);
   const fields = [{
     label: '取值',
@@ -48,7 +58,7 @@ const result = ({
   } = useLocalTable({
     query: {
       fields: [{
-        dataKey: '0',
+        dataKey: 'word',
         label: '取值',
       }],
     },
@@ -74,13 +84,14 @@ const result = ({
 
   const columns = [{
     title: '取值',
-    render: first,
+    dataIndex: 'word',
   }, {
     title: '同义词',
-    render: last,
+    dataIndex: 'synonym',
+    className: s.SynonymColumn,
   }, {
     title: '操作',
-    width: 300,
+    width: 140,
     render: (record) => (
       <>
         <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
@@ -101,7 +112,7 @@ const result = ({
       <Table
         dataSource={getDataSource(value)}
         columns={columns}
-        rowKey={([word]) => word}
+        rowKey="word"
         pagination={pagination}
       />
     </div>
@@ -111,7 +122,7 @@ const result = ({
 result.displayName = __filename;
 
 result.propTypes = {
-  onChange: func.isRequired,
+  onChange: func,
   value: array,
 };
 

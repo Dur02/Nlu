@@ -30,7 +30,7 @@ export default (skillId) => (state) => ({
     filter((words) => words.skillId === 0 || words.skillId === skillId),
     map((words) => ({
       ...words,
-      content: JSON.parse(words.content),
+      content: map(([word, synonym]) => ({ word, synonym }))(JSON.parse(words.content)),
     })),
   )(state),
   rules: flow(

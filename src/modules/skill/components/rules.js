@@ -133,12 +133,14 @@ const result = ({
     title: '名称',
     dataIndex: 'name',
   }, {
-    title: '是否必须',
+    title: '必须',
     dataIndex: 'required',
+    width: 60,
     render: getBooleanText,
   }, {
-    title: '是否有效槽位',
+    title: '有效',
     dataIndex: 'isSlot',
+    width: 60,
     render: getBooleanText,
   }, {
     title: '词库',

@@ -4,6 +4,7 @@ import {
 } from 'relient/actions';
 import { DEFAULT_CURRENT, DEFAULT_SIZE } from 'shared/constants/pagination';
 import { read, post, del, put } from 'relient/actions/request';
+import { map } from 'lodash/fp';
 
 const actionType = actionTypeCreator('actions/words');
 
@@ -38,7 +39,7 @@ export const create = createAction(
   }) => post('/nlu/edit/words', {
     skillId,
     name,
-    content,
+    content: JSON.stringify(map(({ word, synonym }) => ([word, synonym]))(content)),
   }),
 );
 
@@ -50,7 +51,7 @@ export const update = createAction(
     content,
   }) => put(`/nlu/edit/words/${id}`, {
     name,
-    content,
+    content: JSON.stringify(map(({ word, synonym }) => ([word, synonym]))(content)),
   }),
 );
 

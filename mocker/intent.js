@@ -3,12 +3,26 @@ import { map, range, flow, sample, prop, find, propEq } from 'lodash/fp';
 import { pagination, single } from 'shared/mocker-utiles';
 import { SEMANTIC } from 'shared/constants/intent-type';
 import { items as skills } from './skill';
+import { items as words } from './words';
 
 export const createItem = (values) => ({
   id: datatype.number(),
   name: random.word(),
   type: SEMANTIC,
-  slots: '[]',
+  slots: JSON.stringify([{
+    name: random.word(),
+    required: true,
+    isSlot: true,
+    lexiconsNames: [words[0].name, words[1].name, words[2].name],
+  }, {
+    name: random.word(),
+    isSlot: true,
+    lexiconsNames: [words[3].name, words[4].name],
+  }, {
+    name: random.word(),
+    required: true,
+    lexiconsNames: [words[5].name, words[6].name, words[7].name, words[8].name],
+  }]),
   skillId: flow(sample, prop('id'))(skills),
   ...values,
 });
