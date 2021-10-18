@@ -4,6 +4,7 @@ import {
 } from 'relient/actions';
 import { DEFAULT_CURRENT, DEFAULT_SIZE } from 'shared/constants/pagination';
 import { read, post, del, put } from 'relient/actions/request';
+import { map, pick } from 'lodash/fp';
 
 const actionType = actionTypeCreator('actions/rule');
 
@@ -38,7 +39,7 @@ export const create = createAction(
   }) => post('/nlu/edit/rule', {
     intentId,
     sentence,
-    slots: JSON.stringify(slots),
+    slots: map(pick(['pos', 'name', 'value']))(JSON.stringify(slots)),
   }),
 );
 
@@ -50,7 +51,7 @@ export const update = createAction(
     slots,
   }) => put(`/nlu/edit/rule/${id}`, {
     sentence,
-    slots: JSON.stringify(slots),
+    slots: map(pick(['pos', 'name', 'value']))(JSON.stringify(slots)),
   }),
 );
 

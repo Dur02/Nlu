@@ -1,6 +1,8 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
 import { flow, find, filter, propEq, map, orderBy, every, prop, includes } from 'lodash/fp';
 
+const mapWithIndex = map.convert({ cap: false });
+
 export default (skillId) => (state) => {
   const intents = flow(
     getEntityArray('intent'),
@@ -13,7 +15,11 @@ export default (skillId) => (state) => {
         orderBy(['id'], ['desc']),
         map((rule) => ({
           ...rule,
-          slots: JSON.parse(rule.slots),
+          slots: mapWithIndex((slot, index) => ({
+            ...slot,
+            index,
+            ruleId: rule.id,
+          }))(JSON.parse(rule.slots)),
         })),
       )(state);
       return {

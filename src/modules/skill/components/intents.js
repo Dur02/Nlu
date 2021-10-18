@@ -83,13 +83,13 @@ const result = ({
   );
 
   return (
-    <div>
+    <div className={s.Root}>
       <div className={s.Header}>
         <Dropdown overlay={intentOptions}>
           <Button type="primary">添加意图</Button>
         </Dropdown>
         <Search
-          placeholder="输入意图名称搜索"
+          placeholder="按名称搜索"
           allowClear
           onSearch={setIntentSearchText}
           className={s.Search}

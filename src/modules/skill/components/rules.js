@@ -1,16 +1,25 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
-import { Input, message } from 'antd';
-import { map } from 'lodash/fp';
+import { Button, Input, message, Popconfirm, Table } from 'antd';
+import { find, propEq, flow, prop, reject } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
+import { useLocalTable } from 'relient-admin/hooks';
 
-import RuleSlots from './rule-slots';
+import IntentSlots from './intent-slots';
 import s from './rules.less';
 
 const { Search } = Input;
 
+const columns = [{
+  title: '已添加说法',
+  dataIndex: 'sentence',
+}];
+
+const rowExpandable = ({ slots }) => slots && slots.length > 0;
+
 const result = ({
   createRule,
+  updateRule,
   updateIntent,
   createWords,
   updateWords,
@@ -33,6 +42,51 @@ const result = ({
     message.success('添加说法成功，请设置槽位');
     setNewSentence('');
   }, [newSentence, intentId]);
+  const onRemoveSlot = useCallback(async ({ index, ruleId }) => {
+    const selectedRuleSlots = flow(find(propEq('id', ruleId)), prop('slots'))(rules);
+    await updateRule({ id: ruleId, slots: reject(propEq('index', index))(selectedRuleSlots) });
+  }, [intentId]);
+
+  const nestedColumns = [{
+    title: '语义槽',
+    dataIndex: 'name',
+  }, {
+    title: '取值',
+    dataIndex: 'value',
+  }, {
+    title: '操作',
+    width: 80,
+    render: (record) => (
+      <Popconfirm
+        title="确认删除吗？删除操作不可恢复"
+        onConfirm={() => onRemoveSlot(record)}
+      >
+        <Button type="danger" size="small" ghost>删除</Button>
+      </Popconfirm>
+    ),
+  }];
+
+  const {
+    tableHeader,
+    getDataSource,
+    pagination,
+  } = useLocalTable({
+    query: {
+      fields: [{
+        dataKey: 'sentence',
+        label: '说法',
+      }],
+      fussy: true,
+    },
+  });
+
+  const expandedRowRender = (record) => (
+    <Table
+      columns={nestedColumns}
+      dataSource={record.slots}
+      pagination={false}
+    />
+  );
 
   return (
     <div className={s.Root}>
@@ -43,14 +97,23 @@ const result = ({
           value={newSentence}
           placeholder="请输入说法"
           enterButton="添加"
+          className={s.Search}
         />
         <div>
-          {map(({ sentence }) => (
-            <div key={sentence}>sentence</div>
-          ))(rules)}
+          {tableHeader}
+          <Table
+            dataSource={getDataSource(rules)}
+            columns={columns}
+            rowKey="id"
+            pagination={pagination}
+            expandable={{
+              expandedRowRender,
+              rowExpandable,
+            }}
+          />
         </div>
       </div>
-      <RuleSlots
+      <IntentSlots
         updateIntent={updateIntent}
         createWords={createWords}
         updateWords={updateWords}

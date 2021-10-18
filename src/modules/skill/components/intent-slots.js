@@ -7,7 +7,7 @@ import useStyles from 'isomorphic-style-loader/useStyles';
 import { booleanSwitchOptions, getBooleanText } from 'shared/constants/boolean';
 
 import WordsList from './words-list';
-import s from './rule-slots.less';
+import s from './intent-slots.less';
 
 const result = ({
   updateIntent,
@@ -180,14 +180,14 @@ const result = ({
 result.displayName = __filename;
 
 result.propTypes = {
-  updateRule: func.isRequired,
+  updateIntent: func.isRequired,
   createWords: func.isRequired,
   updateWords: func.isRequired,
   removeWords: func.isRequired,
   intentId: number.isRequired,
   skillId: number.isRequired,
-  rules: array.isRequired,
   words: array.isRequired,
+  slots: array.isRequired,
 };
 
 export default result;
