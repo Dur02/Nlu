@@ -1,5 +1,6 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
-import { flow, find, filter, propEq, map, orderBy, every, prop, includes } from 'lodash/fp';
+import { flow, find, filter, propEq, map, orderBy, every, prop, includes, any, compact } from 'lodash/fp';
+import { SLOT, TEXT } from 'shared/constants/content-type';
 
 const mapWithIndex = map.convert({ cap: false });
 
@@ -13,14 +14,30 @@ export default (skillId) => (state) => {
         getEntityArray('rule'),
         filter(propEq('intentId', intent.id)),
         orderBy(['id'], ['desc']),
-        map((rule) => ({
-          ...rule,
-          slots: mapWithIndex((slot, index) => ({
-            ...slot,
-            index,
-            ruleId: rule.id,
-          }))(JSON.parse(rule.slots)),
-        })),
+        map((rule) => {
+          const slots = JSON.parse(rule.slots);
+          return {
+            ...rule,
+            slots: mapWithIndex((slot, index) => ({
+              ...slot,
+              index,
+              ruleId: rule.id,
+            }))(slots),
+            sentenceDisplay: flow(
+              mapWithIndex((char, index) => {
+                const slot = find(({ pos: [start] }) => start === index)(slots);
+                if (slot) {
+                  return { type: SLOT, ...slot };
+                }
+                if (any(({ pos: [start, end] }) => index > start && index <= end)(slots)) {
+                  return null;
+                }
+                return { type: TEXT, value: char };
+              }),
+              compact,
+            )(rule.sentence),
+          };
+        }),
       )(state);
       return {
         ...intent,

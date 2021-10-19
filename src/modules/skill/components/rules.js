@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
-import { Button, Input, message, Popconfirm, Switch, Table } from 'antd';
-import { find, propEq, flow, prop, reject } from 'lodash/fp';
+import { Button, Drawer, Input, message, Popconfirm, Switch, Table } from 'antd';
+import { find, propEq, flow, prop, reject, map } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { useLocalTable } from 'relient-admin/hooks';
+import { SLOT } from 'shared/constants/content-type';
+import classNames from 'classnames';
 
 import IntentSlots from './intent-slots';
 import s from './rules.less';
@@ -45,30 +47,59 @@ const result = ({
   const onRemoveRule = useCallback(async ({ id }) => {
     await removeRule({ id });
     message.success('删除成功');
-  });
+  }, []);
 
   const onRemoveSlot = useCallback(async ({ index, ruleId }) => {
     const selectedRuleSlots = flow(find(propEq('id', ruleId)), prop('slots'))(rules);
     await updateRule({ id: ruleId, slots: reject(propEq('index', index))(selectedRuleSlots) });
   }, [intentId]);
 
+  const {
+    tableHeader,
+    getDataSource,
+    pagination,
+    openEditor,
+  } = useLocalTable({
+    query: {
+      fields: [{
+        dataKey: 'sentence',
+        label: '说法',
+      }],
+      fussy: true,
+    },
+    editor: {
+      title: '编辑说法',
+      onSubmit: updateRule,
+      component: Drawer,
+      fields: [{
+        label: '内容',
+        name: 'sentence',
+      }],
+    },
+  });
+
   const columns = [{
     title: '已添加说法',
-    dataIndex: 'sentence',
+    dataIndex: 'sentenceDisplay',
+    render: map(({ type, value }) => (
+      <span className={classNames({ [s.ContentSlot]: type === SLOT })}>{value}</span>
+    )),
   }, {
     title: '操作',
-    width: 120,
+    width: 140,
     render: (record) => (
       <>
         <div style={{ marginBottom: 8 }}>
           <Switch
             checkedChildren="强说法"
-            unCheckedChildren="非强说法"
+            unCheckedChildren="弱说法"
             onChange={(checked) => onUpdateRule({ id: record.id, taskClassify: checked })}
             checked={prop('taskClassify')(record)}
           />
         </div>
         <div>
+          <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
+          &nbsp;
           <Popconfirm
             title="确认删除吗？删除操作不可恢复"
             onConfirm={() => onRemoveRule(record)}
@@ -98,20 +129,6 @@ const result = ({
       </Popconfirm>
     ),
   }];
-
-  const {
-    tableHeader,
-    getDataSource,
-    pagination,
-  } = useLocalTable({
-    query: {
-      fields: [{
-        dataKey: 'sentence',
-        label: '说法',
-      }],
-      fussy: true,
-    },
-  });
 
   const expandedRowRender = (record) => (
     <Table
