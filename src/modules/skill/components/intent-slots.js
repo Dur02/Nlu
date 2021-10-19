@@ -147,9 +147,6 @@ const result = ({
         <div className={s.Button}>
           <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
         </div>
-        <div className={s.Button}>
-          <Button type="primary" size="small" ghost>绑定槽位</Button>
-        </div>
         {prop('canDelete')(record) && (
           <div className={s.Button}>
             <Popconfirm

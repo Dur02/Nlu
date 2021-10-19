@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Layout from 'shared/components/layout';
-import { Tabs, Empty, Input, message, Form } from 'antd';
+import { Tabs, Empty, Input, message } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import {
   create as createIntentAction,
@@ -27,7 +27,6 @@ import selector from './skill-editor-selector';
 import s from './skill-editor.less';
 
 const { TabPane } = Tabs;
-const { Item } = Form;
 const { Search } = Input;
 
 const result = ({ skillId }) => {
@@ -85,11 +84,8 @@ const result = ({ skillId }) => {
         />
         <div className={s.Content}>
           {selectedIntentId && (
-            <Item
-              labelCol={{ span: 2 }}
-              wrapperCol={{ span: 8 }}
-              label="当前意图名称"
-            >
+            <div className={s.IntentNameWrapper}>
+              当前意图名称：
               <Search
                 onSearch={onSaveIntentNameText}
                 onChange={onChangeIntentNameText}
@@ -97,7 +93,7 @@ const result = ({ skillId }) => {
                 className={s.IntentNameInput}
                 enterButton="保存"
               />
-            </Item>
+            </div>
           )}
           {selectedIntentId ? (
             <Tabs>
