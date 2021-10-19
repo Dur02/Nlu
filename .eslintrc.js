@@ -66,6 +66,7 @@ module.exports = {
 
     'jsx-a11y/click-events-have-key-events': 'off',
     'react/jsx-one-expression-per-line': 'off',
+    'react/destructuring-assignment': 'off',
 
     // Allow .js files to use JSX syntax
     // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md

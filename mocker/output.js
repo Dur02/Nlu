@@ -1,5 +1,5 @@
-import { datatype } from 'faker';
-import { sample, flow, prop, find, propEq, map } from 'lodash/fp';
+import { datatype, random } from 'faker';
+import { sample, flow, prop, find, propEq, map, omit } from 'lodash/fp';
 import { pagination, single } from 'shared/mocker-utiles';
 import { outputComponents } from 'shared/constants/output-component';
 import { outputResources } from 'shared/constants/output-resource';
@@ -10,10 +10,23 @@ export const createItem = (values) => ({
   intentId: flow(sample, prop('id'))(intents),
   component: sample(outputComponents),
   resource: sample(outputResources),
-  ...values,
+  params: values.slots && JSON.stringify({
+    extra: [{
+      name: random.word(),
+      value: random.word(),
+      example: random.word(),
+    }],
+    slots: map(({ name }) => ({
+      name: random.word(),
+      value: name,
+      example: random.word(),
+    }))(JSON.parse(values.slots)),
+  }),
+  responses: JSON.stringify([]),
+  ...omit(['slots'])(values),
 });
 
-export const items = map(({ id }) => createItem({ intentId: id }))(intents);
+export const items = map(({ id, slots }) => createItem({ intentId: id, slots }))(intents);
 
 export default (router) => {
   router.get('/nlu/edit/output/all', ({ query }, response) => {

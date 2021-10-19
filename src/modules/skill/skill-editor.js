@@ -129,6 +129,7 @@ const result = ({ skillId }) => {
                 <Output
                   output={selectedOutput}
                   updateOutput={updateOutput}
+                  intentName={selectedIntent.name}
                 />
               </TabPane>
             </Tabs>

@@ -4,6 +4,7 @@ import {
 } from 'relient/actions';
 import { DEFAULT_CURRENT, DEFAULT_SIZE } from 'shared/constants/pagination';
 import { read, post, del, put } from 'relient/actions/request';
+import { pick, map } from 'lodash/fp';
 
 const actionType = actionTypeCreator('actions/output');
 
@@ -12,6 +13,11 @@ export const READ_ONE = actionType('READ_ONE');
 export const CREATE = actionType('CREATE');
 export const REMOVE = actionType('REMOVE');
 export const UPDATE = actionType('UPDATE');
+
+const parseParams = (params) => params && JSON.stringify({
+  extra: map(pick(['name', 'value', 'example']))(params.extra),
+  slots: map(pick(['name', 'value', 'example']))(params.slots),
+});
 
 export const readAll = createAction(
   READ_ALL,
@@ -45,8 +51,8 @@ export const create = createAction(
     name,
     resource,
     location,
-    params,
-    response,
+    params: parseParams(params),
+    response: JSON.stringify(response),
   }),
 );
 
@@ -67,8 +73,8 @@ export const update = createAction(
     name,
     resource,
     location,
-    params,
-    response,
+    params: parseParams(params),
+    response: response && JSON.stringify(response),
   }),
 );
 

@@ -76,6 +76,13 @@ export default (skillId) => (state) => {
         ))(intents),
       })),
     )(state),
-    outputs: getEntityArray('output')(state),
+    outputs: flow(
+      getEntityArray('output'),
+      map((output) => ({
+        ...output,
+        params: JSON.parse(output.params),
+        responses: JSON.parse(output.responses),
+      })),
+    )(state),
   };
 };
