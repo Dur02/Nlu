@@ -76,5 +76,6 @@ export default (skillId) => (state) => {
         ))(intents),
       })),
     )(state),
+    outputs: getEntityArray('output')(state),
   };
 };

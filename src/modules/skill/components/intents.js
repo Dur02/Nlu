@@ -13,6 +13,7 @@ const { Search } = Input;
 const result = ({
   createIntent,
   removeIntent,
+  readAllOutput,
   intents,
   builtinIntents,
   intentId,
@@ -53,6 +54,7 @@ const result = ({
       };
     }
     const { data: { id, name } } = await createIntent(data);
+    await readAllOutput({ intentId: id });
     onChangeIntentId({ id, name });
     message.success('创建成功');
   }, [skillId, onChangeIntentId]);
@@ -127,6 +129,7 @@ result.displayName = __filename;
 result.propTypes = {
   createIntent: func.isRequired,
   removeIntent: func.isRequired,
+  readAllOutput: func.isRequired,
   skillId: number.isRequired,
   intents: array.isRequired,
   builtinIntents: array.isRequired,

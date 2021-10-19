@@ -1,5 +1,5 @@
 import { datatype } from 'faker';
-import { sample, flow, prop, find, propEq } from 'lodash/fp';
+import { sample, flow, prop, find, propEq, map } from 'lodash/fp';
 import { pagination, single } from 'shared/mocker-utiles';
 import { outputComponents } from 'shared/constants/output-component';
 import { outputResources } from 'shared/constants/output-resource';
@@ -13,7 +13,7 @@ export const createItem = (values) => ({
   ...values,
 });
 
-export const items = [];
+export const items = map(({ id }) => createItem({ intentId: id }))(intents);
 
 export default (router) => {
   router.get('/nlu/edit/output/all', ({ query }, response) => {
