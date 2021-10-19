@@ -32,7 +32,7 @@ export default (skillId) => (state) => {
                 if (any(({ pos: [start, end] }) => index > start && index <= end)(slots)) {
                   return null;
                 }
-                return { type: TEXT, value: char };
+                return { type: TEXT, value: char, index };
               }),
               compact,
             )(rule.sentence),

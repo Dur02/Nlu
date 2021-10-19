@@ -55,7 +55,7 @@ export const update = createAction(
   }) => put(`/nlu/edit/rule/${id}`, {
     sentence,
     taskClassify,
-    slots: JSON.stringify(map(pick(['pos', 'name', 'value']))(slots)),
+    slots: slots && JSON.stringify(map(pick(['pos', 'name', 'value']))(slots)),
   }),
 );
 

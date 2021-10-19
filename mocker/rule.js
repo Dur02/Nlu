@@ -1,18 +1,30 @@
-import { random, datatype } from 'faker';
-import { map, range, flow, sample, prop, find, propEq } from 'lodash/fp';
+import { lorem, datatype } from 'faker';
+import { map, range, sample, find, propEq } from 'lodash/fp';
 import { pagination, single } from 'shared/mocker-utiles';
 import { items as intents } from './intent';
 
-export const createItem = (values) => ({
-  id: datatype.number(),
-  sentence: random.words(),
-  taskClassify: datatype.boolean(),
-  slots: '[]',
-  intentId: flow(sample, prop('id'))(intents),
-  ...values,
-});
+export const createItem = (values) => {
+  const intent = sample(intents);
+  const sentence = lorem.sentence();
+  return {
+    id: datatype.number(),
+    sentence,
+    taskClassify: datatype.boolean(),
+    slots: JSON.stringify([{
+      pos: [0, 2],
+      value: sentence.slice(0, 2),
+      name: JSON.parse(intent.slots)[0].name,
+    }, {
+      pos: [8, 14],
+      value: sentence.slice(8, 14),
+      name: JSON.parse(intent.slots)[1].name,
+    }]),
+    intentId: intent.id,
+    ...values,
+  };
+};
 
-export const items = map(createItem)(range(1, 1));
+export const items = map(createItem)(range(1, 40));
 
 export default (router) => {
   router.get('/nlu/edit/rule/all', ({ query }, response) => {

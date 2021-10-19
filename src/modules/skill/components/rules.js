@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
-import { Button, Drawer, Input, message, Popconfirm, Switch, Table } from 'antd';
-import { find, propEq, flow, prop, reject, map } from 'lodash/fp';
+import { Button, Drawer, Input, message, Popconfirm, Switch, Table, Tooltip, Menu } from 'antd';
+import { find, propEq, flow, prop, reject, map, every, isNaN, any } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { useLocalTable } from 'relient-admin/hooks';
 import { SLOT } from 'shared/constants/content-type';
@@ -11,6 +11,7 @@ import IntentSlots from './intent-slots';
 import s from './rules.less';
 
 const { Search } = Input;
+const { Item } = Menu;
 
 const rowExpandable = ({ slots }) => slots && slots.length > 0;
 
@@ -31,6 +32,8 @@ const result = ({
   useStyles(s);
 
   const [newSentence, setNewSentence] = useState('');
+  const [visibleRuleMenuId, setVisibleRuleMenuId] = useState(null);
+  const [newSlot, setNewSlot] = useState({});
   const onChangeSentence = useCallback(
     ({ target: { value } }) => setNewSentence(value),
     [],
@@ -78,12 +81,100 @@ const result = ({
     },
   });
 
+  const onMouseUpOnSentence = useCallback(({ currentTarget }) => {
+    const selection = window.getSelection();
+    if (currentTarget.contains(selection.anchorNode) && selection.type === 'Range') {
+      const selectionStart = Number(selection.anchorNode.parentNode.dataset.index);
+      const selectionEnd = Number(selection.focusNode.parentNode.dataset.index);
+      if (isNaN(selectionStart) || isNaN(selectionEnd)) {
+        message.error('请勿交叉选择');
+        return;
+      }
+      let start;
+      let end;
+      if (selectionStart > selectionEnd) {
+        start = selectionEnd;
+        end = selectionStart;
+      } else {
+        start = selectionStart;
+        end = selectionEnd;
+      }
+      const ruleId = Number(currentTarget.dataset.id);
+      if (!flow(
+        find(propEq('id', ruleId)),
+        prop('slots'),
+        every(({ pos: [slotStart, slotEnd] }) => start > slotEnd || end < slotStart),
+      )(rules)) {
+        message.error('请勿交叉选择');
+        return;
+      }
+      setVisibleRuleMenuId(ruleId);
+      setNewSlot({ pos: [start, end], value: selection.toString() });
+    }
+  }, [rules]);
+
   const columns = [{
     title: '已添加说法',
     dataIndex: 'sentenceDisplay',
-    render: map(({ type, value }) => (
-      <span className={classNames({ [s.ContentSlot]: type === SLOT })}>{value}</span>
-    )),
+    render: (sentenceDisplay, { id }) => {
+      const ruleSlots = flow(
+        find(propEq('id', id)),
+        prop('slots'),
+      )(rules);
+      const availableRuleSlots = reject(
+        ({ name }) => any((ruleSlot) => ruleSlot.name === name)(ruleSlots),
+      )(slots);
+      const slotsMenu = (
+        <Menu
+          onClick={async ({
+            key,
+          }) => {
+            await onUpdateRule({ id, slots: [{ ...newSlot, name: key }, ...(ruleSlots || [])] });
+            setVisibleRuleMenuId(null);
+          }}
+          className={s.SlotsMenu}
+        >
+          {map(({ name }) => (
+            <Item key={name}>{name}</Item>
+          ))(availableRuleSlots)}
+          {availableRuleSlots.length === 0 && <Item key="_none" disabled>无可用语义槽</Item>}
+        </Menu>
+      );
+
+      return (
+        <>
+          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+          <div
+            onMouseUp={onMouseUpOnSentence}
+            data-id={id}
+          >
+            {map(({ type, value, index, name }) => (
+              <span
+                className={classNames({ [s.ContentSlot]: type === SLOT })}
+                data-index={index}
+                key={type === SLOT ? name : index}
+              >
+                {value}
+              </span>
+            ))(sentenceDisplay)}
+          </div>
+          <Tooltip
+            title={slotsMenu}
+            color="white"
+            visible={id === visibleRuleMenuId}
+            onVisibleChange={(visible) => {
+              if (!visible && id === visibleRuleMenuId) {
+                setVisibleRuleMenuId(null);
+              }
+            }}
+            placement="bottom"
+            trigger="contextMenu"
+          >
+            <div style={{ width: '100%' }} />
+          </Tooltip>
+        </>
+      );
+    },
   }, {
     title: '操作',
     width: 140,
@@ -134,6 +225,7 @@ const result = ({
     <Table
       columns={nestedColumns}
       dataSource={record.slots}
+      rowKey="name"
       pagination={false}
     />
   );
