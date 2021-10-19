@@ -5,6 +5,7 @@ import { map, join, any, flow, prop, reject, propEq, eq } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { booleanSwitchOptions, getBooleanText } from 'shared/constants/boolean';
+import { PlainText } from 'relient-admin/components';
 
 import WordsList from './words-list';
 import s from './intent-slots.less';
@@ -62,11 +63,6 @@ const result = ({
   }, [intentId, slots]);
 
   const fields = [{
-    label: '名称',
-    name: 'name',
-    type: 'text',
-    rules: [{ required: true }],
-  }, {
     label: '是否必须',
     name: 'required',
     component: Switch,
@@ -109,14 +105,23 @@ const result = ({
     creator: {
       title: '创建语义槽',
       onSubmit: onCreateSlot,
-      fields,
+      fields: [{
+        label: '名称',
+        name: 'name',
+        type: 'text',
+        rules: [{ required: true }],
+      }, ...fields],
       component: Drawer,
       width: 600,
     },
     editor: {
       title: '编辑语义槽',
       onSubmit: onUpdateSlot,
-      fields,
+      fields: [{
+        label: '名称',
+        name: 'name',
+        component: PlainText,
+      }, ...fields],
       component: Drawer,
       width: 600,
     },

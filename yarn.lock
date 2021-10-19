@@ -8534,10 +8534,10 @@ regjsparser@^0.6.4:
   dependencies:
     jsesc "~0.5.0"
 
-relient-admin@4.5.2:
-  version "4.5.2"
-  resolved "https://registry.npmmirror.com/relient-admin/download/relient-admin-4.5.2.tgz#f3933c23ba2052c63abe8d4a839e332126da5bca"
-  integrity sha1-85M8I7ogUsY6vo1Kg54zISbaW8o=
+relient-admin@4.6.0:
+  version "4.6.0"
+  resolved "https://registry.npmmirror.com/relient-admin/download/relient-admin-4.6.0.tgz?cache=0&sync_timestamp=1634627600853&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Frelient-admin%2Fdownload%2Frelient-admin-4.6.0.tgz#d4daa46cb11a498ce48cd8ecd5a8fd19e07396a0"
+  integrity sha1-1NqkbLEaSYzkjNjs1aj9GeBzlqA=
   dependencies:
     "@ant-design/icons" ">=4.7.0"
     "@tinymce/tinymce-react" "^3.12.4"
