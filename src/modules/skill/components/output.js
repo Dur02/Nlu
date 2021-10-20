@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { func, object, string } from 'prop-types';
+import React, { useCallback, useEffect, useState } from 'react';
+import { func, number, object, string } from 'prop-types';
 import { Button, Form, Input, message, Select, Radio } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { outputComponentOptions, CUSTOM } from 'shared/constants/output-component';
@@ -8,12 +8,13 @@ import { outputResourceOptions, WEBHOOK } from 'shared/constants/output-resource
 import OutputParams from './output-params';
 import s from './output.less';
 
-const { Item } = Form;
+const { Item, useForm } = Form;
 
 const result = ({
   output,
   updateOutput,
   intentName,
+  intentId,
 }) => {
   useStyles(s);
 
@@ -39,6 +40,14 @@ const result = ({
     }
   }, []);
 
+  const [componentForm] = useForm();
+  const [resourceForm] = useForm();
+
+  useEffect(() => {
+    componentForm.resetFields();
+    resourceForm.resetFields();
+  }, [intentId]);
+
   return (
     <div>
       <h3 className={s.Title}>选择控件</h3>
@@ -50,6 +59,7 @@ const result = ({
         initialValues={output}
         onFinish={onUpdateOutput}
         onValuesChange={onValuesChange}
+        form={componentForm}
       >
         <Item name="component" label="控件类型">
           <Select options={outputComponentOptions} />
@@ -71,6 +81,7 @@ const result = ({
         onValuesChange={onValuesChange}
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 12 }}
+        form={resourceForm}
       >
         <Item name="resource" label="调用方式">
           <Radio.Group options={outputResourceOptions} />
@@ -99,6 +110,7 @@ result.propTypes = {
   output: object.isRequired,
   updateOutput: func.isRequired,
   intentName: string.isRequired,
+  intentId: number.isRequired,
 };
 
 export default result;
