@@ -1,13 +1,14 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
 import { Drawer, message, Table, Switch, Button, Popconfirm } from 'antd';
-import { map, join, any, flow, prop, reject, propEq, eq } from 'lodash/fp';
+import { map, join, any, flow, prop, reject, propEq, eq, find } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { booleanSwitchOptions, getBooleanText } from 'shared/constants/boolean';
 import { PlainText } from 'relient-admin/components';
 
 import WordsList from './words-list';
+import Prompt from './intent-slot-prompt';
 import s from './intent-slots.less';
 
 const result = ({
@@ -22,6 +23,7 @@ const result = ({
 }) => {
   useStyles(s);
 
+  const [promptEditorSlotName, setPromptEditorSlotName] = useState(null);
   const onCreateSlot = useCallback(
     (values) => {
       if (any(flow(prop('name'), eq(values.name)))(slots)) {
@@ -32,6 +34,24 @@ const result = ({
     },
     [intentId, slots],
   );
+  const onUpdatePrompt = useCallback(async (value) => {
+    await updateIntent({
+      id: intentId,
+      slots: map((slot) => {
+        if (slot.name === promptEditorSlotName) {
+          return {
+            ...slot,
+            prompt: value,
+          };
+        }
+        return slot;
+      })(slots),
+    });
+    message.success('编辑成功');
+    setPromptEditorSlotName(null);
+  }, [promptEditorSlotName, intentId]);
+  const onClosePromptEditor = useCallback(() => setPromptEditorSlotName(null), []);
+
   const onUpdateSlot = useCallback(
     (values, formInstance, editItem) => {
       const { name } = values;
@@ -152,6 +172,11 @@ const result = ({
         <div className={s.Button}>
           <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
         </div>
+        {prop('required')(record) && (
+          <div className={s.Button}>
+            <Button type="primary" size="small" ghost onClick={() => setPromptEditorSlotName(record.name)}>提问</Button>
+          </div>
+        )}
         {prop('canDelete')(record) && (
           <div className={s.Button}>
             <Popconfirm
@@ -175,6 +200,18 @@ const result = ({
         rowKey="name"
         pagination={pagination}
       />
+      <Drawer
+        title="编辑提问"
+        visible={!!promptEditorSlotName}
+        onClose={onClosePromptEditor}
+        width={600}
+      >
+        <Prompt
+          onCancel={onClosePromptEditor}
+          onChange={onUpdatePrompt}
+          value={flow(find(propEq('name', promptEditorSlotName)), prop('prompt'))(slots)}
+        />
+      </Drawer>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { func, string, array } from 'prop-types';
+import { func, string, object } from 'prop-types';
 import { Drawer, message, Table, Button, Popconfirm } from 'antd';
 import { map, any, flow, prop, reject, propEq, eq } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
@@ -229,7 +229,7 @@ result.displayName = __filename;
 
 result.propTypes = {
   onChange: func,
-  value: array,
+  value: object,
   intentName: string.isRequired,
   component: string.isRequired,
 };
