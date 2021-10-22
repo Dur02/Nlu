@@ -5,7 +5,8 @@ import useStyles from 'isomorphic-style-loader/useStyles';
 import { outputComponentOptions, CUSTOM } from 'shared/constants/output-component';
 import { outputResourceOptions, WEBHOOK } from 'shared/constants/output-resource';
 
-import OutputParams from './output-params';
+import Params from './output-params';
+import Responses from './output-responses';
 import s from './output.less';
 
 const { Item, useForm } = Form;
@@ -92,7 +93,7 @@ const result = ({
               <Input type="text" />
             </Item>
             <Item name="params" label="API参数">
-              <OutputParams intentName={intentName} component={component} />
+              <Params intentName={intentName} component={component} />
             </Item>
           </>
         )}
@@ -100,6 +101,9 @@ const result = ({
           <Button type="primary" htmlType="submit">保存</Button>
         </Item>
       </Form>
+
+      <h3 className={s.Title}>对话回复</h3>
+      <Responses outputId={output.id} updateOutput={updateOutput} responses={output.responses} />
     </div>
   );
 };

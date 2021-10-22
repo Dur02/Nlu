@@ -44,7 +44,7 @@ export const create = createAction(
     resource,
     location,
     params,
-    response,
+    responses,
   }) => post('/nlu/edit/output', {
     intentId,
     component,
@@ -52,7 +52,7 @@ export const create = createAction(
     resource,
     location,
     params: parseParams(params),
-    response: JSON.stringify(response),
+    responses: JSON.stringify(responses),
   }),
 );
 
@@ -66,7 +66,7 @@ export const update = createAction(
     resource,
     location,
     params,
-    response,
+    responses,
   }) => put(`/nlu/edit/output/${id}`, {
     intentId,
     component,
@@ -74,7 +74,7 @@ export const update = createAction(
     resource,
     location,
     params: parseParams(params),
-    response: response && JSON.stringify(response),
+    responses: responses && JSON.stringify(responses),
   }),
 );
 

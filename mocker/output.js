@@ -22,7 +22,10 @@ export const createItem = (values) => ({
       example: random.word(),
     }))(JSON.parse(values.slots)),
   }),
-  responses: JSON.stringify([]),
+  responses: JSON.stringify([{
+    commandFirst: false,
+    readOnly: true,
+  }]),
   ...omit(['slots'])(values),
 });
 

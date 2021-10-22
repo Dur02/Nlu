@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { func, string, array } from 'prop-types';
 import { Input } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
@@ -20,10 +20,6 @@ const result = ({
   useStyles(s);
 
   const [newItem, setNewItem] = useState('');
-
-  useEffect(() => {
-    onChange(value);
-  }, [value]);
 
   const onRemove = useCallback((index) => {
     onChange(rejectWithIndex((_, currentIndex) => currentIndex === index)(value));
