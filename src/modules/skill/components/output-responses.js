@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
-import { message, Button, Tabs, Tooltip, Popconfirm } from 'antd';
+import { message, Button, Tabs, Tooltip, Popconfirm, Select } from 'antd';
 import { PlusOutlined, SortAscendingOutlined, CloseOutlined } from '@ant-design/icons';
 import { map, flow, reject, propEq, first, propOr, join, find, prop } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
@@ -12,13 +12,20 @@ import s from './output-responses.less';
 
 const mapWithIndex = map.convert({ cap: false });
 const { TabPane } = Tabs;
-
 const DEFAULT_KEY = 'default';
 
 const getCName = flow(
   map(({ params, type }) => `${params[0] || ''}${getConditionTypeText(type)}${params[1] || ''}`),
   join('&'),
 );
+
+const commandFirstOptions = [{
+  label: '回复内容播报完毕，再执行客户端动作',
+  value: 'false',
+}, {
+  label: '客户端动作执行后，再播报回复内容',
+  value: 'true',
+}];
 
 const result = ({
   responses,
@@ -113,7 +120,15 @@ const result = ({
         type="editable-card"
         hideAdd
       >
-        {map(({ cnames, cId, readOnly, condition, nlg, command }) => (
+        {map(({
+          cnames,
+          cId,
+          readOnly,
+          condition,
+          nlg,
+          command,
+          commandFirst,
+        }) => (
           <TabPane
             key={readOnly ? DEFAULT_KEY : cId}
             tab={(
@@ -150,6 +165,13 @@ const result = ({
             <Command
               value={command}
               onChange={(newCommand) => onUpdateResponse({ cId, command: newCommand })}
+            />
+
+            <h4 className={s.Title}>执行时序</h4>
+            <Select
+              options={commandFirstOptions}
+              value={commandFirst.toString()}
+              onChange={(newCommandFirst) => onUpdateResponse({ cId, commandFirst: newCommandFirst === 'true' })}
             />
           </TabPane>
         ))(responses)}
