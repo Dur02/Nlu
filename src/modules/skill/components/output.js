@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { func, number, object, string } from 'prop-types';
+import { func, number, object, string, array } from 'prop-types';
 import { Button, Form, Input, message, Select, Radio } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { outputComponentOptions, CUSTOM } from 'shared/constants/output-component';
@@ -16,6 +16,7 @@ const result = ({
   updateOutput,
   intentName,
   intentId,
+  intents,
 }) => {
   useStyles(s);
 
@@ -103,7 +104,12 @@ const result = ({
       </Form>
 
       <h3 className={s.Title}>对话回复</h3>
-      <Responses outputId={output.id} updateOutput={updateOutput} responses={output.responses} />
+      <Responses
+        outputId={output.id}
+        updateOutput={updateOutput}
+        responses={output.responses}
+        intents={intents}
+      />
     </div>
   );
 };
@@ -115,6 +121,7 @@ result.propTypes = {
   updateOutput: func.isRequired,
   intentName: string.isRequired,
   intentId: number.isRequired,
+  intents: array,
 };
 
 export default result;

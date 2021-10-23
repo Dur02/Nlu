@@ -8,6 +8,7 @@ import { getConditionTypeText } from 'shared/constants/condition-type';
 import NLG from './output-response-nlg';
 import Condition from './output-response-condition';
 import Command from './output-response-command';
+import Next from './output-response-next';
 import s from './output-responses.less';
 
 const mapWithIndex = map.convert({ cap: false });
@@ -31,6 +32,7 @@ const result = ({
   responses,
   updateOutput,
   outputId,
+  intents,
 }) => {
   useStyles(s);
 
@@ -128,6 +130,8 @@ const result = ({
           nlg,
           command,
           commandFirst,
+          next,
+          nextAny,
         }) => (
           <TabPane
             key={readOnly ? DEFAULT_KEY : cId}
@@ -173,6 +177,15 @@ const result = ({
               value={commandFirst.toString()}
               onChange={(newCommandFirst) => onUpdateResponse({ cId, commandFirst: newCommandFirst === 'true' })}
             />
+
+            <h4 className={s.Title}>下一轮对话</h4>
+            <Next
+              next={next}
+              nextAny={nextAny}
+              onUpdateResponse={onUpdateResponse}
+              cId={cId}
+              intents={intents}
+            />
           </TabPane>
         ))(responses)}
       </Tabs>
@@ -197,6 +210,7 @@ result.displayName = __filename;
 
 result.propTypes = {
   responses: array,
+  intents: array,
   updateOutput: func.isRequired,
   outputId: number.isRequired,
 };
