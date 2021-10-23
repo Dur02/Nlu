@@ -5,7 +5,7 @@ import { PlusOutlined, SortAscendingOutlined, CloseOutlined } from '@ant-design/
 import { map, flow, reject, propEq, first, propOr, join, find, prop } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { getConditionTypeText } from 'shared/constants/condition-type';
-
+import NLG from './output-response-nlg';
 import Condition from './output-response-condition';
 import s from './output-responses.less';
 
@@ -62,6 +62,22 @@ const result = ({
     message.success('编辑成功');
     setEditorConditionCId(null);
   }, [outputId, responses, editorConditionCId]);
+  const onUpdateNLG = useCallback((cId) => async (nlg) => {
+    await updateOutput({
+      id: outputId,
+      responses: map((item) => {
+        if (cId === item.cId) {
+          return {
+            ...item,
+            nlg,
+          };
+        }
+        return item;
+      })(responses),
+    });
+    message.success('编辑成功');
+    setEditorConditionCId(null);
+  }, [outputId, responses]);
   const onRemoveResponse = useCallback(async ({ cId }) => {
     const newResponses = flow(
       reject(propEq('cId', cId)),
@@ -96,7 +112,7 @@ const result = ({
         type="editable-card"
         hideAdd
       >
-        {map(({ cnames, cId, readOnly, condition }) => (
+        {map(({ cnames, cId, readOnly, condition, nlg }) => (
           <TabPane
             key={readOnly ? DEFAULT_KEY : cId}
             tab={(
@@ -114,10 +130,17 @@ const result = ({
               </Popconfirm>
             )}
           >
-            <h4>条件描述</h4>
+            <h4 className={s.Title}>条件描述</h4>
             {readOnly ? '默认' : (
               <Button type="link" onClick={() => setEditorConditionCId(cId)}>{getCName(condition)}</Button>
             )}
+
+            <h4 className={s.Title}>回复内容</h4>
+            <div className={s.Tips}>支持“#”引用语义槽值、“$”引用资源查询结果</div>
+            <NLG
+              value={nlg}
+              onChange={onUpdateNLG(cId)}
+            />
           </TabPane>
         ))(responses)}
       </Tabs>
