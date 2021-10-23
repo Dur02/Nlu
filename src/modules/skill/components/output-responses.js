@@ -7,6 +7,7 @@ import useStyles from 'isomorphic-style-loader/useStyles';
 import { getConditionTypeText } from 'shared/constants/condition-type';
 import NLG from './output-response-nlg';
 import Condition from './output-response-condition';
+import Command from './output-response-command';
 import s from './output-responses.less';
 
 const mapWithIndex = map.convert({ cap: false });
@@ -62,14 +63,14 @@ const result = ({
     message.success('编辑成功');
     setEditorConditionCId(null);
   }, [outputId, responses, editorConditionCId]);
-  const onUpdateNLG = useCallback((cId) => async (nlg) => {
+  const onUpdateResponse = useCallback(async (response) => {
     await updateOutput({
       id: outputId,
       responses: map((item) => {
-        if (cId === item.cId) {
+        if (response.cId === item.cId) {
           return {
             ...item,
-            nlg,
+            ...response,
           };
         }
         return item;
@@ -112,7 +113,7 @@ const result = ({
         type="editable-card"
         hideAdd
       >
-        {map(({ cnames, cId, readOnly, condition, nlg }) => (
+        {map(({ cnames, cId, readOnly, condition, nlg, command }) => (
           <TabPane
             key={readOnly ? DEFAULT_KEY : cId}
             tab={(
@@ -139,7 +140,16 @@ const result = ({
             <div className={s.Tips}>支持“#”引用语义槽值、“$”引用资源查询结果</div>
             <NLG
               value={nlg}
-              onChange={onUpdateNLG(cId)}
+              onChange={(newNlg) => onUpdateResponse({ cId, ngl: newNlg })}
+            />
+
+            <h4 className={s.Title}>客户端动作</h4>
+            <div className={s.Tips}>
+              向终端设备发出执行操作的指令，支持“?”标识传参，参数之间用“&”连接。示例： command://call?phone=$phone$&name=#name#。
+            </div>
+            <Command
+              value={command}
+              onChange={(newCommand) => onUpdateResponse({ cId, command: newCommand })}
             />
           </TabPane>
         ))(responses)}

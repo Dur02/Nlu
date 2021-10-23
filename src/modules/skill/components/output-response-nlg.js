@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { func, array } from 'prop-types';
-import { Input } from 'antd';
+import { Input, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { map, reject } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
@@ -36,6 +36,10 @@ const result = ({
   }, [finalValue]);
 
   const onUpdate = useCallback((index) => ({ target }) => {
+    if (!target.value) {
+      message.error('请输入回复内容');
+      return;
+    }
     onChange(mapWithIndex((originalValue, currentIndex) => {
       if (index === currentIndex) {
         return target.value;
