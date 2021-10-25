@@ -1,6 +1,6 @@
 {
   "port": 3100,
-  "serverAPIDomain": "http://test-dds.aitekapp.com:8082",
+  "serverAPIDomain": "http://api-dev.aitekapp.com/api",
   "cdnDomain": "https://static.com/",
   "baseUrl": "/"
 }
