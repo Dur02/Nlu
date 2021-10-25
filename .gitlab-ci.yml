@@ -12,8 +12,8 @@ build:
   tags:
     - java
   script: yarn install && yarn build
-#  only:
-#    - tags
+  only:
+    - tags
 
   artifacts:
     paths:
@@ -27,5 +27,5 @@ publish:
     - java
   script:
     - . ./citools/publish-image.sh
-#  only:
-#    - tags
+  only:
+    - tags
