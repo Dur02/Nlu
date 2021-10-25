@@ -10,8 +10,10 @@ stages:
 build:
   stage: build
   tags:
-    - node
+    - java
   script: yarn install && yarn build
+#  only:
+#    - tags
 
   artifacts:
     paths:
@@ -22,9 +24,8 @@ build:
 publish:
   stage: publish
   tags:
-    - node
+    - java
   script:
     - . ./citools/publish-image.sh
-  only:
-    - dev
-    - tags
+#  only:
+#    - tags
