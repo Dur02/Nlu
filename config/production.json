@@ -1,6 +1,6 @@
 {
   "port": 3100,
-  "serverAPIDomain": "http://api-dev.aitekapp.com/api",
+  "serverAPIDomain": "http://editor.aitekapp.com/api",
   "cdnDomain": "https://static.com/",
   "baseUrl": "/"
 }
