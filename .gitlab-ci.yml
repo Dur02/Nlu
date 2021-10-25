@@ -11,7 +11,7 @@ build:
   stage: build
   tags:
     - java
-  script: . ./citools/build.sh
+  script: yarn install && yarn build
 #  only:
 #    - tags
 
