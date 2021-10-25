@@ -22,7 +22,7 @@ const layout = {
 const result = () => {
   useStyles(s);
   const dispatch = useDispatch();
-  const { submit, submitting } = useForm(async (values) => {
+  const { submit, submitting, form } = useForm(async (values) => {
     await dispatch(loginAction({ ...values }));
     await Promise.all(getPreloader(dispatch));
     message.success('登录成功');
@@ -33,7 +33,7 @@ const result = () => {
 
   return (
     <Layout className={s.Root}>
-      <Form onFinish={submit}>
+      <Form onFinish={submit} form={form}>
         <Item
           rules={[{ required: true }]}
           layout={layout}
