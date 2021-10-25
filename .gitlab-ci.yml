@@ -1,0 +1,30 @@
+image: ${CI_IMAGE}
+
+before_script:
+  - cp -r /root/citools .
+
+stages:
+  - build
+  - publish
+
+build:
+  stage: build
+  tags:
+    - node
+  script: yarn install && yarn build
+
+  artifacts:
+    paths:
+      - build/
+    expire_in: 60 mins
+    when: on_success
+
+publish:
+  stage: publish
+  tags:
+    - node
+  script:
+    - . ./citools/publish-image.sh
+  only:
+    - dev
+    - tags
