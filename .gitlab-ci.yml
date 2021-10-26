@@ -37,5 +37,5 @@ deploy_staging:
   tags:
     - java
   script:
-    - ping -c 3 192.168.10.125
+    - export ANSIBLE_HOST_KEY_CHECKING=False
     - ansible-playbook -i ./ansible/hosts/staging.yml -v ./ansible/deploy-staging.yml
