@@ -37,4 +37,4 @@ deploy_staging:
   tags:
     - java
   script:
-    - ansible-playbook -i ./ansible/hosts/staging.yml ./ansible/deploy-staging.yml
+    - ansible-playbook -i ./ansible/hosts/staging.yml -v ./ansible/deploy-staging.yml
