@@ -4,7 +4,7 @@
   tasks:
     - name: Copy docker compose file
       copy:
-        src: ./docker-compose.yml
+        src: ../docker-compose.yml
         dest: /wdm_dev/skill-editor/docker-compose.yml
 
     - name: Deploy

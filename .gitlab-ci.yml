@@ -38,6 +38,4 @@ deploy_staging:
     - java
   script:
     - export ANSIBLE_HOST_KEY_CHECKING=False
-    - cat /root/.ssh/id_rsa
-    - ls -l /root/.ssh/id_rsa
     - ansible-playbook -i ./ansible/hosts/staging.yml -v ./ansible/deploy-staging.yml
