@@ -5,7 +5,6 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { push as pushAction } from 'relient/actions/history';
 import { useForm } from 'relient-admin/hooks';
-import useRules from 'shared/hooks/use-rules';
 import { login as loginAction } from 'shared/actions/auth';
 import { PRODUCT } from 'shared/constants/features';
 import getPreloader from 'shared/utils/preloader';
@@ -29,8 +28,6 @@ const result = () => {
     dispatch(pushAction(PRODUCT));
   });
 
-  const { password } = useRules();
-
   return (
     <Layout className={s.Root}>
       <Form onFinish={submit} form={form}>
@@ -43,7 +40,7 @@ const result = () => {
           <Input placeholder="帐号" type="text" size="large" prefix={<UserOutlined />} />
         </Item>
         <Item
-          rules={[password]}
+          rules={[{ required: true }]}
           layout={layout}
           name="password"
           messageVariables={{ label: '密码' }}

@@ -1,31 +1,40 @@
-image: ${CI_IMAGE}
+#image: ${CI_IMAGE}
 
-before_script:
-  - cp -r /root/citools .
+#before_script:
+#  - cp -r /root/citools .
 
 stages:
-  - build
-  - publish
+#  - build
+#  - publish
+  - deploy_staging
 
-build:
-  stage: build
-  tags:
-    - java
-  script: yarn install && yarn build
-  only:
-    - tags
+#build:
+#  stage: build
+#  tags:
+#    - java
+#  script: yarn install && yarn build
+#  only:
+#    - tags
+#
+#  artifacts:
+#    paths:
+#      - build/
+#    expire_in: 60 mins
+#    when: on_success
+#
+#publish:
+#  stage: publish
+#  tags:
+#    - java
+#  script:
+#    - . ./citools/publish-image.sh
+#  only:
+#    - tags
 
-  artifacts:
-    paths:
-      - build/
-    expire_in: 60 mins
-    when: on_success
-
-publish:
-  stage: publish
+deploy_staging:
+  stage: deploy_staging
+  image: ${DEPLOY_IMAGE}
   tags:
     - java
   script:
-    - . ./citools/publish-image.sh
-  only:
-    - tags
+    - ansible-playbook -i ./ansible/hosts/staging.yml ./ansible/deploy-staging.yml

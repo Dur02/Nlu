@@ -1,0 +1,11 @@
+- hosts: target
+  remote_user: '{{user}}'
+
+  tasks:
+    - name: Copy docker compose file
+      copy:
+        src: ./docker-compose.yml
+        dest: /wdm_dev/skill-editor/docker-compose.yml
+
+    - name: Deploy
+      command: docker stack deploy --compose-file=/wdm_dev/skill-editor/docker-compose.yml --with-registry-auth nlu

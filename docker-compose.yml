@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  skill-editor:
+    image:  registry.cn-hangzhou.aliyuncs.com/zmsys/skill-editor:0.4
+    environment:
+      NODE_ENV: production
+    deploy:
+      mode: replicated
+      replicas: 2
+      placement:
+        constraints:
+          - node.labels.kind == app
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 20s
+        order: stop-first
+        failure_action: rollback
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1gb
+      labels:
+        traefik.enable: 'true'
+        traefik.http.routers.skill-editor.rule: 'Host(`editor-dev.aitekapp.com`)'
+        traefik.http.routers.skill-editor.tls: 'true'
+        traefik.http.routers.skill-editor.tls.options: noClientAuth@file
+        traefik.http.services.skill-editor.loadbalancer.server.port: 7443
+
+
+        # traefik.http.services.protocol-gw.loadbalancer.healthCheck.path: /actuator/health
+        # traefik.http.services.protocol-gw.loadbalancer.healthCheck.interval: 20s
+        # traefik.http.services.protocol-gw.loadbalancer.healthCheck.timeout: 15s
+
+
+    ####################### logging config #################################
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
