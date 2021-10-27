@@ -9,7 +9,10 @@ build:
   stage: build
   tags:
     - java
-  script: yarn install --registry=http://192.168.10.123:8081/repository/taobao/ && yarn build
+  script:
+    - yarn config set registry http://192.168.10.123:8081/repository/taobao/
+    - yarn install
+    - yarn build
   only:
     - tags
 
