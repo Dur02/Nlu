@@ -1,8 +1,5 @@
 image: ${CI_IMAGE}
 
-before_script:
-  - cp -r /root/citools .
-
 stages:
   - build
   - publish
@@ -27,6 +24,7 @@ publish:
   tags:
     - java
   script:
+    - cp -r /root/citools .
     - . ./citools/publish-image.sh
   only:
     - tags
@@ -36,6 +34,7 @@ deploy_staging:
   image: ${DEPLOY_IMAGE}
   tags:
     - java
+  dependencies: []
   script:
     - ( echo "cat <<EOF" ; cat docker-compose-tpl.yml ; echo EOF ) | sh > docker-compose.yml
     - export ANSIBLE_HOST_KEY_CHECKING=False
