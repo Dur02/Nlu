@@ -1,35 +1,35 @@
-#image: ${CI_IMAGE}
+image: ${CI_IMAGE}
 
-#before_script:
-#  - cp -r /root/citools .
+before_script:
+  - cp -r /root/citools .
 
 stages:
-#  - build
-#  - publish
+  - build
+  - publish
   - deploy_staging
 
-#build:
-#  stage: build
-#  tags:
-#    - java
-#  script: yarn install && yarn build
-#  only:
-#    - tags
-#
-#  artifacts:
-#    paths:
-#      - build/
-#    expire_in: 60 mins
-#    when: on_success
-#
-#publish:
-#  stage: publish
-#  tags:
-#    - java
-#  script:
-#    - . ./citools/publish-image.sh
-#  only:
-#    - tags
+build:
+  stage: build
+  tags:
+    - java
+  script: yarn install && yarn build
+  only:
+    - tags
+
+  artifacts:
+    paths:
+      - build/
+    expire_in: 60 mins
+    when: on_success
+
+publish:
+  stage: publish
+  tags:
+    - java
+  script:
+    - . ./citools/publish-image.sh
+  only:
+    - tags
 
 deploy_staging:
   stage: deploy_staging
@@ -37,5 +37,8 @@ deploy_staging:
   tags:
     - java
   script:
+    - ( echo "cat <<EOF" ; cat docker-compose-tpl.yml ; echo EOF ) | sh > docker-compose.yml
     - export ANSIBLE_HOST_KEY_CHECKING=False
-    - ansible-playbook -i ./ansible/hosts/staging.yml -v ./ansible/deploy-staging.yml
+    - ansible-playbook -i ./ansible/hosts/staging.yml ./ansible/deploy.yml
+  only:
+    - tags

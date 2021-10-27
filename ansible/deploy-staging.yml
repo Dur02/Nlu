@@ -5,7 +5,10 @@
     - name: Copy docker compose file
       copy:
         src: ../docker-compose.yml
-        dest: /wdm_dev/skill-editor/docker-compose.yml
+        dest: /wdm_dev/skill-editor/webapp-docker-compose.yml
 
     - name: Deploy
-      command: docker stack deploy --compose-file=/wdm_dev/skill-editor/docker-compose.yml --with-registry-auth nlu
+      command: docker stack deploy --compose-file=/wdm_dev/skill-editor/webapp-docker-compose.yml --with-registry-auth nlu
+
+    - name: Check status
+      command: docker stack services -f name=nlu_skill-editor-webapp nlu

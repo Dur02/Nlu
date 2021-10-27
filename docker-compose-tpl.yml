@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   skill-editor:
-    image:  registry.cn-hangzhou.aliyuncs.com/zmsys/skill-editor:0.4
+    image: registry.cn-hangzhou.aliyuncs.com/zmsys/skill-editor-webapp:$CI_COMMIT_REF_NAME
     environment:
       NODE_ENV: production
     deploy:
@@ -23,15 +23,14 @@ services:
           memory: 1gb
       labels:
         traefik.enable: 'true'
-        traefik.http.routers.skill-editor.rule: 'Host(`editor-dev.aitekapp.com`)'
-        traefik.http.routers.skill-editor.tls: 'true'
-        traefik.http.routers.skill-editor.tls.options: noClientAuth@file
-        traefik.http.services.skill-editor.loadbalancer.server.port: 7443
+        traefik.http.routers.skill-editor-webapp.rule: 'Host(`editor-dev.aitekapp.com`)'
+        traefik.http.routers.skill-editor-webapp.tls: 'true'
+        traefik.http.routers.skill-editor-webapp.tls.options: noClientAuth@file
+        traefik.http.services.skill-editor-webapp.loadbalancer.server.port: 7443
 
-
-        # traefik.http.services.protocol-gw.loadbalancer.healthCheck.path: /actuator/health
-        # traefik.http.services.protocol-gw.loadbalancer.healthCheck.interval: 20s
-        # traefik.http.services.protocol-gw.loadbalancer.healthCheck.timeout: 15s
+        # traefik.http.services.skill-editor-webapp.loadbalancer.healthCheck.path: /health
+        # traefik.http.services.skill-editor-webapp.loadbalancer.healthCheck.interval: 20s
+        # traefik.http.services.skill-editor-webapp.loadbalancer.healthCheck.timeout: 15s
 
 
     ####################### logging config #################################
