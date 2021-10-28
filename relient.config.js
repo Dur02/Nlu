@@ -14,7 +14,7 @@ export default {
     // },
   }, {
     from: ['/skill/edit'],
-    target: 'http://editor-dev.aitekapp.com:7443',
+    target: 'https://editor-dev.aitekapp.com:7443',
     changeOrigin: true,
     logLevel: 'debug',
     // pathRewrite: {
