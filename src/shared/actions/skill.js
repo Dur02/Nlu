@@ -18,7 +18,7 @@ export const readAll = createAction(
   ({
     current = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
-  } = {}) => read('/nlu/edit/skill/all', {
+  } = {}) => read('/skill/edit/skill/all', {
     current,
     size,
   }),
@@ -26,7 +26,7 @@ export const readAll = createAction(
 
 export const readOne = createAction(
   READ_ONE,
-  ({ id }) => read(`/nlu/edit/skill/${id}`),
+  ({ id }) => read(`/skill/edit/skill/${id}`),
 );
 
 export const create = createAction(
@@ -36,7 +36,7 @@ export const create = createAction(
     category,
     iconPath,
     productId,
-  }) => post('/nlu/edit/skill', {
+  }) => post('/skill/edit/skill', {
     name,
     category,
     iconPath,
@@ -51,7 +51,7 @@ export const update = createAction(
     name,
     category,
     iconPath,
-  }) => put(`/nlu/edit/skill/${id}`, {
+  }) => put(`/skill/edit/skill/${id}`, {
     name,
     category,
     iconPath,
@@ -60,5 +60,5 @@ export const update = createAction(
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/nlu/edit/skill/${id}`),
+  ({ id }) => del(`/skill/edit/skill/${id}`),
 );

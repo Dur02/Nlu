@@ -15,7 +15,7 @@ export const readAll = createAction(
   ({
     current = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
-  } = {}) => read('/nlu/edit/skill-version/all', {
+  } = {}) => read('/skill/edit/skill-version/all', {
     current,
     size,
   }),
@@ -26,7 +26,7 @@ export const create = createAction(
   ({
     skillId,
     note,
-  }) => post('/nlu/edit/skill-version', {
+  }) => post('/skill/edit/skill-version', {
     skillId,
     note,
   }),

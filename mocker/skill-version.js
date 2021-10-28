@@ -16,11 +16,11 @@ export const createItem = (values) => ({
 export const items = map(createItem)(range(1, 4));
 
 export default (router) => {
-  router.get('/nlu/edit/skill-version/all', ({ query }, response) => {
+  router.get('/skill/edit/skill-version/all', ({ query }, response) => {
     response.status(200).send(pagination(query)(items));
   });
 
-  router.post('/nlu/edit/skill-version', ({ body }, response) => {
+  router.post('/skill/edit/skill-version', ({ body }, response) => {
     const item = createItem(body);
     items.push(item);
     response.status(200).send(single()(item));

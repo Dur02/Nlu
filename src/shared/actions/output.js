@@ -24,7 +24,7 @@ export const readAll = createAction(
   ({
     current = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
-  } = {}) => read('/nlu/edit/output/all', {
+  } = {}) => read('/skill/edit/output/all', {
     current,
     size,
   }),
@@ -32,7 +32,7 @@ export const readAll = createAction(
 
 export const readOne = createAction(
   READ_ONE,
-  ({ id }) => read(`/nlu/edit/output/${id}`),
+  ({ id }) => read(`/skill/edit/output/${id}`),
 );
 
 export const create = createAction(
@@ -45,7 +45,7 @@ export const create = createAction(
     location,
     params,
     responses,
-  }) => post('/nlu/edit/output', {
+  }) => post('/skill/edit/output', {
     intentId,
     component,
     name,
@@ -67,7 +67,7 @@ export const update = createAction(
     location,
     params,
     responses,
-  }) => put(`/nlu/edit/output/${id}`, {
+  }) => put(`/skill/edit/output/${id}`, {
     intentId,
     component,
     name,
@@ -80,5 +80,5 @@ export const update = createAction(
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/nlu/edit/output/${id}`),
+  ({ id }) => del(`/skill/edit/output/${id}`),
 );

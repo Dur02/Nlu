@@ -19,7 +19,7 @@ export const readAll = createAction(
   ({
     current = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
-  } = {}) => read('/nlu/edit/rule/all', {
+  } = {}) => read('/skill/edit/rule/all', {
     current,
     size,
   }),
@@ -27,7 +27,7 @@ export const readAll = createAction(
 
 export const readOne = createAction(
   READ_ONE,
-  ({ id }) => read(`/nlu/edit/rule/${id}`),
+  ({ id }) => read(`/skill/edit/rule/${id}`),
 );
 
 export const create = createAction(
@@ -37,7 +37,7 @@ export const create = createAction(
     sentence,
     slots,
     taskClassify,
-  }) => post('/nlu/edit/rule', {
+  }) => post('/skill/edit/rule', {
     intentId,
     sentence,
     taskClassify,
@@ -52,7 +52,7 @@ export const update = createAction(
     sentence,
     slots,
     taskClassify,
-  }) => put(`/nlu/edit/rule/${id}`, {
+  }) => put(`/skill/edit/rule/${id}`, {
     sentence,
     taskClassify,
     slots: slots && JSON.stringify(map(pick(['pos', 'name', 'value']))(slots)),
@@ -61,5 +61,5 @@ export const update = createAction(
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/nlu/edit/rule/${id}`),
+  ({ id }) => del(`/skill/edit/rule/${id}`),
 );

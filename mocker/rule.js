@@ -27,25 +27,25 @@ export const createItem = (values) => {
 export const items = map(createItem)(range(1, 40));
 
 export default (router) => {
-  router.get('/nlu/edit/rule/all', ({ query }, response) => {
+  router.get('/skill/edit/rule/all', ({ query }, response) => {
     response.status(200).send(pagination(query)(items));
   });
 
-  router.get('/nlu/edit/rule/:id', ({ params: { id } }, response) => {
+  router.get('/skill/edit/rule/:id', ({ params: { id } }, response) => {
     response.status(200).send(single()(find(propEq('id', Number(id)))(items)));
   });
 
-  router.post('/nlu/edit/rule', ({ body }, response) => {
+  router.post('/skill/edit/rule', ({ body }, response) => {
     const item = createItem(body);
     items.push(item);
     response.status(200).send(single()(item));
   });
 
-  router.put('/nlu/edit/rule/:id', ({ body, params: { id } }, response) => {
+  router.put('/skill/edit/rule/:id', ({ body, params: { id } }, response) => {
     response.status(200).send(single()({ ...body, id: Number(id) }));
   });
 
-  router.delete('/nlu/edit/rule/:id', (request, response) => {
+  router.delete('/skill/edit/rule/:id', (request, response) => {
     response.status(200).send(single()());
   });
 };

@@ -12,7 +12,7 @@ export const createItem = (values) => ({
 export const items = map(createItem)(range(1, 4));
 
 export default (router) => {
-  router.get('/nlu/edit/builtin-intent/all', ({ query }, response) => {
+  router.get('/skill/edit/builtin-intent/all', ({ query }, response) => {
     response.status(200).send(pagination(query)(items));
   });
 };

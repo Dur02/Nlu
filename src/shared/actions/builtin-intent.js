@@ -14,7 +14,7 @@ export const readAll = createAction(
   ({
     current = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
-  } = {}) => read('/nlu/edit/builtin-intent/all', {
+  } = {}) => read('/skill/edit/builtin-intent/all', {
     current,
     size,
   }),

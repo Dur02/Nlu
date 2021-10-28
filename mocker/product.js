@@ -15,33 +15,33 @@ export const createItem = (values) => ({
 export const items = map(createItem)(range(1, 4));
 
 export default (router) => {
-  router.get('/nlu/edit/product/all', ({ query }, response) => {
+  router.get('/skill/edit/product/all', ({ query }, response) => {
     response.status(200).send(pagination(query)(items));
   });
 
-  router.get('/nlu/edit/product/:id', ({ params: { id } }, response) => {
+  router.get('/skill/edit/product/:id', ({ params: { id } }, response) => {
     response.status(200).send(single()(find(propEq('id', Number(id)))(items)));
   });
 
-  router.post('/nlu/edit/product/:id/skill', (request, response) => {
+  router.post('/skill/edit/product/:id/skill', (request, response) => {
     response.status(200).send(single()());
   });
 
-  router.delete('/nlu/edit/product/:id/skill', (request, response) => {
+  router.delete('/skill/edit/product/:id/skill', (request, response) => {
     response.status(200).send(single()());
   });
 
-  router.post('/nlu/edit/product', ({ body }, response) => {
+  router.post('/skill/edit/product', ({ body }, response) => {
     const item = createItem(body);
     items.push(item);
     response.status(200).send(single()(item));
   });
 
-  router.put('/nlu/edit/product/:id', ({ body, params: { id } }, response) => {
+  router.put('/skill/edit/product/:id', ({ body, params: { id } }, response) => {
     response.status(200).send(single()({ ...body, id: Number(id) }));
   });
 
-  router.delete('/nlu/edit/product/:id', (request, response) => {
+  router.delete('/skill/edit/product/:id', (request, response) => {
     response.status(200).send(single()());
   });
 };

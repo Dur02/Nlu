@@ -18,11 +18,11 @@ export const createItem = (values) => ({
 export const items = map(createItem)(range(1, 4));
 
 export default (router) => {
-  router.get('/nlu/edit/product-version/all', ({ query }, response) => {
+  router.get('/skill/edit/product-version/all', ({ query }, response) => {
     response.status(200).send(pagination(query)(items));
   });
 
-  router.post('/nlu/edit/product-version', ({ body }, response) => {
+  router.post('/skill/edit/product-version', ({ body }, response) => {
     const item = createItem(body);
     items.push(item);
     response.status(200).send(single()(item));

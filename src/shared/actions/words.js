@@ -19,7 +19,7 @@ export const readAll = createAction(
   ({
     current = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
-  } = {}) => read('/nlu/edit/words/all', {
+  } = {}) => read('/skill/edit/words/all', {
     current,
     size,
   }),
@@ -27,7 +27,7 @@ export const readAll = createAction(
 
 export const readOne = createAction(
   READ_ONE,
-  ({ id }) => read(`/nlu/edit/words/${id}`),
+  ({ id }) => read(`/skill/edit/words/${id}`),
 );
 
 export const create = createAction(
@@ -36,7 +36,7 @@ export const create = createAction(
     skillId,
     name,
     content,
-  }) => post('/nlu/edit/words', {
+  }) => post('/skill/edit/words', {
     skillId,
     name,
     content: JSON.stringify(map(({ word, synonym }) => ([word, synonym]))(content)),
@@ -49,7 +49,7 @@ export const update = createAction(
     id,
     name,
     content,
-  }) => put(`/nlu/edit/words/${id}`, {
+  }) => put(`/skill/edit/words/${id}`, {
     name,
     content: JSON.stringify(map(({ word, synonym }) => ([word, synonym]))(content)),
   }),
@@ -57,5 +57,5 @@ export const update = createAction(
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/nlu/edit/words/${id}`),
+  ({ id }) => del(`/skill/edit/words/${id}`),
 );

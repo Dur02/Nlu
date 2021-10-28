@@ -30,25 +30,25 @@ export const createItem = (values) => ({
 export const items = map(createItem)(range(1, 4));
 
 export default (router) => {
-  router.get('/nlu/edit/intent/all', ({ query }, response) => {
+  router.get('/skill/edit/intent/all', ({ query }, response) => {
     response.status(200).send(pagination(query)(items));
   });
 
-  router.get('/nlu/edit/intent/:id', ({ params: { id } }, response) => {
+  router.get('/skill/edit/intent/:id', ({ params: { id } }, response) => {
     response.status(200).send(single()(find(propEq('id', Number(id)))(items)));
   });
 
-  router.post('/nlu/edit/intent', ({ body }, response) => {
+  router.post('/skill/edit/intent', ({ body }, response) => {
     const item = createItem(body);
     items.push(item);
     response.status(200).send(single()(item));
   });
 
-  router.put('/nlu/edit/intent/:id', ({ body, params: { id } }, response) => {
+  router.put('/skill/edit/intent/:id', ({ body, params: { id } }, response) => {
     response.status(200).send(single()({ ...body, id: Number(id) }));
   });
 
-  router.delete('/nlu/edit/intent/:id', (request, response) => {
+  router.delete('/skill/edit/intent/:id', (request, response) => {
     response.status(200).send(single()());
   });
 };

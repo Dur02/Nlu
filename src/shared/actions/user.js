@@ -10,5 +10,5 @@ export const READ_MINE = actionType('READ_MINE');
 
 export const readMine = createAction(
   READ_MINE,
-  () => read('/nlu/edit/user/mine'),
+  () => read('/skill/edit/user/mine'),
 );

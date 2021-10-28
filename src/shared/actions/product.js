@@ -20,7 +20,7 @@ export const readAll = createAction(
   ({
     current = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
-  } = {}) => read('/nlu/edit/product/all', {
+  } = {}) => read('/skill/edit/product/all', {
     current,
     size,
   }),
@@ -28,30 +28,30 @@ export const readAll = createAction(
 
 export const readOne = createAction(
   READ_ONE,
-  ({ id }) => read(`/nlu/edit/product/${id}`),
+  ({ id }) => read(`/skill/edit/product/${id}`),
 );
 
 export const create = createAction(
   CREATE,
-  ({ name, description }) => post('/nlu/edit/product', { name, description }),
+  ({ name, description }) => post('/skill/edit/product', { name, description }),
 );
 
 export const update = createAction(
   UPDATE,
-  ({ id, name, description }) => put(`/nlu/edit/product/${id}`, { name, description }),
+  ({ id, name, description }) => put(`/skill/edit/product/${id}`, { name, description }),
 );
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/nlu/edit/product/${id}`),
+  ({ id }) => del(`/skill/edit/product/${id}`),
 );
 
 export const attachSkills = createAction(
   ATTACH_SKILLS,
-  ({ id, skillIds }) => post(`/nlu/edit/product/${id}/skill`, { skillIds }),
+  ({ id, skillIds }) => post(`/skill/edit/product/${id}/skill`, { skillIds }),
 );
 
 export const detachSkills = createAction(
   DETACH_SKILLS,
-  ({ id, skillIds }) => del(`/nlu/edit/product/${id}/skill`, { skillIds }),
+  ({ id, skillIds }) => del(`/skill/edit/product/${id}/skill`, { skillIds }),
 );

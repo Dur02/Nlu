@@ -11,7 +11,7 @@ export const REMOVE_AUTHORIZATION = actionType('REMOVE_AUTHORIZATION');
 export const login = createAction(
   LOGIN,
   ({ username, password }) => post(
-    '/nlu/edit/auth/login',
+    '/skill/edit/auth/login',
     { username, password },
   ),
   ({ shouldRemember }) => ({ ignoreAuthRedirection: true, shouldRemember }),

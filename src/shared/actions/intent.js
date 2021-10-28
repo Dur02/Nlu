@@ -18,7 +18,7 @@ export const readAll = createAction(
   ({
     current = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
-  } = {}) => read('/nlu/edit/intent/all', {
+  } = {}) => read('/skill/edit/intent/all', {
     current,
     size,
   }),
@@ -26,7 +26,7 @@ export const readAll = createAction(
 
 export const readOne = createAction(
   READ_ONE,
-  ({ id }) => read(`/nlu/edit/intent/${id}`),
+  ({ id }) => read(`/skill/edit/intent/${id}`),
 );
 
 export const create = createAction(
@@ -36,7 +36,7 @@ export const create = createAction(
     type,
     skillId,
     slots,
-  }) => post('/nlu/edit/intent', {
+  }) => post('/skill/edit/intent', {
     name,
     type,
     skillId,
@@ -50,7 +50,7 @@ export const update = createAction(
     id,
     name,
     slots,
-  }) => put(`/nlu/edit/intent/${id}`, {
+  }) => put(`/skill/edit/intent/${id}`, {
     name,
     slots: JSON.stringify(slots),
   }),
@@ -58,5 +58,5 @@ export const update = createAction(
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/nlu/edit/intent/${id}`),
+  ({ id }) => del(`/skill/edit/intent/${id}`),
 );

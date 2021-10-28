@@ -15,7 +15,7 @@ export const readAll = createAction(
   ({
     current = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
-  } = {}) => read('/nlu/edit/product-version/all', {
+  } = {}) => read('/skill/edit/product-version/all', {
     current,
     size,
   }),
@@ -27,7 +27,7 @@ export const create = createAction(
     productId,
     versionName,
     description,
-  }) => post('/nlu/edit/product-version', {
+  }) => post('/skill/edit/product-version', {
     productId,
     versionName,
     description,
