@@ -13,8 +13,8 @@ export default {
     //   '^/api': '',
     // },
   }, {
-    from: ['/nlu/edit'],
-    target: 'http://localhost:9001',
+    from: ['/skill/edit'],
+    target: 'http://editor-dev.aitekapp.com:7443',
     changeOrigin: true,
     logLevel: 'debug',
     // pathRewrite: {
