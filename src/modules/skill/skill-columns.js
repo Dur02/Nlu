@@ -7,11 +7,11 @@ export const getColumns = ({
   openVersion,
   push,
 }) => [{
-  title: '图标',
-  dataIndex: 'iconPath',
-  width: 40,
-  render: (iconPath) => <img alt="icon" src={iconPath} width={40} />,
-}, {
+//   title: '图标',
+//   dataIndex: 'iconPath',
+//   width: 40,
+//   render: (iconPath) => <img alt="icon" src={iconPath} width={40} />,
+// }, {
   title: '名称',
   dataIndex: 'name',
 }, {

@@ -51,10 +51,10 @@ export const getSkillEditorColumns = ({
   const isAttached = (record) => includes(record.id)(product.skillIds);
 
   return [{
-    title: '图标',
-    dataIndex: 'iconPath',
-    render: (iconPath) => <img alt="icon" src={iconPath} width={40} />,
-  }, {
+  //   title: '图标',
+  //   dataIndex: 'iconPath',
+  //   render: (iconPath) => <img alt="icon" src={iconPath} width={40} />,
+  // }, {
     title: '名称',
     dataIndex: 'name',
   }, {
