@@ -1,5 +1,5 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
-import { flow, find, filter, propEq, map, orderBy, every, prop, includes, any, compact } from 'lodash/fp';
+import { flow, find, filter, propEq, map, orderBy, every, prop, includes, any, compact, split } from 'lodash/fp';
 import { SLOT, TEXT } from 'shared/constants/content-type';
 
 const mapWithIndex = map.convert({ cap: false });
@@ -22,6 +22,7 @@ export default (skillId) => (state) => {
               ...slot,
               index,
               ruleId: rule.id,
+              lexiconsNames: split(',')(slot.lexiconsNames),
             }))(slots),
             sentenceDisplay: flow(
               mapWithIndex((char, index) => {

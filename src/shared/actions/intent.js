@@ -4,6 +4,7 @@ import {
 } from 'relient/actions';
 import { DEFAULT_CURRENT, DEFAULT_SIZE } from 'shared/constants/pagination';
 import { read, post, del, put } from 'relient/actions/request';
+import { map, join } from 'lodash/fp';
 
 const actionType = actionTypeCreator('actions/intent');
 
@@ -40,7 +41,7 @@ export const create = createAction(
     name,
     type,
     skillId,
-    slots: JSON.stringify(slots),
+    slots: JSON.stringify(map((slot) => ({ ...slot, lexiconsNames: join(',')(slot.lexiconsNames) }))(slots)),
   }),
 );
 

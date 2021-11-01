@@ -19,9 +19,11 @@ export const readAll = createAction(
   ({
     current = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
+    skillId,
   } = {}) => read('/skill/edit/words/all', {
     current,
     size,
+    skillId,
   }),
 );
 

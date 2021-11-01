@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
 import { Drawer, message, Table, Switch, Button, Popconfirm } from 'antd';
-import { map, join, any, flow, prop, reject, propEq, eq, find } from 'lodash/fp';
+import { map, join, any, flow, prop, reject, propEq, eq, find, includes } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { booleanSwitchOptions, getBooleanText } from 'shared/constants/boolean';
@@ -26,6 +26,10 @@ const result = ({
   const [promptEditorSlotName, setPromptEditorSlotName] = useState(null);
   const onCreateSlot = useCallback(
     (values) => {
+      if (any(flow(prop('name'), includes(',')))(slots)) {
+        message.error('词库名不能包含,');
+        throw Error('词库名不能包含,');
+      }
       if (any(flow(prop('name'), eq(values.name)))(slots)) {
         message.error('取值已存在');
         throw Error('取值已存在');

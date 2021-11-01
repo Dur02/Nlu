@@ -14,8 +14,9 @@ export default {
       isLogin: true,
     }),
 
-    [READ_MINE]: (auth) => ({
+    [READ_MINE]: (auth, { payload: { data: { username } } }) => ({
       ...auth,
+      currentAccountId: username,
       isLogin: true,
     }),
 
