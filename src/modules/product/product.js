@@ -4,7 +4,7 @@ import Layout from 'shared/components/layout';
 import { Table, Drawer, message, Input } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
 import { remove, create, update, detachSkills, attachSkills } from 'shared/actions/product';
-import { create as createVersion } from 'shared/actions/product-version';
+import { create as createVersion, readAll as readAllVersion } from 'shared/actions/product-version';
 import { useAction } from 'relient/actions';
 import { find, propEq, flow, prop } from 'lodash/fp';
 import { getColumns, getSkillEditorColumns, versionColumns } from './product-columns';
@@ -62,6 +62,7 @@ const result = () => {
   const onUpdate = useAction(update);
   const onAttach = useCallback(async ({ skillId, productId }) => {
     await dispatch(attachSkills({ id: productId, skillIds: [skillId] }));
+    await dispatch(readAllVersion({ productId }));
     message.success('添加成功');
   }, []);
   const onDetach = useCallback(async ({ skillId, productId }) => {

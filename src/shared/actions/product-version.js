@@ -15,9 +15,11 @@ export const readAll = createAction(
   ({
     current = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
+    productId,
   } = {}) => read('/skill/edit/product-version/all', {
     current,
     size,
+    productId,
   }),
 );
 
