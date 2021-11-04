@@ -1,5 +1,6 @@
-import { Button, Popconfirm } from 'antd';
 import React from 'react';
+import { Button, Popconfirm } from 'antd';
+import { getVersionStatusText } from 'shared/constants/version-status';
 
 export const getColumns = ({
   openEditor,
@@ -47,7 +48,7 @@ export const versionColumns = [{
 }, {
   title: '状态',
   dataIndex: 'pubState',
-  render: (pubState) => (pubState === 0 ? '成功' : '失败'),
+  render: getVersionStatusText,
 }, {
   title: '发布人',
   dataIndex: 'userName',

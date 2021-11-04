@@ -1,6 +1,7 @@
 import { Button, Popconfirm } from 'antd';
 import React from 'react';
 import { includes } from 'lodash/fp';
+import { getVersionStatusText } from 'shared/constants/version-status';
 
 const ATTACHED = 'ATTACHED';
 const DETACHED = 'DETACHED';
@@ -116,7 +117,7 @@ export const versionColumns = [{
 }, {
   title: '状态',
   dataIndex: 'pubState',
-  render: (pubState) => (pubState === 0 ? '成功' : '失败'),
+  render: getVersionStatusText,
 }, {
   title: '发布人',
   dataIndex: 'createPerson',
