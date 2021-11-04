@@ -123,6 +123,7 @@ export default async (req, res, next) => {
         )(route)}
         initialState={JSON.stringify(store.getState())}
         messages={JSON.stringify(messages)}
+        version={global.version}
       >
         {children}
       </Html>,

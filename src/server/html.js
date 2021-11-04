@@ -9,6 +9,7 @@ const result = ({
   description = 'NLU Editor',
   styles = [],
   scripts = [],
+  version,
   messages,
   children,
   initialState,
@@ -36,6 +37,7 @@ const result = ({
       <script dangerouslySetInnerHTML={{ __html: clientConfig(['cdnDomain', 'baseUrl']) }} />
       <script dangerouslySetInnerHTML={{ __html: `window.__INITIAL_STATE__=${initialState}` }} />
       <script dangerouslySetInnerHTML={{ __html: `window.messages=${messages}` }} />
+      <script dangerouslySetInnerHTML={{ __html: `window.version=${version}` }} />
       {scripts.map((script) => <script key={script} src={script} />)}
     </body>
   </html>

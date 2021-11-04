@@ -16,6 +16,7 @@ const app = express();
 // -----------------------------------------------------------------------------
 global.navigator = global.navigator || {};
 global.navigator.userAgent = global.navigator.userAgent || 'all';
+global.version = process.env.VERSION;
 
 if (__DEV__) {
   app.use(morgan('tiny'));

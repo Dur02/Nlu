@@ -12,12 +12,11 @@ const result = ({ className }) => {
   return (
     <div className={classNames(className, s.Root)}>
       <div className={s.Copyright}>
-        <div>
-          Copyright&nbsp;
-          <CopyrightOutlined />
-          &nbsp;2020 NLU Editor All Rights Reserved.
-        </div>
+        Copyright&nbsp;
+        <CopyrightOutlined />
+        &nbsp;2020 NLU Editor All Rights Reserved.
       </div>
+      <div className={s.Version}>Version: {global.version}</div>
     </div>
   );
 };
