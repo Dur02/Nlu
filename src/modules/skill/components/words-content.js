@@ -20,6 +20,7 @@ const result = ({
       message.error('取值已存在');
       throw Error('取值已存在');
     }
+    message.success('新词条已添加，请记得保存');
     return onChange([{ word, synonym }, ...(value || [])]);
   }, [value, onChange]);
   const onUpdate = useCallback(({ word, synonym }, formInstance, editItem) => {
@@ -72,6 +73,7 @@ const result = ({
       fields,
       component: Drawer,
       width: 800,
+      showSuccessMessage: false,
     },
     editor: {
       title: '编辑词条',

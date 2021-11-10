@@ -32,6 +32,13 @@ export const readOne = createAction(
   ({ id }) => read(`/skill/edit/words/${id}`),
 );
 
+const convertContent = ({ word, synonym }) => {
+  if (synonym) {
+    return [word, synonym];
+  }
+  return [word];
+};
+
 export const create = createAction(
   CREATE,
   ({
@@ -41,7 +48,7 @@ export const create = createAction(
   }) => post('/skill/edit/words', {
     skillId,
     name,
-    content: JSON.stringify(map(({ word, synonym }) => ([word, synonym]))(content)),
+    content: JSON.stringify(map(convertContent)(content)),
   }),
 );
 
@@ -53,7 +60,7 @@ export const update = createAction(
     content,
   }) => put(`/skill/edit/words/${id}`, {
     name,
-    content: JSON.stringify(map(({ word, synonym }) => ([word, synonym]))(content)),
+    content: JSON.stringify(map(convertContent)(content)),
   }),
 );
 

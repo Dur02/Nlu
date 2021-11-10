@@ -4,6 +4,16 @@ import { SLOT, TEXT } from 'shared/constants/content-type';
 
 const mapWithIndex = map.convert({ cap: false });
 
+const getContent = (words) => {
+  if (!words.content) {
+    return words.content;
+  }
+  if (words.format === 0) {
+    return flow(split(/\r?\n/), map((word) => ({ word })))(words.content);
+  }
+  return map(([word, synonym]) => ({ word, synonym }))(JSON.parse(words.content));
+};
+
 export default (skillId) => (state) => {
   const intents = flow(
     getEntityArray('intent'),
@@ -67,11 +77,11 @@ export default (skillId) => (state) => {
     words: flow(
       getEntityArray('words'),
       orderBy(['id'], ['desc']),
-      filter((words) => words.skillId === 0 || words.skillId === skillId),
+      filter((words) => !words.skillId || words.skillId === skillId),
       map((words) => ({
         ...words,
-        content: map(([word, synonym]) => ({ word, synonym }))(JSON.parse(words.content)),
-        canDelete: skillId !== 0 && every(flow(
+        content: getContent(words),
+        canDelete: words.skillId && every(flow(
           prop('slots'),
           every(({ lexiconsNames }) => !includes(words.name)(lexiconsNames)),
         ))(intents),

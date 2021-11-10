@@ -82,19 +82,31 @@ const result = ({
   });
   const columns = [{
     title: '词库名',
+    width: 120,
     dataIndex: 'name',
   }, {
     title: '词条',
     dataIndex: 'content',
-    render: flow(map(prop('word')), join(', ')),
+    render: flow(
+      map(prop('word')),
+      join(', '),
+      (display) => {
+        if (display && display.length > 100) {
+          return `${display.slice(0, 100)}...`;
+        }
+        return display;
+      },
+    ),
   }, {
     title: '操作',
     width: 80,
     render: (record) => (
       <>
-        <div className={s.Button}>
-          <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
-        </div>
+        {record.skillId && (
+          <div className={s.Button}>
+            <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
+          </div>
+        )}
         <div className={s.Button}>
           {includes(prop('name')(record))(value) ? (
             <Button type="primary" size="small" ghost onClick={() => onDetachWords(record)}>去除绑定</Button>
@@ -152,7 +164,7 @@ const result = ({
         visible={tableVisible}
         title="选择词库"
         onClose={() => setTableVisible(false)}
-        width={600}
+        width={800}
       >
         {tableHeader}
         <Table
