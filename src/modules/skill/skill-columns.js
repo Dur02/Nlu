@@ -3,7 +3,7 @@ import { Button, Popconfirm } from 'antd';
 import { getVersionStatusText } from 'shared/constants/version-status';
 
 export const getColumns = ({
-  openEditor,
+  // openEditor,
   onRemove,
   openVersion,
   push,
@@ -23,8 +23,15 @@ export const getColumns = ({
   width: 300,
   render: (record) => (
     <>
-      <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>基础信息</Button>
-      &nbsp;&nbsp;
+      {/* <Button */}
+      {/*  type="primary" */}
+      {/*  size="small" */}
+      {/*  ghost */}
+      {/*  onClick={() => openEditor(record)} */}
+      {/* > */}
+      {/*  基础信息 */}
+      {/* </Button> */}
+      {/* &nbsp;&nbsp; */}
       <Button type="primary" size="small" ghost onClick={() => push(`/skill/${record.id}`)}>编辑技能</Button>
       &nbsp;&nbsp;
       <Button type="primary" size="small" ghost onClick={() => openVersion(record)}>发布</Button>

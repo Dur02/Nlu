@@ -11,7 +11,7 @@ build:
   tags:
     - java
   script:
-    - yarn config set registry http://192.168.10.123:8081/repository/taobao/
+    - yarn config set registry https://nexus.aitekapp.com/repository/taobao/
     - yarn install
     - yarn build
   only:

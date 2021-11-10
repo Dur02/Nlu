@@ -92,7 +92,7 @@ const result = () => {
       component: Drawer,
     },
     editor: {
-      title: '编辑产品',
+      title: '编辑技能',
       onSubmit: onUpdate,
       fields: editorFields,
       component: Drawer,
