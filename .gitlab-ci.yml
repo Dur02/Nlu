@@ -42,6 +42,7 @@ deploy_staging:
     - java
   dependencies: []
   script:
+    - export ENVIRONMENT=staging
     - ( echo "cat <<EOF" ; cat docker-compose-tpl.yml ; echo EOF ) | sh > docker-compose.yml
     - export ANSIBLE_HOST_KEY_CHECKING=False
     - ansible-playbook -i ./ansible/hosts/staging.yml -v ./ansible/deploy.yml

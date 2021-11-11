@@ -4,6 +4,7 @@ services:
     image: registry.cn-hangzhou.aliyuncs.com/zmsys/skill-editor-webapp:$CI_COMMIT_REF_NAME
     environment:
       NODE_ENV: production
+      NODE_CONFIG_ENV: $ENVIRONMENT
       VERSION: $CI_COMMIT_REF_NAME
     deploy:
       mode: replicated
