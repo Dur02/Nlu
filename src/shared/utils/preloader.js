@@ -15,7 +15,7 @@ export default (dispatch) => [
   dispatch(readAllIntent()),
   dispatch(readAllOutput()),
   dispatch(readAllSkill()),
-  dispatch(readAllWords({ skillId: 0 })),
+  dispatch(readAllWords({ type: 'SYSTEM' })),
   dispatch(readMyUser()),
   dispatch(readAllSkillVersion()),
   dispatch(readAllProductVersion()),
