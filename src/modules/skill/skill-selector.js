@@ -8,7 +8,7 @@ export default (state) => ({
       ...skill,
       skillVersions: flow(
         getEntityArray('skillVersion'),
-        filter(propEq('skillId', skill.id)),
+        filter(propEq('code', skill.code)),
       )(state),
     })),
   )(state),

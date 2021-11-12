@@ -54,7 +54,7 @@ export const versionColumns = [{
   dataIndex: 'note',
 }, {
   title: '状态',
-  dataIndex: 'pubState',
+  dataIndex: 'status',
   render: getVersionStatusText,
 }, {
   title: '发布人',
