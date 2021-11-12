@@ -7,6 +7,9 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@dnd-kit/core": "^4.0.1",
+    "@dnd-kit/sortable": "^5.0.0",
+    "@dnd-kit/utilities": "^3.0.0",
     "@tinymce/tinymce-react": "^3.12.4",
     "antd": "^4.16.13",
     "bignumber.js": "^9.0.1",

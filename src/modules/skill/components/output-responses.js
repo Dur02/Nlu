@@ -2,13 +2,14 @@ import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
 import { message, Button, Tabs, Tooltip, Popconfirm, Select } from 'antd';
 import { PlusOutlined, SortAscendingOutlined, CloseOutlined } from '@ant-design/icons';
-import { map, flow, reject, propEq, first, propOr, find, prop } from 'lodash/fp';
+import { map, flow, reject, propEq, first, propOr, find, prop, concat, filter } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { getCName } from 'shared/utils/helper';
 import NLG from './output-response-nlg';
 import Condition from './output-response-condition';
 import Command from './output-response-command';
 import Next from './output-response-next';
+import Sorter from './output-response-sorter';
 import s from './output-responses.less';
 
 const mapWithIndex = map.convert({ cap: false });
@@ -32,6 +33,7 @@ const result = ({
   useStyles(s);
 
   const [selectedCId, setSelectedCId] = useState(flow(first, propOr(DEFAULT_KEY, 'cId'))(responses));
+  const [sorterVisible, setSorterVisible] = useState(false);
   const [creatorConditionVisible, setCreatorConditionVisible] = useState(false);
   const [editorConditionCId, setEditorConditionCId] = useState(null);
   const onCreateResponse = useCallback(async (condition) => {
@@ -97,6 +99,20 @@ const result = ({
     });
     setSelectedCId(newResponses[0].cId);
   }, [outputId, responses]);
+  const onSortResponse = useCallback(async (value) => {
+    await updateOutput({
+      id: outputId,
+      responses: flow(
+        mapWithIndex((item, index) => ({
+          ...item,
+          cId: index.toString(),
+        })),
+        concat(filter(prop('readOnly'))(responses)),
+      )(value),
+    });
+    message.success('排序成功');
+    setSorterVisible(false);
+  }, [outputId, responses]);
 
   return (
     <div>
@@ -109,7 +125,13 @@ const result = ({
           添加对话回复
         </Button>
         &nbsp;&nbsp;
-        <Button icon={<SortAscendingOutlined />} type="primary">对话回复排序</Button>
+        <Button
+          icon={<SortAscendingOutlined />}
+          type="primary"
+          onClick={() => setSorterVisible(true)}
+        >
+          对话回复排序
+        </Button>
       </div>
       <Tabs
         activeKey={selectedCId}
@@ -198,6 +220,13 @@ const result = ({
         onChange={onUpdateCondition}
         title="编辑条件"
         value={flow(find(propEq('cId', editorConditionCId)), prop('condition'))(responses)}
+      />
+      <Sorter
+        visible={sorterVisible}
+        value={filter(({ readOnly }) => !readOnly)(responses)}
+        onClose={() => setSorterVisible(false)}
+        onChange={onSortResponse}
+        title="排序对话回复"
       />
     </div>
   );
