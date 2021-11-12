@@ -2,6 +2,8 @@ import { getEntity, getEntityArray } from 'relient/selectors';
 import { flow, find, filter, propEq, map, orderBy, every, prop, includes, any, compact, split } from 'lodash/fp';
 import { SLOT, TEXT } from 'shared/constants/content-type';
 
+import { getCName } from 'shared/utils/helper';
+
 const mapWithIndex = map.convert({ cap: false });
 
 const getContent = (words) => {
@@ -92,7 +94,11 @@ export default (skillId) => (state) => {
       map((output) => ({
         ...output,
         params: JSON.parse(output.params),
-        responses: JSON.parse(output.responses),
+        responses: mapWithIndex((response, index) => ({
+          cId: response.readOnly ? undefined : index.toString(),
+          cnames: getCName(response.condition),
+          ...response,
+        }))(JSON.parse(output.responses)),
       })),
     )(state),
   };

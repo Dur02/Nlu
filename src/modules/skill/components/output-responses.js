@@ -2,9 +2,9 @@ import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
 import { message, Button, Tabs, Tooltip, Popconfirm, Select } from 'antd';
 import { PlusOutlined, SortAscendingOutlined, CloseOutlined } from '@ant-design/icons';
-import { map, flow, reject, propEq, first, propOr, join, find, prop } from 'lodash/fp';
+import { map, flow, reject, propEq, first, propOr, find, prop } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { getConditionTypeText } from 'shared/constants/condition-type';
+import { getCName } from 'shared/utils/helper';
 import NLG from './output-response-nlg';
 import Condition from './output-response-condition';
 import Command from './output-response-command';
@@ -14,11 +14,6 @@ import s from './output-responses.less';
 const mapWithIndex = map.convert({ cap: false });
 const { TabPane } = Tabs;
 const DEFAULT_KEY = 'default';
-
-const getCName = flow(
-  map(({ params, type }) => `${params[0] || ''}${getConditionTypeText(type)}${params[1] || ''}`),
-  join('&'),
-);
 
 const commandFirstOptions = [{
   label: '回复内容播报完毕，再执行客户端动作',
@@ -121,6 +116,8 @@ const result = ({
         onTabClick={setSelectedCId}
         type="editable-card"
         hideAdd
+        tabPosition="left"
+        style={{ height: 500 }}
       >
         {map(({
           cnames,
