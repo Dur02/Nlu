@@ -52,7 +52,7 @@ export const create = createAction(
     resource,
     location,
     params: parseParams(params),
-    responses: JSON.stringify(responses),
+    responses: responses && JSON.stringify(responses),
   }),
 );
 

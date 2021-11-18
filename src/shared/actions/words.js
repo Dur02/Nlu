@@ -50,7 +50,7 @@ export const create = createAction(
   }) => post('/skill/edit/words', {
     skillId,
     name,
-    content: JSON.stringify(map(convertContent)(content)),
+    content: content && JSON.stringify(map(convertContent)(content)),
   }),
 );
 
@@ -62,7 +62,7 @@ export const update = createAction(
     content,
   }) => put(`/skill/edit/words/${id}`, {
     name,
-    content: JSON.stringify(map(convertContent)(content)),
+    content: content && JSON.stringify(map(convertContent)(content)),
   }),
 );
 

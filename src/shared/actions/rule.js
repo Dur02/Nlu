@@ -41,7 +41,7 @@ export const create = createAction(
     intentId,
     sentence,
     taskClassify,
-    slots: JSON.stringify(map(pick(['pos', 'name', 'value']))(slots)),
+    slots: slots && JSON.stringify(map(pick(['pos', 'name', 'value']))(slots)),
   }),
 );
 
