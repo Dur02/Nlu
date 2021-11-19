@@ -7,13 +7,20 @@ import { getCName } from 'shared/utils/helper';
 const mapWithIndex = map.convert({ cap: false });
 
 const getContent = (words) => {
-  if (!words.content) {
-    return words.content;
+  try {
+    if (!words.content) {
+      return words.content;
+    }
+    if (words.format === 0) {
+      return flow(split(/\r?\n/), map((word) => ({ word })))(words.content);
+    }
+    return map(([word, synonym]) => ({ word, synonym }))(JSON.parse(words.content));
+  } catch (e) {
+    console.error(e);
+    // eslint-disable-next-line no-console
+    console.log('words', words);
+    return [];
   }
-  if (words.format === 0) {
-    return flow(split(/\r?\n/), map((word) => ({ word })))(words.content);
-  }
-  return map(([word, synonym]) => ({ word, synonym }))(JSON.parse(words.content));
 };
 
 export default (skillId) => (state) => {
@@ -59,13 +66,13 @@ export default (skillId) => (state) => {
           find(propEq('intentId', intent.id)),
         )(state),
         rules,
-        slots: map((slot) => ({
+        slots: intent.slots ? map((slot) => ({
           ...slot,
           canDelete: every(flow(
             prop('slots'),
             every(({ name }) => slot.name !== name),
           ))(rules),
-        }))(JSON.parse(intent.slots)),
+        }))(JSON.parse(intent.slots)) : [],
       };
     }),
   )(state);
