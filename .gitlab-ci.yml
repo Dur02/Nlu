@@ -10,6 +10,8 @@ build:
   retry: 2
   tags:
     - java
+  variables:
+    NODE_ENV: production
   script:
     - yarn config set registry https://nexus.aitekapp.com/repository/taobao/
     - yarn install
@@ -41,10 +43,11 @@ deploy_staging:
   tags:
     - java
   dependencies: []
+  variables:
+    ENVIRONMENT: staging
+    ANSIBLE_HOST_KEY_CHECKING: "false"
   script:
-    - export ENVIRONMENT=staging
     - ( echo "cat <<EOF" ; cat docker-compose-tpl.yml ; echo EOF ) | sh > docker-compose.yml
-    - export ANSIBLE_HOST_KEY_CHECKING=False
     - ansible-playbook -i ./ansible/hosts/staging.yml -v ./ansible/deploy.yml
   only:
     - tags

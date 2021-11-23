@@ -218,7 +218,7 @@ const result = ({
           example: component,
         }, ...slotParams, ...extraParams])}
         columns={columns}
-        rowKey="name"
+        rowKey={(record) => `${record.name}${record.value}`}
         pagination={pagination}
       />
     </div>

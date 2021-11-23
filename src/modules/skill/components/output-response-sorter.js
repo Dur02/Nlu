@@ -32,7 +32,7 @@ const result = ({
   const [finalValue, setFinalValue] = useState(value);
   useEffect(() => {
     setFinalValue(value || []);
-  }, value);
+  }, [value]);
   const onSortEnd = useCallback(({ oldIndex, newIndex }) => {
     if (oldIndex !== newIndex) {
       setFinalValue((items) => arrayMoveImmutable(items, oldIndex, newIndex));
