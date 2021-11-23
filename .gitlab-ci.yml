@@ -10,12 +10,10 @@ build:
   retry: 2
   tags:
     - java
-  variables:
-    NODE_ENV: production
   script:
     - yarn config set registry https://nexus.aitekapp.com/repository/taobao/
     - yarn install
-    - yarn build
+    - NODE_ENV=production yarn build # do not set this env var to variables because yarn install wont install dev packages
   only:
     - tags
 
