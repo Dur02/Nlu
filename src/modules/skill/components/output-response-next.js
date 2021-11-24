@@ -20,7 +20,7 @@ const result = ({
 }) => {
   const [intentsVisible, setIntentsVisible] = useState();
   useEffect(() => {
-    setIntentsVisible(next && next.length > 0 && !nextAny);
+    setIntentsVisible((next && next.length > 0) || nextAny);
   }, [cId]);
   const onSelectChange = useCallback(async (value) => {
     if (value === 'end') {

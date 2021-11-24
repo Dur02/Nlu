@@ -139,7 +139,7 @@ const result = ({
         type="editable-card"
         hideAdd
         tabPosition="left"
-        style={{ height: 500 }}
+        style={{ height: 700 }}
       >
         {map(({
           cnames,
