@@ -58,7 +58,10 @@ export const update = createAction(
     slots,
   }) => put(`/skill/edit/intent/${id}`, {
     name,
-    slots: slots && JSON.stringify(map(pick(slotProps))(slots)),
+    slots: slots && JSON.stringify(map((slot) => ({
+      ...pick(slotProps)(slot),
+      lexiconsNames: join(',')(slot.lexiconsNames),
+    }))(slots)),
   }),
 );
 

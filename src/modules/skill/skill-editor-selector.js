@@ -41,7 +41,6 @@ export default (skillId) => (state) => {
               ...slot,
               index,
               ruleId: rule.id,
-              lexiconsNames: split(',')(slot.lexiconsNames),
             }))(slots),
             sentenceDisplay: flow(
               mapWithIndex((char, index) => {
@@ -68,6 +67,7 @@ export default (skillId) => (state) => {
         rules,
         slots: intent.slots ? map((slot) => ({
           ...slot,
+          lexiconsNames: slot.lexiconsNames ? split(',')(slot.lexiconsNames) : [],
           canDelete: every(flow(
             prop('slots'),
             every(({ name }) => slot.name !== name),

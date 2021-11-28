@@ -8,6 +8,29 @@ import { useLocalTable } from 'relient-admin/hooks';
 import WordsContent from './words-content';
 import s from './words-list.less';
 
+const fields = [{
+  label: '名称',
+  name: 'name',
+  type: 'text',
+  rules: [{
+    required: true,
+  }, {
+    validator: async (_, value) => {
+      if (includes(',')(value)) {
+        throw new Error('词库名不能包含,');
+      }
+    },
+  }],
+  labelCol: { span: 2 },
+  wrapperCol: { span: 20 },
+}, {
+  label: '词条',
+  name: 'content',
+  component: WordsContent,
+  labelCol: { span: 2 },
+  wrapperCol: { span: 20 },
+}];
+
 const result = ({
   createWords,
   updateWords,
@@ -33,20 +56,6 @@ const result = ({
     ({ name }) => onChange([name, ...(value || [])]),
     [value, onChange],
   );
-  const fields = [{
-    label: '名称',
-    name: 'name',
-    type: 'text',
-    rules: [{ required: true }],
-    labelCol: { span: 2 },
-    wrapperCol: { span: 20 },
-  }, {
-    label: '词条',
-    name: 'content',
-    component: WordsContent,
-    labelCol: { span: 2 },
-    wrapperCol: { span: 20 },
-  }];
   const {
     tableHeader,
     getDataSource,
