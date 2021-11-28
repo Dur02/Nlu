@@ -102,7 +102,7 @@ export default (skillId) => (state) => {
         ...output,
         params: JSON.parse(output.params),
         responses: mapWithIndex((response, index) => ({
-          cId: response.readOnly ? undefined : index.toString(),
+          cId: index.toString(),
           cnames: getCName(response.condition),
           ...response,
         }))(JSON.parse(output.responses)),

@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
 import { message, Button, Tabs, Tooltip, Popconfirm, Select } from 'antd';
 import { PlusOutlined, SortAscendingOutlined, CloseOutlined } from '@ant-design/icons';
-import { map, flow, reject, propEq, first, propOr, find, prop, concat, filter } from 'lodash/fp';
+import { map, flow, reject, propEq, first, propOr, find, prop, every } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { getCName } from 'shared/utils/helper';
 import NLG from './output-response-nlg';
@@ -39,7 +39,7 @@ const result = ({
   const onCreateResponse = useCallback(async (condition) => {
     const newResponses = mapWithIndex((item, index) => ({
       ...item,
-      cId: item.readOnly ? undefined : index.toString(),
+      cId: index.toString(),
     }))([{
       condition,
       readOnly: false,
@@ -90,7 +90,7 @@ const result = ({
       reject(propEq('cId', cId)),
       mapWithIndex((item, index) => ({
         ...item,
-        cId: item.readOnly ? undefined : index.toString(),
+        cId: index.toString(),
       })),
     )(responses);
     await updateOutput({
@@ -102,17 +102,14 @@ const result = ({
   const onSortResponse = useCallback(async (value) => {
     await updateOutput({
       id: outputId,
-      responses: flow(
-        mapWithIndex((item, index) => ({
-          ...item,
-          cId: index.toString(),
-        })),
-        concat(filter(prop('readOnly'))(responses)),
-      )(value),
+      responses: mapWithIndex((item, index) => ({
+        ...item,
+        cId: index.toString(),
+      }))(value),
     });
     message.success('排序成功');
     setSorterVisible(false);
-  }, [outputId, responses]);
+  }, [outputId]);
 
   return (
     <div>
@@ -144,69 +141,73 @@ const result = ({
         {map(({
           cnames,
           cId,
-          readOnly,
           condition,
           nlg,
           command,
           commandFirst,
           next,
           nextAny,
-        }) => (
-          <TabPane
-            key={readOnly ? DEFAULT_KEY : cId}
-            tab={(
-              <Tooltip title={readOnly ? '默认' : cnames}>
-                <div className={s.Tab}>{readOnly ? '默认' : cnames}</div>
-              </Tooltip>
-            )}
-            closable={!readOnly}
-            closeIcon={(
-              <Popconfirm
-                title="确认删除吗？删除操作不可恢复"
-                onConfirm={() => onRemoveResponse({ cId })}
-              >
-                <CloseOutlined />
-              </Popconfirm>
-            )}
-          >
-            <h4 className={s.Title}>条件描述</h4>
-            {readOnly ? '默认' : (
-              <Button type="link" onClick={() => setEditorConditionCId(cId)}>{getCName(condition)}</Button>
-            )}
+        }) => {
+          const isDefault = !condition
+            || condition.length === 0
+            || every(({ params }) => !params || params.length === 0)(condition);
+          return (
+            <TabPane
+              key={cId}
+              tab={(
+                <Tooltip title={isDefault ? '默认' : cnames}>
+                  <div className={s.Tab}>{isDefault ? '默认' : cnames}</div>
+                </Tooltip>
+              )}
+              closable={!isDefault}
+              closeIcon={(
+                <Popconfirm
+                  title="确认删除吗？删除操作不可恢复"
+                  onConfirm={() => onRemoveResponse({ cId })}
+                >
+                  <CloseOutlined />
+                </Popconfirm>
+              )}
+            >
+              <h4 className={s.Title}>条件描述</h4>
+              {isDefault ? '默认' : (
+                <Button type="link" onClick={() => setEditorConditionCId(cId)}>{getCName(condition)}</Button>
+              )}
 
-            <h4 className={s.Title}>回复内容</h4>
-            <div className={s.Tips}>支持“#”引用语义槽值、“$”引用资源查询结果</div>
-            <NLG
-              value={nlg}
-              onChange={(newNlg) => onUpdateResponse({ cId, ngl: newNlg })}
-            />
+              <h4 className={s.Title}>回复内容</h4>
+              <div className={s.Tips}>支持“#”引用语义槽值、“$”引用资源查询结果</div>
+              <NLG
+                value={nlg}
+                onChange={(newNlg) => onUpdateResponse({ cId, ngl: newNlg })}
+              />
 
-            <h4 className={s.Title}>客户端动作</h4>
-            <div className={s.Tips}>
-              向终端设备发出执行操作的指令，支持“?”标识传参，参数之间用“&”连接。示例： command://call?phone=$phone$&name=#name#。
-            </div>
-            <Command
-              value={command}
-              onChange={(newCommand) => onUpdateResponse({ cId, command: newCommand })}
-            />
+              <h4 className={s.Title}>客户端动作</h4>
+              <div className={s.Tips}>
+                向终端设备发出执行操作的指令，支持“?”标识传参，参数之间用“&”连接。示例： command://call?phone=$phone$&name=#name#。
+              </div>
+              <Command
+                value={command}
+                onChange={(newCommand) => onUpdateResponse({ cId, command: newCommand })}
+              />
 
-            <h4 className={s.Title}>执行时序</h4>
-            <Select
-              options={commandFirstOptions}
-              value={commandFirst.toString()}
-              onChange={(newCommandFirst) => onUpdateResponse({ cId, commandFirst: newCommandFirst === 'true' })}
-            />
+              <h4 className={s.Title}>执行时序</h4>
+              <Select
+                options={commandFirstOptions}
+                value={commandFirst.toString()}
+                onChange={(newCommandFirst) => onUpdateResponse({ cId, commandFirst: newCommandFirst === 'true' })}
+              />
 
-            <h4 className={s.Title}>下一轮对话</h4>
-            <Next
-              next={next}
-              nextAny={nextAny}
-              onUpdateResponse={onUpdateResponse}
-              cId={cId}
-              intents={intents}
-            />
-          </TabPane>
-        ))(responses)}
+              <h4 className={s.Title}>下一轮对话</h4>
+              <Next
+                next={next}
+                nextAny={nextAny}
+                onUpdateResponse={onUpdateResponse}
+                cId={cId}
+                intents={intents}
+              />
+            </TabPane>
+          );
+        })(responses)}
       </Tabs>
       <Condition
         visible={creatorConditionVisible}
@@ -223,7 +224,7 @@ const result = ({
       />
       <Sorter
         visible={sorterVisible}
-        value={filter(({ readOnly }) => !readOnly)(responses)}
+        value={responses}
         onClose={() => setSorterVisible(false)}
         onChange={onSortResponse}
         title="排序对话回复"
