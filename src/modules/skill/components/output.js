@@ -3,7 +3,7 @@ import { func, number, object, string, array } from 'prop-types';
 import { Button, Form, Input, message, Select, Radio } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { outputComponentOptions, CUSTOM } from 'shared/constants/output-component';
-import { outputResourceOptions, WEBHOOK } from 'shared/constants/output-resource';
+import { outputResourceOptions, WEBHOOK, NATIVE } from 'shared/constants/output-resource';
 
 import Params from './output-params';
 import Responses from './output-responses';
@@ -22,7 +22,9 @@ const result = ({
 
   const [nameVisible, setNameVisible] = useState(output.component === CUSTOM);
   const [component, setComponent] = useState(output.component);
-  const [locationVisible, setLocationVisible] = useState(output.resource === WEBHOOK);
+  const [locationVisible, setLocationVisible] = useState(
+    output.resource === WEBHOOK || output.resource === NATIVE,
+  );
   const onUpdateOutput = useCallback(async (values) => {
     const finalValues = { ...values };
     if (finalValues.component && finalValues.component !== CUSTOM) {
@@ -30,7 +32,7 @@ const result = ({
     }
     await updateOutput({ id: output.id, ...finalValues });
     message.success('编辑成功');
-  }, [output.id]);
+  }, [output.id, updateOutput]);
 
   const onValuesChange = useCallback((values) => {
     if (values.component) {
@@ -38,9 +40,9 @@ const result = ({
       setComponent(values.component);
     }
     if (values.resource) {
-      setLocationVisible(values.resource === WEBHOOK);
+      setLocationVisible(values.resource === WEBHOOK || values.resource === NATIVE);
     }
-  }, []);
+  }, [setLocationVisible, setNameVisible, setComponent]);
 
   const [componentForm] = useForm();
   const [resourceForm] = useForm();
