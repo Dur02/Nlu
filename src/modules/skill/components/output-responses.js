@@ -178,7 +178,7 @@ const result = ({
               <div className={s.Tips}>支持“#”引用语义槽值、“$”引用资源查询结果</div>
               <NLG
                 value={nlg}
-                onChange={(newNlg) => onUpdateResponse({ cId, ngl: newNlg })}
+                onChange={(newNlg) => onUpdateResponse({ cId, nlg: newNlg })}
               />
 
               <h4 className={s.Title}>客户端动作</h4>
