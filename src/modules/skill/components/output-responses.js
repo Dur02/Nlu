@@ -133,6 +133,7 @@ const result = ({
       <Tabs
         activeKey={selectedCId}
         onTabClick={setSelectedCId}
+        className={s.Tabs}
         type="editable-card"
         hideAdd
         tabPosition="left"
