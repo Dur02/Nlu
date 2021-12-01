@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { array, func, number } from 'prop-types';
 import { Menu, message, Input, Dropdown, Button, Popconfirm } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { map, flow, filter, identity, includes, every, size, startsWith, find, propEq, prop } from 'lodash/fp';
+import { map, flow, filter, identity, includes, every, size, find, propEq, prop } from 'lodash/fp';
 import { SEMANTIC } from 'shared/constants/intent-type';
 
 import s from './intents.less';
@@ -36,12 +36,14 @@ const result = ({
   const onCreateIntent = useCallback(async ({ key }) => {
     let data;
     if (key === SEMANTIC) {
-      const sameNameIntentSize = flow(
-        filter(({ name }) => startsWith('自定义意图')(name)),
-        size,
-      )(intents);
+      let name = '自定义意图';
+      let count = 1;
+      while (find(propEq('name', name))(intents) && count <= 99999) {
+        name = `自定义意图${count}`;
+        count += 1;
+      }
       data = {
-        name: `自定义意图${sameNameIntentSize ? sameNameIntentSize + 1 : 1}`,
+        name,
         type: SEMANTIC,
         skillId,
       };
