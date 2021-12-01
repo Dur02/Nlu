@@ -94,7 +94,7 @@ const result = ({ skillId }) => {
           readAllOutput={readAllOutput}
         />
         <div className={s.Content}>
-          {selectedIntentId && (
+          {selectedIntent && (
             <div className={s.IntentNameWrapper}>
               当前意图名称：
               <Search
@@ -107,7 +107,7 @@ const result = ({ skillId }) => {
               />
             </div>
           )}
-          {selectedIntentId ? (
+          {selectedIntent ? (
             <Tabs>
               <TabPane tab="说法" key="1">
                 <Rules

@@ -194,7 +194,7 @@ const result = ({
               <h4 className={s.Title}>执行时序</h4>
               <Select
                 options={commandFirstOptions}
-                value={commandFirst.toString()}
+                value={commandFirst ? commandFirst.toString() : undefined}
                 onChange={(newCommandFirst) => onUpdateResponse({ cId, commandFirst: newCommandFirst === 'true' })}
               />
 
