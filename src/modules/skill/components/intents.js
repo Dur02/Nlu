@@ -57,7 +57,7 @@ const result = ({
     await readAllOutput({ intentId: id });
     onChangeIntentId({ id, name });
     message.success('创建成功');
-  }, [skillId, onChangeIntentId]);
+  }, [skillId, onChangeIntentId, intents]);
   const onRemoveIntent = useCallback(async (id) => {
     await removeIntent({ id });
     message.success('删除成功');
