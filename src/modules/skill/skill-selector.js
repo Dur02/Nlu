@@ -1,9 +1,10 @@
 import { getEntityArray } from 'relient/selectors';
-import { flow, map, filter, propEq } from 'lodash/fp';
+import { flow, map, filter, propEq, orderBy } from 'lodash/fp';
 
 export default (state) => ({
   skills: flow(
     getEntityArray('skill'),
+    orderBy(['id'], ['desc']),
     map((skill) => ({
       ...skill,
       skillVersions: flow(

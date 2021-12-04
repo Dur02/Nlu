@@ -27,7 +27,7 @@ const result = ({
       await onUpdateResponse({ cId, next: [], nextAny: false });
       setIntentsVisible(false);
     } else {
-      await onUpdateResponse({ cId, nextAny: true });
+      await onUpdateResponse({ cId, nextAny: true, next: [] });
       setIntentsVisible(true);
     }
   }, [onUpdateResponse, cId]);
@@ -35,12 +35,12 @@ const result = ({
     if (selectedIntentNames.length > 0) {
       await onUpdateResponse({ cId, nextAny: false, next: selectedIntentNames });
     } else {
-      await onUpdateResponse({ cId, nextAny: true });
+      await onUpdateResponse({ cId, nextAny: true, next: [] });
     }
   }, [onUpdateResponse, cId]);
   const onNextAnyChange = useCallback(async (checked) => {
     if (checked) {
-      await onUpdateResponse({ cId, nextAny: true });
+      await onUpdateResponse({ cId, nextAny: true, next: [] });
     } else if (next && next.length > 0) {
       await onUpdateResponse({ cId, nextAny: false });
     }

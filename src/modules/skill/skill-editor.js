@@ -73,7 +73,7 @@ const result = ({ skillId }) => {
   const onSaveIntentNameText = useCallback(async () => {
     if (!flow(
       prop('name'),
-      eq(setIntentNameText),
+      eq(intentNameText),
     )(selectedIntent)) {
       await updateIntent({ name: intentNameText, id: selectedIntent.id });
       message.success('编辑意图名称成功');

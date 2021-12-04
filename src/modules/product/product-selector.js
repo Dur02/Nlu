@@ -1,9 +1,10 @@
 import { getEntityArray } from 'relient/selectors';
-import { map, flow, filter, propEq } from 'lodash/fp';
+import { map, flow, filter, propEq, orderBy } from 'lodash/fp';
 
 export default (state) => ({
   products: flow(
     getEntityArray('product'),
+    orderBy(['id'], ['desc']),
     map((product) => ({
       ...product,
       productVersions: flow(

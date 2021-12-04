@@ -1,34 +1,33 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { func, string } from 'prop-types';
-import { Input, message } from 'antd';
+import { Input } from 'antd';
+
+const { Search } = Input;
 
 const result = ({
   value,
   onChange,
 }) => {
-  const [finalValue, setFinalValue] = useState(value || []);
+  const [finalValue, setFinalValue] = useState(value || '');
   useEffect(() => {
-    setFinalValue(value || []);
+    setFinalValue(value || '');
   }, [value]);
 
   const onInputChange = useCallback(({ target }) => {
     setFinalValue(target.value);
-  }, []);
-  const onInputBlur = useCallback(({ target }) => {
-    if (!target.value) {
-      message.error('请输入指令');
-      return;
-    }
-    onChange(target.value);
-  }, []);
+  }, [setFinalValue]);
+  const onSave = useCallback(() => {
+    onChange(`command://${finalValue}`);
+  }, [finalValue, onChange]);
 
   return (
     <div>
-      <Input
+      <Search
         addonBefore="command://"
-        value={finalValue}
+        onSearch={onSave}
         onChange={onInputChange}
-        onBlur={onInputBlur}
+        value={finalValue.replace('command://', '')}
+        enterButton="保存"
       />
     </div>
   );

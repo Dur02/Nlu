@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
 import { message, Button, Tabs, Tooltip, Popconfirm, Select } from 'antd';
 import { PlusOutlined, SortAscendingOutlined, CloseOutlined } from '@ant-design/icons';
-import { map, flow, reject, propEq, first, propOr, find, prop, every } from 'lodash/fp';
+import { map, flow, reject, propEq, first, propOr, find, prop, every, isBoolean } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { getCName } from 'shared/utils/helper';
 import NLG from './output-response-nlg';
@@ -193,8 +193,9 @@ const result = ({
 
               <h4 className={s.Title}>执行时序</h4>
               <Select
+                style={{ width: 280 }}
                 options={commandFirstOptions}
-                value={commandFirst ? commandFirst.toString() : undefined}
+                value={isBoolean(commandFirst) ? commandFirst.toString() : undefined}
                 onChange={(newCommandFirst) => onUpdateResponse({ cId, commandFirst: newCommandFirst === 'true' })}
               />
 
@@ -215,6 +216,7 @@ const result = ({
         onClose={() => setCreatorConditionVisible(false)}
         onChange={onCreateResponse}
         title="添加对话回复"
+        value={[]}
       />
       <Condition
         visible={!!editorConditionCId}
