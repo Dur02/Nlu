@@ -21,7 +21,7 @@ const result = ({
   const [intentsVisible, setIntentsVisible] = useState();
   useEffect(() => {
     setIntentsVisible((next && next.length > 0) || nextAny);
-  }, [cId]);
+  }, [setIntentsVisible, cId]);
   const onSelectChange = useCallback(async (value) => {
     if (value === 'end') {
       await onUpdateResponse({ cId, next: [], nextAny: false });
@@ -44,7 +44,7 @@ const result = ({
     } else if (next && next.length > 0) {
       await onUpdateResponse({ cId, nextAny: false });
     }
-  }, []);
+  }, [onUpdateResponse, cId]);
 
   return (
     <div>

@@ -4,17 +4,24 @@ import { Input } from 'antd';
 
 const { Search } = Input;
 
+const format = (value) => {
+  if (!value) {
+    return '';
+  }
+  return value.replace(/^(command:\/\/)+/, '');
+};
+
 const result = ({
   value,
   onChange,
 }) => {
-  const [finalValue, setFinalValue] = useState(value || '');
+  const [finalValue, setFinalValue] = useState(format(value));
   useEffect(() => {
-    setFinalValue(value || '');
+    setFinalValue(format(value));
   }, [value]);
 
   const onInputChange = useCallback(({ target }) => {
-    setFinalValue(target.value);
+    setFinalValue(format(target.value));
   }, [setFinalValue]);
   const onSave = useCallback(() => {
     onChange(`command://${finalValue}`);
@@ -26,7 +33,7 @@ const result = ({
         addonBefore="command://"
         onSearch={onSave}
         onChange={onInputChange}
-        value={finalValue.replace('command://', '')}
+        value={finalValue}
         enterButton="保存"
       />
     </div>
