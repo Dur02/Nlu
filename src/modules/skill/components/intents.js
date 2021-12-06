@@ -95,7 +95,7 @@ const result = ({
         <Search
           placeholder="按名称搜索"
           allowClear
-          onSearch={setIntentSearchText}
+          onChange={({ target }) => setIntentSearchText(target.value)}
           className={s.Search}
         />
       </div>
