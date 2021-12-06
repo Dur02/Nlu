@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
 import { Table, Drawer, message, Input } from 'antd';
@@ -108,6 +108,7 @@ const result = () => {
     tableHeader: skillTableHeader,
     getDataSource: skillGetDataSource,
     pagination: skillPagination,
+    reset: resetSkillTable,
   } = useLocalTable({
     query: {
       fields: [{
@@ -133,6 +134,12 @@ const result = () => {
       text: '发布产品',
     },
   });
+
+  useEffect(() => {
+    if (!skillEditorVisible) {
+      resetSkillTable();
+    }
+  }, [skillEditorVisible]);
 
   const onRemove = useCallback(async (id) => {
     await dispatch(remove({ id }));

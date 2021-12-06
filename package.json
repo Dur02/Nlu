@@ -33,7 +33,7 @@
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "relient": "5.2.0",
-    "relient-admin": "4.7.0",
+    "relient-admin": "4.7.1",
     "tinymce": "^5.8.0",
     "universal-router": "^9.0.1"
   },
