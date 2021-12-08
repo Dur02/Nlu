@@ -14,6 +14,7 @@ export default (state) => ({
       productVersions: flow(
         getEntityArray('productVersion'),
         filter(propEq('productId', product.id)),
+        orderBy(['id'], ['desc']),
       )(state),
     })),
   )(state),
