@@ -23,6 +23,9 @@ export const getColumns = ({
   title: '类别',
   dataIndex: 'category',
 }, {
+  title: '最新版本',
+  dataIndex: 'version',
+}, {
   title: '操作',
   width: 300,
   render: (record) => (

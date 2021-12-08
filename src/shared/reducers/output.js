@@ -7,6 +7,7 @@ import {
   CREATE,
   UPDATE,
 } from '../actions/output';
+import { CREATE_DRAFT } from '../actions/skill-version';
 
 export default {
   output: handleActions({
@@ -22,6 +23,11 @@ export default {
     )]: merge({
       schema: output,
       dataKey: 'data',
+    }),
+
+    [CREATE_DRAFT]: merge({
+      schema: output,
+      dataKey: 'data.outputs',
     }),
 
     [REMOVE]: remove(output),

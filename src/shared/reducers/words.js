@@ -7,6 +7,7 @@ import {
   CREATE,
   UPDATE,
 } from '../actions/words';
+import { CREATE_DRAFT } from '../actions/skill-version';
 
 export default {
   words: handleActions({
@@ -22,6 +23,11 @@ export default {
     )]: merge({
       schema: words,
       dataKey: 'data',
+    }),
+
+    [CREATE_DRAFT]: merge({
+      schema: words,
+      dataKey: 'data.words',
     }),
 
     [REMOVE]: remove(words),

@@ -2,7 +2,6 @@ import { schema } from 'relient/reducers';
 
 export const user = new schema.Entity('user', {}, { idAttribute: 'username' });
 export const product = new schema.Entity('product');
-export const skill = new schema.Entity('skill');
 export const output = new schema.Entity('output');
 export const intent = new schema.Entity('intent');
 export const rule = new schema.Entity('rule');

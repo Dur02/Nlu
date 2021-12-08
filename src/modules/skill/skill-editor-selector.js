@@ -81,7 +81,7 @@ export default (skillId) => (state) => {
       getEntityArray('builtinIntent'),
       orderBy(['id'], ['desc']),
     )(state),
-    skill: getEntity(`skill.${skillId}`)(state),
+    skill: getEntity(`skillVersion.${skillId}`)(state),
     intents,
     words: flow(
       getEntityArray('words'),

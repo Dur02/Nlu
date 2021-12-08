@@ -1,6 +1,6 @@
 import { Button, Popconfirm } from 'antd';
 import React from 'react';
-import { includes } from 'lodash/fp';
+import { includes, findIndex, eq, nth } from 'lodash/fp';
 import { getVersionStatusText } from 'shared/constants/version-status';
 import { time } from 'relient/formatters';
 
@@ -51,18 +51,21 @@ export const getSkillEditorColumns = ({
   detach,
   attach,
 }) => {
-  const isAttached = (record) => includes(record.id)(product.skillIds);
+  const isAttached = (record) => includes(record.code)(product.skillCodes);
 
   return [{
-  //   title: '图标',
-  //   dataIndex: 'iconPath',
-  //   render: (iconPath) => <img alt="icon" src={iconPath} width={40} />,
-  // }, {
+    //   title: '图标',
+    //   dataIndex: 'iconPath',
+    //   render: (iconPath) => <img alt="icon" src={iconPath} width={40} />,
+    // }, {
     title: '名称',
     dataIndex: 'name',
   }, {
     title: '类别',
     dataIndex: 'category',
+  }, {
+    title: '最新版本',
+    dataIndex: 'version',
   }, {
     title: '状态',
     render: (record) => (isAttached(record) ? '已添加' : '未添加'),
@@ -96,8 +99,17 @@ export const getSkillEditorColumns = ({
           size="small"
           ghost
           onClick={() => {
-            const operation = isAttached(record) ? detach : attach;
-            operation({ skillId: record.id, productId: product.id });
+            if (isAttached(record)) {
+              detach({
+                skillId: nth(findIndex(eq(record.code))(product.skillCodes))(product.skillIds),
+                productId: product.id,
+              });
+            } else {
+              attach({
+                skillId: record.id,
+                productId: product.id,
+              });
+            }
           }}
         >
           {isAttached(record) ? '去掉' : '添加'}
