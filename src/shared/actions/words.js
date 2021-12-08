@@ -60,13 +60,15 @@ export const update = createAction(
     id,
     name,
     content,
+    skillId,
   }) => put(`/skill/edit/words/${id}`, {
     name,
     content: content && JSON.stringify(map(convertContent)(content)),
+    skillId,
   }),
 );
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/skill/edit/words/${id}`),
+  ({ id, skillId }) => del(`/skill/edit/words/${id}`, { skillId }),
 );

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
 import { Tabs, Empty, Input, message } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
@@ -19,6 +19,7 @@ import {
   remove as removeWordsAction,
   update as updateWordsAction,
 } from 'shared/actions/words';
+// import { createDraft as createDraftVersionAction } from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
 import { find, propEq, flow, prop, eq } from 'lodash/fp';
 import {
@@ -49,18 +50,30 @@ const result = ({ skillId }) => {
   const [intentNameText, setIntentNameText] = useState('');
   const selectedIntent = find(propEq('id', selectedIntentId))(intents);
   const selectedOutput = find(propEq('intentId', selectedIntentId))(outputs);
+  const dispatch = useDispatch();
 
-  const createIntent = useAction(createIntentAction);
-  const removeIntent = useAction(removeIntentAction);
-  const updateIntent = useAction(updateIntentAction);
-  const createRule = useAction(createRuleAction);
-  const removeRule = useAction(removeRuleAction);
-  const updateRule = useAction(updateRuleAction);
-  const createWords = useAction(createWordsAction);
-  const removeWords = useAction(removeWordsAction);
-  const updateWords = useAction(updateWordsAction);
+  // eslint-disable-next-line arrow-body-style
+  const createAction = (action) => useCallback(async (values) => {
+    // if (skill.isDraft) {
+    //   await dispatch(createDraftVersionAction({ skillId }));
+    // }
+    return dispatch(action({
+      skillId,
+      ...values,
+    }));
+  }, [skillId, skill.isDraft]);
+
+  const createIntent = createAction(createIntentAction);
+  const removeIntent = createAction(removeIntentAction);
+  const updateIntent = createAction(updateIntentAction);
+  const createRule = createAction(createRuleAction);
+  const removeRule = createAction(removeRuleAction);
+  const updateRule = createAction(updateRuleAction);
+  const createWords = createAction(createWordsAction);
+  const removeWords = createAction(removeWordsAction);
+  const updateWords = createAction(updateWordsAction);
+  const updateOutput = createAction(updateOutputAction);
   const readAllOutput = useAction(readAllOutputAction);
-  const updateOutput = useAction(updateOutputAction);
 
   const onChangeIntentId = useCallback(({ id, name }) => {
     setSelectedIntentId(id);

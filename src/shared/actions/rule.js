@@ -33,11 +33,13 @@ export const readOne = createAction(
 export const create = createAction(
   CREATE,
   ({
+    skillId,
     intentId,
     sentence,
     slots,
     taskClassify,
   }) => post('/skill/edit/rule', {
+    skillId,
     intentId,
     sentence,
     taskClassify,
@@ -52,14 +54,16 @@ export const update = createAction(
     sentence,
     slots,
     taskClassify,
+    skillId,
   }) => put(`/skill/edit/rule/${id}`, {
     sentence,
     taskClassify,
     slots: slots && JSON.stringify(map(pick(['pos', 'name', 'value']))(slots)),
+    skillId,
   }),
 );
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/skill/edit/rule/${id}`),
+  ({ id, skillId }) => del(`/skill/edit/rule/${id}`, { skillId }),
 );

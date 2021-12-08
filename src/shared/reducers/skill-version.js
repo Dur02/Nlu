@@ -3,6 +3,7 @@ import { skillVersion } from '../schema';
 import {
   READ_ALL,
   CREATE,
+  CREATE_DRAFT,
 } from '../actions/skill-version';
 
 export default {
@@ -14,6 +15,7 @@ export default {
 
     [combineActions(
       CREATE,
+      CREATE_DRAFT,
     )]: merge({
       schema: skillVersion,
       dataKey: 'data',

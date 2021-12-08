@@ -9,6 +9,7 @@ const actionType = actionTypeCreator('actions/skill-version');
 
 export const READ_ALL = actionType('READ_ALL');
 export const CREATE = actionType('CREATE');
+export const CREATE_DRAFT = actionType('CREATE_DRAFT');
 
 export const readAll = createAction(
   READ_ALL,
@@ -30,4 +31,9 @@ export const create = createAction(
     skillId,
     note,
   }),
+);
+
+export const createDraft = createAction(
+  CREATE_DRAFT,
+  ({ skillId }) => post('/skill/edit/skill-version/draft', { skillId }),
 );

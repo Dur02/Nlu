@@ -56,16 +56,18 @@ export const update = createAction(
     id,
     name,
     slots,
+    skillId,
   }) => put(`/skill/edit/intent/${id}`, {
     name,
     slots: slots && JSON.stringify(map((slot) => ({
       ...pick(slotProps)(slot),
       lexiconsNames: join(',')(slot.lexiconsNames),
     }))(slots)),
+    skillId,
   }),
 );
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/skill/edit/intent/${id}`),
+  ({ id, skillId }) => del(`/skill/edit/intent/${id}`, { skillId }),
 );

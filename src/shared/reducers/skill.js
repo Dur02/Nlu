@@ -7,12 +7,23 @@ import {
   CREATE,
   UPDATE,
 } from '../actions/skill';
+import {
+  CREATE_DRAFT,
+} from '../actions/skill-version';
 
 export default {
   skill: handleActions({
     [READ_ALL]: merge({
       schema: skill,
       dataKey: 'data.records',
+    }),
+
+    [CREATE_DRAFT]: (state, { meta: { skillId } }) => ({
+      [skillId]: {
+        ...state[skillId],
+        isDraft: 0,
+      },
+      ...state,
     }),
 
     [combineActions(

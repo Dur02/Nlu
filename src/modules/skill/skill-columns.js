@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Popconfirm } from 'antd';
 import { getVersionStatusText } from 'shared/constants/version-status';
+import { time } from 'relient/formatters';
 
 export const getColumns = ({
   // openEditor,
@@ -62,4 +63,5 @@ export const versionColumns = [{
 }, {
   title: '发布时间',
   dataIndex: 'createDate',
+  render: time(),
 }];

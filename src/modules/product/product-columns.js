@@ -2,6 +2,7 @@ import { Button, Popconfirm } from 'antd';
 import React from 'react';
 import { includes } from 'lodash/fp';
 import { getVersionStatusText } from 'shared/constants/version-status';
+import { time } from 'relient/formatters';
 
 const ATTACHED = 'ATTACHED';
 const DETACHED = 'DETACHED';
@@ -20,6 +21,7 @@ export const getColumns = ({
 }, {
   title: '创建时间',
   dataIndex: 'createTime',
+  render: time(),
 }, {
   title: '创建人',
   dataIndex: 'createPerson',
@@ -124,4 +126,5 @@ export const versionColumns = [{
 }, {
   title: '发布时间',
   dataIndex: 'createTime',
+  render: time(),
 }];

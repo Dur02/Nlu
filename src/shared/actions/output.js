@@ -45,6 +45,7 @@ export const create = createAction(
     location,
     params,
     responses,
+    skillId,
   }) => post('/skill/edit/output', {
     intentId,
     component,
@@ -53,6 +54,7 @@ export const create = createAction(
     location,
     params: parseParams(params),
     responses: responses && JSON.stringify(responses),
+    skillId,
   }),
 );
 
@@ -67,6 +69,7 @@ export const update = createAction(
     location,
     params,
     responses,
+    skillId,
   }) => put(`/skill/edit/output/${id}`, {
     intentId,
     component,
@@ -75,6 +78,7 @@ export const update = createAction(
     location,
     params: parseParams(params),
     responses: responses && JSON.stringify(responses),
+    skillId,
   }),
 );
 
