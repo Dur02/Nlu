@@ -19,7 +19,6 @@ import {
   remove as removeWordsAction,
   update as updateWordsAction,
 } from 'shared/actions/words';
-// import { createDraft as createDraftVersionAction } from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
 import { find, propEq, flow, prop, eq } from 'lodash/fp';
 import {
@@ -52,27 +51,21 @@ const result = ({ skillId }) => {
   const selectedOutput = find(propEq('intentId', selectedIntentId))(outputs);
   const dispatch = useDispatch();
 
-  // eslint-disable-next-line arrow-body-style
-  const createAction = (action) => useCallback(async (values) => {
-    // if (skill.isDraft) {
-    //   await dispatch(createDraftVersionAction({ skillId }));
-    // }
-    return dispatch(action({
-      skillId,
-      ...values,
-    }));
-  }, [skillId, skill.isDraft]);
+  const attachSkillId = (action) => useCallback(
+    (values) => dispatch(action({ skillId, ...values })),
+    [skillId],
+  );
 
-  const createIntent = createAction(createIntentAction);
-  const removeIntent = createAction(removeIntentAction);
-  const updateIntent = createAction(updateIntentAction);
-  const createRule = createAction(createRuleAction);
-  const removeRule = createAction(removeRuleAction);
-  const updateRule = createAction(updateRuleAction);
-  const createWords = createAction(createWordsAction);
-  const removeWords = createAction(removeWordsAction);
-  const updateWords = createAction(updateWordsAction);
-  const updateOutput = createAction(updateOutputAction);
+  const createIntent = attachSkillId(createIntentAction);
+  const removeIntent = attachSkillId(removeIntentAction);
+  const updateIntent = attachSkillId(updateIntentAction);
+  const createRule = attachSkillId(createRuleAction);
+  const removeRule = attachSkillId(removeRuleAction);
+  const updateRule = attachSkillId(updateRuleAction);
+  const createWords = attachSkillId(createWordsAction);
+  const removeWords = attachSkillId(removeWordsAction);
+  const updateWords = attachSkillId(updateWordsAction);
+  const updateOutput = attachSkillId(updateOutputAction);
   const readAllOutput = useAction(readAllOutputAction);
 
   const onChangeIntentId = useCallback(({ id, name }) => {

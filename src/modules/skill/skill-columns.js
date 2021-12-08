@@ -2,11 +2,14 @@ import React from 'react';
 import { Button, Popconfirm } from 'antd';
 import { getVersionStatusText } from 'shared/constants/version-status';
 import { time } from 'relient/formatters';
+import { includes } from 'lodash/fp';
 
 export const getColumns = ({
   // openEditor,
   onRemove,
   openVersion,
+  createDraft,
+  creatingDraftSkillIds,
   push,
 }) => [{
 //   title: '图标',
@@ -33,8 +36,25 @@ export const getColumns = ({
       {/*  基础信息 */}
       {/* </Button> */}
       {/* &nbsp;&nbsp; */}
-      <Button type="primary" size="small" ghost onClick={() => push(`/skill/${record.id}`)}>编辑技能</Button>
-      &nbsp;&nbsp;
+      {record.isDraft ? (
+        <>
+          <Button type="primary" size="small" ghost onClick={() => push(`/skill/${record.id}`)}>编辑技能</Button>
+          &nbsp;&nbsp;
+        </>
+      ) : (
+        <>
+          <Button
+            type="primary"
+            size="small"
+            ghost
+            onClick={() => createDraft(record.id)}
+            loading={includes(record.id)(creatingDraftSkillIds)}
+          >
+            拷贝技能
+          </Button>
+          &nbsp;&nbsp;
+        </>
+      )}
       <Button type="primary" size="small" ghost onClick={() => openVersion(record)}>发布</Button>
       &nbsp;&nbsp;
       <Popconfirm

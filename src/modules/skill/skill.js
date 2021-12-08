@@ -1,13 +1,13 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
 import { Table, Drawer, message, Select, Input } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
 import { remove, create, update } from 'shared/actions/skill';
-import { create as createVersion } from 'shared/actions/skill-version';
+import { create as createVersion, createDraft as createDraftVersionAction } from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
 import { push as pushAction } from 'relient/actions/history';
-import { find, propEq, flow, prop } from 'lodash/fp';
+import { find, propEq, flow, prop, includes, reject, eq } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import { getColumns, versionColumns } from './skill-columns';
 
@@ -64,6 +64,20 @@ const result = () => {
     (values) => dispatch(createVersion({ ...values, skillId: versionItem.id })),
     [versionItem && versionItem.id],
   );
+
+  const [creatingDraftSkillIds, setCreatingDraftSkillIds] = useState([]);
+  const createDraft = useCallback(async (skillId) => {
+    try {
+      await dispatch(createDraftVersionAction({ skillId }));
+      message.success('拷贝技能成功，可以进行技能编辑');
+      if (!includes(skillId)(creatingDraftSkillIds)) {
+        setCreatingDraftSkillIds([...creatingDraftSkillIds, skillId]);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setCreatingDraftSkillIds(reject(eq(skillId))(creatingDraftSkillIds));
+  }, [JSON.stringify(creatingDraftSkillIds)]);
 
   const {
     tableHeader,
@@ -130,6 +144,8 @@ const result = () => {
           onRemove,
           openVersion,
           push,
+          createDraft,
+          creatingDraftSkillIds,
         })}
         rowKey="id"
         pagination={pagination}

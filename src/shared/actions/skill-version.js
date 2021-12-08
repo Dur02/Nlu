@@ -35,5 +35,5 @@ export const create = createAction(
 
 export const createDraft = createAction(
   CREATE_DRAFT,
-  ({ skillId }) => post('/skill/edit/skill-version/draft', { skillId }),
+  ({ skillId }) => post(`/skill/edit/skill-version/draft?skillId=${skillId}`, { skillId }),
 );
