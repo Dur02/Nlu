@@ -38,7 +38,7 @@ const result = ({
       return item;
     })(value));
   }, [value, onChange]);
-  const onRemove = useCallback(([word]) => {
+  const onRemove = useCallback(({ word }) => {
     onChange(reject(flow(prop('word'), eq(word)))(value));
   }, [value, onChange]);
   const fields = [{

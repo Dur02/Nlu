@@ -43,6 +43,7 @@ const result = ({
     }))([{
       condition,
       readOnly: false,
+      commandFirst: false,
       cnames: getCName(condition),
     }, ...responses]);
     await updateOutput({
