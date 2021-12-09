@@ -28,6 +28,7 @@ services:
         traefik.http.routers.skill-editor-webapp.rule: 'Host(\`editor-dev.aitekapp.com\`)'
         traefik.http.routers.skill-editor-webapp.tls: 'true'
         traefik.http.routers.skill-editor-webapp.tls.options: noClientAuth@file
+        traefik.http.routers.skill-editor-webapp.middlewares: gzip@file
         traefik.http.services.skill-editor-webapp.loadbalancer.server.port: 7443
 
         # traefik.http.services.skill-editor-webapp.loadbalancer.healthCheck.path: /health
