@@ -14,12 +14,12 @@ export const REQUIRED = 'required';
 export const ALWAYS = 'always';
 
 export const textMap = {
-  [EQUAL]: 'equal',
-  [NOT_EQUAL]: 'ne',
-  [GREATER]: 'greater',
-  [LESS]: 'less',
-  [GREATER_OR_EQUAL]: 'ge',
-  [LESS_OR_EQUAL]: 'le',
+  [EQUAL]: '==',
+  [NOT_EQUAL]: '!=',
+  [GREATER]: '>',
+  [LESS]: '<',
+  [GREATER_OR_EQUAL]: '>=',
+  [LESS_OR_EQUAL]: '<=',
   [IN]: '任意一个',
   [EXIST]: '存在',
   [REQUIRED]: '缺失',

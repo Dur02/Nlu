@@ -2,9 +2,9 @@ import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
 import { message, Button, Tabs, Tooltip, Popconfirm, Select } from 'antd';
 import { PlusOutlined, SortAscendingOutlined, CloseOutlined } from '@ant-design/icons';
-import { map, flow, reject, propEq, first, propOr, find, prop, every, isBoolean } from 'lodash/fp';
+import { map, flow, reject, propEq, first, propOr, find, prop, isBoolean, omit } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { getCName } from 'shared/utils/helper';
+import { getCName, getIsDefault } from 'shared/utils/helper';
 import NLG from './output-response-nlg';
 import Condition from './output-response-condition';
 import Command from './output-response-command';
@@ -42,7 +42,7 @@ const result = ({
       cId: index.toString(),
     }))([{
       condition,
-      readOnly: false,
+      readOnly: getIsDefault(condition),
       commandFirst: false,
       cnames: getCName(condition),
     }, ...responses]);
@@ -62,6 +62,8 @@ const result = ({
           return {
             ...item,
             condition,
+            readOnly: getIsDefault(condition),
+            cnames: getCName(condition),
           };
         }
         return item;
@@ -77,7 +79,7 @@ const result = ({
         if (response.cId === item.cId) {
           return {
             ...item,
-            ...response,
+            ...omit(['isDefault'])(response),
           };
         }
         return item;
@@ -143,74 +145,69 @@ const result = ({
         {map(({
           cnames,
           cId,
-          condition,
           nlg,
           command,
           commandFirst,
           next,
           nextAny,
-        }) => {
-          const isDefault = !condition
-            || condition.length === 0
-            || every(({ params }) => !params || params.length === 0)(condition);
-          return (
-            <TabPane
-              key={cId}
-              tab={(
-                <Tooltip title={isDefault ? '默认' : cnames}>
-                  <div className={s.Tab}>{isDefault ? '默认' : cnames}</div>
-                </Tooltip>
-              )}
-              closable={!isDefault}
-              closeIcon={(
-                <Popconfirm
-                  title="确认删除吗？删除操作不可恢复"
-                  onConfirm={() => onRemoveResponse({ cId })}
-                >
-                  <CloseOutlined />
-                </Popconfirm>
-              )}
-            >
-              <h4 className={s.Title}>条件描述</h4>
-              {isDefault ? '默认' : (
-                <Button type="link" onClick={() => setEditorConditionCId(cId)}>{getCName(condition)}</Button>
-              )}
+          isDefault,
+        }) => (
+          <TabPane
+            key={cId}
+            tab={(
+              <Tooltip title={cnames}>
+                <div className={s.Tab}>{cnames}</div>
+              </Tooltip>
+            )}
+            closable={!isDefault}
+            closeIcon={(
+              <Popconfirm
+                title="确认删除吗？删除操作不可恢复"
+                onConfirm={() => onRemoveResponse({ cId })}
+              >
+                <CloseOutlined />
+              </Popconfirm>
+            )}
+          >
+            <h4 className={s.Title}>条件描述</h4>
+            {isDefault ? cnames : (
+              <Button type="link" onClick={() => setEditorConditionCId(cId)}>{cnames}</Button>
+            )}
 
-              <h4 className={s.Title}>回复内容</h4>
-              <div className={s.Tips}>支持“#”引用语义槽值、“$”引用资源查询结果</div>
-              <NLG
-                value={nlg}
-                onChange={(newNlg) => onUpdateResponse({ cId, nlg: newNlg })}
-              />
+            <h4 className={s.Title}>回复内容</h4>
+            <div className={s.Tips}>支持“#”引用语义槽值、“$”引用资源查询结果</div>
+            <NLG
+              value={nlg}
+              onChange={(newNlg) => onUpdateResponse({ cId, nlg: newNlg })}
+            />
 
-              <h4 className={s.Title}>客户端动作</h4>
-              <div className={s.Tips}>
-                向终端设备发出执行操作的指令，支持“?”标识传参，参数之间用“&”连接。示例： command://call?phone=$phone$&name=#name#。
-              </div>
-              <Command
-                value={command}
-                onChange={(newCommand) => onUpdateResponse({ cId, command: newCommand })}
-              />
+            <h4 className={s.Title}>客户端动作</h4>
+            <div className={s.Tips}>
+              向终端设备发出执行操作的指令，支持“?”标识传参，参数之间用“&”连接。示例： command://call?phone=$phone$&name=#name#。
+            </div>
+            <Command
+              value={command}
+              onChange={(newCommand) => onUpdateResponse({ cId, command: newCommand })}
+            />
 
-              <h4 className={s.Title}>执行时序</h4>
-              <Select
-                style={{ width: 280 }}
-                options={commandFirstOptions}
-                value={isBoolean(commandFirst) ? commandFirst.toString() : undefined}
-                onChange={(newCommandFirst) => onUpdateResponse({ cId, commandFirst: newCommandFirst === 'true' })}
-              />
+            <h4 className={s.Title}>执行时序</h4>
+            <Select
+              style={{ width: 280 }}
+              options={commandFirstOptions}
+              value={isBoolean(commandFirst) ? commandFirst.toString() : undefined}
+              onChange={(newCommandFirst) => onUpdateResponse({ cId, commandFirst: newCommandFirst === 'true' })}
+            />
 
-              <h4 className={s.Title}>下一轮对话</h4>
-              <Next
-                next={next}
-                nextAny={nextAny}
-                onUpdateResponse={onUpdateResponse}
-                cId={cId}
-                intents={intents}
-              />
-            </TabPane>
-          );
-        })(responses)}
+            <h4 className={s.Title}>下一轮对话</h4>
+            <Next
+              next={next}
+              nextAny={nextAny}
+              onUpdateResponse={onUpdateResponse}
+              cId={cId}
+              intents={intents}
+            />
+          </TabPane>
+        ))(responses)}
       </Tabs>
       <Condition
         visible={creatorConditionVisible}

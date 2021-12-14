@@ -1,8 +1,7 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
 import { flow, find, filter, propEq, map, orderBy, every, prop, includes, any, compact, split } from 'lodash/fp';
 import { SLOT, TEXT } from 'shared/constants/content-type';
-
-import { getCName } from 'shared/utils/helper';
+import { getCName, getIsDefault } from 'shared/utils/helper';
 
 const mapWithIndex = map.convert({ cap: false });
 
@@ -101,11 +100,16 @@ export default (skillId) => (state) => {
       map((output) => ({
         ...output,
         params: JSON.parse(output.params),
-        responses: mapWithIndex((response, index) => ({
-          cId: index.toString(),
-          cnames: getCName(response.condition),
-          ...response,
-        }))(JSON.parse(output.responses)),
+        responses: mapWithIndex((response, index) => {
+          const { condition } = response;
+          const isDefault = getIsDefault(condition);
+          return {
+            cId: index.toString(),
+            cnames: getCName(condition),
+            isDefault,
+            ...response,
+          };
+        })(JSON.parse(output.responses)),
       })),
     )(state),
   };

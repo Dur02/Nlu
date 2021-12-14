@@ -1,10 +1,20 @@
-import { flow, join, map } from 'lodash/fp';
-import { getConditionTypeText } from '../constants/condition-type';
+import { every, flow, join, map, any, propEq } from 'lodash/fp';
+import { getConditionTypeText, ALWAYS } from '../constants/condition-type';
 
-export const getCName = flow(
-  map(({ params, type }) => `${params[0] || ''}${getConditionTypeText(type)}${params[1] || ''}`),
-  join('&'),
-);
+export const getIsDefault = (condition) => !condition
+  || condition.length === 0
+  || any(propEq('type', ALWAYS))(condition)
+  || every(({ params }) => !params || params.length === 0)(condition);
+
+export const getCName = (condition) => {
+  if (getIsDefault(condition)) {
+    return getConditionTypeText(ALWAYS);
+  }
+  return flow(
+    map(({ params, type }) => `${params[0] || ''}${getConditionTypeText(type)}${params[1] || ''}`),
+    join('&'),
+  );
+};
 
 export const arrayMoveMutable = (array, fromIndex, toIndex) => {
   const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex;
