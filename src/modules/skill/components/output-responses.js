@@ -86,7 +86,6 @@ const result = ({
       })(responses),
     });
     message.success('编辑成功');
-    setEditorConditionCId(null);
   }, [outputId, responses]);
   const onRemoveResponse = useCallback(async ({ cId }) => {
     const newResponses = flow(

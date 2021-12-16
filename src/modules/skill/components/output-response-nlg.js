@@ -40,13 +40,16 @@ const result = ({
       message.error('请输入回复内容');
       return;
     }
+    if (value[index] === target.value) {
+      return;
+    }
     onChange(mapWithIndex((originalValue, currentIndex) => {
       if (index === currentIndex) {
         return target.value;
       }
       return originalValue;
     })(finalValue));
-  }, [finalValue]);
+  }, [finalValue, value]);
 
   const onAdd = useCallback(() => {
     if (newItem) {
