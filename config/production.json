@@ -1,6 +1,6 @@
 {
   "port": 7443,
-  "serverAPIDomain": "https://editor.aitekapp.com:7443",
+  "serverAPIDomain": "https://nlueditor.aitekapp.com",
   "cdnDomain": "https://static.com/",
   "baseUrl": "/"
 }
