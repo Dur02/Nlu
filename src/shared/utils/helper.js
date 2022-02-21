@@ -13,7 +13,7 @@ export const getCName = (condition) => {
   return flow(
     map(({ params, type }) => `${params[0] || ''}${getConditionTypeText(type)}${params[1] || ''}`),
     join('&'),
-  );
+  )(condition);
 };
 
 export const arrayMoveMutable = (array, fromIndex, toIndex) => {
