@@ -6,7 +6,7 @@ import { readWordGraph as readWordGraphAction } from 'shared/actions/skill';
 import { Input, message } from 'antd';
 import { useDispatch } from 'react-redux';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { map, values, flatten, flow, prop, nth, filter, propEq, join } from 'lodash/fp';
+import { map, values, flatten, flow, prop, nth, filter } from 'lodash/fp';
 import { volcano, orange, gold, yellow, lime, green, cyan, blue, purple, magenta } from '@ant-design/colors';
 import classNames from 'classnames';
 import s from './word-graph.less';
@@ -16,20 +16,27 @@ const { Search } = Input;
 
 const presetColors = [lime, volcano, orange, cyan, gold, yellow, green, blue, purple, magenta];
 const getColor = (index) => flow(
-  map(nth(7)),
+  map(nth(6)),
   nth(index % presetColors.length),
 )(presetColors);
 const getLightColor = (index) => flow(
-  map(nth(3)),
+  map(nth(2)),
   nth(index % presetColors.length),
 )(presetColors);
+
+const createLine = (textIndex, nodeIndex) => new global.LeaderLine(
+  document.getElementById(`text-underline-${textIndex}`),
+  document.getElementById(`node-${nodeIndex}`),
+  { color: getColor(nodeIndex), size: 2, startSocket: 'bottom', path: 'magnet' },
+);
 
 const result = ({
   skillCode,
 }) => {
   useStyles(s);
   const [input, setInput] = useState('');
-  const [activeIndex, setActiveIndex] = useState();
+  const [activeNodeIndex, setActiveNodeIndex] = useState();
+  const [activeTextIndex, setActiveTextIndex] = useState();
   const [response, setResponse] = useState();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -50,30 +57,15 @@ const result = ({
     }
   }, [dispatch, input, response && response.input]);
   const onChange = useCallback(({ target }) => setInput(target.value), [setInput]);
-  const dictNodes = flow(
+  const nodes = flow(
     prop('dictNodes'),
     values,
     flatten,
     mapWithIndex((item, index) => ({ ...item, index })),
   )(response);
-  const inputHtml = flow(
-    prop('input'),
-    mapWithIndex((text, index) => {
-      const startWithThisText = filter(propEq('pos', index))(dictNodes);
-      const endWithThisText = filter(({ pos, length }) => pos + length === index + 1)(dictNodes);
-      return `${flow(
-        map(({ index: nodeIndex }) => `<span class="${s.Node}" id="input-${nodeIndex}"><div class="${s.Underline}" style="background-color: ${getColor(
-          nodeIndex)}"></div>`),
-        join(''),
-      )(startWithThisText)}${text}${flow(
-        map(() => '</span>'),
-        join(''),
-      )(endWithThisText)}`;
-    }),
-    join(''),
-  )(response);
+  const activeNode = nodes[activeNodeIndex];
 
-  const line = useRef();
+  const lines = useRef();
 
   return (
     <div>
@@ -86,34 +78,67 @@ const result = ({
         value={input}
       />
       {response && (
-        <div className={classNames(s.Container, { [s.entered]: activeIndex >= 0 })}>
-          <div className={s.Input} dangerouslySetInnerHTML={{ __html: inputHtml }} />
-          <div className={s.Annotations}>
-            {map(({ dictName, value, index }) => (
-              <div
-                className={classNames(s.Annotation, { [s.active]: activeIndex === index })}
-                key={index}
-                id={`dict-${index}`}
-                style={{ backgroundColor: getLightColor(index), borderColor: getColor(index) }}
+        <div
+          className={classNames(s.Container, {
+            [s.textEntered]: activeTextIndex >= 0,
+            [s.nodeEntered]: activeNodeIndex >= 0,
+          })}
+        >
+          <div className={s.Input}>
+            {mapWithIndex((text, index) => (
+              <span
+                className={classNames(s.Text, {
+                  [s.activeText]: activeTextIndex === index
+                  || (activeNode
+                    && index >= activeNode.pos
+                    && index < activeNode.pos + activeNode.length),
+                })}
                 onMouseEnter={() => {
-                  line.current = new global.LeaderLine(
-                    document.getElementById(`input-${index}`),
-                    document.getElementById(`dict-${index}`),
-                    { color: getColor(index), size: 2, startSocket: 'bottom' },
-                  );
-                  setActiveIndex(index);
+                  lines.current = flow(
+                    filter(({ pos, length }) => index >= pos && index < pos + length),
+                    map((node) => createLine(index, node.index)),
+                  )(nodes);
+                  setActiveTextIndex(index);
                 }}
                 onMouseLeave={() => {
-                  line.current.remove();
-                  setActiveIndex(undefined);
+                  lines.current.forEach((line) => line.remove());
+                  setActiveTextIndex(undefined);
+                }}
+              >
+                {text}
+                <span
+                  id={`text-underline-${index}`}
+                  className={s.Underline}
+                  style={{ backgroundColor: getColor(activeNodeIndex) }}
+                />
+              </span>
+            ))(response.input)}
+          </div>
+          <div className={s.Nodes}>
+            {map(({ dictName, value, index, pos, length }) => (
+              <div
+                className={classNames(s.Node, {
+                  [s.activeNode]: activeNodeIndex === index
+                  || (activeTextIndex >= pos && activeTextIndex < pos + length),
+                })}
+                key={index}
+                id={`node-${index}`}
+                style={{ backgroundColor: getLightColor(index), borderColor: getColor(index) }}
+                onMouseEnter={() => {
+                  lines.current = [createLine(pos, index)];
+                  setActiveNodeIndex(index);
+                }}
+                onMouseLeave={() => {
+                  lines.current.forEach((line) => line.remove());
+                  setActiveNodeIndex(undefined);
                 }}
               >
                 <div>词典名：{dictName}</div>
                 <div>值：{value}</div>
               </div>
-            ))(dictNodes)}
+            ))(nodes)}
           </div>
-          {dictNodes.length === 0 && <div className={s.Empty}>未解析出词图</div>}
+          {nodes.length === 0 && <div className={s.Empty}>未解析出词图</div>}
         </div>
       )}
     </div>

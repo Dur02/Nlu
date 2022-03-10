@@ -4,45 +4,63 @@
 
 .Input {
   font-size: 24px;
-  letter-spacing: 8px;
-}
-
-.Annotations {
-  margin-top: 40px;
   display: flex;
   flex-wrap: wrap;
 }
 
-.Annotation {
+.Nodes {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.Node {
   padding: 4px;
   margin-top: 4px;
   margin-right: 4px;
   border-width: 2px;
   border-style: solid;
   cursor: pointer;
+  border-radius: 2px;
 
-  .entered & {
+  .textEntered &,
+  .nodeEntered & {
     opacity: 0.2;
   }
 
-  &.active {
+  &.activeNode {
     opacity: 1;
   }
 }
 
-.Node {
+.Text {
   position: relative;
   padding-bottom: 6px;
+  width: 40px;
+  text-align: center;
+  cursor: pointer;
+
+  .nodeEntered &,
+  .textEntered & {
+    opacity: 0.2;
+  }
+
+  &.activeText {
+    opacity: 1;
+  }
 }
 
 .Underline {
   position: absolute;
   bottom: 0;
-  right: 2px;
-  left: 2px;
+  right: 0;
+  left: 0;
   height: 4px;
-  border-radius: 4px;
-  opacity: 0.4;
+  opacity: 0;
+
+  .nodeEntered .activeText & {
+    opacity: 1;
+  }
 }
 
 .Empty {
