@@ -1,12 +1,50 @@
+.Container {
+  margin-top: 20px;
+}
+
+.Input {
+  font-size: 24px;
+}
+
+.Annotations {
+  margin-top: 40px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.Annotation {
+  padding: 4px;
+  margin-top: 4px;
+  margin-right: 4px;
+  border-width: 2px;
+  border-style: solid;
+  cursor: pointer;
+
+  .entered & {
+    opacity: 0.2;
+  }
+
+  &.active {
+    opacity: 1;
+  }
+}
+
 .Node {
   position: relative;
+  padding-bottom: 6px;
+  letter-spacing: 8px;
 }
 
 .Underline {
   position: absolute;
   bottom: 0;
-  right: 0;
-  left: 0;
-  height: 2px;
-  border-radius: 2px;
+  right: 2px;
+  left: 2px;
+  height: 4px;
+  border-radius: 4px;
+  opacity: 0.4;
+}
+
+:global(.leader-line) {
+  z-index: 99999;
 }

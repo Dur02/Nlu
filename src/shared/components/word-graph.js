@@ -1,21 +1,26 @@
 import {
   string,
 } from 'prop-types';
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { readWordGraph as readWordGraphAction } from 'shared/actions/skill';
 import { Input, message } from 'antd';
 import { useDispatch } from 'react-redux';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { map, values, flatten, flow, prop, nth, filter, propEq, join, forEach } from 'lodash/fp';
+import { map, values, flatten, flow, prop, nth, filter, propEq, join } from 'lodash/fp';
 import { volcano, orange, gold, yellow, lime, green, cyan, blue, purple, magenta } from '@ant-design/colors';
+import classNames from 'classnames';
 import s from './word-graph.less';
 
 const mapWithIndex = map.convert({ cap: false });
 const { Search } = Input;
 
-const presetColors = [volcano, orange, gold, yellow, lime, green, cyan, blue, purple, magenta];
+const presetColors = [lime, volcano, orange, cyan, gold, yellow, green, blue, purple, magenta];
 const getColor = (index) => flow(
   map(nth(7)),
+  nth(index % presetColors.length),
+)(presetColors);
+const getLightColor = (index) => flow(
+  map(nth(3)),
   nth(index % presetColors.length),
 )(presetColors);
 
@@ -24,6 +29,7 @@ const result = ({
 }) => {
   useStyles(s);
   const [input, setInput] = useState('');
+  const [activeIndex, setActiveIndex] = useState();
   const [response, setResponse] = useState();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -67,25 +73,10 @@ const result = ({
     join(''),
   )(response);
 
-  const container = useRef();
-  useLayoutEffect(() => {
-    const rect = container.current.getBoundingClientRect();
-    container.current.style.transform = `translate(-${rect.left + global.pageXOffset}px, -${rect.top + global.pageYOffset}px)`;
-  }, []);
-  useLayoutEffect(() => {
-    mapWithIndex(({ index }) => new global.LeaderLine(
-      document.getElementById(`input-${index}`),
-      document.getElementById(`dict-${index}`),
-      { color: getColor(index), size: 2 },
-    ))(dictNodes);
-    forEach(
-      (element) => container.current.appendChild(element),
-    )(document.querySelectorAll('.leader-line'));
-  }, [response]);
+  const line = useRef();
 
   return (
     <div>
-      <div ref={container} />
       <Search
         enterButton="提交"
         onChange={onChange}
@@ -95,14 +86,33 @@ const result = ({
         value={input}
       />
       {response && (
-        <div>
-          <div dangerouslySetInnerHTML={{ __html: inputHtml }} />
-          {map(({ dictName, value, index }) => (
-            <div key={index} id={`dict-${index}`}>
-              <div>词典名：{dictName}</div>
-              <div>值：{value}</div>
-            </div>
-          ))(dictNodes)}
+        <div className={classNames(s.Container, { [s.entered]: activeIndex >= 0 })}>
+          <div className={s.Input} dangerouslySetInnerHTML={{ __html: inputHtml }} />
+          <div className={s.Annotations}>
+            {map(({ dictName, value, index }) => (
+              <div
+                className={classNames(s.Annotation, { [s.active]: activeIndex === index })}
+                key={index}
+                id={`dict-${index}`}
+                style={{ backgroundColor: getLightColor(index), borderColor: getColor(index) }}
+                onMouseEnter={() => {
+                  line.current = new global.LeaderLine(
+                    document.getElementById(`input-${index}`),
+                    document.getElementById(`dict-${index}`),
+                    { color: getColor(index), size: 2, startSocket: 'bottom' },
+                  );
+                  setActiveIndex(index);
+                }}
+                onMouseLeave={() => {
+                  line.current.remove();
+                  setActiveIndex(undefined);
+                }}
+              >
+                <div>词典名：{dictName}</div>
+                <div>值：{value}</div>
+              </div>
+            ))(dictNodes)}
+          </div>
         </div>
       )}
     </div>
