@@ -45,7 +45,7 @@ const result = ({
     if (input) {
       setLoading(true);
       const data = await dispatch(readWordGraphAction({ input, skillCode }));
-      setResponse(data);
+      setResponse(data[skillCode]);
       setLoading(false);
     }
   }, [dispatch, input, response && response.input]);
@@ -113,6 +113,7 @@ const result = ({
               </div>
             ))(dictNodes)}
           </div>
+          {dictNodes.length === 0 && <div className={s.Empty}>未解析出词图</div>}
         </div>
       )}
     </div>

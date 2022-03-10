@@ -13,7 +13,7 @@ export default {
     //   '^/api': '',
     // },
   }, {
-    from: ['/skill/edit'],
+    from: ['/skill/edit', '/nlu/rest'],
     target: 'https://editor-dev.aitekapp.com:7443',
     changeOrigin: true,
     logLevel: 'debug',
