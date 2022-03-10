@@ -38,6 +38,7 @@ const result = ({
       <script dangerouslySetInnerHTML={{ __html: `window.__INITIAL_STATE__=${initialState}` }} />
       <script dangerouslySetInnerHTML={{ __html: `window.messages=${messages}` }} />
       <script dangerouslySetInnerHTML={{ __html: `window.version=${version}` }} />
+      <script src="/leader-line.min.js" />
       {scripts.map((script) => <script key={script} src={script} />)}
     </body>
   </html>

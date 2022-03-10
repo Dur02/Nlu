@@ -12,6 +12,7 @@ export const READ_ONE = actionType('READ_ONE');
 export const CREATE = actionType('CREATE');
 export const REMOVE = actionType('REMOVE');
 export const UPDATE = actionType('UPDATE');
+export const READ_WORD_GRAPH = actionType('READ_WORD_GRAPH');
 
 export const readAll = createAction(
   READ_ALL,
@@ -61,4 +62,9 @@ export const update = createAction(
 export const remove = createAction(
   REMOVE,
   ({ id }) => del(`/skill/edit/skill/${id}`),
+);
+
+export const readWordGraph = createAction(
+  READ_WORD_GRAPH,
+  ({ input, skillCode }) => read('/nlu/rest/v1/word-graph', { refText: input, skillCode }),
 );

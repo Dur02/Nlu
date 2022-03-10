@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
-import { Table, Drawer, message, Select, Input } from 'antd';
+import { Table, Drawer, message, Select, Input, Modal } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
 import { remove, create, update } from 'shared/actions/skill';
 import { create as createVersion, createDraft as createDraftVersionAction } from 'shared/actions/skill-version';
@@ -9,6 +9,7 @@ import { useAction } from 'relient/actions';
 import { push as pushAction } from 'relient/actions/history';
 import { find, propEq, flow, prop, includes, reject, eq } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
+import WordGraph from 'shared/components/word-graph';
 import { getColumns, versionColumns } from './skill-columns';
 
 import selector from './skill-selector';
@@ -28,6 +29,13 @@ const result = () => {
     openDetails: openVersion,
     closeDetails: closeVersion,
     detailsItem: versionItem,
+  } = useDetails();
+
+  const {
+    detailsVisible: wordGraphVisible,
+    openDetails: openWordGraph,
+    closeDetails: closeWordGraph,
+    detailsItem: wordGraphItem,
   } = useDetails();
 
   const editorFields = [{
@@ -143,6 +151,7 @@ const result = () => {
           openEditor,
           onRemove,
           openVersion,
+          openWordGraph,
           push,
           createDraft,
           creatingDraftSkillIds,
@@ -168,6 +177,16 @@ const result = () => {
             pagination={versionPagination}
           />
         </Drawer>
+      )}
+      {wordGraphItem && (
+        <Modal
+          visible={wordGraphVisible}
+          onCancel={closeWordGraph}
+          title={`${wordGraphItem.name} 词图`}
+          width={800}
+        >
+          <WordGraph skillCode={wordGraphItem.code} />
+        </Modal>
       )}
     </Layout>
   );

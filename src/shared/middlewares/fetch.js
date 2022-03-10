@@ -1,6 +1,6 @@
 import { getEntity } from 'relient/selectors';
 import { throwServerError } from 'relient/actions/server-error';
-import { prop, propEq } from 'lodash/fp';
+import { prop } from 'lodash/fp';
 import { AUTHORIZATION } from 'shared/constants/cookie';
 
 const deserialize = (response) => {
@@ -41,7 +41,7 @@ export default ({
         },
       });
       const data = await deserialize(response);
-      if (response.status >= 200 && response.status < 300 && propEq('code', 'SUCCESS')(data)) {
+      if (response.status >= 200 && response.status < 300 && (!data.code || data.code === 'SUCCESS')) {
         next({ ...action, payload: data });
         return data;
       }

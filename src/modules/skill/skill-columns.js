@@ -8,6 +8,7 @@ export const getColumns = ({
   // openEditor,
   onRemove,
   openVersion,
+  openWordGraph,
   createDraft,
   creatingDraftSkillIds,
   push,
@@ -59,6 +60,8 @@ export const getColumns = ({
         </>
       )}
       <Button type="primary" size="small" ghost onClick={() => openVersion(record)}>发布</Button>
+      &nbsp;&nbsp;
+      <Button type="primary" size="small" ghost onClick={() => openWordGraph(record)}>词图</Button>
       &nbsp;&nbsp;
       <Popconfirm
         title="确认删除吗？删除操作不可恢复"
