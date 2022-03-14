@@ -1,10 +1,20 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
-import { Table, Drawer, message, Select, Input, Modal } from 'antd';
+import { Table, Drawer, message, Select, Input, Modal, Button, Upload } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
-import { remove, create, update } from 'shared/actions/skill';
-import { create as createVersion, createDraft as createDraftVersionAction } from 'shared/actions/skill-version';
+import { remove, create, update, readAll } from 'shared/actions/skill';
+import { readAll as readAllBuiltinIntent } from 'shared/actions/builtin-intent';
+import { readAll as readAllIntent } from 'shared/actions/intent';
+import { readAll as readAllOutput } from 'shared/actions/output';
+import { readAll as readAllWords } from 'shared/actions/words';
+import { readAll as readAllRule } from 'shared/actions/rule';
+import { UploadOutlined } from '@ant-design/icons';
+import {
+  create as createVersion,
+  createDraft as createDraftVersionAction,
+  readAll as readAllSkillVersion,
+} from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
 import { push as pushAction } from 'relient/actions/history';
 import { find, propEq, flow, prop, includes, reject, eq } from 'lodash/fp';
@@ -142,9 +152,50 @@ const result = () => {
     message.success('删除成功');
   }, []);
 
+  const [uploading, setUploading] = useState(false);
+  const onUpload = useCallback(async ({ file: { status, response } }) => {
+    setUploading(true);
+    if (status === 'done' && response.code === 'SUCCESS') {
+      await Promise.all([
+        dispatch(readAll()),
+        dispatch(readAllBuiltinIntent()),
+        dispatch(readAllIntent()),
+        dispatch(readAllOutput()),
+        dispatch(readAllWords()),
+        dispatch(readAllRule()),
+        dispatch(readAllSkillVersion()),
+      ]);
+      message.success('上传成功');
+      setUploading(false);
+    } else if (status === 'error' || (response && response.code !== 'SUCCESS')) {
+      message.error(response ? response.msg : '上传失败，请稍后再试');
+      setUploading(false);
+    }
+  }, []);
+
   return (
     <Layout>
       {tableHeader}
+      <Upload
+        name="file"
+        action="/skill/edit/skill/excel-import"
+        onChange={onUpload}
+        showUploadList={false}
+      >
+        <Button
+          icon={<UploadOutlined />}
+          type="primary"
+          loading={uploading}
+          size="large"
+          style={{
+            position: 'absolute',
+            top: 24,
+            left: 140,
+          }}
+        >
+          上传技能
+        </Button>
+      </Upload>
       <Table
         dataSource={getDataSource(skills)}
         columns={getColumns({
