@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { array, func, number } from 'prop-types';
 import { Drawer, Button, Table, Popconfirm, message } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { map, flow, find, propEq, reject, eq, includes, join, prop } from 'lodash/fp';
+import { map, flow, find, propEq, reject, eq, includes, join, prop, compact } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
 
 import WordsContent from './words-content';
@@ -137,7 +137,10 @@ const result = ({
     ),
   }];
 
-  const selectedWords = map((name) => find(propEq('name', name))(words))(value);
+  const selectedWords = flow(
+    map((name) => find(propEq('name', name))(words)),
+    compact,
+  )(value);
 
   return (
     <>
