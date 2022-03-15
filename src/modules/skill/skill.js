@@ -17,7 +17,7 @@ import {
 } from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
 import { push as pushAction } from 'relient/actions/history';
-import { find, propEq, flow, prop, includes, reject, eq } from 'lodash/fp';
+import { find, propEq, flow, prop, includes, reject, eq, map, join } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import WordGraph from 'shared/components/word-graph';
 import { getColumns, versionColumns } from './skill-columns';
@@ -172,6 +172,27 @@ const result = () => {
       setUploading(false);
     }
   }, []);
+  const [testing, setTesting] = useState(false);
+  const onTest = useCallback(async ({ file: { status, response } }) => {
+    setTesting(true);
+    if (status === 'done') {
+      if (response.code === 'SUCCESS') {
+        message.success('检查完成，测试文件格式正确');
+      } else if (response.data && response.data.length > 0) {
+        flow(
+          map(prop('errorMsg')),
+          join('，'),
+          message.error,
+        )(response.data);
+      } else {
+        message.error(response.msg);
+      }
+      setTesting(false);
+    } else if (status === 'error') {
+      message.error(response ? response.msg : '上传失败，请稍后再试');
+      setTesting(false);
+    }
+  }, []);
 
   return (
     <Layout>
@@ -194,6 +215,27 @@ const result = () => {
           }}
         >
           上传技能
+        </Button>
+      </Upload>
+      <Upload
+        name="file"
+        action="/skill/edit/skill/excel-import/test"
+        onChange={onTest}
+        showUploadList={false}
+      >
+        <Button
+          icon={<UploadOutlined />}
+          loading={testing}
+          size="large"
+          type="primary"
+          ghost
+          style={{
+            position: 'absolute',
+            top: 24,
+            left: 280,
+          }}
+        >
+          测试上传文件
         </Button>
       </Upload>
       <Table
