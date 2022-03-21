@@ -6,7 +6,7 @@ import { readWordGraph as readWordGraphAction } from 'shared/actions/skill';
 import { Input, message } from 'antd';
 import { useDispatch } from 'react-redux';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { map, values, flatten, flow, prop, nth, filter } from 'lodash/fp';
+import { map, values, flatten, flow, prop, nth, filter, isObject } from 'lodash/fp';
 import { volcano, orange, gold, yellow, lime, green, cyan, blue, purple, magenta } from '@ant-design/colors';
 import classNames from 'classnames';
 import s from './word-graph.less';
@@ -134,7 +134,7 @@ const result = ({
                 }}
               >
                 <div>词典名：{dictName}</div>
-                <div>值：{value}</div>
+                <div>值：{isObject(value) ? value.value : value}</div>
               </div>
             ))(nodes)}
           </div>
