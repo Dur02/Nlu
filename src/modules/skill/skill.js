@@ -17,7 +17,7 @@ import {
 } from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
 import { push as pushAction } from 'relient/actions/history';
-import { find, propEq, flow, prop, includes, reject, eq, map, join } from 'lodash/fp';
+import { find, propEq, flow, prop, includes, reject, eq } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import WordGraph from 'shared/components/word-graph';
 import { getColumns, versionColumns } from './skill-columns';
@@ -147,6 +147,46 @@ const result = () => {
     },
   });
 
+  const columns = [
+    {
+      title: 'errorMsg',
+      dataIndex: 'errorMsg',
+      key: 'errorMsg',
+      render: (text) => <p style={{ color: '#3CA7FF' }}>{text}</p>,
+    },
+    {
+      title: 'skill',
+      dataIndex: 'skill',
+      key: 'skill',
+    },
+    {
+      title: 'task',
+      dataIndex: 'task',
+      key: 'task',
+    },
+    {
+      title: 'intent',
+      dataIndex: 'intent',
+      key: 'intent',
+    },
+    {
+      title: 'rule',
+      dataIndex: 'rule',
+      key: 'rule',
+    },
+    {
+      title: 'lexiconsName',
+      dataIndex: 'lexiconsName',
+      key: 'lexiconsName',
+    },
+    {
+      title: 'lexiconsContent',
+      dataIndex: 'lexiconsContent',
+      key: 'lexiconsContent',
+      width: '200px',
+    },
+  ];
+
   const onRemove = useCallback(async (id) => {
     await dispatch(remove({ id }));
     message.success('删除成功');
@@ -172,18 +212,19 @@ const result = () => {
       setUploading(false);
     }
   }, []);
+
   const [testing, setTesting] = useState(false);
+  const [data, setData] = useState([]);
+  const [errInfoVisible, setErrInfoVisible] = useState(false);
   const onTest = useCallback(async ({ file: { status, response } }) => {
     setTesting(true);
     if (status === 'done') {
       if (response.code === 'SUCCESS') {
         message.success('检查完成，测试文件格式正确');
       } else if (response.data && response.data.length > 0) {
-        flow(
-          map(prop('errorMsg')),
-          join('，'),
-          message.error,
-        )(response.data);
+        setData(response.data);
+        // eslint-disable-next-line no-restricted-syntax
+        setErrInfoVisible(true);
       } else {
         message.error(response.msg);
       }
@@ -193,6 +234,11 @@ const result = () => {
       setTesting(false);
     }
   }, []);
+
+  function closeErrInfo() {
+    setErrInfoVisible(false);
+    setData([]);
+  }
 
   return (
     <Layout>
@@ -281,6 +327,15 @@ const result = () => {
           <WordGraph skillCode={wordGraphItem.code} />
         </Modal>
       )}
+      <Modal
+        visible={errInfoVisible}
+        onOk={closeErrInfo}
+        onCancel={closeErrInfo}
+        title="错误提示"
+        width={800}
+      >
+        <Table columns={columns} dataSource={data} />
+      </Modal>
     </Layout>
   );
 };
