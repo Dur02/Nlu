@@ -21,6 +21,7 @@ import { find, propEq, flow, prop, includes, reject, eq } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import WordGraph from 'shared/components/word-graph';
 import { getColumns, versionColumns } from './skill-columns';
+import { columns } from './components/skii-test-columns';
 
 import selector from './skill-selector';
 
@@ -147,98 +148,60 @@ const result = () => {
     },
   });
 
-  const columns = [
-    {
-      title: 'errorMsg',
-      dataIndex: 'errorMsg',
-      key: 'errorMsg',
-      render: (text) => <p style={{ color: '#3CA7FF' }}>{text}</p>,
-    },
-    {
-      title: 'skill',
-      dataIndex: 'skill',
-      key: 'skill',
-    },
-    {
-      title: 'task',
-      dataIndex: 'task',
-      key: 'task',
-    },
-    {
-      title: 'intent',
-      dataIndex: 'intent',
-      key: 'intent',
-    },
-    {
-      title: 'rule',
-      dataIndex: 'rule',
-      key: 'rule',
-    },
-    {
-      title: 'lexiconsName',
-      dataIndex: 'lexiconsName',
-      key: 'lexiconsName',
-    },
-    {
-      title: 'lexiconsContent',
-      dataIndex: 'lexiconsContent',
-      key: 'lexiconsContent',
-      width: '200px',
-    },
-  ];
-
   const onRemove = useCallback(async (id) => {
     await dispatch(remove({ id }));
     message.success('删除成功');
   }, []);
 
   const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState([]);
   const onUpload = useCallback(async ({ file: { status, response } }) => {
     setUploading(true);
-    if (status === 'done' && response.code === 'SUCCESS') {
-      await Promise.all([
-        dispatch(readAll()),
-        dispatch(readAllBuiltinIntent()),
-        dispatch(readAllIntent()),
-        dispatch(readAllOutput()),
-        dispatch(readAllWords()),
-        dispatch(readAllRule()),
-        dispatch(readAllSkillVersion()),
-      ]);
-      message.success('上传成功');
+    if (status === 'done') {
+      if (response.code === 'SUCCESS') {
+        message.success('检查完成，测试文件格式正确');
+        await Promise.all([
+          dispatch(readAll()),
+          dispatch(readAllBuiltinIntent()),
+          dispatch(readAllIntent()),
+          dispatch(readAllOutput()),
+          dispatch(readAllWords()),
+          dispatch(readAllRule()),
+          dispatch(readAllSkillVersion()),
+        ]);
+        message.success('上传成功');
+      } else if (response.data && response.data.length > 0) {
+        setError(response.data);
+      } else {
+        message.error(response.msg);
+      }
       setUploading(false);
-    } else if (status === 'error' || (response && response.code !== 'SUCCESS')) {
+    } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
       setUploading(false);
     }
   }, []);
 
   const [testing, setTesting] = useState(false);
-  const [data, setData] = useState([]);
-  const [errInfoVisible, setErrInfoVisible] = useState(false);
   const onTest = useCallback(async ({ file: { status, response } }) => {
     setTesting(true);
     if (status === 'done') {
       if (response.code === 'SUCCESS') {
         message.success('检查完成，测试文件格式正确');
       } else if (response.data && response.data.length > 0) {
-        setData(response.data);
-        // eslint-disable-next-line no-restricted-syntax
-        setErrInfoVisible(true);
+        setError(response.data);
       } else {
         message.error(response.msg);
       }
       setTesting(false);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
-      setTesting(false);
     }
   }, []);
 
-  function closeErrInfo() {
-    setErrInfoVisible(false);
-    setData([]);
-  }
+  const closeErrorInfo = useCallback(() => {
+    setError([]);
+  });
 
   return (
     <Layout>
@@ -328,13 +291,13 @@ const result = () => {
         </Modal>
       )}
       <Modal
-        visible={errInfoVisible}
-        onOk={closeErrInfo}
-        onCancel={closeErrInfo}
+        visible={error.length > 0}
+        onOk={closeErrorInfo}
+        onCancel={closeErrorInfo}
         title="错误提示"
-        width={800}
+        width={1000}
       >
-        <Table columns={columns} dataSource={data} />
+        <Table columns={columns} dataSource={error} />
       </Modal>
     </Layout>
   );
