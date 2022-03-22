@@ -171,7 +171,10 @@ const result = () => {
         ]);
         message.success('上传成功');
       } else if (response.data && response.data.length > 0) {
-        setError(response.data);
+        const newArray = response.data.map((item, index) => ({ ...item, key: index + 1 }));
+        // eslint-disable-next-line max-len
+        // flow(prop('data'), map((item, index) => ({ ...item, key: index + 1 })), setError)(response);
+        setError(newArray);
       } else {
         message.error(response.msg);
       }
@@ -189,7 +192,8 @@ const result = () => {
       if (response.code === 'SUCCESS') {
         message.success('检查完成，测试文件格式正确');
       } else if (response.data && response.data.length > 0) {
-        setError(response.data);
+        const newArray = response.data.map((item, index) => ({ ...item, key: index + 1 }));
+        setError(newArray);
       } else {
         message.error(response.msg);
       }
@@ -297,7 +301,11 @@ const result = () => {
         title="错误提示"
         width={1000}
       >
-        <Table columns={columns} dataSource={error} />
+        <Table
+          columns={columns}
+          dataSource={error}
+          rowKey={error.key}
+        />
       </Modal>
     </Layout>
   );
