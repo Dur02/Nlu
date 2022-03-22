@@ -17,13 +17,15 @@ import {
 } from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
 import { push as pushAction } from 'relient/actions/history';
-import { find, propEq, flow, prop, includes, reject, eq } from 'lodash/fp';
+import { find, propEq, flow, prop, includes, reject, eq, map } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import WordGraph from 'shared/components/word-graph';
 import { getColumns, versionColumns } from './skill-columns';
 import { columns } from './components/skii-test-columns';
 
 import selector from './skill-selector';
+
+const mapWithIndex = map.convert({ cap: false });
 
 const { TextArea } = Input;
 
@@ -171,10 +173,7 @@ const result = () => {
         ]);
         message.success('上传成功');
       } else if (response.data && response.data.length > 0) {
-        const newArray = response.data.map((item, index) => ({ ...item, key: index + 1 }));
-        // eslint-disable-next-line max-len
-        // flow(prop('data'), map((item, index) => ({ ...item, key: index + 1 })), setError)(response);
-        setError(newArray);
+        flow(mapWithIndex((item, index) => ({ ...item, key: index + 1 })), setError)(response.data);
       } else {
         message.error(response.msg);
       }
@@ -192,8 +191,7 @@ const result = () => {
       if (response.code === 'SUCCESS') {
         message.success('检查完成，测试文件格式正确');
       } else if (response.data && response.data.length > 0) {
-        const newArray = response.data.map((item, index) => ({ ...item, key: index + 1 }));
-        setError(newArray);
+        flow(mapWithIndex((item, index) => ({ ...item, key: index + 1 })), setError)(response.data);
       } else {
         message.error(response.msg);
       }
