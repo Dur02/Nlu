@@ -3,12 +3,14 @@ import {
 } from 'prop-types';
 import React, { useCallback, useState } from 'react';
 import { readWordGraph as readWordGraphAction } from 'shared/actions/skill';
-import { Input, message } from 'antd';
+import { Input, message, Divider } from 'antd';
 import { useDispatch } from 'react-redux';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { map, values, flatten, flow, prop, nth, isObject } from 'lodash/fp';
 import { volcano, orange, gold, yellow, lime, green, cyan, blue, purple, magenta } from '@ant-design/colors';
 import classNames from 'classnames';
+import ReactJsonView from 'react-json-view';
+import { time } from 'relient/formatters';
 import s from './word-graph.less';
 
 const mapWithIndex = map.convert({ cap: false });
@@ -61,6 +63,7 @@ const result = ({
   const activeNode = nodes && nodes[activeNodeIndex];
   const documents = prop('documents')(response);
   const activeDocument = documents && documents[activeDocumentIndex];
+  const events = prop('tracker.events')(response);
 
   return (
     <div>
@@ -108,7 +111,7 @@ const result = ({
               )),
             )(response)}
           </div>
-          <div className={s.Title}>词图：</div>
+          <Divider>词图</Divider>
           <div className={s.Tags}>
             {map(({ dictName, value, index, pos, length }) => (
               <div
@@ -128,7 +131,7 @@ const result = ({
           </div>
           {nodes.length === 0 && <div className={s.Empty}>未解析出词图</div>}
 
-          <div className={s.Title}>文档：</div>
+          <Divider>文档</Divider>
           <div className={s.Tags}>
             {mapWithIndex(({ doc: { content }, weight, start, end }, index) => (
               <div
@@ -145,8 +148,23 @@ const result = ({
                 <div>权重：{weight}</div>
               </div>
             ))(documents)}
-            {documents.length === 0 && <div className={s.Empty}>未解析出文档</div>}
           </div>
+          {documents.length === 0 && <div className={s.Empty}>未解析出文档</div>}
+
+          <Divider>日志</Divider>
+          <div><b>Skill Code: </b>{prop('tracker.skillCode')(response)}</div>
+          <div><b>Skill Version: </b>{prop('tracker.skillVersion')(response)}</div>
+          <div><b>Request ID: </b>{prop('tracker.context.requestId')(response)}</div>
+          <Divider>日志详情</Divider>
+          <div>
+            {map(({ ts, message: eventMessage, data }) => (
+              <div key={ts}>
+                <div><b>{time()(ts)}: </b>{eventMessage}</div>
+                <ReactJsonView src={data} collapsed />
+              </div>
+            ))(events)}
+          </div>
+          {events.length === 0 && <div className={s.Empty}>无日志</div>}
         </div>
       )}
     </div>
