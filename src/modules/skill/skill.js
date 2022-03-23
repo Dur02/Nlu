@@ -201,9 +201,12 @@ const result = () => {
     }
   }, []);
 
-  const closeErrorInfo = useCallback(() => {
-    setError([]);
-  });
+  const closeErrorInfo = useCallback(
+    () => {
+      setError([]);
+    },
+    [setError],
+  );
 
   return (
     <Layout>
@@ -302,7 +305,6 @@ const result = () => {
         <Table
           columns={columns}
           dataSource={error}
-          rowKey={error.key}
         />
       </Modal>
     </Layout>
