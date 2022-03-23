@@ -21,7 +21,7 @@ import { find, propEq, flow, prop, includes, reject, eq, map } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import WordGraph from 'shared/components/word-graph';
 import { getColumns, versionColumns } from './skill-columns';
-import { columns } from './components/skii-test-columns';
+import { columns } from './components/skill-test-columns';
 
 import selector from './skill-selector';
 
