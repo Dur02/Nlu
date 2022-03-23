@@ -1,7 +1,17 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
-import { Table, Drawer, message, Select, Input, Modal, Button, Upload } from 'antd';
+import {
+  Table,
+  Drawer,
+  message,
+  Select,
+  Input,
+  Modal,
+  Button,
+  Upload,
+  Tooltip,
+} from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
 import { remove, create, update, readAll } from 'shared/actions/skill';
 import { readAll as readAllBuiltinIntent } from 'shared/actions/builtin-intent';
@@ -9,7 +19,7 @@ import { readAll as readAllIntent } from 'shared/actions/intent';
 import { readAll as readAllOutput } from 'shared/actions/output';
 import { readAll as readAllWords } from 'shared/actions/words';
 import { readAll as readAllRule } from 'shared/actions/rule';
-import { UploadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import {
   create as createVersion,
   createDraft as createDraftVersionAction,
@@ -20,6 +30,8 @@ import { push as pushAction } from 'relient/actions/history';
 import { find, propEq, flow, prop, includes, reject, eq, map } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import WordGraph from 'shared/components/word-graph';
+import getConfig from 'relient/config';
+import { getWithBaseUrl } from 'relient/url';
 import { getColumns, versionColumns } from './skill-columns';
 import { columns } from './components/skii-test-columns';
 
@@ -252,6 +264,27 @@ const result = () => {
           测试上传文件
         </Button>
       </Upload>
+      <a
+        href={`${getWithBaseUrl('/template.xlsx', getConfig('baseUrl'))}`}
+        download="语料模板.xlsx"
+      >
+        <Tooltip
+          title="下载模板"
+          placement="top"
+        >
+          <Button
+            type="primary"
+            icon={<DownloadOutlined />}
+            size="large"
+            ghost
+            style={{
+              position: 'absolute',
+              top: 24,
+              left: 450,
+            }}
+          />
+        </Tooltip>
+      </a>
       <Table
         dataSource={getDataSource(skills)}
         columns={getColumns({
