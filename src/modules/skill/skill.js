@@ -33,7 +33,7 @@ import WordGraph from 'shared/components/word-graph';
 import getConfig from 'relient/config';
 import { getWithBaseUrl } from 'relient/url';
 import { getColumns, versionColumns } from './skill-columns';
-import { columns } from './components/skii-test-columns';
+import { columns } from './components/skill-test-columns';
 
 import selector from './skill-selector';
 
