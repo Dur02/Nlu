@@ -67,7 +67,7 @@ export const remove = createAction(
 
 export const readWordGraph = createAction(
   READ_WORD_GRAPH,
-  ({ input, skillCode }) => read('/nlu/rest/v1/word-graph', { refText: input, skillCode }),
+  ({ input, skillCode }) => read('/nlu/rest/v1/index/search', { refText: input, skillCode }),
 );
 
 export const upload = createAction(
