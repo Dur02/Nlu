@@ -9,7 +9,6 @@ import useStyles from 'isomorphic-style-loader/useStyles';
 import { map, values, flatten, flow, prop, nth, isObject } from 'lodash/fp';
 import { volcano, orange, gold, yellow, lime, green, cyan, blue, purple, magenta } from '@ant-design/colors';
 import classNames from 'classnames';
-import ReactJsonView from 'react-json-view';
 import { time } from 'relient/formatters';
 import s from './word-graph.less';
 
@@ -64,6 +63,7 @@ const result = ({
   const documents = prop('documents')(response);
   const activeDocument = documents && documents[activeDocumentIndex];
   const events = prop('tracker.events')(response);
+  const { ReactJsonView } = global;
 
   return (
     <div>

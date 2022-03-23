@@ -13,9 +13,11 @@ import getConfig from 'relient/config';
 import App from 'shared/components/app';
 import routes from 'modules/routes';
 import i18n from 'relient/i18n';
+import ReactJsonView from 'react-json-view';
 import history from './history';
 import store from './store';
 
+global.ReactJsonView = ReactJsonView;
 const baseUrl = getConfig('baseUrl');
 let router = createRouter({ routes, baseUrl });
 
