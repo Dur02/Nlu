@@ -26,12 +26,12 @@ export default (skillId) => (state) => {
   const intents = flow(
     getEntityArray('intent'),
     filter(propEq('skillId', skillId)),
-    orderBy(['id'], ['desc']),
+    orderBy(['id'], ['asc']),
     map((intent) => {
       const rules = flow(
         getEntityArray('rule'),
         filter(propEq('intentId', intent.id)),
-        orderBy(['id'], ['desc']),
+        orderBy(['id'], ['asc']),
         map((rule) => {
           const slots = JSON.parse(rule.slots);
           return {
@@ -78,13 +78,13 @@ export default (skillId) => (state) => {
   return {
     builtinIntents: flow(
       getEntityArray('builtinIntent'),
-      orderBy(['id'], ['desc']),
+      orderBy(['id'], ['asc']),
     )(state),
     skill: getEntity(`skillVersion.${skillId}`)(state),
     intents,
     words: flow(
       getEntityArray('words'),
-      orderBy(['id'], ['desc']),
+      orderBy(['id'], ['asc']),
       filter((words) => !words.skillId || words.skillId === skillId),
       map((words) => ({
         ...words,
