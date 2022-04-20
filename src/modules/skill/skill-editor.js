@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
-import { Tabs, Empty, Input, message } from 'antd';
+import { Tabs, Empty, Input, message, Modal, Button } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { SEMANTIC } from 'shared/constants/intent-type';
 import {
@@ -31,6 +31,7 @@ import Intents from './components/intents';
 import Output from './components/output';
 import selector from './skill-editor-selector';
 import s from './skill-editor.less';
+import WordGraph from '../../shared/components/word-graph';
 
 const { TabPane } = Tabs;
 const { Search } = Input;
@@ -85,9 +86,13 @@ const result = ({ skillId }) => {
       message.success('编辑意图名称成功');
     }
   }, [intentNameText, selectedIntent]);
+  const [wordGraphVisible, setWordGraphVisible] = useState(false);
 
   return (
-    <Layout subTitle={skill.name}>
+    <Layout
+      subTitle={skill.name}
+      addonAfter={<Button type="primary" onClick={() => setWordGraphVisible(true)}>词图</Button>}
+    >
       <div className={s.Container}>
         <Intents
           onChangeIntentId={onChangeIntentId}
@@ -144,6 +149,14 @@ const result = ({ skillId }) => {
           ) : (<Empty description="请选择意图" />)}
         </div>
       </div>
+      <Modal
+        visible={wordGraphVisible}
+        onCancel={() => setWordGraphVisible(false)}
+        title="词图"
+        width={800}
+      >
+        <WordGraph skillCode={skill.code} />
+      </Modal>
     </Layout>
   );
 };

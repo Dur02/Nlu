@@ -25,6 +25,7 @@ const result = ({
   title,
   subTitle,
   multipleCard = false,
+  addonAfter,
 }) => {
   useStyles(globalStyle, relientAdminStyle, s);
   const { features, currentAccount, selectedFeatureKeys } = useSelector(selector);
@@ -62,6 +63,7 @@ const result = ({
           </h1>
           {subTitle && <div className={s.Separator}>/</div>}
           <div className={s.SubTitle}>{subTitle}</div>
+          {addonAfter && <div className={s.AddonAfter}>{addonAfter}</div>}
         </div>
 
         <div className={className} style={{ margin: '24px 24px 0' }}>
@@ -79,6 +81,7 @@ const result = ({
 
 result.propTypes = {
   children: node,
+  addonAfter: node,
   className: string,
   title: node,
   subTitle: string,

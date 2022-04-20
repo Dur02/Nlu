@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   skill-editor-webapp:
-    image: registry.cn-hangzhou.aliyuncs.com/zmsys/skill-editor-webapp:$CI_COMMIT_REF_NAME
+    image: $CI_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME
     environment:
       NODE_ENV: production
       NODE_CONFIG_ENV: $ENVIRONMENT
