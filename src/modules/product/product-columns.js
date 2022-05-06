@@ -12,6 +12,7 @@ export const getColumns = ({
   onRemove,
   openSkillEditor,
   openVersion,
+  openWordGraph,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -27,7 +28,7 @@ export const getColumns = ({
   dataIndex: 'createPerson',
 }, {
   title: '操作',
-  width: 300,
+  width: 380,
   render: (record) => (
     <>
       <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>基础信息</Button>
@@ -35,6 +36,8 @@ export const getColumns = ({
       <Button type="primary" size="small" ghost onClick={() => openSkillEditor(record)}>编辑技能</Button>
       &nbsp;&nbsp;
       <Button type="primary" size="small" ghost onClick={() => openVersion(record)}>发布</Button>
+      &nbsp;&nbsp;
+      <Button type="primary" size="small" ghost onClick={() => openWordGraph(record)}>词图</Button>
       &nbsp;&nbsp;
       <Popconfirm
         title="确认删除吗？删除操作不可恢复"

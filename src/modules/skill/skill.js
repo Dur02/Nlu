@@ -185,6 +185,8 @@ const result = () => {
         ]);
         message.success('上传成功');
       } else if (response.data && response.data.length > 0) {
+        // eslint-disable-next-line no-console
+        console.log(response.data);
         flow(mapWithIndex((item, index) => ({ ...item, key: index + 1 })), setError)(response.data);
       } else {
         message.error(response.msg);

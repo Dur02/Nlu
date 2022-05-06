@@ -14,6 +14,7 @@ export const REMOVE = actionType('REMOVE');
 export const UPDATE = actionType('UPDATE');
 export const ATTACH_SKILLS = actionType('ATTACH_SKILLS');
 export const DETACH_SKILLS = actionType('DETACH_SKILLS');
+export const READ_PRODUCT_WORD_GRAPH = actionType('READ_PRODUCT_WORD_GRAPH');
 
 export const readAll = createAction(
   READ_ALL,
@@ -54,4 +55,9 @@ export const attachSkills = createAction(
 export const detachSkills = createAction(
   DETACH_SKILLS,
   ({ id, skillIds }) => del(`/skill/edit/product/${id}/skill`, { skillIds }),
+);
+
+export const readWordGraph = createAction(
+  READ_PRODUCT_WORD_GRAPH,
+  ({ input, productId }) => read('/nlu/rest/v1/product/search', { refText: input, productId }),
 );

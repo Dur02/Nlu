@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
-import { Table, Drawer, message, Input } from 'antd';
+import { Table, Drawer, message, Input, Modal } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
 import { remove, create, update, detachSkills, attachSkills } from 'shared/actions/product';
 import { create as createVersion, readAll as readAllVersion } from 'shared/actions/product-version';
 import { useAction } from 'relient/actions';
 import { find, propEq, flow, prop } from 'lodash/fp';
+import WordGraph from 'shared/components/product-word-graph';
 import { getColumns, getSkillEditorColumns, versionColumns } from './product-columns';
 
 import selector from './product-selector';
@@ -33,6 +34,13 @@ const result = () => {
     openDetails: openVersion,
     closeDetails: closeVersion,
     detailsItem: versionItem,
+  } = useDetails();
+
+  const {
+    detailsVisible: wordGraphVisible,
+    openDetails: openWordGraph,
+    closeDetails: closeWordGraph,
+    detailsItem: wordGraphItem,
   } = useDetails();
 
   const fields = [{
@@ -156,6 +164,7 @@ const result = () => {
           onRemove,
           openSkillEditor,
           openVersion,
+          openWordGraph,
         })}
         rowKey="id"
         pagination={pagination}
@@ -198,6 +207,16 @@ const result = () => {
             pagination={versionPagination}
           />
         </Drawer>
+      )}
+      {wordGraphItem && (
+        <Modal
+          visible={wordGraphVisible}
+          onCancel={closeWordGraph}
+          title={`${wordGraphItem.name} 词图`}
+          width={800}
+        >
+          <WordGraph productId={wordGraphItem.id} />
+        </Modal>
       )}
     </Layout>
   );
