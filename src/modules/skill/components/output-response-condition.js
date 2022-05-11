@@ -27,9 +27,10 @@ const result = ({
         if (!params[0]) {
           return true;
         }
-      } else if (!params[0] || !params[1]) {
-        return true;
       }
+      // else if (!params[0] || !params[1]) {
+      //   return true;
+      // }
       return false;
     })(finalValue)) {
       message.error('请完善条件');
