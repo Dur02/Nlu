@@ -10,7 +10,7 @@ import {
   Modal,
   Button,
   Upload,
-  Tooltip,
+  Tooltip, Form,
 } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
 import { remove, create, update, readAll } from 'shared/actions/skill';
@@ -167,6 +167,49 @@ const result = () => {
     message.success('删除成功');
   }, []);
 
+  const [visible, setVisible] = useState(false);
+  // modal可见
+  const [uploadFlag, setUploadFlag] = useState(false);
+  // upload是否可见,false显示Form，true显示Upload
+  const [uploadType, setUploadType] = useState();
+  // upload的类型，当uploadFlag为true时，uploadType为true显示上传的Upload，为false显示测试的Upload
+  const [action, setAction] = useState('/skill/edit/skill/excel-import/v2');
+
+  const openImportForm = useCallback(
+    () => {
+      setVisible(true);
+      setAction('/skill/edit/skill/excel-import/v2');
+      setUploadType(true);
+    },
+    [visible, setVisible],
+  );
+
+  const openTestForm = useCallback(
+    () => {
+      setVisible(true);
+      setAction('/skill/edit/skill/excel-import/test/v2');
+      setUploadType(false);
+    },
+    [visible, setVisible],
+  );
+
+  const closeForm = useCallback(
+    () => {
+      setVisible(false);
+      setUploadFlag(false);
+      setAction('/skill/edit/skill/excel-import/v2');
+    },
+    [visible, setVisible],
+  );
+
+  const Finish = useCallback(
+    (values) => {
+      setAction(`${action}?skillName=${values.skillName}`);
+      setUploadFlag(true);
+    },
+    [uploadFlag, setUploadFlag, action, setAction],
+  );
+
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState([]);
   const onUpload = useCallback(async ({ file: { status, response } }) => {
@@ -191,10 +234,16 @@ const result = () => {
       } else {
         message.error(response.msg);
       }
+      setUploadFlag(false);
+      setUploadType();
       setUploading(false);
+      setVisible(false);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
+      setUploadFlag(false);
+      setUploadType();
       setUploading(false);
+      setVisible(false);
     }
   }, []);
 
@@ -209,9 +258,16 @@ const result = () => {
       } else {
         message.error(response.msg);
       }
+      setUploadFlag(false);
+      setUploadType();
       setTesting(false);
+      setVisible(false);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
+      setUploadFlag(false);
+      setUploadType();
+      setTesting(false);
+      setVisible(false);
     }
   }, []);
 
@@ -225,47 +281,35 @@ const result = () => {
   return (
     <Layout>
       {tableHeader}
-      <Upload
-        name="file"
-        action="/skill/edit/skill/excel-import"
-        onChange={onUpload}
-        showUploadList={false}
+      <Button
+        icon={<UploadOutlined />}
+        type="primary"
+        loading={uploading}
+        onClick={openImportForm}
+        size="large"
+        style={{
+          position: 'absolute',
+          top: 24,
+          left: 140,
+        }}
       >
-        <Button
-          icon={<UploadOutlined />}
-          type="primary"
-          loading={uploading}
-          size="large"
-          style={{
-            position: 'absolute',
-            top: 24,
-            left: 140,
-          }}
-        >
-          上传技能
-        </Button>
-      </Upload>
-      <Upload
-        name="file"
-        action="/skill/edit/skill/excel-import/test"
-        onChange={onTest}
-        showUploadList={false}
+        上传技能
+      </Button>
+      <Button
+        icon={<UploadOutlined />}
+        loading={testing}
+        onClick={openTestForm}
+        size="large"
+        type="primary"
+        ghost
+        style={{
+          position: 'absolute',
+          top: 24,
+          left: 280,
+        }}
       >
-        <Button
-          icon={<UploadOutlined />}
-          loading={testing}
-          size="large"
-          type="primary"
-          ghost
-          style={{
-            position: 'absolute',
-            top: 24,
-            left: 280,
-          }}
-        >
-          测试上传文件
-        </Button>
-      </Upload>
+        测试上传文件
+      </Button>
       <a
         href={`${getWithBaseUrl('/template.xlsx', getConfig('baseUrl'))}`}
         download="语料模板.xlsx"
@@ -324,6 +368,7 @@ const result = () => {
         <Modal
           visible={wordGraphVisible}
           onCancel={closeWordGraph}
+          onOk={closeWordGraph}
           title={`${wordGraphItem.name} 词图`}
           width={800}
         >
@@ -341,6 +386,85 @@ const result = () => {
           columns={columns}
           dataSource={error}
         />
+      </Modal>
+      <Modal
+        footer={null}
+        onCancel={closeForm}
+        visible={visible}
+      >
+        {
+          // eslint-disable-next-line no-nested-ternary
+          uploadFlag === false
+            ? (
+              <Form
+                autoComplete="off"
+                labelCol={{ span: 5 }}
+                wrapperCol={{ span: 16 }}
+                onFinish={Finish}
+                initialValues={{
+                  skillName: '',
+                  importFlag: 'false',
+                }}
+                style={{
+                  marginTop: '40px',
+                }}
+              >
+                <Form.Item
+                  label="技能名"
+                  name="skillName"
+                  rules={[{ required: true }]}
+                >
+                  <Input
+                    placeholder="请输入技能名"
+                    allowClear
+                  />
+                </Form.Item>
+                <Form.Item
+                  wrapperCol={{ offset: 10, span: 16 }}
+                >
+                  <Button
+                    style={{
+                      margin: '0 auto',
+                    }}
+                    type="primary"
+                    htmlType="submit"
+                  >
+                    确定
+                  </Button>
+                </Form.Item>
+              </Form>
+            )
+            : uploadType === true
+              ? (
+                <Upload
+                  name="file"
+                  action={action}
+                  onChange={onUpload}
+                  showUploadList={false}
+                >
+                  <Button
+                    icon={<UploadOutlined />}
+                    loading={uploading}
+                  >
+                    上传
+                  </Button>
+                </Upload>
+              )
+              : (
+                <Upload
+                  name="file"
+                  action={action}
+                  onChange={onTest}
+                  showUploadList={false}
+                >
+                  <Button
+                    icon={<UploadOutlined />}
+                  >
+                    测试
+                  </Button>
+                </Upload>
+              )
+        }
       </Modal>
     </Layout>
   );

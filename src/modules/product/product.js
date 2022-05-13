@@ -212,6 +212,7 @@ const result = () => {
         <Modal
           visible={wordGraphVisible}
           onCancel={closeWordGraph}
+          onOk={closeWordGraph}
           title={`${wordGraphItem.name} 词图`}
           width={800}
         >
