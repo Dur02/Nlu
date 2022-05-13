@@ -42,6 +42,7 @@ const mapWithIndex = map.convert({ cap: false });
 const { TextArea } = Input;
 
 const result = () => {
+  const [uploadForm] = Form.useForm();
   const {
     skills,
   } = useSelector(selector);
@@ -168,9 +169,9 @@ const result = () => {
   }, []);
 
   const [visible, setVisible] = useState(false);
-  // modal可见
+  // modal是否可见
   const [uploadFlag, setUploadFlag] = useState(false);
-  // upload是否可见,false显示Form，true显示Upload
+  // upload是否可用,false不可用，true表示可用
   const [uploadType, setUploadType] = useState();
   // upload的类型，当uploadFlag为true时，uploadType为true显示上传的Upload，为false显示测试的Upload
   const [action, setAction] = useState('/skill/edit/skill/excel-import/v2');
@@ -198,16 +199,26 @@ const result = () => {
       setVisible(false);
       setUploadFlag(false);
       setAction('/skill/edit/skill/excel-import/v2');
+      uploadForm.resetFields();
     },
     [visible, setVisible],
   );
 
-  const Finish = useCallback(
-    (values) => {
-      setAction(`${action}?skillName=${values.skillName}`);
-      setUploadFlag(true);
-    },
-    [uploadFlag, setUploadFlag, action, setAction],
+  const onChange = useCallback(
+    (value) => {
+      if (value.target.value !== '') {
+        setUploadFlag(true);
+        let baseUrl;
+        if (action.includes('/skill/edit/skill/excel-import/v2')) {
+          baseUrl = '/skill/edit/skill/excel-import/v2';
+        } else {
+          baseUrl = '/skill/edit/skill/excel-import/test/v2';
+        }
+        setAction(`${baseUrl}?skillName=${value.target.value}`);
+      } else if (value.target.value === '') {
+        setUploadFlag(false);
+      }
+    }, [uploadFlag, setUploadFlag, action, setAction],
   );
 
   const [uploading, setUploading] = useState(false);
@@ -237,12 +248,14 @@ const result = () => {
       setUploadFlag(false);
       setUploadType();
       setUploading(false);
+      uploadForm.resetFields();
       setVisible(false);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
       setUploadFlag(false);
       setUploadType();
       setUploading(false);
+      uploadForm.resetFields();
       setVisible(false);
     }
   }, []);
@@ -261,12 +274,14 @@ const result = () => {
       setUploadFlag(false);
       setUploadType();
       setTesting(false);
+      uploadForm.resetFields();
       setVisible(false);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
       setUploadFlag(false);
       setUploadType();
       setTesting(false);
+      uploadForm.resetFields();
       setVisible(false);
     }
   }, []);
@@ -392,79 +407,66 @@ const result = () => {
         onCancel={closeForm}
         visible={visible}
       >
-        {
-          // eslint-disable-next-line no-nested-ternary
-          uploadFlag === false
-            ? (
-              <Form
-                autoComplete="off"
-                labelCol={{ span: 5 }}
-                wrapperCol={{ span: 16 }}
-                onFinish={Finish}
-                initialValues={{
-                  skillName: '',
-                  importFlag: 'false',
-                }}
-                style={{
-                  marginTop: '40px',
-                }}
-              >
-                <Form.Item
-                  label="技能名"
-                  name="skillName"
-                  rules={[{ required: true }]}
-                >
-                  <Input
-                    placeholder="请输入技能名"
-                    allowClear
-                  />
-                </Form.Item>
-                <Form.Item
-                  wrapperCol={{ offset: 10, span: 16 }}
-                >
-                  <Button
-                    style={{
-                      margin: '0 auto',
-                    }}
-                    type="primary"
-                    htmlType="submit"
+        <Form
+          form={uploadForm}
+          autoComplete="off"
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 16 }}
+          style={{
+            marginTop: '40px',
+          }}
+        >
+          <Form.Item
+            label="技能名"
+            name="skillName"
+            rules={[{ required: true }]}
+          >
+            <Input
+              placeholder="请输入技能名"
+              onChange={onChange}
+              allowClear
+            />
+          </Form.Item>
+          <Form.Item
+            label="选择文件"
+          >
+            {
+              uploadType === true
+                ? (
+                  <Upload
+                    name="file"
+                    action={action}
+                    onChange={onUpload}
+                    showUploadList={false}
                   >
-                    确定
-                  </Button>
-                </Form.Item>
-              </Form>
-            )
-            : uploadType === true
-              ? (
-                <Upload
-                  name="file"
-                  action={action}
-                  onChange={onUpload}
-                  showUploadList={false}
-                >
-                  <Button
-                    icon={<UploadOutlined />}
-                    loading={uploading}
+                    <Button
+                      icon={<UploadOutlined />}
+                      loading={uploading}
+                      disabled={!uploadFlag}
+                    >
+                      上传
+                    </Button>
+                  </Upload>
+                )
+                : (
+                  <Upload
+                    name="file"
+                    action={action}
+                    onChange={onTest}
+                    showUploadList={false}
                   >
-                    上传
-                  </Button>
-                </Upload>
-              )
-              : (
-                <Upload
-                  name="file"
-                  action={action}
-                  onChange={onTest}
-                  showUploadList={false}
-                >
-                  <Button
-                    icon={<UploadOutlined />}
-                  >
-                    测试
-                  </Button>
-                </Upload>
-              )
-        }
+                    <Button
+                      icon={<UploadOutlined />}
+                      loading={testing}
+                      disabled={!uploadFlag}
+                    >
+                      测试
+                    </Button>
+                  </Upload>
+                )
+            }
+          </Form.Item>
+        </Form>
       </Modal>
     </Layout>
   );
