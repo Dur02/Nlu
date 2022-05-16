@@ -48,7 +48,7 @@ const result = ({
     if (input) {
       setLoading(true);
       const data = await dispatch(readWordGraphAction({ input, productId }));
-      setResponse(data);
+      setResponse(data.data);
       setLoading(false);
     }
   }, [dispatch, input, prop(['wordGraph', 'input'])(response)]);
@@ -145,7 +145,11 @@ const result = ({
                   )),
                 )(item)}
               </div>
-              {Object.keys(item.wordGraph.dictNodes).length === 0
+              {
+                // eslint-disable-next-line no-console
+                console.log(item)
+              }
+              {item.wordGraph.dictNodes.length === 0
               && <div className={s.Empty}>未解析出词图</div>}
 
               <Divider>文档</Divider>

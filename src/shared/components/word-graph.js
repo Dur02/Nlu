@@ -48,7 +48,7 @@ const result = ({
     if (input) {
       setLoading(true);
       const data = await dispatch(readWordGraphAction({ input, skillCode }));
-      setResponse(data);
+      setResponse(data.data);
       setLoading(false);
     }
   }, [dispatch, input, prop(['wordGraph', 'input'])(response)]);
@@ -146,7 +146,7 @@ const result = ({
               >
                 <div>内容：{content}</div>
                 <div>权重：{weight}</div>
-                <div>权重：{intentName}</div>
+                <div>意图名：{intentName}</div>
               </div>
             ))(documents)}
           </div>
