@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
 import { Drawer, message, Table, Switch, Button, Popconfirm } from 'antd';
-import { map, join, any, flow, prop, reject, propEq, eq, find } from 'lodash/fp';
+import { map, any, flow, prop, reject, propEq, eq, find } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { booleanSwitchOptions, getBooleanText } from 'shared/constants/boolean';
@@ -113,9 +113,13 @@ const result = ({
     openEditor,
   } = useLocalTable({
     query: {
+      fussy: true,
       fields: [{
         dataKey: 'name',
         label: '名称',
+      }, {
+        dataKey: 'lexiconsNamesJoint',
+        label: '词库',
       }],
     },
     createButton: {
@@ -162,8 +166,7 @@ const result = ({
     render: getBooleanText,
   }, {
     title: '词库',
-    dataIndex: 'lexiconsNames',
-    render: join(', '),
+    dataIndex: 'lexiconsNamesJoint',
   }, {
     title: '操作',
     width: 80,

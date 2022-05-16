@@ -67,6 +67,7 @@ export default (skillId) => (state) => {
         slots: intent.slots ? map((slot) => ({
           ...slot,
           lexiconsNames: slot.lexiconsNames ? split(',')(slot.lexiconsNames) : [],
+          lexiconsNamesJoint: slot.lexiconsNames,
           canDelete: every(flow(
             prop('slots'),
             every(({ name }) => slot.name !== name),
