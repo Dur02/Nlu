@@ -59,5 +59,5 @@ export const detachSkills = createAction(
 
 export const readWordGraph = createAction(
   READ_PRODUCT_WORD_GRAPH,
-  ({ input, productId }) => read('/nlu/rest/v1/product/search', { refText: input, productId }),
+  ({ input, productId }) => read('/skill/edit/word-map/product/search', { refText: input, productId }),
 );
