@@ -150,7 +150,7 @@ const result = ({
 
               <Divider>文档</Divider>
               <div className={s.Tags}>
-                {mapWithIndex(({ doc: { content }, weight, start, end }, index2) => (
+                {mapWithIndex(({ doc: { content, intentName }, weight, start, end }, index2) => (
                   <div
                     key={index2}
                     className={classNames(s.Tag, {
@@ -166,6 +166,7 @@ const result = ({
                   >
                     <div>内容：{content}</div>
                     <div>权重：{weight}</div>
+                    <div>意图名：{intentName}</div>
                   </div>
                 ))(item.documents)}
               </div>
@@ -175,6 +176,7 @@ const result = ({
               <div><b>Skill Code: </b>{prop('tracker.skillCode')(item)}</div>
               <div><b>Skill Version: </b>{prop('tracker.skillVersion')(item)}</div>
               <div><b>Request ID: </b>{prop('tracker.context.requestId')(item)}</div>
+              <div><b>Skill Name: </b>{prop('tracker.skillName')(item)}</div>
             </Card>
           </div>
         ))(response)
