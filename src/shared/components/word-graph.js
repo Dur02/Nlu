@@ -166,8 +166,8 @@ const result = ({
           <div><b>Skill Name: </b>{prop('tracker.skillName')(response)}</div>
           <Divider>日志详情</Divider>
           <div>
-            {map(({ ts, message: eventMessage, data }) => (
-              <div key={`${ts}${eventMessage}`}>
+            {mapWithIndex(({ ts, message: eventMessage, data }, index) => (
+              <div key={index}>
                 <div><b>{time()(ts)}: </b>{eventMessage}</div>
                 <ReactJsonView src={data} collapsed />
               </div>
