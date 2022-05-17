@@ -47,9 +47,16 @@ const result = ({
     }
     if (input) {
       setLoading(true);
-      const data = await dispatch(readWordGraphAction({ input, productId }));
-      setResponse(data.data);
-      setLoading(false);
+      try {
+        const data = await dispatch(readWordGraphAction({ input, productId }));
+        setResponse(data.data);
+        setLoading(false);
+      } catch (err) {
+        if (err.code === 'NOT_FIND_DATA') {
+          message.error(err.msg);
+        }
+        setLoading(false);
+      }
     }
   }, [dispatch, input, prop(['wordGraph', 'input'])(response)]);
   const onChange = useCallback(({ target }) => setInput(target.value), [setInput]);
@@ -145,10 +152,6 @@ const result = ({
                   )),
                 )(item)}
               </div>
-              {
-                // eslint-disable-next-line no-console
-                console.log(item)
-              }
               {item.wordGraph.dictNodes.length === 0
               && <div className={s.Empty}>未解析出词图</div>}
 

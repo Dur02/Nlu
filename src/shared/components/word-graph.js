@@ -47,9 +47,16 @@ const result = ({
     }
     if (input) {
       setLoading(true);
-      const data = await dispatch(readWordGraphAction({ input, skillCode }));
-      setResponse(data.data);
-      setLoading(false);
+      try {
+        const data = await dispatch(readWordGraphAction({ input, skillCode }));
+        setResponse(data.data);
+        setLoading(false);
+      } catch (err) {
+        if (err.code === 'NOT_FIND_DATA') {
+          message.error(err.msg);
+        }
+        setLoading(false);
+      }
     }
   }, [dispatch, input, prop(['wordGraph', 'input'])(response)]);
   const onChange = useCallback(({ target }) => setInput(target.value), [setInput]);
