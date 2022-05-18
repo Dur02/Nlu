@@ -189,7 +189,7 @@ const result = ({ skillId }) => {
         visible={globalSearch}
         onCancel={() => setGlobalSearch(false)}
         title="全局说法检索"
-        width={800}
+        width={900}
         footer={null}
         destroyOnClose="true"
       >

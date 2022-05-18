@@ -49,6 +49,9 @@ const result = ({
         name: 'sentence',
       }],
     },
+    pagination: {
+      pageSize: 10,
+    },
   });
 
   const columns = [
@@ -73,27 +76,24 @@ const result = ({
     },
     {
       title: '操作',
-      width: 140,
+      width: 240,
       render: (record) => (
         <>
-          <div style={{ marginBottom: 8 }}>
-            <Switch
-              checkedChildren="强说法"
-              unCheckedChildren="弱说法"
-              onChange={(checked) => onUpdateRule({ id: record.id, taskClassify: checked })}
-              checked={prop('taskClassify')(record)}
-            />
-          </div>
-          <div>
-            <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
-            &nbsp;
-            <Popconfirm
-              title="确认删除吗？删除操作不可恢复"
-              onConfirm={() => onRemoveRule(record)}
-            >
-              <Button type="danger" size="small" ghost>删除</Button>
-            </Popconfirm>
-          </div>
+          <Switch
+            checkedChildren="强说法"
+            unCheckedChildren="弱说法"
+            onChange={(checked) => onUpdateRule({ id: record.id, taskClassify: checked })}
+            checked={prop('taskClassify')(record)}
+          />
+          &nbsp;
+          <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
+          &nbsp;
+          <Popconfirm
+            title="确认删除吗？删除操作不可恢复"
+            onConfirm={() => onRemoveRule(record)}
+          >
+            <Button type="danger" size="small" ghost>删除</Button>
+          </Popconfirm>
         </>
       ),
     }];
