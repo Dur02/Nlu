@@ -25,11 +25,15 @@ const result = ({
   const [intentSearchText, setIntentSearchText] = useState(null);
   const onIntentClick = useCallback(
     ({ key }) => {
-      const id = Number(key);
-      onChangeIntentId({
-        id,
-        name: flow(find(propEq('id', id)), prop('name'))(intents),
-      });
+      if (key !== '') {
+        const id = Number(key);
+        onChangeIntentId({
+          id,
+          name: flow(find(propEq('id', id)), prop('name'))(intents),
+        });
+      } else {
+        onChangeIntentId();
+      }
     },
     [onChangeIntentId, intents],
   );

@@ -52,9 +52,10 @@ const result = ({
         setResponse(data.data);
         setLoading(false);
       } catch (err) {
-        if (err.code === 'NOT_FIND_DATA') {
-          message.error(err.msg);
-        }
+        // if (err.code === 'NOT_FIND_DATA') {
+        //   // console.log('111');
+        //   message.error(err.msg);
+        // }
         setLoading(false);
       }
     }
