@@ -108,7 +108,7 @@ const result = ({ skillId }) => {
       subTitle={skill.name}
       addonAfter={(
         <>
-          <Button type="primary" onClick={() => setGlobalSearch(true)}>全局说法搜索</Button>
+          <Button type="primary" onClick={() => setGlobalSearch(true)}>全局说法检索</Button>
           &nbsp;
           <Button type="primary" onClick={() => setWordGraphVisible(true)}>词图</Button>
         </>
@@ -188,7 +188,7 @@ const result = ({ skillId }) => {
       <Modal
         visible={globalSearch}
         onCancel={() => setGlobalSearch(false)}
-        title="全局搜索"
+        title="全局说法检索"
         width={800}
         footer={null}
         destroyOnClose="true"
