@@ -103,14 +103,12 @@ const result = ({ skillId }) => {
   }, [intentNameText, selectedIntent]);
   const [wordGraphVisible, setWordGraphVisible] = useState(false);
   const [globalSearch, setGlobalSearch] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [ruleSearchText, setRuleSearchText] = useState('');
   return (
     <Layout
       subTitle={skill.name}
       addonAfter={(
         <>
-          <Button type="primary" onClick={() => setGlobalSearch(true)}>全局搜索</Button>
+          <Button type="primary" onClick={() => setGlobalSearch(true)}>全局说法搜索</Button>
           &nbsp;
           <Button type="primary" onClick={() => setWordGraphVisible(true)}>词图</Button>
         </>
@@ -193,6 +191,7 @@ const result = ({ skillId }) => {
         title="全局搜索"
         width={800}
         footer={null}
+        destroyOnClose="true"
       >
         <GlobalSearchRules
           onChangeIntentId={onChangeIntentId}
