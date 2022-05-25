@@ -102,11 +102,11 @@ export default (skillId) => (state) => {
         ...output,
         params: JSON.parse(output.params),
         responses: mapWithIndex((response, index) => {
-          const { condition } = response;
+          const { condition, cnames } = response;
           const isDefault = getIsDefault(condition);
           return {
             cId: index.toString(),
-            cnames: getCName(condition),
+            cnames: cnames || getCName(condition),
             isDefault,
             ...response,
           };

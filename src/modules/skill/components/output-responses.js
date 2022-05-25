@@ -36,7 +36,7 @@ const result = ({
   const [sorterVisible, setSorterVisible] = useState(false);
   const [creatorConditionVisible, setCreatorConditionVisible] = useState(false);
   const [editorConditionCId, setEditorConditionCId] = useState(null);
-  const onCreateResponse = useCallback(async (condition) => {
+  const onCreateResponse = useCallback(async (condition, cnames) => {
     const newResponses = mapWithIndex((item, index) => ({
       ...item,
       cId: index.toString(),
@@ -44,7 +44,7 @@ const result = ({
       condition,
       readOnly: getIsDefault(condition),
       commandFirst: false,
-      cnames: getCName(condition),
+      cnames: cnames || getCName(condition),
     }, ...responses]);
     await updateOutput({
       id: outputId,
@@ -54,7 +54,7 @@ const result = ({
     setCreatorConditionVisible(false);
     setSelectedCId(newResponses[0].cId);
   }, [outputId, responses]);
-  const onUpdateCondition = useCallback(async (condition) => {
+  const onUpdateCondition = useCallback(async (condition, cnames) => {
     await updateOutput({
       id: outputId,
       responses: map((item) => {
@@ -63,7 +63,7 @@ const result = ({
             ...item,
             condition,
             readOnly: getIsDefault(condition),
-            cnames: getCName(condition),
+            cnames: cnames || getCName(condition),
           };
         }
         return item;
@@ -143,6 +143,7 @@ const result = ({
       >
         {map(({
           cnames,
+          condition,
           cId,
           nlg,
           command,
@@ -170,7 +171,7 @@ const result = ({
           >
             <h4 className={s.Title}>条件描述</h4>
             {isDefault ? cnames : (
-              <Button type="link" onClick={() => setEditorConditionCId(cId)}>{cnames}</Button>
+              <Button type="link" onClick={() => setEditorConditionCId(cId)}>{getCName(condition)}</Button>
             )}
 
             <h4 className={s.Title}>回复内容</h4>
@@ -219,6 +220,7 @@ const result = ({
         visible={!!editorConditionCId}
         onClose={() => setEditorConditionCId(null)}
         onChange={onUpdateCondition}
+        cnames={flow(find(propEq('cId', editorConditionCId)), prop('cnames'))(responses)}
         title="编辑条件"
         value={flow(find(propEq('cId', editorConditionCId)), prop('condition'))(responses)}
       />

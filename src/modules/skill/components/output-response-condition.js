@@ -15,12 +15,14 @@ const result = ({
   visible,
   onClose,
   value,
+  cnames,
   onChange,
   title,
 }) => {
   useStyles(s);
 
   const [finalValue, setFinalValue] = useState();
+  const [finalCnames, setFinalCnames] = useState();
   const onAdd = useCallback(() => {
     if (any(({ params, type }) => {
       if (type === EXIST || type === REQUIRED) {
@@ -74,12 +76,19 @@ const result = ({
       message.error('请至少填写一个条件');
       return;
     }
-    onChange(finalValue);
-  }, [finalValue, onChange]);
+    onChange(finalValue, finalCnames);
+  }, [finalValue, onChange, finalCnames]);
+  const onChangeCnames = useCallback(
+    ({ target }) => setFinalCnames(target.value),
+    [setFinalCnames],
+  );
 
   useEffect(() => {
     setFinalValue(value || []);
   }, [value]);
+  useEffect(() => {
+    setFinalCnames(cnames || '');
+  }, [cnames]);
 
   return (
     <Drawer
@@ -92,6 +101,13 @@ const result = ({
         <li>可根据语义槽取值，API资源的查询结果，以及客户端的状态，输出不同的对话回复。“#”引用语义槽，“$”引用查询结果。</li>
         <li>设定对话条件，根据上一轮的意图输出不同的对话回复</li>
       </ol>
+
+      <Input
+        value={finalCnames}
+        onChange={onChangeCnames}
+        placeholder="标题"
+        style={{ marginBottom: 20 }}
+      />
 
       <div className={s.AddWrapper}>
         <Button type="primary" onClick={onAdd}>新增条件项</Button>
