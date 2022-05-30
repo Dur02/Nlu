@@ -37,6 +37,8 @@ import { columns } from './components/skill-test-columns';
 
 import selector from './skill-selector';
 
+const { Option } = Select;
+
 const mapWithIndex = map.convert({ cap: false });
 
 const { TextArea } = Input;
@@ -175,9 +177,15 @@ const result = () => {
   const [uploadType, setUploadType] = useState();
   // upload的类型，当uploadFlag为true时，uploadType为true显示上传的Upload，为false显示测试的Upload
   const [action, setAction] = useState('/skill/edit/skill/excel-import/v2');
+  const [skillCodeList, setSkillCodeList] = useState([]);
+  const [skillCode, setSkillCode] = useState('');
 
   const openImportForm = useCallback(
-    () => {
+    async () => {
+      const res = await dispatch(readAll());
+      // console.log(result);
+      const code = res.data.records;
+      setSkillCodeList(code);
       setVisible(true);
       setAction('/skill/edit/skill/excel-import/v2');
       setUploadType(true);
@@ -204,7 +212,7 @@ const result = () => {
     [visible, setVisible],
   );
 
-  const onChange = useCallback(
+  const onNameChange = useCallback(
     (value) => {
       if (value.target.value !== '') {
         setUploadFlag(true);
@@ -221,8 +229,32 @@ const result = () => {
     }, [uploadFlag, setUploadFlag, action, setAction],
   );
 
+  const onCodeChange = useCallback(
+    (value) => {
+      if (value !== '') {
+        setSkillCode(value);
+      } else if (value === '') {
+        setSkillCode('');
+      }
+    }, [setSkillCode],
+  );
+
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState([]);
+  const beforeUpload = useCallback(
+    () => {
+      if (skillCode !== '') {
+        const res = find((item) => (item.id === skillCode))(skillCodeList);
+        // console.log(res);
+        onUpdate({ id: res.id, name: res.name, category: res.category, iconPath: res.icon });
+        setUploading(false);
+        setVisible(false);
+        message.success('测试');
+        return false;
+      }
+      return true;
+    }, [skillCode, setSkillCode, onCodeChange],
+  );
   const onUpload = useCallback(async ({ file: { status, response } }) => {
     setUploading(true);
     if (status === 'done') {
@@ -246,19 +278,19 @@ const result = () => {
         message.error(response.msg);
       }
       setUploadFlag(false);
-      setUploadType();
+      setUploadType(true);
       setUploading(false);
       uploadForm.resetFields();
       setVisible(false);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
       setUploadFlag(false);
-      setUploadType();
+      setUploadType(true);
       setUploading(false);
       uploadForm.resetFields();
       setVisible(false);
     }
-  }, []);
+  }, [skillCode, onCodeChange]);
 
   const [testing, setTesting] = useState(false);
   const onTest = useCallback(async ({ file: { status, response } }) => {
@@ -272,14 +304,14 @@ const result = () => {
         message.error(response.msg);
       }
       setUploadFlag(false);
-      setUploadType();
+      setUploadType(false);
       setTesting(false);
       uploadForm.resetFields();
       setVisible(false);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
       setUploadFlag(false);
-      setUploadType();
+      setUploadType(false);
       setTesting(false);
       uploadForm.resetFields();
       setVisible(false);
@@ -412,6 +444,9 @@ const result = () => {
           autoComplete="off"
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 16 }}
+          initialValues={{
+            skillCode: '',
+          }}
           style={{
             marginTop: '40px',
           }}
@@ -423,9 +458,26 @@ const result = () => {
           >
             <Input
               placeholder="请输入技能名"
-              onChange={onChange}
+              onChange={onNameChange}
               allowClear
             />
+          </Form.Item>
+          <Form.Item
+            label="技能代号"
+            name="skillCode"
+          >
+            <Select
+              onChange={onCodeChange}
+            >
+              <Option value="">无</Option>
+              {
+                map(
+                  (item) => (
+                    <Option value={item.id} key={item.id}>{item.name}</Option>
+                  ),
+                )(skillCodeList)
+              }
+            </Select>
           </Form.Item>
           <Form.Item
             label="选择文件"
@@ -434,6 +486,7 @@ const result = () => {
               uploadType === true
                 ? (
                   <Upload
+                    beforeUpload={beforeUpload}
                     name="file"
                     action={action}
                     onChange={onUpload}
@@ -450,6 +503,7 @@ const result = () => {
                 )
                 : (
                   <Upload
+                    beforeUpload={beforeUpload}
                     name="file"
                     action={action}
                     onChange={onTest}
