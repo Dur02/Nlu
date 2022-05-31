@@ -27,7 +27,7 @@ import {
 } from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
 import { push as pushAction } from 'relient/actions/history';
-import { find, propEq, flow, prop, includes, reject, eq, map, uniqBy } from 'lodash/fp';
+import { find, propEq, flow, prop, includes, reject, eq, map, uniqBy, sortBy } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import WordGraph from 'shared/components/word-graph';
 import getConfig from 'relient/config';
@@ -184,7 +184,7 @@ const result = () => {
   const openImportForm = useCallback(
     async () => {
       const res = await dispatch(readAll());
-      const code = uniqBy('code')(res.data.records);
+      const code = uniqBy('code')(sortBy((o) => -o.id)(res.data.records));
       setSkillCodeList(code);
       setVisible(true);
       setAction('/skill/edit/skill/excel-import/v2');
@@ -196,7 +196,7 @@ const result = () => {
   const openTestForm = useCallback(
     async () => {
       const res = await dispatch(readAll());
-      const code = uniqBy('code')(res.data.records);
+      const code = uniqBy('code')(sortBy((o) => -o.id)(res.data.records));
       setSkillCodeList(code);
       setVisible(true);
       setAction('/skill/edit/skill/excel-import/test/v2');
@@ -489,10 +489,43 @@ const result = () => {
             <Select
               onChange={onCodeChange}
             >
-              <Option value="">无</Option>
+              <Option value=""><b>无</b></Option>
               {
                 map((item) => (
-                  <Option value={item.code} key={item.id}>{item.name}</Option>
+                  <Option style={{ position: 'relative' }} value={item.code} key={item.id}>
+                    <b
+                      style={{
+                        width: '55%',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {item.name}
+                    </b>
+                    &nbsp;&nbsp;
+                    <i
+                      style={{
+                        width: '20%',
+                        position: 'absolute',
+                        left: '50%',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {item.version}
+                    </i>
+                    &nbsp;&nbsp;
+                    <i
+                      style={{
+                        width: '25%',
+                        overflow: 'hidden',
+                        position: 'absolute',
+                        left: '70%',
+                      }}
+                    >
+                      {item.createDate.slice(0, 10)}
+                    </i>
+                  </Option>
                 ))(skillCodeList)
               }
             </Select>
