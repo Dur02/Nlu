@@ -508,7 +508,7 @@ const result = () => {
                       style={{
                         width: '20%',
                         position: 'absolute',
-                        left: '50%',
+                        left: '40%',
                         overflow: 'hidden',
                       }}
                     >
@@ -520,7 +520,7 @@ const result = () => {
                         width: '25%',
                         overflow: 'hidden',
                         position: 'absolute',
-                        left: '70%',
+                        left: '60%',
                       }}
                     >
                       {item.createDate.slice(0, 10)}
