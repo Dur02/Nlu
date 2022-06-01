@@ -506,9 +506,9 @@ const result = () => {
                     &nbsp;&nbsp;
                     <i
                       style={{
-                        width: '20%',
+                        width: '18%',
                         position: 'absolute',
-                        left: '40%',
+                        left: '50%',
                         overflow: 'hidden',
                       }}
                     >
@@ -517,10 +517,10 @@ const result = () => {
                     &nbsp;&nbsp;
                     <i
                       style={{
-                        width: '25%',
+                        width: '27%',
                         overflow: 'hidden',
                         position: 'absolute',
-                        left: '60%',
+                        left: '70%',
                       }}
                     >
                       {item.createDate.slice(0, 10)}
