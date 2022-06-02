@@ -72,7 +72,11 @@ export const getSkillEditorColumns = ({
     dataIndex: 'category',
   }, {
     title: '版本',
-    render: (record) => (<p>{record.version}</p>),
+    render: (record) => (
+      <>
+        <p>{record.version}</p>
+      </>
+    ),
   }, {
     title: '状态',
     render: (record) => (isAttached(record) ? '已添加' : '未添加'),

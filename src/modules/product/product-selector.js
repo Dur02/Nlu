@@ -1,7 +1,5 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
-// import { map, flow, filter, propEq, orderBy, reduce, find, reject, concat, prop }
-// from 'lodash/fp';
-import { map, flow, filter, propEq, orderBy, reduce, find, concat, prop } from 'lodash/fp';
+import { map, flow, filter, propEq, orderBy, find, reduce, reject, concat, prop } from 'lodash/fp';
 
 export default (state) => ({
   products: flow(
@@ -29,29 +27,28 @@ export default (state) => ({
       }
       const skill = find(skillVersion.code)(skills);
       if (!skill || skillVersion.id > skill.id) {
+        // return flow(
+        //   reject(propEq('code', skillVersion.code)),
+        //   concat(skillVersion),
+        // )(skills);
+        const skillVersionTemp = skillVersion;
+        skillVersionTemp.flag = [{ version: skillVersion.version, id: skillVersion.id }];
+        let a;
+        map((item) => {
+          if (item.code === skillVersionTemp.code) {
+            a = concat(skillVersionTemp.flag, item.flag);
+          }
+        })(skills);
+        if (a !== undefined) {
+          skillVersionTemp.flag = a;
+        }
         return flow(
-          // reject(propEq('code', skillVersion.code)),
-          concat(skillVersion),
+          reject(propEq('code', skillVersionTemp.code)),
+          concat(skillVersionTemp),
         )(skills);
       }
-      // skillVersion.flag = [{ version:skillVersion.version, id:skillVersion.id}]
-      // console.log(skillVersion)
-      // map((item) => {
-      //   if (item.code === skillVersion.code && item.version !== skillVersion.version){
-      //     console.log(item.flag);
-      //     const a = concat(item.flag, skillVersion.flag);
-      //     console.log(a);
-      //     item.flag = a;
-      //     console.log(item.flag);
-      //   }
-      // })(skills)
-      // skills = flow(
-      //   reject(propEq('code', skillVersion.code)),
-      //   concat(skillVersion),
-      // )(skills);
-      // console.log(skills)
       return skills;
     }, []),
-    orderBy(['id'], ['asc']),
+    orderBy(['id'], ['desc']),
   )(state),
 });
