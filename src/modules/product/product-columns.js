@@ -1,7 +1,7 @@
 import { Button, Popconfirm, Select } from 'antd';
 import React from 'react';
 // import { includes, findIndex, eq, nth } from 'lodash/fp';
-import { includes, map } from 'lodash/fp';
+import { includes, map, findIndex } from 'lodash/fp';
 import { getVersionStatusText } from 'shared/constants/version-status';
 import { time } from 'relient/formatters';
 
@@ -57,7 +57,25 @@ export const getSkillEditorColumns = ({
   detach,
   attach,
 }) => {
-  const isAttached = (record) => includes(record.id)(product.skillIds);
+  const isAttached = (record) => {
+    const a = map((item) => {
+      if (includes(item.id)(product.skillIds)) {
+        return true;
+      }
+      return false;
+    })(record.flag);
+    return includes(true)(a);
+  };
+
+  const findDefault = (record) => {
+    const a = map((item) => {
+      if (includes(item.id)(product.skillIds)) {
+        return true;
+      }
+      return false;
+    })(record.flag);
+    return findIndex((o) => o === true)(a);
+  };
 
   return [{
     //   title: '图标',
@@ -71,34 +89,51 @@ export const getSkillEditorColumns = ({
     dataIndex: 'category',
   }, {
     title: '版本',
-    render: (record) => (
-      <>
-        <Select
-          defaultValue={record.flag[0].id}
-          onChange={
-            (value) => {
-              /* eslint no-param-reassign: ["error", { "props": false }] */
-              record.id = value;
+    // shouldCellUpdate: (record, prevRecord) => {
+    //   console.log(record);
+    //   console.log(prevRecord);
+    //   if (record.mark !== prevRecord.mark) {
+    //     return true;
+    //   }
+    //   return false;
+    // },
+    render: (record) => {
+      /* eslint no-param-reassign: ["error", { "props": false }] */
+      record.mark = findDefault(record) === -1 ? record.id : record.flag[findDefault(record)].id;
+      return (
+        <>
+          <Select
+            defaultValue={
+              findDefault(record) === -1
+                ? record.id
+                : record.flag[findDefault(record)].id
             }
-          }
-          style={{
-            width: '100px',
-          }}
-          disabled={isAttached(record)}
-        >
-          {
-            map((item) => (
-              <Option
-                key={item.version}
-                value={item.id}
-              >
-                {item.version}
-              </Option>
-            ))(record.flag)
-          }
-        </Select>
-      </>
-    ),
+            onChange={
+              (value) => {
+                // console.log(product)
+                /* eslint no-param-reassign: ["error", { "props": false }] */
+                record.mark = value;
+              }
+            }
+            disabled={isAttached(record)}
+            style={{
+              width: '100px',
+            }}
+          >
+            {
+              map((item) => (
+                <Option
+                  key={item.version}
+                  value={item.id}
+                >
+                  {item.version}
+                </Option>
+              ))(record.flag)
+            }
+          </Select>
+        </>
+      );
+    },
   }, {
     title: '状态',
     render: (record) => (isAttached(record) ? '已添加' : '未添加'),
@@ -135,12 +170,12 @@ export const getSkillEditorColumns = ({
             if (isAttached(record)) {
               detach({
                 // skillId: nth(findIndex(eq(record.code))(product.skillCodes))(product.skillIds),
-                skillId: record.id,
+                skillId: record.mark,
                 productId: product.id,
               });
             } else {
               attach({
-                skillId: record.id,
+                skillId: record.mark,
                 productId: product.id,
               });
             }
