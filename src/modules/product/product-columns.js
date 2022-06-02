@@ -1,9 +1,11 @@
-import { Button, Popconfirm } from 'antd';
+import { Button, Popconfirm, Select } from 'antd';
 import React from 'react';
 // import { includes, findIndex, eq, nth } from 'lodash/fp';
-import { includes } from 'lodash/fp';
+import { includes, map } from 'lodash/fp';
 import { getVersionStatusText } from 'shared/constants/version-status';
 import { time } from 'relient/formatters';
+
+const { Option } = Select;
 
 const ATTACHED = 'ATTACHED';
 const DETACHED = 'DETACHED';
@@ -65,16 +67,36 @@ export const getSkillEditorColumns = ({
     title: '名称',
     dataIndex: 'name',
   }, {
-    title: 'ID',
-    dataIndex: 'id',
-  }, {
     title: '类别',
     dataIndex: 'category',
   }, {
     title: '版本',
     render: (record) => (
       <>
-        <p>{record.version}</p>
+        <Select
+          defaultValue={record.flag[0].id}
+          onChange={
+            (value) => {
+              /* eslint no-param-reassign: ["error", { "props": false }] */
+              record.id = value;
+            }
+          }
+          style={{
+            width: '100px',
+          }}
+          disabled={isAttached(record)}
+        >
+          {
+            map((item) => (
+              <Option
+                key={item.version}
+                value={item.id}
+              >
+                {item.version}
+              </Option>
+            ))(record.flag)
+          }
+        </Select>
       </>
     ),
   }, {
