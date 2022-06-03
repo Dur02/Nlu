@@ -121,7 +121,6 @@ export const getSkillEditorColumns = ({
             }
             onChange={
               (value) => {
-                /* eslint no-param-reassign: ["error", { "props": false }] */
                 record.mark = value;
               }
             }
