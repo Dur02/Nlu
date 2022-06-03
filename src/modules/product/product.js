@@ -175,6 +175,7 @@ const result = () => {
           onClose={closeSkillEditor}
           title={`${skillEditorItem.name} 编辑技能`}
           width={600}
+          destroyOnClose="true"
         >
           {skillTableHeader}
           <Table

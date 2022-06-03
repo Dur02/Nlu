@@ -9,6 +9,7 @@ const { Option } = Select;
 
 const ATTACHED = 'ATTACHED';
 const DETACHED = 'DETACHED';
+let temp = -1;
 
 export const getColumns = ({
   openEditor,
@@ -100,6 +101,16 @@ export const getSkillEditorColumns = ({
     render: (record) => {
       /* eslint no-param-reassign: ["error", { "props": false }] */
       record.mark = findDefault(record) === -1 ? record.id : record.flag[findDefault(record)].id;
+      const bool = map((item) => {
+        if (item.id === temp) {
+          return 1;
+        }
+        return 0;
+      })(record.flag);
+      if (temp !== -1 && includes(1)(bool) && findDefault(record) === -1) {
+        record.mark = temp;
+        temp = -1;
+      }
       return (
         <>
           <Select
@@ -110,7 +121,6 @@ export const getSkillEditorColumns = ({
             }
             onChange={
               (value) => {
-                // console.log(product)
                 /* eslint no-param-reassign: ["error", { "props": false }] */
                 record.mark = value;
               }
@@ -173,11 +183,13 @@ export const getSkillEditorColumns = ({
                 skillId: record.mark,
                 productId: product.id,
               });
+              temp = record.mark;
             } else {
               attach({
                 skillId: record.mark,
                 productId: product.id,
               });
+              temp = record.mark;
             }
           }}
         >
