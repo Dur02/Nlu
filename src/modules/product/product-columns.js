@@ -7,10 +7,6 @@ import { time } from 'relient/formatters';
 
 const { Option } = Select;
 
-const ATTACHED = 'ATTACHED';
-const DETACHED = 'DETACHED';
-let temp = -1;
-
 export const getColumns = ({
   openEditor,
   onRemove,
@@ -58,16 +54,6 @@ export const getSkillEditorColumns = ({
   detach,
   attach,
 }) => {
-  const isAttached = (record) => {
-    const a = map((item) => {
-      if (includes(item.id)(product.skillIds)) {
-        return true;
-      }
-      return false;
-    })(record.flag);
-    return includes(true)(a);
-  };
-
   const findDefault = (record) => {
     const a = map((item) => {
       if (includes(item.id)(product.skillIds)) {
@@ -90,46 +76,36 @@ export const getSkillEditorColumns = ({
     dataIndex: 'category',
   }, {
     title: '版本',
-    // shouldCellUpdate: (record, prevRecord) => {
-    //   console.log(record);
-    //   console.log(prevRecord);
-    //   if (record.mark !== prevRecord.mark) {
-    //     return true;
-    //   }
-    //   return false;
-    // },
-    render: (record) => {
-      /* eslint no-param-reassign: ["error", { "props": false }] */
-      record.mark = findDefault(record) === -1 ? record.id : record.flag[findDefault(record)].id;
-      const bool = map((item) => {
-        if (item.id === temp) {
-          return 1;
-        }
-        return 0;
-      })(record.flag);
-      if (temp !== -1 && includes(1)(bool) && findDefault(record) === -1) {
-        record.mark = temp;
-        temp = -1;
-      }
-      return (
-        <>
-          <Select
-            defaultValue={
+    render: (record) => (
+      <>
+        <Select
+          defaultValue={
               findDefault(record) === -1
-                ? record.id
+                ? ''
                 : record.flag[findDefault(record)].id
             }
-            onChange={
+          onChange={
               (value) => {
-                record.mark = value;
+                if (findDefault(record) !== -1) {
+                  detach({
+                    skillId: record.flag[findDefault(record)].id,
+                    productId: product.id,
+                  });
+                }
+                if (value !== '') {
+                  attach({
+                    skillId: value,
+                    productId: product.id,
+                  });
+                }
               }
             }
-            disabled={isAttached(record)}
-            style={{
-              width: '100px',
-            }}
-          >
-            {
+          style={{
+            width: '100px',
+          }}
+        >
+          <Option value="">无选择</Option>
+          {
               map((item) => (
                 <Option
                   key={item.version}
@@ -139,61 +115,7 @@ export const getSkillEditorColumns = ({
                 </Option>
               ))(record.flag)
             }
-          </Select>
-        </>
-      );
-    },
-  }, {
-    title: '状态',
-    render: (record) => (isAttached(record) ? '已添加' : '未添加'),
-    filterMultiple: false,
-    filters: [{
-      text: '全部',
-      value: '',
-    }, {
-      text: '已添加',
-      value: ATTACHED,
-    }, {
-      text: '未添加',
-      value: DETACHED,
-    }],
-    onFilter: (value, record) => {
-      if (value === ATTACHED) {
-        return isAttached(record);
-      }
-      if (value === DETACHED) {
-        return !isAttached(record);
-      }
-      return true;
-    },
-  }, {
-    title: '操作',
-    width: 100,
-    render: (record) => (
-      <>
-        <Button
-          type="primary"
-          size="small"
-          ghost
-          onClick={() => {
-            if (isAttached(record)) {
-              detach({
-                // skillId: nth(findIndex(eq(record.code))(product.skillCodes))(product.skillIds),
-                skillId: record.mark,
-                productId: product.id,
-              });
-              temp = record.mark;
-            } else {
-              attach({
-                skillId: record.mark,
-                productId: product.id,
-              });
-              temp = record.mark;
-            }
-          }}
-        >
-          {isAttached(record) ? '去掉' : '添加'}
-        </Button>
+        </Select>
       </>
     ),
   }];
