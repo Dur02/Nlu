@@ -10,7 +10,8 @@ import {
   Modal,
   Button,
   Upload,
-  Tooltip, Form,
+  Tooltip,
+  Form,
 } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
 import { remove, create, update, readAll } from 'shared/actions/skill';
