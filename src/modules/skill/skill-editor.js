@@ -105,7 +105,7 @@ const result = ({ skillId }) => {
   const [globalSearch, setGlobalSearch] = useState(false);
   return (
     <Layout
-      subTitle={skill.name}
+      subTitle={`${skill.name}  (${skill.version})  `}
       addonAfter={(
         <>
           <Button type="primary" onClick={() => setGlobalSearch(true)}>全局说法检索</Button>
