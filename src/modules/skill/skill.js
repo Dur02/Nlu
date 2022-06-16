@@ -28,7 +28,7 @@ import {
 } from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
 import { push as pushAction } from 'relient/actions/history';
-import { find, propEq, flow, prop, includes, reject, eq, map, uniqBy, sortBy } from 'lodash/fp';
+import { find, propEq, flow, prop, includes, reject, eq, map, slice, filter, head } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import WordGraph from 'shared/components/word-graph';
 import getConfig from 'relient/config';
@@ -178,15 +178,16 @@ const result = () => {
   const [uploadType, setUploadType] = useState();
   // upload的类型，当uploadFlag为true时，uploadType为true显示上传的Upload，为false显示测试的Upload
   const [action, setAction] = useState('/skill/edit/skill/excel-import/v2');
+  // 记录表单skillName
+  const [skillName, setSkillName] = useState('');
   const [skillCodeList, setSkillCodeList] = useState([]);
+  // 记录表单skillCode
   const [skillCode, setSkillCode] = useState('');
   const [isInputShow, setIsInputShow] = useState(true);
 
   const openImportForm = useCallback(
     async () => {
-      const res = await dispatch(readAll());
-      const code = uniqBy('code')(sortBy((o) => -o.id)(res.data.records));
-      setSkillCodeList(code);
+      setSkillCodeList(getDataSource(skills));
       setVisible(true);
       setAction('/skill/edit/skill/excel-import/v2');
       setUploadType(true);
@@ -196,9 +197,7 @@ const result = () => {
 
   const openTestForm = useCallback(
     async () => {
-      const res = await dispatch(readAll());
-      const code = uniqBy('code')(sortBy((o) => -o.id)(res.data.records));
-      setSkillCodeList(code);
+      setSkillCodeList(getDataSource(skills));
       setVisible(true);
       setAction('/skill/edit/skill/excel-import/test/v2');
       setUploadType(false);
@@ -239,16 +238,13 @@ const result = () => {
   const onCodeChange = useCallback(
     (value) => {
       if (value !== '') {
+        // 防止用户改变skillCode后skillName还保留
+        setUploadFlag(false);
+        uploadForm.resetFields();
+        uploadForm.setFieldsValue({ skillCode: value });
         setIsInputShow(false);
         const temp = find((o) => o.code === value)(skillCodeList);
-        let baseUrl;
-        if (action.includes('/skill/edit/skill/excel-import/v2')) {
-          baseUrl = '/skill/edit/skill/excel-import/v2';
-        } else {
-          baseUrl = '/skill/edit/skill/excel-import/test/v2';
-        }
-        setAction(`${baseUrl}?skillName=${temp.name}&skillCode=${temp.code}`);
-        setUploadFlag(true);
+        setSkillName(temp.name);
         setSkillCode(value);
       } else if (value === '') {
         uploadForm.resetFields();
@@ -257,6 +253,19 @@ const result = () => {
         setIsInputShow(true);
       }
     }, [skillCodeList, setSkillCode, action, setAction, isInputShow, setIsInputShow],
+  );
+
+  const onVersionChange = useCallback(
+    (value) => {
+      let baseUrl;
+      if (action.includes('/skill/edit/skill/excel-import/v2')) {
+        baseUrl = '/skill/edit/skill/excel-import/v2';
+      } else {
+        baseUrl = '/skill/edit/skill/excel-import/test/v2';
+      }
+      setAction(`${baseUrl}?skillName=${skillName}&skillCode=${skillCode}&skillVersion=${value}`);
+      setUploadFlag(true);
+    }, [action, skillName, skillCode],
   );
 
   const [uploading, setUploading] = useState(false);
@@ -427,17 +436,19 @@ const result = () => {
           />
         </Drawer>
       )}
-      {wordGraphItem && (
-        <Modal
-          visible={wordGraphVisible}
-          onCancel={closeWordGraph}
-          onOk={closeWordGraph}
-          title={`${wordGraphItem.name} 词图`}
-          width={800}
-        >
-          <WordGraph skillCode={wordGraphItem.code} />
-        </Modal>
-      )}
+      {
+        wordGraphItem && (
+          <Modal
+            visible={wordGraphVisible}
+            onCancel={closeWordGraph}
+            onOk={closeWordGraph}
+            title={`${wordGraphItem.name} 词图`}
+            width={800}
+          >
+            <WordGraph skillCode={wordGraphItem.code} />
+          </Modal>
+        )
+      }
       <Modal
         visible={error.length > 0}
         onOk={closeErrorInfo}
@@ -504,33 +515,33 @@ const result = () => {
                     >
                       {item.name}
                     </b>
-                    &nbsp;&nbsp;
-                    <i
-                      style={{
-                        width: '18%',
-                        position: 'absolute',
-                        left: '50%',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      {item.version}
-                    </i>
-                    &nbsp;&nbsp;
-                    <i
-                      style={{
-                        width: '27%',
-                        overflow: 'hidden',
-                        position: 'absolute',
-                        left: '70%',
-                      }}
-                    >
-                      {item.createDate.slice(0, 10)}
-                    </i>
                   </Option>
                 ))(skillCodeList)
               }
             </Select>
           </Form.Item>
+          {
+            !isInputShow
+            && (
+              <Form.Item
+                label="技能版本"
+                name="skillVersion"
+                rules={[{ required: true }]}
+              >
+                <Select
+                  onChange={onVersionChange}
+                >
+                  {
+                    map((item) => (
+                      <Option style={{ position: 'relative' }} value={item.version} key={item.id}>
+                        {item.version}
+                      </Option>
+                    ))(slice(1, 4)(prop('skillVersions')(head(filter(propEq('code', skillCode))(skillCodeList)))))
+                  }
+                </Select>
+              </Form.Item>
+            )
+          }
           <Form.Item
             label="选择文件"
           >
