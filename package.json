@@ -36,7 +36,7 @@
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "relient": "5.2.0",
-    "relient-admin": "4.7.1",
+    "relient-admin": "4.8.0",
     "tinymce": "^5.8.0",
     "universal-router": "^9.0.1"
   },
@@ -66,7 +66,7 @@
     "pinst": "^2.1.6",
     "react-deep-force-update": "^2.1.1",
     "react-test-renderer": "^17.0.1",
-    "relient-cli": "3.2.1",
+    "relient-cli": "3.2.3",
     "serve": "^12.0.1",
     "stylelint": "^13.13.1",
     "stylelint-config-standard": "^22.0.0",
