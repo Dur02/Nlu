@@ -14,16 +14,16 @@ export default {
       isLogin: true,
     }),
 
-    [READ_MINE]: (auth, { payload: { data: { username } } }) => ({
+    [READ_MINE]: (auth, { payload: { data: { id } } }) => ({
       ...auth,
-      currentAccountId: username,
+      currentUserId: id,
       isLogin: true,
     }),
 
     [LOGOUT]: () => ({
       isLogin: false,
       authorization: null,
-      currentAccountId: null,
+      currentUserId: null,
     }),
 
     [SET_AUTHORIZATION]: (auth, { payload }) => ({
@@ -36,6 +36,6 @@ export default {
   }, {
     authorization: null,
     isLogin: false,
-    currentAccountId: null,
+    currentUserId: null,
   }),
 };

@@ -28,7 +28,7 @@ const result = ({
   addonAfter,
 }) => {
   useStyles(globalStyle, relientAdminStyle, s);
-  const { features, currentAccount, selectedFeatureKeys } = useSelector(selector);
+  const { features, currentUser, selectedFeatureKeys } = useSelector(selector);
   const dispatch = useDispatch();
   const logout = useCallback(() => {
     dispatch(logoutAction());
@@ -45,10 +45,10 @@ const result = ({
         isCollapsed={isCollapsed}
       />
       <Content style={{ height: '100%' }}>
-        {currentAccount && (
+        {currentUser && (
           <Header
-            email={currentAccount.email}
-            username={currentAccount.username}
+            email={currentUser.email}
+            username={currentUser.username}
             logout={logout}
             toggleSider={toggleSider}
             isCollapsed={isCollapsed}

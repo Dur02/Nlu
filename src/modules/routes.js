@@ -13,6 +13,13 @@ const routes = [
   },
 
   {
+    path: '/user',
+    chunks: ['user'],
+    requireAuth: true,
+    load: () => import(/* webpackChunkName: 'user' */ 'modules/user'),
+  },
+
+  {
     path: '/',
     chunks: ['product'],
     requireAuth: true,

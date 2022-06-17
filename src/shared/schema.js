@@ -1,6 +1,8 @@
 import { schema } from 'relient/reducers';
 
-export const user = new schema.Entity('user', {}, { idAttribute: 'username' });
+export const user = new schema.Entity('user');
+export const role = new schema.Entity('role');
+export const resource = new schema.Entity('resource');
 export const product = new schema.Entity('product');
 export const output = new schema.Entity('output');
 export const intent = new schema.Entity('intent');

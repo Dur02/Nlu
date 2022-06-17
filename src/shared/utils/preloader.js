@@ -4,10 +4,12 @@ import { readAll as readAllIntent } from 'shared/actions/intent';
 import { readAll as readAllOutput } from 'shared/actions/output';
 import { readAll as readAllSkill } from 'shared/actions/skill';
 import { readAll as readAllWords } from 'shared/actions/words';
-import { readMine as readMyUser } from 'shared/actions/user';
+import { readMine as readMyUser, readAll as readAllUser } from 'shared/actions/user';
 import { readAll as readAllSkillVersion } from 'shared/actions/skill-version';
 import { readAll as readAllProductVersion } from 'shared/actions/product-version';
 import { readAll as readAllRule } from 'shared/actions/rule';
+import { readAll as readAllRole } from 'shared/actions/role';
+import { readAll as readAllResource } from 'shared/actions/resource';
 
 export default (dispatch) => [
   dispatch(readAllProduct()),
@@ -20,4 +22,7 @@ export default (dispatch) => [
   dispatch(readAllSkillVersion()),
   dispatch(readAllProductVersion()),
   dispatch(readAllRule()),
+  dispatch(readAllUser()),
+  dispatch(readAllRole()),
+  dispatch(readAllResource()),
 ];
