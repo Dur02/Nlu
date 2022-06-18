@@ -22,10 +22,10 @@ const parseParams = (params) => params && JSON.stringify({
 export const readAll = createAction(
   READ_ALL,
   ({
-    current = DEFAULT_CURRENT,
+    page = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
   } = {}) => read('/skill/edit/output/all', {
-    current,
+    current: page,
     size,
   }),
 );

@@ -13,11 +13,11 @@ export const CREATE = actionType('CREATE');
 export const readAll = createAction(
   READ_ALL,
   ({
-    current = DEFAULT_CURRENT,
+    page = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
     productId,
   } = {}) => read('/skill/edit/product-version/all', {
-    current,
+    current: page,
     size,
     productId,
   }),

@@ -14,10 +14,10 @@ export const CREATE_DRAFT = actionType('CREATE_DRAFT');
 export const readAll = createAction(
   READ_ALL,
   ({
-    current = DEFAULT_CURRENT,
+    page = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
   } = {}) => read('/skill/edit/skill-version/all', {
-    current,
+    current: page,
     size,
   }),
 );

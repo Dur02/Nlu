@@ -17,12 +17,12 @@ export const UPDATE = actionType('UPDATE');
 export const readAll = createAction(
   READ_ALL,
   ({
-    current = DEFAULT_CURRENT,
+    page = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
     skillId,
     type,
   } = {}) => read('/skill/edit/words/all', {
-    current,
+    current: page,
     size,
     skillId,
     type,

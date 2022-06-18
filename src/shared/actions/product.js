@@ -19,10 +19,10 @@ export const READ_PRODUCT_WORD_GRAPH = actionType('READ_PRODUCT_WORD_GRAPH');
 export const readAll = createAction(
   READ_ALL,
   ({
-    current = DEFAULT_CURRENT,
+    page = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
   } = {}) => read('/skill/edit/product/all', {
-    current,
+    current: page,
     size,
   }),
 );

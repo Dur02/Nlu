@@ -12,10 +12,10 @@ export const READ_ALL = actionType('READ_ALL');
 export const readAll = createAction(
   READ_ALL,
   ({
-    current = DEFAULT_CURRENT,
+    page = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
   } = {}) => read('/skill/edit/builtin-intent/all', {
-    current,
+    current: page,
     size,
   }),
 );
