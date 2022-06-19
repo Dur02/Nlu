@@ -9,6 +9,8 @@ export const CURRENT_USER = 'CURRENT_USER';
 export const ROLE = 'ROLE';
 export const RESOURCE = 'RESOURCE';
 
+export const AUDIT_LOG = 'AUDIT_LOG';
+
 export const features = [{
   key: PRODUCT,
   link: '/',
@@ -38,6 +40,10 @@ export const features = [{
     link: 'resource',
     text: '资源',
   }],
+}, {
+  key: AUDIT_LOG,
+  link: 'audit/log',
+  text: '审计',
 }];
 
 setFeatures(features);
