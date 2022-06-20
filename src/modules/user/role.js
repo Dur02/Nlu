@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import Layout from 'shared/components/layout';
 import {
   Table,
-  Select,
   Modal,
   Button,
+  Tree,
 } from 'antd';
 import { useLocalTable } from 'relient-admin/hooks';
 import { create, update } from 'shared/actions/role';
@@ -28,11 +28,13 @@ const result = () => {
     type: 'text',
     rules: [{ required: true }],
   }, {
-    label: '资源',
+    label: '权限',
     name: 'resourceIds',
-    component: Select,
-    mode: 'multiple',
-    options: resourceOptions,
+    component: Tree,
+    valuePropName: 'checkedKeys',
+    trigger: 'onCheck',
+    treeData: resourceOptions,
+    checkable: true,
   }];
 
   const onCreate = useAction(create);
@@ -75,14 +77,15 @@ const result = () => {
   const columns = [{
     title: '名称',
     dataIndex: 'name',
+    width: 120,
   }, {
-    title: '资源',
+    title: '权限',
     dataIndex: 'resources',
-    render: flow(map(prop('aliasName')), join(', ')),
+    render: flow(map(prop('resourceName')), join(', ')),
   }, {
     title: '操作',
     key: 'operations',
-    width: 200,
+    width: 120,
     render: (record) => (
       <>
         <Button

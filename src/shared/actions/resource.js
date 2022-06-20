@@ -18,9 +18,9 @@ export const update = createAction(
   UPDATE,
   ({
     id,
-    aliasName,
+    resourceName,
   }) => put('/skill/edit/resource', {
     id,
-    aliasName,
+    resourceName,
   }),
 );

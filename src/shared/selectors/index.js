@@ -1,5 +1,5 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
-import { flow, prop, map } from 'lodash/fp';
+import { flow, prop, map, filter, propEq } from 'lodash/fp';
 
 export const getCurrentUser = (state) => flow(
   getEntity('user'),
@@ -23,10 +23,31 @@ export const getRoleOptions = (state) => flow(
   })),
 )(state);
 
-export const getResourceOptions = (state) => flow(
-  getEntityArray('resource'),
-  map(({ id, aliasName }) => ({
-    label: aliasName,
-    value: id,
-  })),
-)(state);
+export const getResourceOptions = (state, father = 0) => {
+  const resources = flow(
+    getEntityArray('resource'),
+    filter(propEq('father', father)),
+  )(state);
+  if (resources.length > 0) {
+    return map(({ id, resourceName }) => ({
+      title: resourceName,
+      key: id,
+      children: getResourceOptions(state, id),
+    }))(resources);
+  }
+  return undefined;
+};
+
+export const getResources = (state, father = 0) => {
+  const resources = flow(
+    getEntityArray('resource'),
+    filter(propEq('father', father)),
+  )(state);
+  if (resources.length > 0) {
+    return map((resource) => ({
+      ...resource,
+      children: getResources(state, resource.id),
+    }))(resources);
+  }
+  return undefined;
+};

@@ -9,18 +9,18 @@ import {
 import { useLocalTable } from 'relient-admin/hooks';
 import { update } from 'shared/actions/resource';
 import { useAction } from 'relient/actions';
-import { getEntityArray } from 'relient/selectors';
+import { getResources } from 'shared/selectors';
 
 const result = () => {
   const {
     resources,
   } = useSelector((state) => ({
-    resources: getEntityArray('resource')(state),
+    resources: getResources(state),
   }));
 
   const editorFields = [{
     label: '名称',
-    name: 'aliasName',
+    name: 'resourceName',
     rules: [{ required: true }],
   }];
 
@@ -33,7 +33,7 @@ const result = () => {
     openEditor,
   } = useLocalTable({
     editor: {
-      title: '编辑资源',
+      title: '编辑权限',
       onSubmit: onUpdate,
       fields: editorFields,
       component: Modal,
@@ -42,19 +42,10 @@ const result = () => {
 
   const columns = [{
     title: '名称',
-    dataIndex: 'aliasName',
-  }, {
-    title: '方法',
-    dataIndex: 'method',
-  }, {
-    title: '资源名',
     dataIndex: 'resourceName',
   }, {
     title: '路径',
     dataIndex: 'resourcePath',
-  }, {
-    title: '类型',
-    dataIndex: 'type',
   }, {
     title: '操作',
     key: 'operations',
