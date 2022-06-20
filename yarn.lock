@@ -8754,10 +8754,10 @@ regjsparser@^0.6.4:
   dependencies:
     jsesc "~0.5.0"
 
-relient-admin@4.8.0:
-  version "4.8.0"
-  resolved "https://registry.npmmirror.com/relient-admin/-/relient-admin-4.8.0.tgz#4d0367c0065cc34544ff55441cb273cc9012c78d"
-  integrity sha512-JmfM4SnKhdfwZ3RRtMTjKM2i8vZuqZ/PbPvj3is3gzbXGVgy+lHUanpz2jkWE/4sNauMLoheLN80FIImz9MnyA==
+relient-admin@4.8.1:
+  version "4.8.1"
+  resolved "https://registry.npmmirror.com/relient-admin/-/relient-admin-4.8.1.tgz#08c37c68865bdd85555db96d7b9db05b25e41ebd"
+  integrity sha512-7P8g+RVhzs0E3xy1RvkQ+kRWImi8Z74ffcXCdzhqa6hdO/ziOK+4+nvV7+ffyDUJxbAVmtZuk27u8NgCBg+Xlg==
   dependencies:
     "@ant-design/icons" ">=4.7.0"
     "@tinymce/tinymce-react" "^3.12.4"

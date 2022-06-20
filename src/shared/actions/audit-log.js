@@ -15,10 +15,14 @@ export const readAll = createAction(
     size,
     createTimeBefore,
     createTimeAfter,
+    userName,
+    resourceType,
   }) => read('/skill/edit/audit/audit-log', {
     page,
     pageSize: size,
     startTime: createTimeAfter,
     endTime: createTimeBefore,
+    userName,
+    resourceType,
   }),
 );
