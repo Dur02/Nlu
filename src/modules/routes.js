@@ -13,10 +13,10 @@ const routes = [
   },
 
   {
-    path: '/user',
-    chunks: ['user'],
+    path: '/system',
+    chunks: ['system'],
     requireAuth: true,
-    load: () => import(/* webpackChunkName: 'user' */ 'modules/user'),
+    load: () => import(/* webpackChunkName: 'system' */ 'modules/system'),
   },
 
   {

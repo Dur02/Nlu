@@ -3,7 +3,7 @@ import { setFeatures } from 'relient/features';
 export const PRODUCT = 'PRODUCT';
 export const SKILL = 'SKILL';
 
-export const USER = 'USER';
+export const SYSTEM = 'SYSTEM';
 export const ALL_USER = 'ALL_USER';
 export const CURRENT_USER = 'CURRENT_USER';
 export const ROLE = 'ROLE';
@@ -20,9 +20,9 @@ export const features = [{
   link: '/skill',
   text: '技能',
 }, {
-  key: USER,
-  link: '/user',
-  text: '权限',
+  key: SYSTEM,
+  link: '/system',
+  text: '系统设置',
   items: [{
     key: ALL_USER,
     link: 'all',
@@ -38,7 +38,7 @@ export const features = [{
   }, {
     key: RESOURCE,
     link: 'resource',
-    text: '资源',
+    text: '权限',
   }],
 }, {
   key: AUDIT_LOG,
