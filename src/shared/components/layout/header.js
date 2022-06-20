@@ -10,8 +10,7 @@ const { Header } = Layout;
 const { Item } = Menu;
 
 const result = ({
-  email,
-  username,
+  name,
   logout,
   isCollapsed,
   toggleSider,
@@ -36,7 +35,7 @@ const result = ({
         )}
       >
         <div className={s.Action}>
-          <span>{username || email}</span>
+          <span>{name}</span>
         </div>
       </Dropdown>
     </Header>
@@ -44,8 +43,7 @@ const result = ({
 };
 
 result.propTypes = {
-  email: string,
-  username: string,
+  name: string,
   logout: func.isRequired,
   isCollapsed: bool.isRequired,
   toggleSider: func.isRequired,

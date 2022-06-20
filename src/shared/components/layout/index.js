@@ -47,8 +47,7 @@ const result = ({
       <Content style={{ height: '100%' }}>
         {currentUser && (
           <Header
-            email={currentUser.email}
-            username={currentUser.username}
+            name={currentUser.name}
             logout={logout}
             toggleSider={toggleSider}
             isCollapsed={isCollapsed}
