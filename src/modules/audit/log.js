@@ -71,7 +71,14 @@ const result = ({
     dataIndex: 'operationType',
   }, {
     title: '操作内容',
-    dataIndex: 'contentDiff',
+    dataIndex: 'contentDiffVos',
+    render: (contentDiffVos) => (
+      <>
+        {map(({ contentDiff, id }) => (
+          <div key={id}>{contentDiff}</div>
+        ))(contentDiffVos)}
+      </>
+    ),
   }, {
     title: 'IP',
     dataIndex: 'ip',
