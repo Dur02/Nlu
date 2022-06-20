@@ -1,17 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from 'shared/components/layout';
-import { Button, Input, Form, message, Switch } from 'antd';
+import { Button, Input, Form, message } from 'antd';
 import { useForm } from 'relient-admin/hooks';
 import { getCurrentUser } from 'shared/selectors';
 import { updateMine } from 'shared/actions/user';
-import {
-  ACTIVE,
-  formatNormalStatus,
-  getUserStatusText,
-  INACTIVE,
-  parseNormalStatus,
-} from '../../shared/constants/user-status';
+import useRules from 'shared/hooks/use-rules';
 
 const { Item } = Form;
 
@@ -22,6 +16,7 @@ const result = () => {
     currentUser: getCurrentUser(state),
   }));
 
+  const { sameAsRule } = useRules();
   const dispatch = useDispatch();
   const { submit, submitting, form } = useForm(async (values) => {
     await dispatch(updateMine({ id: currentUser.id, ...values }));
@@ -38,31 +33,19 @@ const result = () => {
         wrapperCol={{ span: 6 }}
       >
         <Item
-          rules={[{ required: true }]}
-          name="openMfa"
-          label="打开MFA"
-          valuePropName="checked"
-        >
-          <Switch />
-        </Item>
-        <Item
           name="password"
-          label="密码"
+          label="新密码"
+          rules={[{ required: true }]}
         >
-          <Input placeholder="密码" type="password" />
+          <Input type="password" />
         </Item>
         <Item
-          rules={[{ required: true }]}
-          name="status"
-          label="状态"
-          valuePropName="checked"
-          getValueFromEvent={formatNormalStatus}
-          normalize={parseNormalStatus}
+          name="repeatedPassword"
+          label="重复新密码"
+          rules={[{ required: true }, sameAsRule('password', '新密码')]}
+          dependencies={['password']}
         >
-          <Switch
-            checkedChildren={getUserStatusText(ACTIVE)}
-            unCheckedChildren={getUserStatusText(INACTIVE)}
-          />
+          <Input type="password" />
         </Item>
         <Item
           wrapperCol={{ span: 6, offset: 9 }}
