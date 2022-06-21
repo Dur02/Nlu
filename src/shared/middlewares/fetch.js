@@ -1,7 +1,6 @@
 import { getEntity } from 'relient/selectors';
 import { throwServerError } from 'relient/actions/server-error';
 import { prop } from 'lodash/fp';
-import { AUTHORIZATION } from 'shared/constants/cookie';
 
 const deserialize = (response) => {
   const header = response.headers.get('Content-Type') || '';
@@ -35,7 +34,7 @@ export default ({
         credentials: 'same-origin',
         headers: {
           ...(withoutAuth ? {} : {
-            Cookie: `${AUTHORIZATION}=${getEntity('auth.authorization')(state)}`,
+            token: getEntity('auth.authorization')(state),
           }),
           ...headers,
         },

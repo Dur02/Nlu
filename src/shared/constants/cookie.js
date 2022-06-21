@@ -1,2 +1,2 @@
-export const AUTHORIZATION = 'JSESSIONID';
+export const AUTHORIZATION = 'token';
 export const a = 'a';

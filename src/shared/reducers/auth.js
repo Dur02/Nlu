@@ -9,9 +9,11 @@ import { READ_MINE } from '../actions/user';
 
 export default {
   auth: handleActions({
-    [LOGIN]: (auth) => ({
+    [LOGIN]: (auth, { payload }) => ({
       ...auth,
       isLogin: true,
+      authorization: payload.data.token,
+      currentUserId: payload.data.id,
     }),
 
     [READ_MINE]: (auth, { payload: { data: { id } } }) => ({
