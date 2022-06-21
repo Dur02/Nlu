@@ -8,7 +8,7 @@ import logger from '../logger';
 
 // eslint-disable-next-line no-unused-vars
 export default (err, req, res, next) => {
-  logger.error(err);
+  logger.error(`${new Date().toISOString()}: `, err);
 
   const html = ReactDOM.renderToStaticMarkup(
     <Html
