@@ -35,7 +35,7 @@ export default {
 
     [CREATE_DRAFT]: merge({
       schema: skillVersion,
-      dataKey: 'data.skill',
+      dataKey: 'data.newSkill',
     }),
 
     [REMOVE_SKILL]: remove(skillVersion),

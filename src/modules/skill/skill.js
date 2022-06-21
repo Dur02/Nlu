@@ -18,8 +18,6 @@ import { remove, create, update, readAll } from 'shared/actions/skill';
 import { readAll as readAllBuiltinIntent } from 'shared/actions/builtin-intent';
 import { readAll as readAllIntent } from 'shared/actions/intent';
 import { readAll as readAllOutput } from 'shared/actions/output';
-import { readAll as readAllWords } from 'shared/actions/words';
-import { readAll as readAllRule } from 'shared/actions/rule';
 import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import {
   create as createVersion,
@@ -280,8 +278,6 @@ const result = () => {
           dispatch(readAllBuiltinIntent()),
           dispatch(readAllIntent()),
           dispatch(readAllOutput()),
-          dispatch(readAllWords()),
-          dispatch(readAllRule()),
           dispatch(readAllSkillVersion()),
         ]);
         message.success('上传成功');
