@@ -1,5 +1,5 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
-import { flow, prop, map, filter, propEq } from 'lodash/fp';
+import { flow, prop, map, filter, propEq, reject } from 'lodash/fp';
 
 export const getCurrentUser = (state) => flow(
   getEntity('user'),
@@ -8,6 +8,7 @@ export const getCurrentUser = (state) => flow(
 
 export const gerRoles = (state) => flow(
   getEntityArray('role'),
+  reject(propEq('id', 1)),
   map((role) => ({
     ...role,
     resourceIds: map(prop('id'))(role.resources),
@@ -17,6 +18,7 @@ export const gerRoles = (state) => flow(
 
 export const getRoleOptions = (state) => flow(
   getEntityArray('role'),
+  reject(propEq('id', 1)),
   map(({ id, name }) => ({
     label: name,
     value: id,
