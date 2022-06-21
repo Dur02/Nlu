@@ -1,6 +1,6 @@
 {
   "port": 7443,
-  "serverAPIDomain": "https://editor-dev.aitekapp.com:7443",
+  "serverAPIDomain": "http://skill-editor-service:8082",
   "cdnDomain": "https://static.com/",
   "baseUrl": "/"
 }
