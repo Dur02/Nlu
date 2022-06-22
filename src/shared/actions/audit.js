@@ -7,6 +7,7 @@ import { read } from 'relient/actions/request';
 const actionType = actionTypeCreator('actions/audit-log');
 
 export const READ_ALL = actionType('READ_ALL');
+export const READ_ALL_RESOURCE_TYPE = actionType('READ_ALL_RESOURCE_TYPE');
 
 export const readAll = createAction(
   READ_ALL,
@@ -25,4 +26,9 @@ export const readAll = createAction(
     userName,
     resourceType,
   }),
+);
+
+export const readAllResourceType = createAction(
+  READ_ALL_RESOURCE_TYPE,
+  () => read('/skill/edit/audit/audit-resource-type'),
 );

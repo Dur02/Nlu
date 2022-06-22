@@ -1,7 +1,7 @@
 import React from 'react';
 import { AUDIT_LOG } from 'shared/constants/features';
 import { map, prop } from 'lodash/fp';
-import { readAll } from 'shared/actions/audit-log';
+import { readAll } from 'shared/actions/audit';
 import Log from './log';
 
 export default () => [{
@@ -23,7 +23,7 @@ export default () => [{
       component: <Log
         ids={map(prop('id'))(data)}
         total={total}
-        current={currentPage}
+        current={currentPage - 1}
         size={pageSize}
       />,
     };

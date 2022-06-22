@@ -4,13 +4,13 @@ import {
   Table,
 } from 'antd';
 import { useAPITable } from 'relient-admin/hooks';
-import { readAll } from 'shared/actions/audit-log';
+import { readAll } from 'shared/actions/audit';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
 import { map } from 'lodash/fp';
 import { time } from 'relient/formatters';
-import { getResourceTypeText, resourceTypeOptions } from 'shared/constants/resource-type';
-import { getOperationTypeText } from 'shared/constants/operation-type';
+import { useSelector } from 'react-redux';
+import { getAuditResourceTypeOptions } from 'shared/selectors';
 
 const getDataSource = (state) => map((id) => getEntity(`auditLog.${id}`)(state));
 
@@ -21,6 +21,11 @@ const result = ({
   size,
 }) => {
   const readAllAuditLog = useAction(readAll);
+  const {
+    resourceTypeOptions,
+  } = useSelector((state) => ({
+    resourceTypeOptions: getAuditResourceTypeOptions(state),
+  }));
 
   const {
     tableHeader,
@@ -37,14 +42,18 @@ const result = ({
     readAction: async (values) => {
       const {
         data: response,
-      } = await readAllAuditLog(values);
+      } = await readAllAuditLog({
+        ...values,
+        page: values.page + 1,
+      });
       return {
         content: response.data,
-        number: response.currentPage,
+        number: response.currentPage - 1,
         size: response.pageSize,
         totalElements: response.total,
       };
     },
+    showReset: true,
     query: {
       fields: [{
         dataKey: 'userName',
@@ -68,49 +77,74 @@ const result = ({
   });
 
   const columns = [{
+    title: '业务号',
+    dataIndex: 'bizNo',
+  }, {
     title: '用户ID',
     dataIndex: 'userId',
   }, {
     title: '用户名',
     dataIndex: 'userName',
   }, {
-    title: '技能ID',
-    dataIndex: 'skillId',
-  }, {
-    title: '技能Code',
-    dataIndex: 'skillCode',
-  }, {
-    title: '技能版本',
-    dataIndex: 'skillVersion',
-  }, {
     title: '资源ID',
     dataIndex: 'resourceId',
   }, {
     title: '资源类型',
-    dataIndex: 'resourceType',
-    render: getResourceTypeText,
+    dataIndex: 'resourceTypeName',
+    render: (resourceTypeName, { resourceType }) => resourceTypeName || resourceType,
   }, {
     title: '操作类型',
     dataIndex: 'operationType',
-    render: getOperationTypeText,
   }, {
-    title: '操作内容',
-    dataIndex: 'contentDiffVos',
-    render: (contentDiffVos) => (
-      <>
-        {map(({ contentDiff, id }) => (
-          <div key={id}>{contentDiff}</div>
-        ))(contentDiffVos)}
-      </>
-    ),
+    title: '描述',
+    dataIndex: 'description',
   }, {
     title: 'IP',
     dataIndex: 'ip',
   }, {
-    title: '创建时间',
+    title: '操作时间',
     dataIndex: 'createTime',
     render: time(),
   }];
+
+  const expandedRowRender = (record) => {
+    const expandedColumns = [{
+      title: '日志ID',
+      dataIndex: 'logId',
+      width: 80,
+    }, {
+      title: '属性名',
+      dataIndex: 'attributeName',
+      width: 80,
+    }, {
+      title: '属性别名',
+      dataIndex: 'attributeAlias',
+      width: 120,
+    }, {
+      title: '属性类型',
+      dataIndex: 'attributeType',
+      width: 120,
+    }, {
+      title: '新值',
+      dataIndex: 'newValue',
+    }, {
+      title: '旧值',
+      dataIndex: 'oldValue',
+    }, {
+      title: '内容差异',
+      dataIndex: 'contentDiff',
+      width: 120,
+    }];
+
+    return (
+      <Table
+        dataSource={record.contentDiffVos}
+        columns={expandedColumns}
+        rowKey="id"
+        pagination={false}
+      />
+    );
+  };
 
   return (
     <Layout>
@@ -119,6 +153,7 @@ const result = ({
         dataSource={data}
         columns={columns}
         rowKey="id"
+        expandable={{ expandedRowRender }}
         pagination={pagination}
       />
     </Layout>

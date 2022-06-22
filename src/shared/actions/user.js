@@ -64,11 +64,13 @@ export const update = createAction(
     openMfa,
     password,
     status,
+    roleIds,
   }) => put('/skill/edit/admin/user', {
     id,
     openMfa,
     password,
     status,
+    roleIds,
   }),
 );
 

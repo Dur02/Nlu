@@ -2,6 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import {
   history as historyMiddleware,
 } from 'relient/middlewares';
+import { push } from 'relient/actions/history';
 import reducers from 'shared/reducers';
 import fetch from 'isomorphic-fetch/fetch-npm-browserify';
 import fetchMiddleware from 'shared/middlewares/fetch';
@@ -9,6 +10,7 @@ import { message } from 'antd';
 import { prop } from 'lodash/fp';
 import pushMiddleware from 'relient/middlewares/push';
 import getConfig from 'relient/config';
+import { getWithBaseUrl } from 'relient/url';
 import authorization from './middlewares/cookie';
 import history from './history';
 
@@ -18,8 +20,9 @@ const middlewares = [
   fetchMiddleware({
     fetch,
     apiDomain: `${global.location.origin}`,
-    onUnauthorized: () => {
+    onUnauthorized: ({ dispatch }) => {
       message.error('权限错误，请重新登陆适当账号', 5);
+      dispatch(push(getWithBaseUrl('/auth/login', getConfig('baseUrl'))));
     },
     onGlobalWarning: async ({ payload }) => {
       message.error(prop('msg')(payload), 5);

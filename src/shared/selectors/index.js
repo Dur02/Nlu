@@ -25,6 +25,14 @@ export const getRoleOptions = (state) => flow(
   })),
 )(state);
 
+export const getAuditResourceTypeOptions = (state) => flow(
+  getEntityArray('auditResourceType'),
+  map(({ resourceType, resourceTypeName }) => ({
+    label: resourceTypeName,
+    value: resourceType,
+  })),
+)(state);
+
 export const getResourceOptions = (state, father = 0) => {
   const resources = flow(
     getEntityArray('resource'),

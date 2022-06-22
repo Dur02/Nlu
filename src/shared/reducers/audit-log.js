@@ -1,7 +1,7 @@
 import { handleActions, merge } from 'relient/reducers';
 import {
   READ_ALL,
-} from '../actions/audit-log';
+} from '../actions/audit';
 import { auditLog } from '../schema';
 
 export default {
