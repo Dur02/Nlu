@@ -21,19 +21,12 @@ export const login = createAction(
 
 export const readQRImage = createAction(
   READ_QR_IMAGE,
-  () => read(
-    '/skill/edit/mfa/qr-code',
-  ),
-  // ({}) => ({ignoreAuthRedirection: true}),
+  () => read('/skill/edit/mfa/qr-code'),
 );
 
 export const qrLogin = createAction(
   QR_LOGIN,
-  ({ code }) => post(
-    `/skill/edit/mfa/login?code=${code}`,
-  ),
-  // ({}) => ({ignoreAuthRedirection: true}),
-
+  ({ code }) => post(`/skill/edit/mfa/login?code=${code}`),
 );
 
 export const logout = createAction(LOGOUT);

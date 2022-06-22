@@ -22,48 +22,45 @@ const result = () => {
   const [mfaForm] = Form.useForm();
   useStyles(s);
   const dispatch = useDispatch();
-  const [visible, setVisible] = useState(false);
+  const [mfaVisible, setMfaVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [code, setCode] = useState(-1);
-  const [qrSrc, setQrSrc] = useState('');
+  const [qrBase64, setQrBase64] = useState(null);
 
   const { submit, submitting, form } = useForm(async (values) => {
-    const userInfo = await dispatch(loginAction({ ...values }));
-    setVisible(userInfo.data.openMfa);
-    if (userInfo.data.openMfa === true && userInfo.data.hasMfaSecret === false) {
+    const { data: { openMfa, hasMfaSecret } } = await dispatch(loginAction({ ...values }));
+    if (openMfa && !hasMfaSecret === false) {
+      setMfaVisible(true);
       const imgSrc = await dispatch(readQRImage());
-      setQrSrc(imgSrc.data);
-      setVisible(true);
-    } else if (userInfo.data.openMfa === false) {
+      setQrBase64(imgSrc.data);
+      setMfaVisible(true);
+    } else if (!openMfa) {
       await Promise.all(getPreloader(dispatch));
       message.success('登录成功');
       dispatch(pushAction(PRODUCT));
     }
   });
 
-  const handleQrClose = useCallback(
+  const onMfaClose = useCallback(
     () => {
       mfaForm.resetFields();
-      setQrSrc('');
-      setVisible(false);
+      setQrBase64(null);
+      setMfaVisible(false);
     },
-    [visible, setVisible],
+    [setMfaVisible, setQrBase64, mfaForm],
   );
 
-  const toMfaLogin = useCallback(
-    () => {
-      setQrSrc('');
-    },
-    [visible, setVisible],
+  const onBindFinish = useCallback(
+    () => setQrBase64(null),
+    [setQrBase64],
   );
 
   const onMfaLogin = useCallback(
     async (values) => {
       setLoading(true);
       try {
-        await dispatch(qrLogin({ ...values }));
+        await dispatch(qrLogin(values));
         setLoading(false);
-        setVisible(false);
+        setMfaVisible(false);
         await Promise.all(getPreloader(dispatch));
         message.success('登录成功');
         dispatch(pushAction(PRODUCT));
@@ -72,7 +69,7 @@ const result = () => {
       }
       mfaForm.resetFields();
     },
-    [setVisible, setLoading, code, setCode],
+    [setMfaVisible, setLoading],
   );
 
   const [disabled, setDisabled] = useState(true);
@@ -114,14 +111,13 @@ const result = () => {
       </Form>
       <Modal
         title="使用验证器扫码"
-        onCancel={handleQrClose}
+        onCancel={onMfaClose}
         footer={null}
-        visible={visible}
+        visible={mfaVisible}
         centered="true"
         width={400}
       >
-        {
-          qrSrc !== '' && (
+        {qrBase64 ? (
           <>
             <br />
             <div
@@ -131,7 +127,7 @@ const result = () => {
               }}
             >
               <img
-                src={qrSrc}
+                src={qrBase64}
                 alt="加载失败"
                 style={{
                   position: 'absolute',
@@ -141,7 +137,7 @@ const result = () => {
               />
               <Button
                 type="primary"
-                onClick={toMfaLogin}
+                onClick={onBindFinish}
                 style={{
                   position: 'absolute',
                   top: '320px',
@@ -153,50 +149,36 @@ const result = () => {
               </Button>
             </div>
           </>
-          )
-}
-        {
-          qrSrc === '' && (
-          <>
-            <Form
-              form={mfaForm}
-              autoComplete="off"
-              onFinish={onMfaLogin}
-              style={{
-                width: '80%',
-                margin: '0 auto',
-              }}
+        ) : (
+          <Form
+            form={mfaForm}
+            autoComplete="off"
+            onFinish={onMfaLogin}
+            style={{
+              width: '80%',
+              margin: '0 auto',
+            }}
+          >
+            <Form.Item
+              label="MFA"
+              name="code"
+              rules={[{ required: true, message: 'MFA不能为空!' }]}
             >
-              <Form.Item
-                label="MFA"
-                name="code"
-                rules={[
-                  {
-                    required: true,
-                    message: 'MFA不能为空!',
-                  },
-                ]}
+              <Input placeholder="MFA" prefix={<LockOutlined />} />
+            </Form.Item>
+            <Form.Item
+              wrapperCol={{ offset: 10, span: 14 }}
+            >
+              <Button
+                type="primary"
+                loading={loading}
+                htmlType="submit"
               >
-                <Input placeholder="MFA" prefix={<LockOutlined />} />
-              </Form.Item>
-              <Form.Item
-                wrapperCol={{
-                  offset: 10,
-                  span: 14,
-                }}
-              >
-                <Button
-                  type="primary"
-                  loading={loading}
-                  htmlType="submit"
-                >
-                  登录
-                </Button>
-              </Form.Item>
-            </Form>
-          </>
-          )
-}
+                登录
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
       </Modal>
     </Layout>
   );
