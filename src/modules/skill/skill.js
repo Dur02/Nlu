@@ -46,6 +46,7 @@ const result = () => {
   const [uploadForm] = Form.useForm();
   const {
     skills,
+    token,
   } = useSelector(selector);
 
   const dispatch = useDispatch();
@@ -549,6 +550,7 @@ const result = () => {
                     action={action}
                     onChange={onUpload}
                     showUploadList={false}
+                    headers={{ token }}
                   >
                     <Button
                       icon={<UploadOutlined />}
@@ -565,6 +567,7 @@ const result = () => {
                     action={action}
                     onChange={onTest}
                     showUploadList={false}
+                    headers={{ token }}
                   >
                     <Button
                       icon={<UploadOutlined />}

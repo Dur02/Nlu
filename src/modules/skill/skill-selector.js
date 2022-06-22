@@ -1,4 +1,4 @@
-import { getEntityArray } from 'relient/selectors';
+import { getEntity, getEntityArray } from 'relient/selectors';
 import { flow, map, filter, propEq, orderBy, reduce, find, reject, concat, last, prop } from 'lodash/fp';
 
 export default (state) => ({
@@ -28,4 +28,5 @@ export default (state) => ({
     }),
     orderBy(['originalId'], ['desc']),
   )(state),
+  token: getEntity('auth.authorization')(state),
 });
