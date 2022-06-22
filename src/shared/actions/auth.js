@@ -1,5 +1,5 @@
 import { actionTypeCreator, createAction } from 'relient/actions';
-import { post } from 'relient/actions/request';
+import { post, read } from 'relient/actions/request';
 
 const actionType = actionTypeCreator('actions/auth');
 
@@ -7,6 +7,8 @@ export const LOGIN = actionType('LOGIN');
 export const LOGOUT = actionType('LOGOUT');
 export const SET_AUTHORIZATION = actionType('SET_AUTHORIZATION');
 export const REMOVE_AUTHORIZATION = actionType('REMOVE_AUTHORIZATION');
+export const READ_QR_IMAGE = actionType('READ_QR_IMAGE');
+export const QR_LOGIN = actionType('QR_LOGIN');
 
 export const login = createAction(
   LOGIN,
@@ -15,6 +17,23 @@ export const login = createAction(
     { account: username, password },
   ),
   ({ shouldRemember }) => ({ ignoreAuthRedirection: true, shouldRemember }),
+);
+
+export const readQRImage = createAction(
+  READ_QR_IMAGE,
+  () => read(
+    '/skill/edit/mfa/qr-code',
+  ),
+  // ({}) => ({ignoreAuthRedirection: true}),
+);
+
+export const qrLogin = createAction(
+  QR_LOGIN,
+  ({ code }) => post(
+    `/skill/edit/mfa/login?code=${code}`,
+  ),
+  // ({}) => ({ignoreAuthRedirection: true}),
+
 );
 
 export const logout = createAction(LOGOUT);
