@@ -34,6 +34,10 @@ const result = () => {
       const imgSrc = await dispatch(readQRImage());
       setQrSrc(imgSrc.data);
       setVisible(true);
+    } else if (userInfo.data.openMfa === false) {
+      await Promise.all(getPreloader(dispatch));
+      message.success('登录成功');
+      dispatch(pushAction(PRODUCT));
     }
   });
 
