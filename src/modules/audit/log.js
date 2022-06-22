@@ -77,14 +77,14 @@ const result = ({
   });
 
   const columns = [{
-    title: '业务号',
-    dataIndex: 'bizNo',
-  }, {
     title: '用户ID',
     dataIndex: 'userId',
   }, {
     title: '用户名',
     dataIndex: 'userName',
+  }, {
+    title: '业务号',
+    dataIndex: 'bizNo',
   }, {
     title: '资源ID',
     dataIndex: 'resourceId',
@@ -107,43 +107,46 @@ const result = ({
     render: time(),
   }];
 
-  const expandedRowRender = (record) => {
-    const expandedColumns = [{
-      title: '日志ID',
-      dataIndex: 'logId',
-      width: 80,
-    }, {
-      title: '属性名',
-      dataIndex: 'attributeName',
-      width: 80,
-    }, {
-      title: '属性别名',
-      dataIndex: 'attributeAlias',
-      width: 120,
-    }, {
-      title: '属性类型',
-      dataIndex: 'attributeType',
-      width: 120,
-    }, {
-      title: '新值',
-      dataIndex: 'newValue',
-    }, {
-      title: '旧值',
-      dataIndex: 'oldValue',
-    }, {
-      title: '内容差异',
-      dataIndex: 'contentDiff',
-      width: 120,
-    }];
+  const expandable = {
+    expandedRowRender: (record) => {
+      const expandedColumns = [{
+        title: '日志ID',
+        dataIndex: 'logId',
+        width: 80,
+      }, {
+        title: '属性名',
+        dataIndex: 'attributeName',
+        width: 80,
+      }, {
+        title: '属性别名',
+        dataIndex: 'attributeAlias',
+        width: 120,
+      }, {
+        title: '属性类型',
+        dataIndex: 'attributeType',
+        width: 120,
+      }, {
+        title: '新值',
+        dataIndex: 'newValue',
+      }, {
+        title: '旧值',
+        dataIndex: 'oldValue',
+      }, {
+        title: '内容差异',
+        dataIndex: 'contentDiff',
+        width: 120,
+      }];
 
-    return (
-      <Table
-        dataSource={record.contentDiffVos}
-        columns={expandedColumns}
-        rowKey="id"
-        pagination={false}
-      />
-    );
+      return (
+        <Table
+          dataSource={record.contentDiffVos}
+          columns={expandedColumns}
+          rowKey="id"
+          pagination={false}
+        />
+      );
+    },
+    rowExpandable: ({ contentDiffVos }) => contentDiffVos && contentDiffVos.length > 0,
   };
 
   return (
@@ -153,7 +156,7 @@ const result = ({
         dataSource={data}
         columns={columns}
         rowKey="id"
-        expandable={{ expandedRowRender }}
+        expandable={expandable}
         pagination={pagination}
       />
     </Layout>
