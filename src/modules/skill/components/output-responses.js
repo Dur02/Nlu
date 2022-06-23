@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
 import { message, Button, Tabs, Tooltip, Popconfirm, Select } from 'antd';
 import { PlusOutlined, SortAscendingOutlined, CloseOutlined } from '@ant-design/icons';
-import { map, flow, reject, propEq, first, propOr, find, prop, isBoolean, omit } from 'lodash/fp';
+import { map, flow, reject, propEq, first, propOr, find, prop, isBoolean, omit, size, filter } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { getCName, getIsDefault } from 'shared/utils/helper';
 import NLG from './output-response-nlg';
@@ -23,6 +23,11 @@ const commandFirstOptions = [{
   label: '客户端动作执行后，再播报回复内容',
   value: 'true',
 }];
+
+const getDefaultConditionSize = flow(
+  filter(flow(prop('getIsDefault'), getIsDefault)),
+  size,
+);
 
 const result = ({
   responses,
@@ -46,6 +51,10 @@ const result = ({
       commandFirst: false,
       cnames: cnames || getCName(condition),
     }, ...responses]);
+    if (getDefaultConditionSize(newResponses) > 1) {
+      message.error('请添加相应的条件再保存');
+      return;
+    }
     await updateOutput({
       id: outputId,
       responses: newResponses,
@@ -55,19 +64,24 @@ const result = ({
     setSelectedCId(newResponses[0].cId);
   }, [outputId, responses]);
   const onUpdateCondition = useCallback(async (condition, cnames) => {
+    const newResponses = map((item) => {
+      if (editorConditionCId === item.cId) {
+        return {
+          ...item,
+          condition,
+          readOnly: getIsDefault(condition),
+          cnames: cnames || getCName(condition),
+        };
+      }
+      return item;
+    })(responses);
+    if (getDefaultConditionSize(newResponses) > 1) {
+      message.error('请添加相应的条件再保存');
+      return;
+    }
     await updateOutput({
       id: outputId,
-      responses: map((item) => {
-        if (editorConditionCId === item.cId) {
-          return {
-            ...item,
-            condition,
-            readOnly: getIsDefault(condition),
-            cnames: cnames || getCName(condition),
-          };
-        }
-        return item;
-      })(responses),
+      responses: newResponses,
     });
     message.success('编辑成功');
     setEditorConditionCId(null);

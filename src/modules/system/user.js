@@ -57,6 +57,10 @@ const result = () => {
   }];
 
   const creatorFields = [{
+    label: '昵称',
+    name: 'nickName',
+    type: 'text',
+  }, {
     label: '名称',
     name: 'name',
     type: 'text',
@@ -118,6 +122,9 @@ const result = () => {
   });
 
   const columns = [{
+    title: '昵称',
+    dataIndex: 'nickName',
+  }, {
     title: '名称',
     dataIndex: 'name',
   }, {

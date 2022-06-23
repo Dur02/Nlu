@@ -45,11 +45,13 @@ export const updateMine = createAction(
 export const create = createAction(
   CREATE,
   ({
+    nickName,
     name,
     openMfa,
     password,
     roleIds,
   }) => post('/skill/edit/admin/user', {
+    nickName,
     name,
     openMfa,
     password,

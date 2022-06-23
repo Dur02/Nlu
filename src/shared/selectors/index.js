@@ -18,7 +18,6 @@ export const gerRoles = (state) => flow(
 
 export const getRoleOptions = (state) => flow(
   getEntityArray('role'),
-  reject(propEq('id', 1)),
   map(({ id, name }) => ({
     label: name,
     value: id,
