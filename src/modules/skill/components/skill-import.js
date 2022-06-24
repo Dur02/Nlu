@@ -154,18 +154,21 @@ const result = ({
       } else {
         message.error(response.msg);
       }
-      // 需要在此setIsupload，否则上方得promise会在此行代码后执行，导致即使是测试也会发送刷新数据的请求
-      setIsUpload(true);
+      setUploadFlag(false);
+      setUploading(false);
+      uploadForm.resetFields();
+      setVisible(false);
+      setIsInputShow(true);
+      setVersionArray([]);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
-      setIsUpload(true);
+      setUploadFlag(false);
+      setUploading(false);
+      uploadForm.resetFields();
+      setVisible(false);
+      setIsInputShow(true);
+      setVersionArray([]);
     }
-    setUploadFlag(false);
-    setUploading(false);
-    uploadForm.resetFields();
-    setVisible(false);
-    setIsInputShow(true);
-    setVersionArray([]);
   }, [isUpload, uploadFlag, uploading, visible, isInputShow, versionArray]);
 
   const closeErrorInfo = useCallback(
