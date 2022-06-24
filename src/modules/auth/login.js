@@ -29,11 +29,15 @@ const result = () => {
 
   const { submit, submitting, form } = useForm(async (values) => {
     const { data: { openMfa, hasMfaSecret } } = await dispatch(loginAction({ ...values }));
+    global.ignoreAuthRedirection = true;
+    global.ignoreGlobalWarning = true;
     try {
       await Promise.all(getPreloader(dispatch));
     } catch (e) {
       console.error(e);
     }
+    global.ignoreAuthRedirection = undefined;
+    global.ignoreGlobalWarning = undefined;
     if (!openMfa) {
       message.success('登录成功');
       dispatch(pushAction(PRODUCT));

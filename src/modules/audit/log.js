@@ -59,6 +59,7 @@ const result = ({
         dataKey: 'userName',
         label: '用户名',
       }],
+      searchWhenValueChange: false,
     },
     filters: [{
       dataKey: 'resourceType',

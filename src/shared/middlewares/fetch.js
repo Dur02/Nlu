@@ -13,6 +13,8 @@ const deserialize = (response) => {
   return response.text();
 };
 
+const { ignoreAuthRedirection, ignoreGlobalWarning } = global;
+
 export default ({
   fetch,
   apiDomain: globalApiDomain,
@@ -45,11 +47,11 @@ export default ({
         return data;
       }
 
-      if (!prop('ignoreGlobalWarning')(meta) && onGlobalWarning) {
+      if (!prop('ignoreGlobalWarning')(meta) && !ignoreGlobalWarning && onGlobalWarning) {
         onGlobalWarning({ payload: data, getState, dispatch });
       }
 
-      if ((response.status === 401 || (data && data.code === 'NOT_LOGIN')) && !prop('ignoreAuthRedirection')(meta) && onUnauthorized) {
+      if ((response.status === 401 || (data && data.code === 'NOT_LOGIN')) && !prop('ignoreAuthRedirection')(meta) && !ignoreAuthRedirection && onUnauthorized) {
         onUnauthorized({ payload: data, getState, dispatch });
       }
 
