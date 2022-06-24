@@ -49,7 +49,7 @@ export default ({
         onGlobalWarning({ payload: data, getState, dispatch });
       }
 
-      if ((response.status === 401 || response.status === 403 || (data && data.code === 'NOT_LOGIN')) && !prop('ignoreAuthRedirection')(meta) && onUnauthorized) {
+      if ((response.status === 401 || (data && data.code === 'NOT_LOGIN')) && !prop('ignoreAuthRedirection')(meta) && onUnauthorized) {
         onUnauthorized({ payload: data, getState, dispatch });
       }
 

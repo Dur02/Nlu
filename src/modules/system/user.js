@@ -14,7 +14,7 @@ import { create, update } from 'shared/actions/user';
 import { useAction } from 'relient/actions';
 import { flow, prop, map, join } from 'lodash/fp';
 import { getBooleanText } from 'shared/constants/boolean';
-import { parseNormalStatus, formatNormalStatus, getUserStatusText, ACTIVE, INACTIVE } from 'shared/constants/user-status';
+import { normalize, getValueFromEvent, getUserStatusText, ACTIVE, INACTIVE } from 'shared/constants/user-status';
 
 import selector from './user-selector';
 
@@ -52,8 +52,8 @@ const result = () => {
     unCheckedChildren: getUserStatusText(INACTIVE),
     rules: [{ required: true }],
     valuePropName: 'checked',
-    getValueFromEvent: formatNormalStatus,
-    normalize: parseNormalStatus,
+    getValueFromEvent,
+    normalize,
   }];
 
   const creatorFields = [{

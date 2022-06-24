@@ -13,5 +13,5 @@ export const getUserStatusText = (status) => {
   return '无';
 };
 
-export const formatNormalStatus = eq(ACTIVE);
-export const parseNormalStatus = (value) => (value ? ACTIVE : INACTIVE);
+export const getValueFromEvent = (value) => (value ? ACTIVE : INACTIVE);
+export const normalize = eq(ACTIVE);

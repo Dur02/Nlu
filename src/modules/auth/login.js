@@ -29,8 +29,12 @@ const result = () => {
 
   const { submit, submitting, form } = useForm(async (values) => {
     const { data: { openMfa, hasMfaSecret } } = await dispatch(loginAction({ ...values }));
-    if (!openMfa) {
+    try {
       await Promise.all(getPreloader(dispatch));
+    } catch (e) {
+      console.error(e);
+    }
+    if (!openMfa) {
       message.success('登录成功');
       dispatch(pushAction(PRODUCT));
     } else if (!hasMfaSecret) {
