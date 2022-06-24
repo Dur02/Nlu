@@ -1,19 +1,10 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
-import { flow, map, filter, propEq, orderBy, reduce, find, reject, concat, last, prop } from 'lodash/fp';
+import { flow, map, filter, propEq, orderBy, last, prop } from 'lodash/fp';
+import { getUniqSkillByCode } from 'shared/selectors';
 
 export default (state) => ({
   skills: flow(
-    getEntityArray('skillVersion'),
-    reduce((skills, skillVersion) => {
-      const skill = find(skillVersion.code)(skills);
-      if (!skill || skillVersion.id > skill.id) {
-        return flow(
-          reject(propEq('code', skillVersion.code)),
-          concat(skillVersion),
-        )(skills);
-      }
-      return skills;
-    }, []),
+    getUniqSkillByCode,
     map((skill) => {
       const skillVersions = flow(
         getEntityArray('skillVersion'),

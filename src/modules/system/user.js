@@ -1,5 +1,5 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Layout from 'shared/components/layout';
 import {
   Table,
@@ -11,10 +11,10 @@ import {
 import { useLocalTable } from 'relient-admin/hooks';
 import { PlainText } from 'relient-admin/components';
 import { create, update } from 'shared/actions/user';
-import { useAction } from 'relient/actions';
 import { flow, prop, map, join } from 'lodash/fp';
 import { getBooleanText } from 'shared/constants/boolean';
 import { normalize, getValueFromEvent, getUserStatusText, ACTIVE, INACTIVE } from 'shared/constants/user-status';
+import { update as updateSkillPermission } from 'shared/actions/skill-permission';
 
 import selector from './user-selector';
 
@@ -22,6 +22,7 @@ const result = () => {
   const {
     users,
     roleOptions,
+    skillOptions,
   } = useSelector(selector);
 
   const editorFields = [{
@@ -45,12 +46,17 @@ const result = () => {
     mode: 'multiple',
     options: roleOptions,
   }, {
+    label: '技能权限',
+    name: 'skillCodes',
+    component: Select,
+    mode: 'multiple',
+    options: skillOptions,
+  }, {
     label: '状态',
     name: 'status',
     component: Switch,
     checkedChildren: getUserStatusText(ACTIVE),
     unCheckedChildren: getUserStatusText(INACTIVE),
-    rules: [{ required: true }],
     valuePropName: 'checked',
     getValueFromEvent,
     normalize,
@@ -82,10 +88,23 @@ const result = () => {
     component: Select,
     mode: 'multiple',
     options: roleOptions,
+  }, {
+    label: '技能权限',
+    name: 'skillCodes',
+    component: Select,
+    mode: 'multiple',
+    options: skillOptions,
   }];
 
-  const onCreate = useAction(create);
-  const onUpdate = useAction(update);
+  const dispatch = useDispatch();
+  const onCreate = useCallback(async (values) => {
+    const { data: { id } } = await dispatch(create(values));
+    await dispatch(updateSkillPermission({ userId: id, skillCodes: values.skillCodes }));
+  }, [create, updateSkillPermission, dispatch]);
+  const onUpdate = useCallback(async (values) => {
+    await dispatch(update(values));
+    await dispatch(updateSkillPermission({ userId: values.id, skillCodes: values.skillCodes }));
+  }, [update, updateSkillPermission, dispatch]);
 
   const {
     tableHeader,
@@ -118,6 +137,10 @@ const result = () => {
       onSubmit: onUpdate,
       fields: editorFields,
       component: Modal,
+      getInitialValues: (editItem) => (editItem && {
+        ...editItem,
+        status: normalize(editItem.status),
+      }),
     },
   });
 
@@ -139,6 +162,10 @@ const result = () => {
     title: '角色',
     dataIndex: 'roles',
     render: flow(map(prop('name')), join(', ')),
+  }, {
+    title: '状态',
+    dataIndex: 'status',
+    render: getUserStatusText,
   }, {
     title: '操作',
     key: 'operations',

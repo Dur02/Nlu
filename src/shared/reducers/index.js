@@ -14,6 +14,7 @@ import role from './role';
 import resource from './resource';
 import auditResourceType from './audit-resource-type';
 import auditLog from './audit-log';
+import skillPermission from './skill-permission';
 
 export default combineReducers({
   ...createReducer([
@@ -31,5 +32,6 @@ export default combineReducers({
     resource,
     auditLog,
     auditResourceType,
+    skillPermission,
   ]),
 });
