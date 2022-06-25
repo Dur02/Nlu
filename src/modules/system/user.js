@@ -57,9 +57,8 @@ const result = () => {
     component: Switch,
     checkedChildren: getUserStatusText(ACTIVE),
     unCheckedChildren: getUserStatusText(INACTIVE),
-    valuePropName: 'checked',
     getValueFromEvent,
-    normalize,
+    getValueProps: (value) => ({ checked: normalize(value), value: normalize(value) }),
   }];
 
   const creatorFields = [{
@@ -137,10 +136,6 @@ const result = () => {
       onSubmit: onUpdate,
       fields: editorFields,
       component: Modal,
-      getInitialValues: (editItem) => (editItem && {
-        ...editItem,
-        status: normalize(editItem.status),
-      }),
     },
   });
 
