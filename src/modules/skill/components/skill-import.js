@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { func } from 'prop-types';
+import { array, func } from 'prop-types';
 import {
   Table,
   message,
@@ -33,10 +33,10 @@ const mapWithIndex = map.convert({ cap: false });
 
 const result = ({
   getDataSource,
+  skills,
 }) => {
   const [uploadForm] = Form.useForm();
   const {
-    skills,
     token,
   } = useSelector(selector);
 
@@ -305,7 +305,7 @@ const result = ({
                       <Option style={{ position: 'relative' }} value={item.version} key={item.id}>
                         {item.version}
                       </Option>
-                    ))(versionArray)
+                    ))(slice(1, 4)(prop('skillVersions')(head(filter(propEq('code', uploadForm.getFieldValue('skillCode')))(getDataSource(skills))))))
                   }
                 </Select>
               </Form.Item>
@@ -353,6 +353,7 @@ result.displayName = __filename;
 
 result.propTypes = {
   getDataSource: func.isRequired,
+  skills: array.isRequired,
 };
 
 export default result;

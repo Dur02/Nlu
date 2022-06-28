@@ -158,6 +158,7 @@ const result = () => {
       {tableHeader}
       <SkillImport
         getDataSource={getDataSource}
+        skills={skills}
       />
       <Table
         dataSource={getDataSource(skills)}
