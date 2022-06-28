@@ -27,20 +27,24 @@ const result = () => {
   const [loading, setLoading] = useState(false);
   const [qrBase64, setQrBase64] = useState(null);
 
-  const { submit, submitting, form } = useForm(async (values) => {
-    const { data: { openMfa, hasMfaSecret, roles } } = await dispatch(loginAction({ ...values }));
+  const onLoginSuccess = useCallback(async () => {
+    message.success('登录成功');
     global.ignoreAuthRedirection = true;
     global.ignoreGlobalWarning = true;
     try {
-      await Promise.all(getPreloader(dispatch, roles));
+      await Promise.all(getPreloader(dispatch));
     } catch (e) {
       console.error(e);
     }
     global.ignoreAuthRedirection = undefined;
     global.ignoreGlobalWarning = undefined;
+    dispatch(pushAction(PRODUCT));
+  }, [dispatch]);
+
+  const { submit, submitting, form } = useForm(async (values) => {
+    const { data: { openMfa, hasMfaSecret } } = await dispatch(loginAction({ ...values }));
     if (!openMfa) {
-      message.success('登录成功');
-      dispatch(pushAction(PRODUCT));
+      await onLoginSuccess();
     } else if (!hasMfaSecret) {
       setMfaSecretVisible(true);
       const imgSrc = await dispatch(readQRImage());
@@ -73,9 +77,7 @@ const result = () => {
         await dispatch(qrLogin(values));
         setLoading(false);
         setMfaVisible(false);
-        await Promise.all(getPreloader(dispatch));
-        message.success('登录成功');
-        dispatch(pushAction(PRODUCT));
+        await onLoginSuccess();
       } catch (err) {
         setLoading(false);
       }
