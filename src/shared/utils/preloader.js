@@ -10,7 +10,6 @@ import { readAll as readAllProductVersion } from 'shared/actions/product-version
 import { readAll as readAllRole } from 'shared/actions/role';
 import { readAll as readAllResource } from 'shared/actions/resource';
 import { readAllResourceType as readAllAuditResourceType } from 'shared/actions/audit';
-import { readAll as readAllSkillPermission } from 'shared/actions/skill-permission';
 
 export default (dispatch) => [
   dispatch(readAllProduct()),
@@ -23,7 +22,6 @@ export default (dispatch) => [
   dispatch(readAllSkillVersion()),
   dispatch(readAllProductVersion()),
   dispatch(readAllUser()),
-  dispatch(readAllSkillPermission()),
   dispatch(readAllRole()),
   dispatch(readAllResource()),
   dispatch(readAllAuditResourceType()),

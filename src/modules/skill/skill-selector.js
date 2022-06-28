@@ -1,10 +1,11 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
-import { flow, map, filter, propEq, orderBy, last, prop } from 'lodash/fp';
-import { getUniqSkillByCode } from 'shared/selectors';
+import { flow, map, filter, propEq, orderBy, last, prop, values } from 'lodash/fp';
+import { getSkillsWithCodeKey } from 'shared/selectors';
 
 export default (state) => ({
   skills: flow(
-    getUniqSkillByCode,
+    getSkillsWithCodeKey,
+    values,
     map((skill) => {
       const skillVersions = flow(
         getEntityArray('skillVersion'),

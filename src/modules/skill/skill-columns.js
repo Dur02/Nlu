@@ -74,7 +74,7 @@ export const getColumns = ({
               }
           </Menu>
           )}
-        placement="bottomCenter"
+        placement="bottom"
       >
         <Button type="primary" size="small" ghost>
           <Space>

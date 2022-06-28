@@ -8,6 +8,7 @@ export const ALL_USER = 'ALL_USER';
 export const CURRENT_USER = 'CURRENT_USER';
 export const ROLE = 'ROLE';
 export const RESOURCE = 'RESOURCE';
+export const SKILL_PERMISSION = 'SKILL_PERMISSION';
 
 export const AUDIT_LOG = 'AUDIT_LOG';
 
@@ -39,6 +40,10 @@ export const features = [{
     key: RESOURCE,
     link: 'resource',
     text: '权限',
+  }, {
+    key: SKILL_PERMISSION,
+    link: 'skill-permission',
+    text: '技能权限',
   }],
 }, {
   key: AUDIT_LOG,

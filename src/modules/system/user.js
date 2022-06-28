@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import Layout from 'shared/components/layout';
 import {
   Table,
@@ -14,7 +14,7 @@ import { create, update } from 'shared/actions/user';
 import { flow, prop, map, join } from 'lodash/fp';
 import { getBooleanText } from 'shared/constants/boolean';
 import { normalize, getValueFromEvent, getUserStatusText, ACTIVE, INACTIVE } from 'shared/constants/user-status';
-import { update as updateSkillPermission } from 'shared/actions/skill-permission';
+import { useAction } from 'relient/actions';
 
 import selector from './user-selector';
 
@@ -22,7 +22,6 @@ const result = () => {
   const {
     users,
     roleOptions,
-    skillOptions,
   } = useSelector(selector);
 
   const editorFields = [{
@@ -45,12 +44,6 @@ const result = () => {
     component: Select,
     mode: 'multiple',
     options: roleOptions,
-  }, {
-    label: '技能权限',
-    name: 'skillCodes',
-    component: Select,
-    mode: 'multiple',
-    options: skillOptions,
   }, {
     label: '状态',
     name: 'status',
@@ -87,23 +80,7 @@ const result = () => {
     component: Select,
     mode: 'multiple',
     options: roleOptions,
-  }, {
-    label: '技能权限',
-    name: 'skillCodes',
-    component: Select,
-    mode: 'multiple',
-    options: skillOptions,
   }];
-
-  const dispatch = useDispatch();
-  const onCreate = useCallback(async (values) => {
-    const { data: { id } } = await dispatch(create(values));
-    await dispatch(updateSkillPermission({ userId: id, skillCodes: values.skillCodes }));
-  }, [create, updateSkillPermission, dispatch]);
-  const onUpdate = useCallback(async (values) => {
-    await dispatch(update(values));
-    await dispatch(updateSkillPermission({ userId: values.id, skillCodes: values.skillCodes }));
-  }, [update, updateSkillPermission, dispatch]);
 
   const {
     tableHeader,
@@ -115,7 +92,11 @@ const result = () => {
       fields: [{
         dataKey: 'name',
         label: '名称',
+      }, {
+        dataKey: 'nickName',
+        label: '昵称',
       }],
+      fussy: true,
     },
     showReset: true,
     createButton: {
@@ -123,7 +104,7 @@ const result = () => {
     },
     creator: {
       title: '创建用户',
-      onSubmit: onCreate,
+      onSubmit: useAction(create),
       fields: creatorFields,
       initialValues: {
         openMfa: true,
@@ -133,7 +114,7 @@ const result = () => {
     },
     editor: {
       title: '编辑用户',
-      onSubmit: onUpdate,
+      onSubmit: useAction(update),
       fields: editorFields,
       component: Modal,
     },

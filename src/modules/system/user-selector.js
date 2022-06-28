@@ -1,6 +1,6 @@
 import { getEntityArray, getEntity } from 'relient/selectors';
 import { flow, map } from 'lodash/fp';
-import { getRoleOptions, getSkillOptions } from 'shared/selectors/index';
+import { getRoleOptions } from 'shared/selectors/index';
 
 export default (state) => ({
   users: flow(
@@ -12,5 +12,4 @@ export default (state) => ({
     })),
   )(state),
   roleOptions: getRoleOptions(state),
-  skillOptions: getSkillOptions(state),
 });

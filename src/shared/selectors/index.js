@@ -1,5 +1,5 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
-import { flow, prop, map, filter, propEq, reject, reduce, find, concat } from 'lodash/fp';
+import { flow, prop, map, filter, propEq, reject, reduce, values } from 'lodash/fp';
 
 export const getCurrentUser = (state) => flow(
   getEntity('user'),
@@ -24,22 +24,20 @@ export const getRoleOptions = (state) => flow(
   })),
 )(state);
 
-export const getUniqSkillByCode = (state) => flow(
+export const getSkillsWithCodeKey = (state) => flow(
   getEntityArray('skillVersion'),
   reduce((skills, skillVersion) => {
-    const skill = find(skillVersion.code)(skills);
+    const skill = prop(skillVersion.code)(skills);
     if (!skill || skillVersion.id > skill.id) {
-      return flow(
-        reject(propEq('code', skillVersion.code)),
-        concat(skillVersion),
-      )(skills);
+      return { [skillVersion.code]: skillVersion, ...skills };
     }
     return skills;
-  }, []),
+  }, {}),
 )(state);
 
 export const getSkillOptions = (state) => flow(
-  getUniqSkillByCode,
+  getSkillsWithCodeKey,
+  values,
   map(({ code, name }) => ({
     label: name,
     value: code,

@@ -51,6 +51,7 @@ const result = () => {
         dataKey: 'name',
         label: '名称',
       }],
+      fussy: true,
     },
     showReset: true,
     createButton: {
