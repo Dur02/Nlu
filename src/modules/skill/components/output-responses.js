@@ -25,7 +25,7 @@ const commandFirstOptions = [{
 }];
 
 const getDefaultConditionSize = flow(
-  filter(flow(prop('getIsDefault'), getIsDefault)),
+  filter(flow(prop('condition'), getIsDefault)),
   size,
 );
 
