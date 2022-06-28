@@ -36,10 +36,11 @@ export default async (req, res, next) => {
 
     const { dispatch } = store;
     const authorization = req.cookies[AUTHORIZATION];
+    let roles = [];
     if (authorization) {
       try {
         dispatch(setAuthorization(authorization));
-        await dispatch(readMine());
+        roles = (await dispatch(readMine())).data.roles;
       } catch (error) {
         console.error(error);
         dispatch(removeAuthorization());
@@ -56,7 +57,7 @@ export default async (req, res, next) => {
       if (isLogin) {
         preloader = [
           ...preloader,
-          ...getPreloader(dispatch),
+          ...getPreloader(dispatch, roles),
         ];
       }
       await Promise.all(preloader);
