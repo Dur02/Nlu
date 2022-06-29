@@ -49,8 +49,8 @@ const result = () => {
   }];
 
   const dispatch = useDispatch();
-  const onUpdate = useCallback(async (values) => {
-    await dispatch(updateSkillPermission({ userId: values.id, skillCodes: values.skillCodes }));
+  const onUpdate = useCallback(async ({ skillCodes }, _, { userId }) => {
+    await dispatch(updateSkillPermission({ userId, skillCodes }));
   }, [updateSkillPermission, dispatch]);
 
   const {
