@@ -1,26 +1,13 @@
 import React, { useCallback, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { array, func } from 'prop-types';
-import {
-  Table,
-  message,
-  Select,
-  Input,
-  Modal,
-  Form,
-  Button,
-  Tooltip,
-  Upload,
-} from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button, Form, Input, message, Modal, Select, Table, Tooltip, Upload } from 'antd';
 import { readAll } from 'shared/actions/skill';
 import { readAll as readAllBuiltinIntent } from 'shared/actions/builtin-intent';
 import { readAll as readAllIntent } from 'shared/actions/intent';
 import { readAll as readAllOutput } from 'shared/actions/output';
 import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
-import {
-  readAll as readAllSkillVersion,
-} from 'shared/actions/skill-version';
-import { find, propEq, flow, prop, map, slice, filter, head } from 'lodash/fp';
+import { readAll as readAllSkillVersion } from 'shared/actions/skill-version';
+import { filter, find, flow, head, map, prop, propEq, slice } from 'lodash/fp';
 import getConfig from 'relient/config';
 import { getWithBaseUrl } from 'relient/url';
 import { columns } from './skill-test-columns';
@@ -31,12 +18,10 @@ const { Option } = Select;
 
 const mapWithIndex = map.convert({ cap: false });
 
-const result = ({
-  getDataSource,
-  skills,
-}) => {
+const result = () => {
   const [uploadForm] = Form.useForm();
   const {
+    skills,
     token,
   } = useSelector(selector);
 
@@ -48,12 +33,8 @@ const result = ({
   const [uploadFlag, setUploadFlag] = useState(false);
   // upload的类型，当uploadFlag为true时，uploadType为true表示正式上传，为false表示测试
   const [isUpload, setIsUpload] = useState(true);
-  // 保存upload使用得action值
-  const [action, setAction] = useState('');
   // 输入框是否显示
   const [isInputShow, setIsInputShow] = useState(true);
-  // 保存render所需的skillVersion数组，直接用getFieldValue表单不会rerender
-  const [versionArray, setVersionArray] = useState([]);
 
   const openImportForm = useCallback(
     () => {
@@ -95,17 +76,13 @@ const result = ({
     (value) => {
       setUploadFlag(false);
       uploadForm.resetFields();
+      uploadForm.setFieldsValue({ skillCode: value });
       if (value !== '') {
-        // 防止用户改变skillCode后skillName还保留
-        uploadForm.setFieldsValue({ skillCode: value });
-        setVersionArray(
-          slice(1, 4)(prop('skillVersions')(head(filter(propEq('code', value))(getDataSource(skills))))),
-        );
         setIsInputShow(false);
       } else {
         setIsInputShow(true);
       }
-    }, [isInputShow, uploadFlag, versionArray],
+    }, [isInputShow, uploadFlag],
   );
 
   const onVersionChange = useCallback(
@@ -114,23 +91,18 @@ const result = ({
     }, [uploadFlag],
   );
 
-  const beforeUpload = useCallback(
-    () => {
-      const base = isUpload
-        ? '/skill/edit/skill/excel-import/v2?skillName='
-        : '/skill/edit/skill/excel-import/test/v2?skillName=';
-      const skillName = uploadForm.getFieldValue('skillName');
-      const skillCode = uploadForm.getFieldValue('skillCode');
-      const skillVersion = uploadForm.getFieldValue('skillVersion');
-      const temp = find((o) => o.code === skillCode)(getDataSource(skills));
-      if (isInputShow) {
-        setAction(`${base}${skillName}`);
-      } else {
-        setAction(`${base}${temp.name}&skillCode=${skillCode}&skillVersion=${skillVersion}`);
-      }
-      return true;
-    }, [action, isInputShow, isUpload, versionArray],
-  );
+  const beforeUpload = () => {
+    const base = isUpload
+      ? `/skill/edit/skill/excel-import/v2?skillName=${isInputShow
+        ? `${uploadForm.getFieldValue('skillName')}`
+        : `${prop('name')(find((o) => o.code === uploadForm.getFieldValue('skillCode'))(skills))}&skillCode=${
+          uploadForm.getFieldValue('skillCode')}&skillVersion=${uploadForm.getFieldValue('skillVersion')}`}`
+      : `/skill/edit/skill/excel-import/test/v2?skillName=${isInputShow
+        ? `${uploadForm.getFieldValue('skillName')}`
+        : `${prop('name')(find((o) => o.code === uploadForm.getFieldValue('skillCode'))(skills))}&skillCode=${
+          uploadForm.getFieldValue('skillCode')}&skillVersion=${uploadForm.getFieldValue('skillVersion')}`}`;
+    return base;
+  };
 
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState([]);
@@ -159,7 +131,6 @@ const result = ({
       uploadForm.resetFields();
       setVisible(false);
       setIsInputShow(true);
-      setVersionArray([]);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
       setUploadFlag(false);
@@ -167,9 +138,8 @@ const result = ({
       uploadForm.resetFields();
       setVisible(false);
       setIsInputShow(true);
-      setVersionArray([]);
     }
-  }, [isUpload, uploadFlag, uploading, visible, isInputShow, versionArray]);
+  }, [isUpload, uploadFlag, uploading, visible, isInputShow]);
 
   const closeErrorInfo = useCallback(
     () => {
@@ -234,6 +204,7 @@ const result = ({
         footer={null}
         onCancel={closeForm}
         visible={visible}
+        destroyOnClose
       >
         <Form
           form={uploadForm}
@@ -285,7 +256,7 @@ const result = ({
                       {item.name}
                     </b>
                   </Option>
-                ))(getDataSource(skills))
+                ))(skills)
               }
             </Select>
           </Form.Item>
@@ -305,7 +276,7 @@ const result = ({
                       <Option style={{ position: 'relative' }} value={item.version} key={item.id}>
                         {item.version}
                       </Option>
-                    ))(slice(1, 4)(prop('skillVersions')(head(filter(propEq('code', uploadForm.getFieldValue('skillCode')))(getDataSource(skills))))))
+                    ))(slice(1, 4)(prop('skillVersions')(head(filter(propEq('code', uploadForm.getFieldValue('skillCode')))(skills)))))
                   }
                 </Select>
               </Form.Item>
@@ -316,11 +287,10 @@ const result = ({
           >
             <Upload
               name="file"
-              action={action}
               onChange={onUpload}
               showUploadList={false}
+              action={beforeUpload}
               headers={{ token }}
-              beforeUpload={beforeUpload}
             >
               <Button
                 icon={<UploadOutlined />}
@@ -339,6 +309,7 @@ const result = ({
         onCancel={closeErrorInfo}
         title="错误提示"
         width={1000}
+        destroyOnClose
       >
         <Table
           columns={columns}
@@ -352,8 +323,6 @@ const result = ({
 result.displayName = __filename;
 
 result.propTypes = {
-  getDataSource: func.isRequired,
-  skills: array.isRequired,
 };
 
 export default result;
