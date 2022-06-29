@@ -37,8 +37,6 @@ const result = () => {
 
   // modal是否可见
   const [visible, setVisible] = useState(false);
-  // upload是否可用,false不可用，true表示可用
-  const [uploadFlag, setUploadFlag] = useState(false);
   // upload的类型，当uploadFlag为true时，uploadType为true表示正式上传，为false表示测试
   const [isUpload, setIsUpload] = useState(true);
 
@@ -55,46 +53,20 @@ const result = () => {
     [visible, setVisible, isUpload, setIsUpload],
   );
 
-  const openTestForm = useCallback(
-    () => {
-      setVisible(true);
-      setIsUpload(false);
-    },
-    [visible, isUpload],
-  );
+  const openTestForm = useCallback(() => {
+    setVisible(true);
+    setIsUpload(false);
+  }, [setVisible, setIsUpload]);
 
-  const closeForm = useCallback(
-    () => {
-      setVisible(false);
-      setUploadFlag(false);
-      form.resetFields();
-    },
-    [visible, uploadFlag],
-  );
+  const closeForm = useCallback(() => {
+    setVisible(false);
+    form.resetFields();
+  }, [setVisible, form]);
 
-  const onNameChange = useCallback(
-    (value) => {
-      if (value.target.value !== '') {
-        setUploadFlag(true);
-      } else if (value.target.value === '') {
-        setUploadFlag(false);
-      }
-    }, [uploadFlag],
-  );
-
-  const onCodeChange = useCallback(
-    (value) => {
-      setUploadFlag(false);
-      form.resetFields();
-      form.setFieldsValue({ skillCode: value });
-    }, [uploadFlag],
-  );
-
-  const onVersionChange = useCallback(
-    () => {
-      setUploadFlag(true);
-    }, [uploadFlag],
-  );
+  const onCodeChange = useCallback((value) => {
+    form.resetFields();
+    form.setFieldsValue({ skillCode: value });
+  }, [form]);
 
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState([]);
@@ -118,18 +90,16 @@ const result = () => {
       } else {
         message.error(response.msg);
       }
-      setUploadFlag(false);
       setUploading(false);
       form.resetFields();
       setVisible(false);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
-      setUploadFlag(false);
       setUploading(false);
       form.resetFields();
       setVisible(false);
     }
-  }, [isUpload, uploadFlag, uploading, visible]);
+  }, [isUpload, uploading, visible]);
 
   const closeErrorInfo = useCallback(() => setError([]), [setError]);
 
@@ -210,7 +180,6 @@ const result = () => {
             >
               <Input
                 placeholder="请输入技能名"
-                onChange={onNameChange}
                 allowClear
               />
             </Form.Item>
@@ -245,9 +214,7 @@ const result = () => {
               name="skillVersion"
               rules={[{ required: true }]}
             >
-              <Select
-                onChange={onVersionChange}
-              >
+              <Select>
                 {
                   map((item) => (
                     <Option style={{ position: 'relative' }} value={item.version} key={item.id}>
