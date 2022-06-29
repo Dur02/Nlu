@@ -7,21 +7,29 @@ import { readAll as readAllIntent } from 'shared/actions/intent';
 import { readAll as readAllOutput } from 'shared/actions/output';
 import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import { readAll as readAllSkillVersion } from 'shared/actions/skill-version';
-import { filter, find, flow, head, map, prop, propEq, slice } from 'lodash/fp';
+import { filter, flow, head, map, prop, propEq, slice } from 'lodash/fp';
 import getConfig from 'relient/config';
 import { getWithBaseUrl } from 'relient/url';
 import { columns } from './skill-test-columns';
 
-import selector from '../skill-selector';
+import selector from './skill-import-selector';
 
 const { Option } = Select;
+const { useForm, useWatch } = Form;
 
 const mapWithIndex = map.convert({ cap: false });
 
+const getAction = ({
+  isTesting,
+  skillName,
+  skillCode,
+  skillVersion,
+}) => `/skill/edit/skill/excel-import/${isTesting ? 'test' : ''}/v2?skillName=${skillName}&skillCode=${skillCode}&skillVersion=${skillVersion}`;
+
 const result = () => {
-  const [uploadForm] = Form.useForm();
   const {
     skills,
+    skillsWithCodeKey,
     token,
   } = useSelector(selector);
 
@@ -33,8 +41,11 @@ const result = () => {
   const [uploadFlag, setUploadFlag] = useState(false);
   // upload的类型，当uploadFlag为true时，uploadType为true表示正式上传，为false表示测试
   const [isUpload, setIsUpload] = useState(true);
-  // 输入框是否显示
-  const [isInputShow, setIsInputShow] = useState(true);
+
+  const [form] = useForm();
+  const skillName = useWatch('skillName', form);
+  const skillCode = useWatch('skillCode', form);
+  const defaultSkillName = prop([skillCode, 'name'])(skillsWithCodeKey);
 
   const openImportForm = useCallback(
     () => {
@@ -56,10 +67,9 @@ const result = () => {
     () => {
       setVisible(false);
       setUploadFlag(false);
-      uploadForm.resetFields();
-      setIsInputShow(true);
+      form.resetFields();
     },
-    [visible, uploadFlag, isInputShow],
+    [visible, uploadFlag],
   );
 
   const onNameChange = useCallback(
@@ -75,14 +85,9 @@ const result = () => {
   const onCodeChange = useCallback(
     (value) => {
       setUploadFlag(false);
-      uploadForm.resetFields();
-      uploadForm.setFieldsValue({ skillCode: value });
-      if (value !== '') {
-        setIsInputShow(false);
-      } else {
-        setIsInputShow(true);
-      }
-    }, [isInputShow, uploadFlag],
+      form.resetFields();
+      form.setFieldsValue({ skillCode: value });
+    }, [uploadFlag],
   );
 
   const onVersionChange = useCallback(
@@ -90,16 +95,6 @@ const result = () => {
       setUploadFlag(true);
     }, [uploadFlag],
   );
-
-  const beforeUpload = () => (isUpload
-    ? `/skill/edit/skill/excel-import/v2?skillName=${isInputShow
-      ? `${uploadForm.getFieldValue('skillName')}`
-      : `${prop('name')(find((o) => o.code === uploadForm.getFieldValue('skillCode'))(skills))}&skillCode=${
-        uploadForm.getFieldValue('skillCode')}&skillVersion=${uploadForm.getFieldValue('skillVersion')}`}`
-    : `/skill/edit/skill/excel-import/test/v2?skillName=${isInputShow
-      ? `${uploadForm.getFieldValue('skillName')}`
-      : `${prop('name')(find((o) => o.code === uploadForm.getFieldValue('skillCode'))(skills))}&skillCode=${
-        uploadForm.getFieldValue('skillCode')}&skillVersion=${uploadForm.getFieldValue('skillVersion')}`}`);
 
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState([]);
@@ -125,25 +120,18 @@ const result = () => {
       }
       setUploadFlag(false);
       setUploading(false);
-      uploadForm.resetFields();
+      form.resetFields();
       setVisible(false);
-      setIsInputShow(true);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
       setUploadFlag(false);
       setUploading(false);
-      uploadForm.resetFields();
+      form.resetFields();
       setVisible(false);
-      setIsInputShow(true);
     }
-  }, [isUpload, uploadFlag, uploading, visible, isInputShow]);
+  }, [isUpload, uploadFlag, uploading, visible]);
 
-  const closeErrorInfo = useCallback(
-    () => {
-      setError([]);
-    },
-    [setError],
-  );
+  const closeErrorInfo = useCallback(() => setError([]), [setError]);
 
   return (
     <>
@@ -201,10 +189,9 @@ const result = () => {
         footer={null}
         onCancel={closeForm}
         visible={visible}
-        destroyOnClose
       >
         <Form
-          form={uploadForm}
+          form={form}
           autoComplete="off"
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 16 }}
@@ -215,22 +202,19 @@ const result = () => {
             marginTop: '40px',
           }}
         >
-          {
-            isInputShow
-            && (
-              <Form.Item
-                label="技能名"
-                name="skillName"
-                rules={[{ required: true }]}
-              >
-                <Input
-                  placeholder="请输入技能名"
-                  onChange={onNameChange}
-                  allowClear
-                />
-              </Form.Item>
-            )
-          }
+          {!skillCode && (
+            <Form.Item
+              label="技能名"
+              name="skillName"
+              rules={[{ required: true }]}
+            >
+              <Input
+                placeholder="请输入技能名"
+                onChange={onNameChange}
+                allowClear
+              />
+            </Form.Item>
+          )}
           <Form.Item
             label="技能代号"
             name="skillCode"
@@ -239,60 +223,61 @@ const result = () => {
               onChange={onCodeChange}
             >
               <Option value=""><b>无</b></Option>
-              {
-                map((item) => (
-                  <Option style={{ position: 'relative' }} value={item.code} key={item.id}>
-                    <b
-                      style={{
-                        width: '55%',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis',
-                      }}
-                    >
-                      {item.name}
-                    </b>
-                  </Option>
-                ))(skills)
-              }
+              {map(({ code, id, name }) => (
+                <Option style={{ position: 'relative' }} value={code} key={id}>
+                  <b
+                    style={{
+                      width: '55%',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {name}
+                  </b>
+                </Option>
+              ))(skills)}
             </Select>
           </Form.Item>
-          {
-            !isInputShow
-            && (
-              <Form.Item
-                label="技能版本"
-                name="skillVersion"
-                rules={[{ required: true }]}
+          {skillCode && (
+            <Form.Item
+              label="技能版本"
+              name="skillVersion"
+              rules={[{ required: true }]}
+            >
+              <Select
+                onChange={onVersionChange}
               >
-                <Select
-                  onChange={onVersionChange}
-                >
-                  {
-                    map((item) => (
-                      <Option style={{ position: 'relative' }} value={item.version} key={item.id}>
-                        {item.version}
-                      </Option>
-                    ))(slice(1, 4)(prop('skillVersions')(head(filter(propEq('code', uploadForm.getFieldValue('skillCode')))(skills)))))
-                  }
-                </Select>
-              </Form.Item>
-            )
-          }
+                {
+                  map((item) => (
+                    <Option style={{ position: 'relative' }} value={item.version} key={item.id}>
+                      {item.version}
+                    </Option>
+                  ))(slice(1, 4)(prop('skillVersions')(head(filter(propEq('code', form.getFieldValue('skillCode')))(skills)))))
+                }
+              </Select>
+            </Form.Item>
+          )}
           <Form.Item
             label="选择文件"
+            shouldUpdate={(prevValue, curValue) => prevValue.skillVersion !== curValue.skillVersion}
           >
             <Upload
               name="file"
               onChange={onUpload}
               showUploadList={false}
-              action={beforeUpload}
+              action={getAction({
+                isTesting: !isUpload,
+                skillName: skillName || defaultSkillName,
+                skillCode,
+                skillVersion: form.getFieldValue('skillVersion'),
+              })}
               headers={{ token }}
             >
               <Button
                 icon={<UploadOutlined />}
                 loading={uploading}
-                disabled={!uploadFlag}
+                disabled={!skillCode && !skillName}
               >
                 {isUpload ? '上传' : '测试'}
               </Button>
@@ -306,7 +291,6 @@ const result = () => {
         onCancel={closeErrorInfo}
         title="错误提示"
         width={1000}
-        destroyOnClose
       >
         <Table
           columns={columns}
@@ -319,7 +303,6 @@ const result = () => {
 
 result.displayName = __filename;
 
-result.propTypes = {
-};
+result.propTypes = {};
 
 export default result;
