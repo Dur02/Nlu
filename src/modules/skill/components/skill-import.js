@@ -91,18 +91,15 @@ const result = () => {
     }, [uploadFlag],
   );
 
-  const beforeUpload = () => {
-    const base = isUpload
-      ? `/skill/edit/skill/excel-import/v2?skillName=${isInputShow
-        ? `${uploadForm.getFieldValue('skillName')}`
-        : `${prop('name')(find((o) => o.code === uploadForm.getFieldValue('skillCode'))(skills))}&skillCode=${
-          uploadForm.getFieldValue('skillCode')}&skillVersion=${uploadForm.getFieldValue('skillVersion')}`}`
-      : `/skill/edit/skill/excel-import/test/v2?skillName=${isInputShow
-        ? `${uploadForm.getFieldValue('skillName')}`
-        : `${prop('name')(find((o) => o.code === uploadForm.getFieldValue('skillCode'))(skills))}&skillCode=${
-          uploadForm.getFieldValue('skillCode')}&skillVersion=${uploadForm.getFieldValue('skillVersion')}`}`;
-    return base;
-  };
+  const beforeUpload = () => (isUpload
+    ? `/skill/edit/skill/excel-import/v2?skillName=${isInputShow
+      ? `${uploadForm.getFieldValue('skillName')}`
+      : `${prop('name')(find((o) => o.code === uploadForm.getFieldValue('skillCode'))(skills))}&skillCode=${
+        uploadForm.getFieldValue('skillCode')}&skillVersion=${uploadForm.getFieldValue('skillVersion')}`}`
+    : `/skill/edit/skill/excel-import/test/v2?skillName=${isInputShow
+      ? `${uploadForm.getFieldValue('skillName')}`
+      : `${prop('name')(find((o) => o.code === uploadForm.getFieldValue('skillCode'))(skills))}&skillCode=${
+        uploadForm.getFieldValue('skillCode')}&skillVersion=${uploadForm.getFieldValue('skillVersion')}`}`);
 
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState([]);
