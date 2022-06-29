@@ -21,11 +21,20 @@ const middlewares = [
     fetch,
     apiDomain: `${global.location.origin}`,
     onUnauthorized: ({ dispatch }) => {
-      message.error('权限错误，请重新登陆适当账号', 5);
+      message.error({
+        key: '权限错误，请重新登陆适当账号',
+        content: '权限错误，请重新登陆适当账号',
+        duration: 5,
+      });
       dispatch(push(getWithBaseUrl('/auth/login', getConfig('baseUrl'))));
     },
     onGlobalWarning: async ({ payload }) => {
-      message.error(prop('msg')(payload), 5);
+      const content = prop('msg')(payload);
+      message.error({
+        content,
+        key: content,
+        duration: 5,
+      });
     },
   }),
   authorization,

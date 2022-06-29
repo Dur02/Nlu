@@ -1,6 +1,11 @@
 import React from 'react';
 import { ALL_USER, ROLE, RESOURCE, CURRENT_USER, SKILL_PERMISSION } from 'shared/constants/features';
 import { readAll as readAllSkillPermission } from 'shared/actions/skill-permission';
+import { readAll as readAllUser } from 'shared/actions/user';
+import { readAll as readAllRole } from 'shared/actions/role';
+import { readAll as readAllResource } from 'shared/actions/resource';
+import { readAll as readAllSkillVersion } from 'shared/actions/skill-version';
+
 import User from './user';
 import Role from './role';
 import Resource from './resource';
@@ -10,15 +15,45 @@ import SkillPermission from './skill-permission';
 export default () => [{
   path: '/all',
   feature: ALL_USER,
-  component: <User />,
+  action: async ({ store: { dispatch } }) => {
+    try {
+      await dispatch(readAllUser());
+    } catch (e) {
+      // ignore
+    }
+    return {
+      component: <User />,
+    };
+  },
 }, {
   path: '/role',
   feature: ROLE,
-  component: <Role />,
+  action: async ({ store: { dispatch } }) => {
+    try {
+      await Promise.all([
+        dispatch(readAllRole()),
+        dispatch(readAllResource()),
+      ]);
+    } catch (e) {
+      // ignore
+    }
+    return {
+      component: <Role />,
+    };
+  },
 }, {
   path: '/resource',
   feature: RESOURCE,
-  component: <Resource />,
+  action: async ({ store: { dispatch } }) => {
+    try {
+      await dispatch(readAllResource());
+    } catch (e) {
+      // ignore
+    }
+    return {
+      component: <Resource />,
+    };
+  },
 }, {
   path: '/current',
   feature: CURRENT_USER,
@@ -28,7 +63,10 @@ export default () => [{
   feature: SKILL_PERMISSION,
   action: async ({ store: { dispatch } }) => {
     try {
-      await dispatch(readAllSkillPermission());
+      await Promise.all([
+        dispatch(readAllSkillVersion()),
+        dispatch(readAllSkillPermission()),
+      ]);
     } catch (e) {
       // ignore
     }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AUDIT_LOG } from 'shared/constants/features';
 import { map, prop } from 'lodash/fp';
-import { readAll } from 'shared/actions/audit';
+import { readAll, readAllResourceType as readAllAuditResourceType } from 'shared/actions/audit';
 import Log from './log';
 
 export default () => [{
@@ -9,6 +9,7 @@ export default () => [{
   feature: AUDIT_LOG,
   action: async ({ store: { dispatch } }) => {
     try {
+      await dispatch(readAllAuditResourceType());
       const {
         data: {
           data,
