@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Form, Input, message, Modal, Select, Table, Tooltip, Upload } from 'antd';
-import { readAll } from 'shared/actions/skill';
 import { readAll as readAllBuiltinIntent } from 'shared/actions/builtin-intent';
 import { readAll as readAllIntent } from 'shared/actions/intent';
 import { readAll as readAllOutput } from 'shared/actions/output';
@@ -35,10 +34,8 @@ const result = () => {
 
   const dispatch = useDispatch();
 
-  // modal是否可见
   const [visible, setVisible] = useState(false);
-  // upload的类型，当uploadFlag为true时，uploadType为true表示正式上传，为false表示测试
-  const [isUpload, setIsUpload] = useState(true);
+  const [isTesting, setIsTesting] = useState(false);
 
   const [form] = useForm();
   const skillName = useWatch('skillName', form);
@@ -48,25 +45,20 @@ const result = () => {
   const openImportForm = useCallback(
     () => {
       setVisible(true);
-      setIsUpload(true);
+      setIsTesting(false);
     },
-    [visible, setVisible, isUpload, setIsUpload],
+    [setVisible, setIsTesting],
   );
 
   const openTestForm = useCallback(() => {
     setVisible(true);
-    setIsUpload(false);
-  }, [setVisible, setIsUpload]);
+    setIsTesting(true);
+  }, [setVisible, setIsTesting]);
 
   const closeForm = useCallback(() => {
     setVisible(false);
     form.resetFields();
   }, [setVisible, form]);
-
-  const onCodeChange = useCallback((value) => {
-    form.resetFields();
-    form.setFieldsValue({ skillCode: value });
-  }, [form]);
 
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState([]);
@@ -75,9 +67,8 @@ const result = () => {
     if (status === 'done') {
       if (response.code === 'SUCCESS') {
         message.success('检查完成，测试文件格式正确');
-        if (isUpload) {
+        if (!isTesting) {
           await Promise.all([
-            dispatch(readAll()),
             dispatch(readAllBuiltinIntent()),
             dispatch(readAllIntent()),
             dispatch(readAllOutput()),
@@ -99,7 +90,7 @@ const result = () => {
       form.resetFields();
       setVisible(false);
     }
-  }, [isUpload, uploading, visible]);
+  }, [isTesting, setUploading, setVisible, form, dispatch]);
 
   const closeErrorInfo = useCallback(() => setError([]), [setError]);
 
@@ -188,9 +179,7 @@ const result = () => {
             label="技能代号"
             name="skillCode"
           >
-            <Select
-              onChange={onCodeChange}
-            >
+            <Select>
               <Option value=""><b>无</b></Option>
               {map(({ code, id, name }) => (
                 <Option style={{ position: 'relative' }} value={code} key={id}>
@@ -234,7 +223,7 @@ const result = () => {
               onChange={onUpload}
               showUploadList={false}
               action={getAction({
-                isTesting: !isUpload,
+                isTesting,
                 skillName: skillName || defaultSkillName,
                 skillCode,
                 skillVersion: form.getFieldValue('skillVersion'),
@@ -246,7 +235,7 @@ const result = () => {
                 loading={uploading}
                 disabled={!skillCode && !skillName}
               >
-                {isUpload ? '上传' : '测试'}
+                {isTesting ? '测试' : '上传'}
               </Button>
             </Upload>
           </Form.Item>
