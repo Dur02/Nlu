@@ -29,7 +29,7 @@ export const getSkillsWithCodeKey = (state) => flow(
   reduce((skills, skillVersion) => {
     const skill = prop(skillVersion.code)(skills);
     if (!skill || skillVersion.id > skill.id) {
-      return { [skillVersion.code]: skillVersion, ...skills };
+      return { ...skills, [skillVersion.code]: skillVersion };
     }
     return skills;
   }, {}),
