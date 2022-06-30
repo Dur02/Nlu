@@ -14,7 +14,7 @@ import { columns } from './skill-test-columns';
 import selector from './skill-import-selector';
 
 const { Option } = Select;
-const { useForm, useWatch } = Form;
+const { useForm, useWatch, Item } = Form;
 
 const mapWithIndex = map.convert({ cap: false });
 
@@ -42,28 +42,25 @@ const result = () => {
   const skillCode = useWatch('skillCode', form);
   const defaultSkillName = prop([skillCode, 'name'])(skillsWithCodeKey);
 
-  const openImportForm = useCallback(
-    () => {
-      setVisible(true);
-      setIsTesting(false);
-    },
-    [setVisible, setIsTesting],
-  );
+  const openImportModal = useCallback(() => {
+    setVisible(true);
+    setIsTesting(false);
+  }, [setVisible, setIsTesting]);
 
-  const openTestForm = useCallback(() => {
+  const openTestModal = useCallback(() => {
     setVisible(true);
     setIsTesting(true);
   }, [setVisible, setIsTesting]);
 
-  const closeForm = useCallback(() => {
+  const closeModal = useCallback(() => {
     setVisible(false);
     form.resetFields();
   }, [setVisible, form]);
 
-  const [uploading, setUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState([]);
   const onUpload = useCallback(async ({ file: { status, response } }) => {
-    setUploading(true);
+    setIsUploading(true);
     if (status === 'done') {
       if (response.code === 'SUCCESS') {
         message.success('检查完成，测试文件格式正确');
@@ -81,26 +78,30 @@ const result = () => {
       } else {
         message.error(response.msg);
       }
-      setUploading(false);
+      setIsUploading(false);
       form.resetFields();
       setVisible(false);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
-      setUploading(false);
+      setIsUploading(false);
       form.resetFields();
       setVisible(false);
     }
-  }, [isTesting, setUploading, setVisible, form, dispatch]);
+  }, [isTesting, setIsUploading, setVisible, form, dispatch]);
 
   const closeErrorInfo = useCallback(() => setError([]), [setError]);
+
+  const onSkillCodeChange = useCallback(() => {
+    form.resetFields(['skillVersion']);
+  }, [form]);
 
   return (
     <>
       <Button
         icon={<UploadOutlined />}
         type="primary"
-        loading={uploading}
-        onClick={openImportForm}
+        loading={isUploading}
+        onClick={openImportModal}
         size="large"
         style={{
           position: 'absolute',
@@ -112,8 +113,8 @@ const result = () => {
       </Button>
       <Button
         icon={<UploadOutlined />}
-        loading={uploading}
-        onClick={openTestForm}
+        loading={isUploading}
+        onClick={openTestModal}
         size="large"
         type="primary"
         ghost
@@ -148,7 +149,7 @@ const result = () => {
       </a>
       <Modal
         footer={null}
-        onCancel={closeForm}
+        onCancel={closeModal}
         visible={visible}
       >
         <Form
@@ -164,7 +165,7 @@ const result = () => {
           }}
         >
           {!skillCode && (
-            <Form.Item
+            <Item
               label="技能名"
               name="skillName"
               rules={[{ required: true }]}
@@ -173,13 +174,13 @@ const result = () => {
                 placeholder="请输入技能名"
                 allowClear
               />
-            </Form.Item>
+            </Item>
           )}
-          <Form.Item
+          <Item
             label="技能代号"
             name="skillCode"
           >
-            <Select>
+            <Select onChange={onSkillCodeChange}>
               <Option value=""><b>无</b></Option>
               {map(({ code, id, name }) => (
                 <Option style={{ position: 'relative' }} value={code} key={id}>
@@ -196,49 +197,55 @@ const result = () => {
                 </Option>
               ))(skills)}
             </Select>
-          </Form.Item>
+          </Item>
           {skillCode && (
-            <Form.Item
+            <Item
               label="技能版本"
               name="skillVersion"
               rules={[{ required: true }]}
             >
               <Select>
-                {
-                  map((item) => (
-                    <Option style={{ position: 'relative' }} value={item.version} key={item.id}>
-                      {item.version}
+                {flow(
+                  filter(propEq('code', skillCode)),
+                  head,
+                  prop('skillVersions'),
+                  slice(1, 4),
+                  map(({ version, id }) => (
+                    <Option style={{ position: 'relative' }} value={version} key={id}>
+                      {version}
                     </Option>
-                  ))(slice(1, 4)(prop('skillVersions')(head(filter(propEq('code', form.getFieldValue('skillCode')))(skills)))))
-                }
+                  )),
+                )(skills)}
               </Select>
-            </Form.Item>
+            </Item>
           )}
-          <Form.Item
+          <Item
             label="选择文件"
             shouldUpdate={(prevValue, curValue) => prevValue.skillVersion !== curValue.skillVersion}
           >
-            <Upload
-              name="file"
-              onChange={onUpload}
-              showUploadList={false}
-              action={getAction({
-                isTesting,
-                skillName: skillName || defaultSkillName,
-                skillCode,
-                skillVersion: form.getFieldValue('skillVersion'),
-              })}
-              headers={{ token }}
-            >
-              <Button
-                icon={<UploadOutlined />}
-                loading={uploading}
-                disabled={!skillCode && !skillName}
+            {({ getFieldValue }) => (
+              <Upload
+                name="file"
+                onChange={onUpload}
+                showUploadList={false}
+                action={getAction({
+                  isTesting,
+                  skillName: skillName || defaultSkillName,
+                  skillCode,
+                  skillVersion: getFieldValue('skillVersion'),
+                })}
+                headers={{ token }}
               >
-                {isTesting ? '测试' : '上传'}
-              </Button>
-            </Upload>
-          </Form.Item>
+                <Button
+                  icon={<UploadOutlined />}
+                  loading={isUploading}
+                  disabled={!getFieldValue('skillVersion') && !skillName}
+                >
+                  {isTesting ? '测试' : '上传'}
+                </Button>
+              </Upload>
+            )}
+          </Item>
         </Form>
       </Modal>
       <Modal

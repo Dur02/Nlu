@@ -17,7 +17,10 @@ export default () => [{
   feature: ALL_USER,
   action: async ({ store: { dispatch } }) => {
     try {
-      await dispatch(readAllUser());
+      await Promise.all([
+        dispatch(readAllRole()),
+        dispatch(readAllUser()),
+      ]);
     } catch (e) {
       // ignore
     }
