@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import { Select, Checkbox } from 'antd';
 import { array, bool, func, string } from 'prop-types';
 import { map } from 'lodash/fp';
@@ -18,17 +18,11 @@ const result = ({
   intents,
   cId,
 }) => {
-  const [intentsVisible, setIntentsVisible] = useState();
-  useEffect(() => {
-    setIntentsVisible((next && next.length > 0) || nextAny);
-  }, [setIntentsVisible, cId]);
   const onSelectChange = useCallback(async (value) => {
     if (value === 'end') {
       await onUpdateResponse({ cId, next: [], nextAny: false });
-      setIntentsVisible(false);
     } else {
       await onUpdateResponse({ cId, nextAny: true, next: [] });
-      setIntentsVisible(true);
     }
   }, [onUpdateResponse, cId]);
   const onNextChange = useCallback(async (selectedIntentNames) => {
@@ -55,7 +49,7 @@ const result = ({
           value={nextAny === true || (next && next.length > 0) ? 'intents' : 'end'}
         />
       </div>
-      {intentsVisible && (
+      {((next && next.length > 0) || nextAny) && (
         <div style={{ marginTop: 10 }}>
           <Checkbox checked={nextAny} onChange={onNextAnyChange}>任意意图</Checkbox>
           <Checkbox.Group
