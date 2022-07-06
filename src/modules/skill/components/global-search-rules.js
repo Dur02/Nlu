@@ -59,7 +59,9 @@ const result = ({
     { title: '所属意图',
       render: (record) => (
         <>
-          <Button
+          {/* eslint-disable-next-line max-len */}
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid,jsx-a11y/no-static-element-interactions */}
+          <a
             type="primary"
             size="small"
             onClick={
@@ -70,7 +72,7 @@ const result = ({
             }
           >
             {record.name}
-          </Button>
+          </a>
         </>
       ),
     },

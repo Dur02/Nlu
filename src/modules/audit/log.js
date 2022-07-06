@@ -141,6 +141,7 @@ const result = ({
       return (
         <Table
           dataSource={record.contentDiffVos}
+          tableLayout="fixed"
           columns={expandedColumns}
           rowKey="id"
           pagination={false}
@@ -154,6 +155,7 @@ const result = ({
     <Layout>
       {tableHeader}
       <Table
+        tableLayout="fixed"
         dataSource={data}
         columns={columns}
         rowKey="id"

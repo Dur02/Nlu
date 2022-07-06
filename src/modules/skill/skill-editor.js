@@ -32,7 +32,7 @@ import Output from './components/output';
 import selector from './skill-editor-selector';
 import s from './skill-editor.less';
 import WordGraph from '../../shared/components/word-graph';
-import GlobalSearchRules from './components/globalSearchRules';
+import GlobalSearchRules from './components/global-search-rules';
 
 const { TabPane } = Tabs;
 const { Search } = Input;
@@ -182,6 +182,7 @@ const result = ({ skillId }) => {
         title="词图"
         width={800}
         footer={null}
+        centered="true"
       >
         <WordGraph skillCode={skill.code} />
       </Modal>
@@ -192,6 +193,7 @@ const result = ({ skillId }) => {
         width={900}
         footer={null}
         destroyOnClose="true"
+        centered="true"
       >
         <GlobalSearchRules
           onChangeIntentId={onChangeIntentId}
