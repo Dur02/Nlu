@@ -11,6 +11,7 @@ import { map } from 'lodash/fp';
 import { time } from 'relient/formatters';
 import { useSelector } from 'react-redux';
 import { getAuditResourceTypeOptions } from 'shared/selectors';
+import moment from 'moment';
 
 const getDataSource = (state) => map((id) => getEntity(`auditLog.${id}`)(state));
 
@@ -44,6 +45,8 @@ const result = ({
         data: response,
       } = await readAllAuditLog({
         ...values,
+        createTimeAfter: moment(new Date(values.createTimeAfter)).startOf('day').toISOString(),
+        createTimeBefore: moment(new Date(values.createTimeBefore)).endOf('day').toISOString(),
         page: values.page + 1,
       });
       return {
