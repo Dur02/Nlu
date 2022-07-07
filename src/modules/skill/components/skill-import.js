@@ -209,7 +209,8 @@ const result = () => {
                   filter(propEq('code', skillCode)),
                   head,
                   prop('skillVersions'),
-                  slice(1, 4),
+                  filter((item) => (item.pubState)),
+                  slice(0, 3),
                   map(({ version, id }) => (
                     <Option style={{ position: 'relative' }} value={version} key={id}>
                       {version}
