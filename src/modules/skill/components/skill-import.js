@@ -23,7 +23,7 @@ const getAction = ({
   skillName,
   skillCode,
   skillVersion,
-}) => `/skill/edit/skill/excel-import/${isTesting ? 'test' : ''}/v2?skillName=${skillName}&skillCode=${skillCode}&skillVersion=${skillVersion}`;
+}) => `/skill/edit/skill/excel-import${isTesting ? '/test' : ''}/v2?skillName=${skillName}&skillCode=${skillCode}&skillVersion=${skillVersion}`;
 
 const result = () => {
   const {
