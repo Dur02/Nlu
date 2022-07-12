@@ -1,5 +1,16 @@
 import { getEntity, getEntityArray } from 'relient/selectors';
-import { flow, prop, map, filter, propEq, reject, reduce, values, includes } from 'lodash/fp';
+import {
+  flow,
+  prop,
+  map,
+  filter,
+  propEq,
+  reject,
+  reduce,
+  values,
+  includes,
+  orderBy, last,
+} from 'lodash/fp';
 
 export const getCurrentUser = (state) => flow(
   getEntity('user'),
@@ -90,4 +101,25 @@ export const getResources = (state, father = 0) => {
     }))(resources);
   }
   return undefined;
+};
+
+export const getSkillsWithVersions = (state) => {
+  const skills = flow(
+    getSkillsWithCodeKey,
+    values,
+    map((skill) => {
+      const skillVersions = flow(
+        getEntityArray('skillVersion'),
+        filter(propEq('code', skill.code)),
+        orderBy(['id'], ['desc']),
+      )(state);
+      return {
+        ...skill,
+        originalId: flow(last, prop('id'))(skillVersions),
+        skillVersions,
+      };
+    }),
+    orderBy(['originalId'], ['desc']),
+  )(state);
+  return skills;
 };
