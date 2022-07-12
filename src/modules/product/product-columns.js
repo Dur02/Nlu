@@ -60,7 +60,7 @@ export const getSkillEditorColumns = ({
         return true;
       }
       return false;
-    })(record.flag);
+    })(record.skillVersions);
     return findIndex((o) => o === true)(a);
   };
 
@@ -82,13 +82,13 @@ export const getSkillEditorColumns = ({
           defaultValue={
               findDefault(record) === -1
                 ? ''
-                : record.flag[findDefault(record)].id
+                : record.skillVersions[findDefault(record)].id
           }
           onChange={
               (value) => {
                 if (findDefault(record) !== -1) {
                   detach({
-                    skillId: record.flag[findDefault(record)].id,
+                    skillId: record.skillVersions[findDefault(record)].id,
                     productId: product.id,
                     skillName: record.name,
                   });
@@ -115,7 +115,7 @@ export const getSkillEditorColumns = ({
                 >
                   {item.version}
                 </Option>
-              ))(record.flag)
+              ))(record.skillVersions)
             }
         </Select>
       </>
