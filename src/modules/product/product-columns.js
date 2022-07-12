@@ -83,19 +83,21 @@ export const getSkillEditorColumns = ({
               findDefault(record) === -1
                 ? ''
                 : record.flag[findDefault(record)].id
-            }
+          }
           onChange={
               (value) => {
                 if (findDefault(record) !== -1) {
                   detach({
                     skillId: record.flag[findDefault(record)].id,
                     productId: product.id,
+                    skillName: record.name,
                   });
                 }
                 if (value !== '') {
                   attach({
                     skillId: value,
                     productId: product.id,
+                    skillName: record.name,
                   });
                 }
               }

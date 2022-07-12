@@ -68,13 +68,13 @@ const result = () => {
 
   const onCreate = useAction(create);
   const onUpdate = useAction(update);
-  const onAttach = useCallback(async ({ skillId, productId }) => {
-    await dispatch(attachSkills({ id: productId, skillIds: [skillId] }));
+  const onAttach = useCallback(async ({ skillId, productId, skillName }) => {
+    await dispatch(attachSkills({ id: productId, skillIds: [skillId], skillName: [skillName] }));
     await dispatch(readAllVersion({ productId }));
     message.success('添加成功');
   }, []);
-  const onDetach = useCallback(async ({ skillId, productId }) => {
-    await dispatch(detachSkills({ id: productId, skillIds: [skillId] }));
+  const onDetach = useCallback(async ({ skillId, productId, skillName }) => {
+    await dispatch(detachSkills({ id: productId, skillIds: [skillId], skillName: [skillName] }));
     message.success('去掉成功');
   }, []);
   const onCreateVersion = useCallback(

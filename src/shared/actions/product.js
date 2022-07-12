@@ -49,12 +49,12 @@ export const remove = createAction(
 
 export const attachSkills = createAction(
   ATTACH_SKILLS,
-  ({ id, skillIds }) => post(`/skill/edit/product/${id}/skill`, { skillIds }),
+  ({ id, skillIds, skillName }) => post(`/skill/edit/product/${id}/skill`, { skillIds, skillName }),
 );
 
 export const detachSkills = createAction(
   DETACH_SKILLS,
-  ({ id, skillIds }) => del(`/skill/edit/product/${id}/skill`, { skillIds }),
+  ({ id, skillIds, skillName }) => del(`/skill/edit/product/${id}/skill`, { skillIds, skillName }),
 );
 
 export const readWordGraph = createAction(
