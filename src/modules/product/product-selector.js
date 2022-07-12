@@ -26,7 +26,5 @@ export default (state) => ({
       )(state),
     })),
   )(state),
-  skills: flow(
-    getSkillsWithVersions,
-  )(state),
+  skills: getSkillsWithVersions(state),
 });

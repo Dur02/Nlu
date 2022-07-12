@@ -1,9 +1,8 @@
 import { getEntity } from 'relient/selectors';
-import { getSkillsWithCodeKey } from 'shared/selectors';
-import { getSkills } from '../skill-selector';
+import { getSkillsWithCodeKey, getSkillsWithVersions } from 'shared/selectors';
 
 export default (state) => ({
-  skills: getSkills(state),
+  skills: getSkillsWithVersions(state),
   skillsWithCodeKey: getSkillsWithCodeKey(state),
   token: getEntity('auth.authorization')(state),
 });

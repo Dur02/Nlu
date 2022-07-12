@@ -103,23 +103,20 @@ export const getResources = (state, father = 0) => {
   return undefined;
 };
 
-export const getSkillsWithVersions = (state) => {
-  const skills = flow(
-    getSkillsWithCodeKey,
-    values,
-    map((skill) => {
-      const skillVersions = flow(
-        getEntityArray('skillVersion'),
-        filter(propEq('code', skill.code)),
-        orderBy(['id'], ['desc']),
-      )(state);
-      return {
-        ...skill,
-        originalId: flow(last, prop('id'))(skillVersions),
-        skillVersions,
-      };
-    }),
-    orderBy(['originalId'], ['desc']),
-  )(state);
-  return skills;
-};
+export const getSkillsWithVersions = (state) => flow(
+  getSkillsWithCodeKey,
+  values,
+  map((skill) => {
+    const skillVersions = flow(
+      getEntityArray('skillVersion'),
+      filter(propEq('code', skill.code)),
+      orderBy(['id'], ['desc']),
+    )(state);
+    return {
+      ...skill,
+      originalId: flow(last, prop('id'))(skillVersions),
+      skillVersions,
+    };
+  }),
+  orderBy(['originalId'], ['desc']),
+)(state);
