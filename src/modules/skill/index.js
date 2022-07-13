@@ -32,15 +32,21 @@ export default () => [{
   feature: SKILL,
   action: async ({ params: { id }, store: { dispatch } }) => {
     const skillId = Number(id);
-    await Promise.all([
-      dispatch(readOneSkill({ id: skillId })),
-      dispatch(readAllWords({ skillId })),
-      dispatch(readAllWords({ type: 'SYSTEM' })),
-      dispatch(readAllRule({ skillId })),
-      dispatch(readAllBuiltinIntent()),
-      dispatch(readAllIntent()),
-      dispatch(readAllOutput()),
-    ]);
+    try {
+      await Promise.all([
+        dispatch(readOneSkill({ id: skillId })),
+        dispatch(readAllWords({ skillId })),
+        dispatch(readAllWords({ type: 'SYSTEM' })),
+        dispatch(readAllRule({ skillId })),
+        dispatch(readAllBuiltinIntent()),
+        dispatch(readAllIntent()),
+        dispatch(readAllOutput()),
+      ]);
+    } catch (e) {
+      return {
+        redirect: '/skill',
+      };
+    }
     return {
       component: <SkillEditor skillId={skillId} />,
     };

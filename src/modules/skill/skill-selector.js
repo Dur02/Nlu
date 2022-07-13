@@ -1,5 +1,5 @@
-import { getSkillsWithVersions } from 'shared/selectors';
+import { getPermittedSkillsWithCodeKey } from 'shared/selectors';
 
 export default (state) => ({
-  skills: getSkillsWithVersions(state),
+  skills: getPermittedSkillsWithCodeKey(state),
 });

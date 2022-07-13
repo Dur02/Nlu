@@ -20,6 +20,7 @@ import { push as pushAction } from 'relient/actions/history';
 import { find, propEq, flow, prop, includes, reject, eq } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import WordGraph from 'shared/components/word-graph';
+import { readMine } from 'shared/actions/user';
 import { getColumns, versionColumns } from './skill-columns';
 import SkillImport from './components/skill-import';
 
@@ -34,6 +35,7 @@ const result = () => {
 
   const dispatch = useDispatch();
   const push = useAction(pushAction);
+  const readProfile = useAction(readMine);
 
   const {
     detailsVisible: versionVisible,
@@ -167,6 +169,7 @@ const result = () => {
           push,
           createDraft,
           creatingDraftSkillIds,
+          readProfile,
         })}
         rowKey="id"
         pagination={pagination}
