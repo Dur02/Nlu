@@ -109,3 +109,12 @@ export const getSkillsWithVersions = (state) => flow(
   }),
   orderBy(['originalId'], ['desc']),
 )(state);
+
+export const getIntervention = (state) => {
+  // eslint-disable-next-line no-console
+  console.log(state);
+  const intervention = flow(
+    getEntityArray('intervention'),
+  )(state);
+  return intervention;
+};
