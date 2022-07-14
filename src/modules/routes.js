@@ -27,6 +27,13 @@ const routes = [
   },
 
   {
+    path: '/intervention',
+    chunks: ['intervention'],
+    requireAuth: true,
+    load: () => import(/* webpackChunkName: 'audit' */ 'modules/intervention'),
+  },
+
+  {
     path: '/',
     chunks: ['product'],
     requireAuth: true,

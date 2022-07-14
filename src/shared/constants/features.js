@@ -11,6 +11,7 @@ export const RESOURCE = 'RESOURCE';
 export const SKILL_PERMISSION = 'SKILL_PERMISSION';
 
 export const AUDIT_LOG = 'AUDIT_LOG';
+export const INTERVENTION = 'INTERVENTION';
 
 export const features = [{
   key: PRODUCT,
@@ -49,6 +50,10 @@ export const features = [{
   key: AUDIT_LOG,
   link: 'audit/log',
   text: '审计',
+}, {
+  key: INTERVENTION,
+  link: 'intervention',
+  text: '干预',
 }];
 
 setFeatures(features);
