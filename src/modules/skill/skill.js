@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
 import {
@@ -17,7 +17,7 @@ import {
 } from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
 import { push as pushAction } from 'relient/actions/history';
-import { find, propEq, flow, prop, includes, reject, eq } from 'lodash/fp';
+import { find, propEq, flow, prop } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import WordGraph from 'shared/components/word-graph';
 import { readMine } from 'shared/actions/user';
@@ -81,24 +81,11 @@ const result = () => {
 
   const onCreate = useAction(create);
   const onUpdate = useAction(update);
+  const createDraft = useAction(createDraftVersionAction);
   const onCreateVersion = useCallback(
     (values) => dispatch(createVersion({ ...values, skillId: versionItem.id })),
     [versionItem && versionItem.id],
   );
-
-  const [creatingDraftSkillIds, setCreatingDraftSkillIds] = useState([]);
-  const createDraft = useCallback(async (skillId) => {
-    try {
-      await dispatch(createDraftVersionAction({ skillId }));
-      message.success('拷贝技能成功，可以进行技能编辑');
-      if (!includes(skillId)(creatingDraftSkillIds)) {
-        setCreatingDraftSkillIds([...creatingDraftSkillIds, skillId]);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-    setCreatingDraftSkillIds(reject(eq(skillId))(creatingDraftSkillIds));
-  }, [JSON.stringify(creatingDraftSkillIds)]);
 
   const {
     tableHeader,
@@ -168,7 +155,6 @@ const result = () => {
           openWordGraph,
           push,
           createDraft,
-          creatingDraftSkillIds,
           readProfile,
         })}
         rowKey="id"

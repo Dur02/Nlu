@@ -8,8 +8,8 @@ import {
   reject,
   reduce,
   values,
-  includes,
-  orderBy, last,
+  orderBy,
+  last,
 } from 'lodash/fp';
 
 export const getCurrentUser = (state) => flow(
@@ -35,26 +35,15 @@ export const getRoleOptions = (state) => flow(
   })),
 )(state);
 
-const skillsArrayToMap = reduce((skills, skillVersion) => {
-  const skill = prop(skillVersion.code)(skills);
-  if (!skill || skillVersion.id > skill.id) {
-    return { ...skills, [skillVersion.code]: skillVersion };
-  }
-  return skills;
-}, {});
-
-export const getPermittedSkillsWithCodeKey = (state) => {
-  const { skillCodes } = getCurrentUser(state);
-  return flow(
-    getEntityArray('skillVersion'),
-    filter(({ code }) => includes(code)(skillCodes)),
-    skillsArrayToMap,
-  )(state);
-};
-
 export const getSkillsWithCodeKey = (state) => flow(
   getEntityArray('skillVersion'),
-  skillsArrayToMap,
+  reduce((skills, skillVersion) => {
+    const skill = prop(skillVersion.code)(skills);
+    if (!skill || skillVersion.id > skill.id) {
+      return { ...skills, [skillVersion.code]: skillVersion };
+    }
+    return skills;
+  }, {}),
 )(state);
 
 export const getSkillOptions = (state) => flow(
