@@ -25,7 +25,7 @@ const EditButton = ({
       onClick={async () => {
         setLoading(true);
         try {
-          const { skillCodes } = await readProfile();
+          const { data: { skillCodes } } = await readProfile();
           if (includes(code)(skillCodes)) {
             push(`/skill/${id}`);
           } else {
