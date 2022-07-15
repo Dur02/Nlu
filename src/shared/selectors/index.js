@@ -112,7 +112,7 @@ export const getSkillsWithVersions = (state) => flow(
 
 export const getAllProduct = (state) => {
   // eslint-disable-next-line no-console
-  console.log(state);
+  // console.log(state);
   const a = flow(
     getEntityArray('product'),
     orderBy(['id'], ['desc']),

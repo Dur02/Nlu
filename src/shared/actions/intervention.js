@@ -41,8 +41,8 @@ export const create = createAction(
     sentence,
     skillId,
     type,
-    wildLeft,
-    wildRight,
+    wildLeft: wildLeft || false,
+    wildRight: wildRight || false,
   }),
 );
 

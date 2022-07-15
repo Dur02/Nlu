@@ -5,4 +5,5 @@ export default (state) => ({
   intervention: getEntityArray('intervention')(state),
   skills: getSkillsWithVersions(state),
   products: getAllProduct(state),
+  intents: getEntityArray('intent')(state),
 });
