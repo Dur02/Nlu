@@ -10,28 +10,20 @@ export default ({
 }) => [{
   title: '产品',
   render: (record) => (
-    <p>
-      {
-        flow(
-          filter((item) => (item.id === Number(record.productId))),
-          head,
-          prop('name'),
-        )(products)
-      }
-    </p>
+    flow(
+      filter((item) => (item.id === Number(record.productId))),
+      head,
+      prop('name'),
+    )(products)
   ),
 }, {
   title: '技能',
   render: (record) => (
-    <p>
-      {
-        flow(
-          filter((item) => (item.code === record.skillCode)),
-          head,
-          prop('name'),
-        )(skills)
-      }
-    </p>
+    flow(
+      filter((item) => (item.code === record.skillCode)),
+      head,
+      prop('name'),
+    )(skills)
   ),
 }, {
   title: '说法',
@@ -43,19 +35,19 @@ export default ({
   title: '类型',
   render: (record) => {
     if (record.type === '1') {
-      return <p>DM</p>;
+      return 'DM';
     }
-    return <p>NLU</p>;
+    return 'NLU';
   },
 }, {
   title: '左匹配',
   render: (record) => (
-    <p>{String(record.wildLeft)}</p>
+    String(record.wildLeft)
   ),
 }, {
   title: '右匹配',
   render: (record) => (
-    <p>{String(record.wildRight)}</p>
+    String(record.wildRight)
   ),
 }, {
   title: '操作',

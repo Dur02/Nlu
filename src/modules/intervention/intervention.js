@@ -5,7 +5,7 @@ import { useLocalTable, useDetails } from 'relient-admin/hooks';
 import { Table, Modal, Select, Switch, Radio } from 'antd';
 import { useAction } from 'relient/actions';
 import { remove, create, update } from 'shared/actions/intervention';
-import { flow, map } from 'lodash/fp';
+import { flow, map, filter, head, at, flatten, difference } from 'lodash/fp';
 import selector from './intervention-selector';
 import columns from './intervention-columns';
 import InterventionForm from './componets/intervention-form';
@@ -15,6 +15,7 @@ const result = () => {
     intervention,
     skills,
     products,
+    // eslint-disable-next-line no-unused-vars
     intents,
   } = useSelector(selector);
 
@@ -31,17 +32,15 @@ const result = () => {
   } = useDetails();
 
   // eslint-disable-next-line no-unused-vars
-  const [skillSelect, setSkillSelect] = useState(flow(
-    map((item) => ({ ...item, label: item.name, value: item.id })),
-  )(skills));
+  const [skillSelect, setSkillSelect] = useState([{}]);
 
   // eslint-disable-next-line no-unused-vars
-  const [intentSelect, setIntentSelect] = useState(flow(
-    map((item) => ({ ...item, label: item.name, value: item.id })),
-  )(intents));
+  const [intentSelect, setIntentSelect] = useState([{}]);
 
-  // eslint-disable-next-line no-unused-vars
   const creatorFields = (form) => {
+    // eslint-disable-next-line no-console
+    console.log(form);
+
     const productSelect = () => flow(
       map((item) => ({ ...item, label: item.name, value: item.id })),
     )(products);
@@ -58,6 +57,27 @@ const result = () => {
       component: Select,
       options: skillSelect,
       rules: [{ required: true }],
+      shouldUpdate: (prevValues, curValues) => {
+        // console.log(productSelect())
+        const skillIds = flow(
+          filter((item) => item.id === curValues.productId),
+          head,
+          at('skillIds'),
+          flatten,
+        )(products);
+        setSkillSelect(flow(
+          map((item) => (item.skillVersions)),
+          flatten,
+          map((item) => ({ label: item.name, value: item.id, version: item.version })),
+          filter((item) => {
+            if (difference(skillIds, [item.value]).length === skillIds.length - 1) {
+              return true;
+            }
+            return false;
+          }),
+        )(skills));
+        return prevValues.productId !== curValues.productId;
+      },
     }, {
       label: '意图',
       name: 'intentId',
