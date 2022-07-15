@@ -8,7 +8,7 @@ import {
 import { intervention } from '../schema';
 
 export default {
-  role: handleActions({
+  intervention: handleActions({
     [combineActions(
       UPDATE,
       CREATE,
@@ -19,7 +19,7 @@ export default {
 
     [READ_ALL]: merge({
       schema: intervention,
-      dataKey: 'data.record',
+      dataKey: 'data.records',
     }),
 
     [REMOVE]: remove(intervention),

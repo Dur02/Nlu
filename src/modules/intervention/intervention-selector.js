@@ -1,5 +1,8 @@
-import { getIntervention } from 'shared/selectors';
+import { getEntityArray } from 'relient/selectors';
+import { getSkillsWithVersions, getAllProduct } from 'shared/selectors';
 
 export default (state) => ({
-  intervention: getIntervention(state),
+  intervention: getEntityArray('intervention')(state),
+  skills: getSkillsWithVersions(state),
+  products: getAllProduct(state),
 });
