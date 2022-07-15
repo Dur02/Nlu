@@ -1,96 +1,105 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from 'shared/components/layout';
 import { useSelector } from 'react-redux';
-import { useLocalTable } from 'relient-admin/hooks';
+import { useLocalTable, useDetails } from 'relient-admin/hooks';
 import { Table, Modal, Select, Switch, Radio } from 'antd';
 import { useAction } from 'relient/actions';
 import { remove, create, update } from 'shared/actions/intervention';
-// import { flow, prop, filter, head } from 'lodash/fp';
+import { flow, map } from 'lodash/fp';
 import selector from './intervention-selector';
 import columns from './intervention-columns';
+import InterventionForm from './componets/intervention-form';
 
 const result = () => {
   const {
     intervention,
     skills,
     products,
+    intents,
   } = useSelector(selector);
-
-  const productSelect = () => {
-    // eslint-disable-next-line no-console
-    console.log(products);
-    return [{
-      label: '111',
-      value: '222',
-    }, {
-      label: '333',
-      value: '444',
-    }];
-  };
 
   const onCreate = useAction(create);
   // eslint-disable-next-line no-unused-vars
   const onUpdate = useAction(update);
   const onRemove = useAction(remove);
 
-  const creatorFields = [{
-    label: '产品',
-    name: 'productId',
-    component: Select,
-    options: productSelect(products),
-    rules: [{ required: true }],
-  }, {
-    label: '技能',
-    name: 'skillId',
-    component: Select,
-    options: [{
-      label: '111',
-      value: 222,
-    }],
-    rules: [{ required: true }],
-  }, {
-    label: '意图',
-    name: 'intentId',
-    component: Select,
-    options: [{
-      label: '111',
-      value: 222,
-    }],
-    rules: [{ required: true }],
-  }, {
-    label: '说法',
-    name: 'sentence',
-    type: 'text',
-    autoComplete: 'off',
-    rules: [{ required: true }],
-  }, {
-    label: '回复',
-    name: 'response',
-    type: 'text',
-    autoComplete: 'off',
-    rules: [{ required: true }],
-  }, {
-    label: '左模糊匹配',
-    name: 'wildLeft',
-    component: Switch,
-    valuePropName: 'checked',
-  }, {
-    label: '右模糊匹配',
-    name: 'wildRight',
-    component: Switch,
-    valuePropName: 'checked',
-  }, {
-    label: '类型',
-    name: 'type',
-    component: Radio.Group,
-    options: [{
-      label: 'DM',
-      value: 1,
+  const {
+    detailsVisible: editorVisible,
+    openDetails: openEditor,
+    closeDetails: closeEditor,
+    detailsItem: editorItem,
+  } = useDetails();
+
+  // eslint-disable-next-line no-unused-vars
+  const [skillSelect, setSkillSelect] = useState(flow(
+    map((item) => ({ ...item, label: item.name, value: item.id })),
+  )(skills));
+
+  // eslint-disable-next-line no-unused-vars
+  const [intentSelect, setIntentSelect] = useState(flow(
+    map((item) => ({ ...item, label: item.name, value: item.id })),
+  )(intents));
+
+  // eslint-disable-next-line no-unused-vars
+  const creatorFields = (form) => {
+    const productSelect = () => flow(
+      map((item) => ({ ...item, label: item.name, value: item.id })),
+    )(products);
+
+    const a = [{
+      label: '产品',
+      name: 'productId',
+      component: Select,
+      options: productSelect(),
+      rules: [{ required: true }],
     }, {
-      label: 'NLU',
-      value: 2,
-    }],
-  }];
+      label: '技能',
+      name: 'skillId',
+      component: Select,
+      options: skillSelect,
+      rules: [{ required: true }],
+    }, {
+      label: '意图',
+      name: 'intentId',
+      component: Select,
+      options: intentSelect,
+      rules: [{ required: true }],
+    }, {
+      label: '说法',
+      name: 'sentence',
+      type: 'text',
+      autoComplete: 'off',
+      rules: [{ required: true }],
+    }, {
+      label: '回复',
+      name: 'response',
+      type: 'text',
+      autoComplete: 'off',
+      rules: [{ required: true }],
+    }, {
+      label: '左模糊匹配',
+      name: 'wildLeft',
+      component: Switch,
+      valuePropName: 'checked',
+    }, {
+      label: '右模糊匹配',
+      name: 'wildRight',
+      component: Switch,
+      valuePropName: 'checked',
+    }, {
+      label: '类型',
+      name: 'type',
+      component: Radio.Group,
+      options: [{
+        label: 'DM',
+        value: 1,
+      }, {
+        label: 'NLU',
+        value: 2,
+      }],
+    }];
+    return a;
+  };
 
   const {
     tableHeader,
@@ -120,7 +129,7 @@ const result = () => {
     creator: {
       title: '创建干预',
       onSubmit: onCreate,
-      fields: creatorFields,
+      getFields: creatorFields,
       initialValues: {
         type: 1,
       },
@@ -133,10 +142,20 @@ const result = () => {
       {tableHeader}
       <Table
         dataSource={intervention}
-        columns={columns({ skills, products, onRemove })}
+        columns={columns({ skills, products, onRemove, openEditor })}
         rowKey="id"
         pagination={pagination}
       />
+      {editorItem && (
+        <InterventionForm
+          editorVisible={editorVisible}
+          closeEditor={closeEditor}
+          editorItem={editorItem}
+          products={products}
+          skillSelect={skillSelect}
+          intentSelect={intentSelect}
+        />
+      )}
     </Layout>
   );
 };

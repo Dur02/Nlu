@@ -6,6 +6,7 @@ export default ({
   skills,
   products,
   onRemove,
+  openEditor,
 }) => [{
   title: '产品',
   render: (record) => (
@@ -61,7 +62,16 @@ export default ({
   width: 140,
   render: (record) => (
     <>
-      <Button type="primary" ghost size="small">修改</Button>
+      <Button
+        type="primary"
+        ghost
+        size="small"
+        onClick={() => {
+          openEditor(record);
+        }}
+      >
+        修改
+      </Button>
       &nbsp;&nbsp;
       <Popconfirm
         title="确认删除吗？删除操作不可恢复"
