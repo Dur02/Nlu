@@ -1,15 +1,16 @@
 import React from 'react';
 import { Button, Form, Input, Modal, Select, Switch, Radio } from 'antd';
+import { array, func, object, bool } from 'prop-types';
 import { map } from 'lodash/fp';
 
-const result = (
+const result = ({
   editorVisible,
   closeEditor,
   editorItem,
   products,
   skillSelect,
   intentSelect,
-) => {
+}) => {
   const { Item } = Form;
   return (
     <>
@@ -140,6 +141,13 @@ const result = (
 
 result.displayName = __filename;
 
-result.propTypes = {};
+result.propTypes = {
+  editorVisible: bool.isRequired,
+  closeEditor: func.isRequired,
+  editorItem: object.isRequired,
+  products: array.isRequired,
+  skillSelect: array.isRequired,
+  intentSelect: array.isRequired,
+};
 
 export default result;
