@@ -2,6 +2,8 @@ import React from 'react';
 import { INTERVENTION } from 'shared/constants/features';
 import { readAll as readAllIntervention } from 'shared/actions/intervention';
 import { readMine as readProfile } from 'shared/actions/user';
+import { readAll as readAllSkills } from 'shared/actions/skill';
+import { readAll as readAllProduct } from 'shared/actions/product';
 
 import Intervention from './intervention';
 
@@ -11,6 +13,8 @@ export default () => [{
     try {
       await Promise.all([
         dispatch(readAllIntervention()),
+        dispatch(readAllSkills()),
+        dispatch(readAllProduct()),
         dispatch(readProfile()),
       ]);
     } catch (e) {
