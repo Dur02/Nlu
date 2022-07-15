@@ -73,12 +73,12 @@ const result = () => {
     label: '左模糊匹配',
     name: 'wildLeft',
     component: Switch,
-    defaultChecked: false,
+    valuePropName: 'checked',
   }, {
     label: '右模糊匹配',
     name: 'wildRight',
     component: Switch,
-    defaultChecked: false,
+    valuePropName: 'checked',
   }, {
     label: '类型',
     name: 'type',
@@ -121,11 +121,9 @@ const result = () => {
       title: '创建干预',
       onSubmit: onCreate,
       fields: creatorFields,
-      // initialValues: {
-      //   productId: '222',
-      //   skillId: '222',
-      //   intentId: 222,
-      // },
+      initialValues: {
+        type: 1,
+      },
       component: Modal,
     },
   });
