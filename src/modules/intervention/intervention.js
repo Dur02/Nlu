@@ -15,7 +15,6 @@ const result = () => {
     intervention,
     skills,
     products,
-    // eslint-disable-next-line no-unused-vars
     intents,
   } = useSelector(selector);
 
@@ -31,19 +30,19 @@ const result = () => {
     detailsItem: editorItem,
   } = useDetails();
 
-  // eslint-disable-next-line no-unused-vars
   const [skillSelect, setSkillSelect] = useState([{}]);
-
-  // eslint-disable-next-line no-unused-vars
   const [intentSelect, setIntentSelect] = useState([{}]);
+  const [slotSelect, setSlotSelect] = useState([{}]);
 
   const creatorFields = (form) => {
     // eslint-disable-next-line no-console
     console.log(form);
 
-    const productSelect = () => flow(
-      map((item) => ({ ...item, label: item.name, value: item.id })),
-    )(products);
+    const productSelect = () => map((item) => ({
+      ...item,
+      label: item.name,
+      value: item.id,
+    }))(products);
 
     const a = [{
       label: '产品',
@@ -58,23 +57,21 @@ const result = () => {
       options: skillSelect,
       rules: [{ required: true }],
       shouldUpdate: (prevValues, curValues) => {
-        // console.log(productSelect())
-        const skillIds = flow(
+        if (prevValues.productId !== curValues.productId) {
+          /* eslint no-param-reassign: ["error", { "props": false }] */
+          curValues.skillId = '';
+        }
+        const skillIds = flow( // array
           filter((item) => item.id === curValues.productId),
           head,
           at('skillIds'),
           flatten,
         )(products);
-        setSkillSelect(flow(
+        setSkillSelect(flow( // array
           map((item) => (item.skillVersions)),
           flatten,
           map((item) => ({ label: item.name, value: item.id, version: item.version })),
-          filter((item) => {
-            if (difference(skillIds, [item.value]).length === skillIds.length - 1) {
-              return true;
-            }
-            return false;
-          }),
+          filter((item) => difference(skillIds, [item.value]).length === skillIds.length - 1),
         )(skills));
         return prevValues.productId !== curValues.productId;
       },
@@ -84,6 +81,35 @@ const result = () => {
       component: Select,
       options: intentSelect,
       rules: [{ required: true }],
+      shouldUpdate: (prevValues, curValues) => {
+        if (prevValues.skillId !== curValues.skillId) {
+          /* eslint no-param-reassign: ["error", { "props": false }] */
+          curValues.intentId = '';
+        }
+        // console.log(intents)
+        setIntentSelect(flow(
+          filter((item) => item.skillId === curValues.skillId),
+          map((item) => ({ label: item.name, value: item.id })),
+        )(intents));
+        return prevValues.productId !== curValues.productId;
+      },
+    }, {
+      label: '插槽',
+      name: 'slotId',
+      component: Select,
+      options: slotSelect,
+      rules: [{ required: true }],
+      shouldUpdate: (prevValues, curValues) => {
+        if (prevValues.intentId !== curValues.intentId) {
+          /* eslint no-param-reassign: ["error", { "props": false }] */
+          curValues.slotId = '';
+        }
+        setSlotSelect(flow( // 字符串数组怎么改select option？
+          filter((item) => item.skillId === curValues.skillId),
+          map((item) => item.slots),
+        )(intents));
+        return prevValues.intentId !== curValues.intentId;
+      },
     }, {
       label: '说法',
       name: 'sentence',
@@ -148,6 +174,10 @@ const result = () => {
     },
     creator: {
       title: '创建干预',
+      onCancel: () => {
+        setSkillSelect([{}]);
+        setIntentSelect([{}]);
+      },
       onSubmit: onCreate,
       getFields: creatorFields,
       initialValues: {
