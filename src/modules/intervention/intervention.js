@@ -30,21 +30,18 @@ const result = () => {
     detailsItem: editorItem,
   } = useDetails();
 
-  const [skillSelect, setSkillSelect] = useState([{}]);
-  const [intentSelect, setIntentSelect] = useState([{}]);
-  const [slotSelect, setSlotSelect] = useState([{}]);
+  const [skillSelect, setSkillSelect] = useState();
+  const [intentSelect, setIntentSelect] = useState();
+  const [slotSelect, setSlotSelect] = useState();
 
   const creatorFields = (form) => {
-    // eslint-disable-next-line no-console
-    console.log(form);
-
     const productSelect = () => map((item) => ({
       ...item,
       label: item.name,
       value: item.id,
     }))(products);
 
-    const a = [{
+    const array = [{
       label: '产品',
       name: 'productId',
       component: Select,
@@ -58,8 +55,7 @@ const result = () => {
       rules: [{ required: true }],
       shouldUpdate: (prevValues, curValues) => {
         if (prevValues.productId !== curValues.productId) {
-          /* eslint no-param-reassign: ["error", { "props": false }] */
-          curValues.skillId = '';
+          form.setFieldsValue({ skillId: '' });
         }
         const skillIds = flow( // array
           filter((item) => item.id === curValues.productId),
@@ -83,10 +79,8 @@ const result = () => {
       rules: [{ required: true }],
       shouldUpdate: (prevValues, curValues) => {
         if (prevValues.skillId !== curValues.skillId) {
-          /* eslint no-param-reassign: ["error", { "props": false }] */
-          curValues.intentId = '';
+          form.setFieldsValue({ intentId: '' });
         }
-        // console.log(intents)
         setIntentSelect(flow(
           filter((item) => item.skillId === curValues.skillId),
           map((item) => ({ label: item.name, value: item.id })),
@@ -101,12 +95,13 @@ const result = () => {
       rules: [{ required: true }],
       shouldUpdate: (prevValues, curValues) => {
         if (prevValues.intentId !== curValues.intentId) {
-          /* eslint no-param-reassign: ["error", { "props": false }] */
-          curValues.slotId = '';
+          form.setFieldsValue({ slotId: '' });
         }
-        setSlotSelect(flow( // 字符串数组怎么改select option？
-          filter((item) => item.skillId === curValues.skillId),
-          map((item) => item.slots),
+        setSlotSelect(flow(
+          filter((item) => (item.id === curValues.intentId)),
+          map((item) => JSON.parse(item.slots)),
+          flatten,
+          map((item) => ({ ...item, label: item.name, value: item.lexiconsNames })),
         )(intents));
         return prevValues.intentId !== curValues.intentId;
       },
@@ -144,7 +139,7 @@ const result = () => {
         value: 2,
       }],
     }];
-    return a;
+    return array;
   };
 
   const {
