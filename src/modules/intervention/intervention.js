@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import Layout from 'shared/components/layout';
 import { useSelector } from 'react-redux';
-import { useLocalTable, useDetails } from 'relient-admin/hooks';
+import { useLocalTable } from 'relient-admin/hooks';
 import { Table, Modal, Select, Switch, Radio } from 'antd';
 import { useAction } from 'relient/actions';
 import { remove, create, update } from 'shared/actions/intervention';
 import { flow, map, filter, head, at, flatten, difference } from 'lodash/fp';
 import selector from './intervention-selector';
 import columns from './intervention-columns';
-import InterventionForm from './componets/intervention-form';
+// import InterventionForm from './componets/intervention-form';
 
 const result = () => {
   const {
     intervention,
     skills,
-    products,
+    productVersion,
     intents,
   } = useSelector(selector);
 
@@ -23,23 +23,26 @@ const result = () => {
   const onUpdate = useAction(update);
   const onRemove = useAction(remove);
 
-  const {
-    detailsVisible: editorVisible,
-    openDetails: openEditor,
-    closeDetails: closeEditor,
-    detailsItem: editorItem,
-  } = useDetails();
+  // const {
+  //   detailsVisible: editorVisible,
+  //   openDetails: openEditor,
+  //   closeDetails: closeEditor,
+  //   detailsItem: editorItem,
+  // } = useDetails();
 
   const [skillSelect, setSkillSelect] = useState();
   const [intentSelect, setIntentSelect] = useState();
   const [slotSelect, setSlotSelect] = useState();
 
   const creatorFields = (form) => {
-    const productSelect = () => map((item) => ({
-      ...item,
-      label: item.name,
-      value: item.id,
-    }))(products);
+    const productSelect = () => flow(
+      map((item) => ({
+        ...item,
+        label: `${item.versionName}(${item.id})`,
+        value: item.id,
+      })),
+      filter((item) => (item.pubState === 1)),
+    )(productVersion);
 
     const array = [{
       label: '产品',
@@ -57,12 +60,21 @@ const result = () => {
         if (prevValues.productId !== curValues.productId) {
           form.setFieldsValue({ skillId: '' });
         }
+        // console.log(productSelect());
+        // console.log(skills);
         const skillIds = flow( // array
           filter((item) => item.id === curValues.productId),
           head,
           at('skillIds'),
           flatten,
-        )(products);
+        )(productVersion);
+        // console.log(skillIds);
+        // console.log(flow( // array
+        //   map((item) => (item.skillVersions)),
+        //   flatten,
+        //   map((item) => ({ label: item.name, value: item.id, version: item.version })),
+        //   filter((item) => difference(skillIds, [item.value]).length === skillIds.length - 1),
+        // )(skills));
         setSkillSelect(flow( // array
           map((item) => (item.skillVersions)),
           flatten,
@@ -86,24 +98,6 @@ const result = () => {
           map((item) => ({ label: item.name, value: item.id })),
         )(intents));
         return prevValues.productId !== curValues.productId;
-      },
-    }, {
-      label: '插槽',
-      name: 'slotId',
-      component: Select,
-      options: slotSelect,
-      rules: [{ required: true }],
-      shouldUpdate: (prevValues, curValues) => {
-        if (prevValues.intentId !== curValues.intentId) {
-          form.setFieldsValue({ slotId: '' });
-        }
-        setSlotSelect(flow(
-          filter((item) => (item.id === curValues.intentId)),
-          map((item) => JSON.parse(item.slots)),
-          flatten,
-          map((item) => ({ ...item, label: item.name, value: item.lexiconsNames })),
-        )(intents));
-        return prevValues.intentId !== curValues.intentId;
       },
     }, {
       label: '说法',
@@ -138,15 +132,41 @@ const result = () => {
         label: 'NLU',
         value: 2,
       }],
+    }, {
+      label: '插槽',
+      name: ['slots', 'name'],
+      component: Select,
+      disabled: form.getFieldValue('type') !== 2,
+      options: slotSelect,
+      shouldUpdate: (prevValues, curValues) => {
+        // eslint-disable-next-line no-console
+        console.log(form.getFieldsValue());
+        if ((prevValues.intentId !== curValues.intentId) || (prevValues.type !== curValues.type)) {
+          form.setFieldsValue({ slotName: '' });
+        }
+        setSlotSelect(flow(
+          filter((item) => (item.id === curValues.intentId)),
+          map((item) => JSON.parse(item.slots)),
+          flatten,
+          map((item) => ({ ...item, label: item.name, value: item.name })),
+        )(intents));
+        return prevValues.intentId !== curValues.intentId || prevValues.type !== curValues.type;
+      },
+    }, {
+      label: '插槽值',
+      name: ['slots', 'value'],
+      type: 'text',
+      autoComplete: 'off',
+      disabled: form.getFieldValue('type') !== 2,
     }];
     return array;
   };
 
   const {
     tableHeader,
-    // getDataSource,
+    getDataSource,
     pagination,
-    // openEditor,
+    openEditor,
   } = useLocalTable({
     query: {
       fields: [{
@@ -156,7 +176,7 @@ const result = () => {
         dataKey: 'productId',
         label: '产品',
       }, {
-        dataKey: 'skillId',
+        dataKey: 'skillCode',
         label: '技能',
       }, {
         dataKey: 'type',
@@ -176,8 +196,16 @@ const result = () => {
       onSubmit: onCreate,
       getFields: creatorFields,
       initialValues: {
+        wildLeft: false,
+        wildRight: false,
         type: 1,
       },
+      component: Modal,
+    },
+    editor: {
+      title: '编辑产品',
+      onSubmit: onUpdate,
+      getFields: creatorFields,
       component: Modal,
     },
   });
@@ -186,21 +214,11 @@ const result = () => {
     <Layout>
       {tableHeader}
       <Table
-        dataSource={intervention}
-        columns={columns({ skills, products, onRemove, openEditor })}
+        dataSource={getDataSource(intervention)}
+        columns={columns({ skills, productVersion, onRemove, openEditor })}
         rowKey="id"
         pagination={pagination}
       />
-      {editorItem && (
-        <InterventionForm
-          editorVisible={editorVisible}
-          closeEditor={closeEditor}
-          editorItem={editorItem}
-          products={products}
-          skillSelect={skillSelect}
-          intentSelect={intentSelect}
-        />
-      )}
     </Layout>
   );
 };

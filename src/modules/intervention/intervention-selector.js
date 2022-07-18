@@ -6,4 +6,5 @@ export default (state) => ({
   skills: getSkillsWithVersions(state),
   products: getAllProduct(state),
   intents: getEntityArray('intent')(state),
+  productVersion: getEntityArray('productVersion')(state),
 });
