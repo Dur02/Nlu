@@ -4,20 +4,23 @@ import { flow, filter, head, prop } from 'lodash/fp';
 
 export default ({
   skills,
-  products,
+  // eslint-disable-next-line no-unused-vars
+  productVersion,
   onRemove,
   openEditor,
 }) => [{
-  title: '产品',
-  render: (record) => (
-    flow(
-      filter((item) => (item.id === Number(record.productId))),
-      head,
-      prop('name'),
-    )(products)
-  ),
+  title: '产品ID',
+  dataIndex: 'productId',
+  // render: (record) => (
+  //   flow(
+  //     filter((item) => (item.id === Number(record.productId))),
+  //     head,
+  //     prop('versionName'),
+  //   )(productVersion)
+  // ),
 }, {
   title: '技能',
+  // dataIndex: 'skillCode',
   render: (record) => (
     flow(
       filter((item) => (item.code === record.skillCode)),
