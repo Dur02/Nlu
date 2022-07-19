@@ -8840,8 +8840,10 @@ regjsparser@^0.6.4:
   dependencies:
     jsesc "~0.5.0"
 
-"relient-admin@file:../../relient-admin/dist":
-  version "4.8.2"
+relient-admin@4.8.3:
+  version "4.8.3"
+  resolved "https://registry.npmmirror.com/relient-admin/-/relient-admin-4.8.3.tgz#193267b9f14f440b7d1eadfd8b408549d82a1ef0"
+  integrity sha512-eh64XxIfalROlzBU9dhdAh2hcXuZkC7CU6WfLIZ3+GBULlBhSXypPzyJQH6oZWjUsHnXRvQyiIAuv8R2MkAbrw==
   dependencies:
     "@ant-design/icons" ">=4.7.0"
     "@tinymce/tinymce-react" "^3.12.4"
