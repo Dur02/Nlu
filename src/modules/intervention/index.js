@@ -4,7 +4,6 @@ import { readAll as readAllIntervention } from 'shared/actions/intervention';
 import { readMine as readProfile } from 'shared/actions/user';
 import { readAll as readAllSkills } from 'shared/actions/skill';
 import { readAll as readAllProduct } from 'shared/actions/product';
-import { readAll as readAllintent } from 'shared/actions/intent';
 import { readAll as readAllProductVersion } from 'shared/actions/product-version';
 
 import Intervention from './intervention';
@@ -17,7 +16,6 @@ export default () => [{
         dispatch(readAllIntervention()),
         dispatch(readAllSkills()),
         dispatch(readAllProduct()),
-        dispatch(readAllintent()),
         dispatch(readProfile()),
         dispatch(readAllProductVersion()),
       ]);
