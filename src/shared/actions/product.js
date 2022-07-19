@@ -15,7 +15,6 @@ export const UPDATE = actionType('UPDATE');
 export const ATTACH_SKILLS = actionType('ATTACH_SKILLS');
 export const DETACH_SKILLS = actionType('DETACH_SKILLS');
 export const READ_PRODUCT_WORD_GRAPH = actionType('READ_PRODUCT_WORD_GRAPH');
-export const PRODUCT_BIND_SKILL = actionType('PRODUCT_BIND_SKILL');
 
 export const readAll = createAction(
   READ_ALL,
@@ -61,9 +60,4 @@ export const detachSkills = createAction(
 export const readWordGraph = createAction(
   READ_PRODUCT_WORD_GRAPH,
   ({ input, productId }) => read('/skill/edit/word-map/product/search', { refText: input, productId }),
-);
-
-export const productBindSkill = createAction(
-  PRODUCT_BIND_SKILL,
-  ({ productId, status }) => read('/skill/edit/product/product-bind-skill', { productId, status }),
 );
