@@ -4,6 +4,7 @@ import {
   READ_ALL,
   CREATE,
   CREATE_DRAFT,
+  READ_BY_PRODUCT,
 } from '../actions/skill-version';
 import {
   READ_ALL as READ_ALL_SKILL,
@@ -36,6 +37,11 @@ export default {
     [CREATE_DRAFT]: merge({
       schema: skillVersion,
       dataKey: 'data.newSkill',
+    }),
+
+    [READ_BY_PRODUCT]: merge({
+      schema: skillVersion,
+      dataKey: 'data.skills',
     }),
 
     [REMOVE_SKILL]: remove(skillVersion),

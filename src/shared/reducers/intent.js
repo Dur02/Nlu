@@ -7,7 +7,7 @@ import {
   CREATE,
   UPDATE,
 } from '../actions/intent';
-import { CREATE_DRAFT } from '../actions/skill-version';
+import { CREATE_DRAFT, READ_BY_PRODUCT } from '../actions/skill-version';
 
 export default {
   intent: handleActions({
@@ -28,6 +28,11 @@ export default {
     [CREATE_DRAFT]: merge({
       schema: intent,
       dataKey: 'data.intents',
+    }),
+
+    [READ_BY_PRODUCT]: merge({
+      schema: intent,
+      dataKey: 'data.skill.intents',
     }),
 
     [REMOVE]: remove(intent),

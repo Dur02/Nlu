@@ -1,33 +1,18 @@
 import { Button, Popconfirm } from 'antd';
 import React from 'react';
-import { flow, filter, head, prop } from 'lodash/fp';
+import { prop } from 'lodash/fp';
 
 export default ({
-  skills,
-  // eslint-disable-next-line no-unused-vars
-  productVersion,
+  skillVersionEntity,
   onRemove,
   openEditor,
 }) => [{
   title: '产品ID',
   dataIndex: 'productId',
-  // render: (record) => (
-  //   flow(
-  //     filter((item) => (item.id === Number(record.productId))),
-  //     head,
-  //     prop('versionName'),
-  //   )(productVersion)
-  // ),
 }, {
   title: '技能',
-  // dataIndex: 'skillCode',
-  render: (record) => (
-    flow(
-      filter((item) => (item.code === record.skillCode)),
-      head,
-      prop('name'),
-    )(skills)
-  ),
+  dataIndex: 'skillId',
+  render: (skillId) => prop([skillId, 'name'])(skillVersionEntity),
 }, {
   title: '说法',
   dataIndex: 'sentence',

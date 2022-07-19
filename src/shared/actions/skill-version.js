@@ -8,6 +8,7 @@ import { read, post } from 'relient/actions/request';
 const actionType = actionTypeCreator('actions/skill-version');
 
 export const READ_ALL = actionType('READ_ALL');
+export const READ_BY_PRODUCT = actionType('READ_BY_PRODUCT');
 export const CREATE = actionType('CREATE');
 export const CREATE_DRAFT = actionType('CREATE_DRAFT');
 
@@ -36,4 +37,9 @@ export const create = createAction(
 export const createDraft = createAction(
   CREATE_DRAFT,
   ({ skillId }) => post(`/skill/edit/skill-version/draft?skillId=${skillId}`, { skillId }),
+);
+
+export const readByProduct = createAction(
+  READ_BY_PRODUCT,
+  ({ productId, status }) => read('/skill/edit/product/product-bind-skill', { productId, status }),
 );
