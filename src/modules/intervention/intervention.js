@@ -40,14 +40,14 @@ const result = () => {
       prop([productId, 'skillIds']),
       map((id) => prop(id)(skillVersionEntity)),
       filter(propEq('pubState', 1)),
-      map((name, id) => ({
+      map(({ name, id }) => ({
         value: id,
         label: name,
       })),
     )(productEntity);
     const intentOptions = flow(
       filter(propEq('skillId', skillId)),
-      map((name, id) => ({
+      map(({ name, id }) => ({
         value: id,
         label: name,
       })),
@@ -81,7 +81,7 @@ const result = () => {
       component: Select,
       options: intentOptions,
       rules: [{ required: true }],
-      shouldUpdate: (prevValues, curValues) => prevValues.skillId !== curValues.skillId,
+      dependencies: ['skillId'],
       onChange: async () => {
         form.setFieldsValue({ slots: [] });
       },
@@ -159,7 +159,7 @@ const result = () => {
               block
               icon={<PlusOutlined />}
             >
-              添加
+              添加语义槽
             </Button>
           </Item>
         </>

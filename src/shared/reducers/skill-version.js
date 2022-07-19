@@ -1,4 +1,5 @@
 import { merge, handleActions, combineActions, remove } from 'relient/reducers';
+import { prop } from 'lodash/fp';
 import { skillVersion } from '../schema';
 import {
   READ_ALL,
@@ -41,7 +42,7 @@ export default {
 
     [READ_BY_PRODUCT]: merge({
       schema: skillVersion,
-      dataKey: 'data.skills',
+      preProcess: ({ payload }) => prop('data.skills')(payload) || [],
     }),
 
     [REMOVE_SKILL]: remove(skillVersion),

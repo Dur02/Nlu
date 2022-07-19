@@ -1,4 +1,5 @@
 import { merge, handleActions, remove, combineActions } from 'relient/reducers';
+import { prop, flatten, flow, map } from 'lodash/fp';
 import { intent } from '../schema';
 import {
   READ_ALL,
@@ -32,7 +33,11 @@ export default {
 
     [READ_BY_PRODUCT]: merge({
       schema: intent,
-      dataKey: 'data.skill.intents',
+      preProcess: ({ payload }) => flow(
+        prop('data.skills'),
+        map(prop('intents')),
+        flatten,
+      )(payload) || [],
     }),
 
     [REMOVE]: remove(intent),
