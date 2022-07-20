@@ -52,7 +52,7 @@ export const update = createAction(
   UPDATE,
   ({
     id,
-    intent,
+    intentId,
     productId,
     response,
     sentence,
@@ -63,7 +63,7 @@ export const update = createAction(
     wildRight,
   }) => put('/skill/edit/intervention', {
     id,
-    intent,
+    intentId,
     productId,
     response,
     sentence,

@@ -30,6 +30,7 @@ const Operations = ({
   openVersion,
   onRemove,
   openWordGraph,
+  // exportYaml,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -67,6 +68,14 @@ const Operations = ({
     }
     setLoading(false);
   }, [readProfile, record, setLoading]);
+
+  // const onExport = useCallback(async () => {
+  //   setLoading(true);
+  //   const a = await exportYaml({ skillId: record.id });
+  //   // eslint-disable-next-line no-console
+  //   console.log(a);
+  //   setLoading(false);
+  // }, [readProfile, record, setLoading]);
 
   const onRemoveSkill = useCallback(async () => {
     setLoading(true);
@@ -133,6 +142,8 @@ const Operations = ({
       </Dropdown>
       &nbsp;&nbsp;
       <Button type="primary" size="small" ghost onClick={onPublish}>发布</Button>
+      {/* &nbsp;&nbsp; */}
+      {/* <Button type="primary" size="small" ghost onClick={onExport}>导出</Button> */}
       &nbsp;&nbsp;
       <Button type="primary" size="small" ghost onClick={() => openWordGraph(record)}>词图</Button>
       &nbsp;&nbsp;
@@ -159,6 +170,7 @@ Operations.propTypes = {
     isDraft: number,
     code: string,
   }),
+  // exportYaml: func.isRequired,
 };
 
 export const getColumns = ({
@@ -169,6 +181,7 @@ export const getColumns = ({
   createDraft,
   push,
   readProfile,
+  exportYaml,
 }) => [{
   //   title: '图标',
   //   dataIndex: 'iconPath',
@@ -185,7 +198,7 @@ export const getColumns = ({
   dataIndex: 'version',
 }, {
   title: '操作',
-  width: 400,
+  width: 380,
   render: (record) => (
     <Operations
       record={record}
@@ -195,6 +208,7 @@ export const getColumns = ({
       openWordGraph={openWordGraph}
       push={push}
       readProfile={readProfile}
+      exportYaml={exportYaml}
     />
   ),
 }];

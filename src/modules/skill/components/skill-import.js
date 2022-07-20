@@ -19,11 +19,14 @@ const { useForm, useWatch, Item } = Form;
 const mapWithIndex = map.convert({ cap: false });
 
 const getAction = ({
+  isYaml,
   isTesting,
   skillName,
   skillCode,
   skillVersion,
-}) => `/skill/edit/skill/excel-import${isTesting ? '/test' : ''}/v2?skillName=${skillName}&skillCode=${skillCode}&skillVersion=${skillVersion}`;
+}) => `/skill/edit/skill/${isYaml
+  ? `skill-yaml-import?importFlag=${isTesting ? 'true' : 'false'}&skillName=${skillName}&skillCode=${skillCode}&skillVersion=${skillVersion}`
+  : `excel-import${isTesting ? '/test' : ''}/v2?skillName=${skillName}&skillCode=${skillCode}&skillVersion=${skillVersion}`}`;
 
 const result = () => {
   const {
@@ -36,6 +39,7 @@ const result = () => {
 
   const [visible, setVisible] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
+  const [isYaml, setIsYaml] = useState(true);
 
   const [form] = useForm();
   const skillName = useWatch('skillName', form);
@@ -164,6 +168,16 @@ const result = () => {
             marginTop: '40px',
           }}
         >
+          <Item
+            label="文件类型"
+            name="fileType"
+            rules={[{ required: true }]}
+          >
+            <Select defaultValue="yaml" onChange={(value) => (value === 'yaml' ? setIsYaml(true) : setIsYaml(false))}>
+              <Option value="yaml">Yaml</Option>
+              <Option value="excel">Excel</Option>
+            </Select>
+          </Item>
           {!skillCode && (
             <Item
               label="技能名"
@@ -230,6 +244,7 @@ const result = () => {
                 onChange={onUpload}
                 showUploadList={false}
                 action={getAction({
+                  isYaml,
                   isTesting,
                   skillName: skillName || defaultSkillName,
                   skillCode,

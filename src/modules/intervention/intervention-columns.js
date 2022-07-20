@@ -6,9 +6,11 @@ export default ({
   skillVersionEntity,
   onRemove,
   openEditor,
+  productEntity,
 }) => [{
   title: '产品ID',
   dataIndex: 'productId',
+  render: (productId) => prop([productId, 'name'])(productEntity),
 }, {
   title: '技能',
   dataIndex: 'skillId',
@@ -29,14 +31,22 @@ export default ({
   },
 }, {
   title: '左匹配',
-  render: (record) => (
-    String(record.wildLeft)
+  dataIndex: 'wildLeft',
+  render: (wildLeft) => (
+    String(wildLeft)
   ),
 }, {
   title: '右匹配',
-  render: (record) => (
-    String(record.wildRight)
+  dataIndex: 'wildRight',
+  render: (wildRight) => (
+    String(wildRight)
   ),
+}, {
+  title: '创建时间',
+  dataIndex: 'createTime',
+}, {
+  title: '更新时间',
+  dataIndex: 'updateTime',
 }, {
   title: '操作',
   width: 140,

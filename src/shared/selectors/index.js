@@ -110,24 +110,19 @@ export const getSkillsWithVersions = (state) => flow(
   orderBy(['originalId'], ['desc']),
 )(state);
 
-export const getAllProduct = (state) => {
-  // eslint-disable-next-line no-console
-  // console.log(state);
-  const a = flow(
-    getEntityArray('product'),
-    orderBy(['id'], ['desc']),
-    map((product) => ({
-      ...product,
-      skillCodes: map((skillId) => flow(
-        getEntity(`skillVersion.${skillId}`),
-        prop('code'),
-      )(state))(product.skillIds),
-      productVersions: flow(
-        getEntityArray('productVersion'),
-        filter(propEq('productId', product.id)),
-        orderBy(['id'], ['desc']),
-      )(state),
-    })),
-  )(state);
-  return a;
-};
+export const getAllProduct = (state) => flow(
+  getEntityArray('product'),
+  orderBy(['id'], ['desc']),
+  map((product) => ({
+    ...product,
+    skillCodes: map((skillId) => flow(
+      getEntity(`skillVersion.${skillId}`),
+      prop('code'),
+    )(state))(product.skillIds),
+    productVersions: flow(
+      getEntityArray('productVersion'),
+      filter(propEq('productId', product.id)),
+      orderBy(['id'], ['desc']),
+    )(state),
+  })),
+)(state);

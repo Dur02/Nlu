@@ -6,7 +6,7 @@ import { useLocalTable } from 'relient-admin/hooks';
 import { Table, Modal, Select, Switch, Radio, Button, Form, Input } from 'antd';
 import { useAction } from 'relient/actions';
 import { remove, create, update } from 'shared/actions/intervention';
-import { flow, map, filter, propEq, prop } from 'lodash/fp';
+import { flow, map, filter, propEq, head, at, prop } from 'lodash/fp';
 import { readByProduct as readSkillVersionsByProductAction } from 'shared/actions/skill-version';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import selector from './intervention-selector';
@@ -23,7 +23,7 @@ const result = () => {
     productOptions,
     productEntity,
     skillVersionEntity,
-    intents,
+    // intents,
   } = useSelector(selector);
 
   const onCreate = useAction(create);
@@ -34,24 +34,10 @@ const result = () => {
   const [loading, setLoading] = useState(false);
 
   const getFields = (form) => {
-    const productId = form.getFieldValue('productId');
-    const skillId = form.getFieldValue('skillId');
-    const skillOptions = flow(
-      prop([productId, 'skillIds']),
-      map((id) => prop(id)(skillVersionEntity)),
-      filter(propEq('pubState', 1)),
-      map(({ name, id }) => ({
-        value: id,
-        label: name,
-      })),
-    )(productEntity);
-    const intentOptions = flow(
-      filter(propEq('skillId', skillId)),
-      map(({ name, id }) => ({
-        value: id,
-        label: name,
-      })),
-    )(intents);
+    // const productId = form.getFieldValue('productId');
+    // const skillId = form.getFieldValue('skillId');
+    const [skillState, setSkillsState] = useState();
+    const [slots, setSlots] = useState();
 
     return [{
       label: '产品',
@@ -61,7 +47,13 @@ const result = () => {
       rules: [{ required: true }],
       onChange: async (value) => {
         setLoading(true);
-        await readSkillVersionsByProduct({ productId: value, status: 1 });
+        const { data } = await readSkillVersionsByProduct({ productId: value, status: 1 });
+        // eslint-disable-next-line max-len
+        setSkillsState(map((item) => ({
+          intents: item.intents,
+          label: item.name,
+          value: item.id,
+        }))(data.skills));
         setLoading(false);
         form.setFieldsValue({ skillId: null, intentId: null, slots: [] });
       },
@@ -69,9 +61,9 @@ const result = () => {
       label: '技能',
       name: 'skillId',
       component: Select,
-      options: skillOptions,
+      options: skillState,
       rules: [{ required: true }],
-      onChange: async () => {
+      onChange: () => {
         form.setFieldsValue({ intentId: null, slots: [] });
       },
       loading,
@@ -79,10 +71,27 @@ const result = () => {
       label: '意图',
       name: 'intentId',
       component: Select,
-      options: intentOptions,
+      options: flow(
+        filter(propEq('value', form.getFieldValue('skillId'))),
+        map((item) => ({ intents: item.intents })),
+        head,
+        at('intents'),
+        head,
+        map((item) => ({ label: item.name, value: item.id })),
+      )(skillState),
       rules: [{ required: true }],
       dependencies: ['skillId'],
-      onChange: async () => {
+      onChange: () => {
+        setSlots(map((item) => ({ label: item.name, value: item.name }))(JSON.parse(flow(
+          filter(propEq('value', form.getFieldValue('skillId'))),
+          map((item) => ({ intents: item.intents })),
+          head,
+          at('intents'),
+          head,
+          filter(propEq('id', form.getFieldValue('intentId'))),
+          head,
+          prop('slots'),
+        )(skillState))));
         form.setFieldsValue({ slots: [] });
       },
       loading,
@@ -134,14 +143,17 @@ const result = () => {
             >
               <Item
                 {...restField}
-                name={[name, 'skillId']}
+                name={[name, 'name']}
                 rules={[{ required: true }]}
               >
-                <Select options={skillOptions} placeholder="技能" />
+                <Select
+                  placeholder="技能"
+                  options={slots}
+                />
               </Item>
               <Item
                 {...restField}
-                name={[name, 'response']}
+                name={[name, 'value']}
                 rules={[{ required: true }]}
               >
                 <Input autoComplete="off" placeholder="回复" />
@@ -220,7 +232,8 @@ const result = () => {
       {tableHeader}
       <Table
         dataSource={getDataSource(intervention)}
-        columns={columns({ skillVersionEntity, onRemove, openEditor })}
+        tableLayout="fixed"
+        columns={columns({ skillVersionEntity, onRemove, openEditor, productEntity })}
         rowKey="id"
         pagination={pagination}
       />
