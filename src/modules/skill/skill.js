@@ -10,7 +10,7 @@ import {
   Modal,
 } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
-import { remove, create, update } from 'shared/actions/skill';
+import { remove, create, update, yamlImport } from 'shared/actions/skill';
 import {
   create as createVersion,
   createDraft as createDraftVersionAction,
@@ -36,6 +36,7 @@ const result = () => {
   const dispatch = useDispatch();
   const push = useAction(pushAction);
   const readProfile = useAction(readMine);
+  const exportYaml = useAction(yamlImport);
 
   const {
     detailsVisible: versionVisible,
@@ -156,6 +157,7 @@ const result = () => {
           push,
           createDraft,
           readProfile,
+          exportYaml,
         })}
         rowKey="id"
         pagination={pagination}
@@ -179,19 +181,17 @@ const result = () => {
           />
         </Drawer>
       )}
-      {
-        wordGraphItem && (
-          <Modal
-            visible={wordGraphVisible}
-            onCancel={closeWordGraph}
-            onOk={closeWordGraph}
-            title={`${wordGraphItem.name} 词图`}
-            width={800}
-          >
-            <WordGraph skillCode={wordGraphItem.code} />
-          </Modal>
-        )
-      }
+      {wordGraphItem && (
+        <Modal
+          visible={wordGraphVisible}
+          onCancel={closeWordGraph}
+          onOk={closeWordGraph}
+          title={`${wordGraphItem.name} 词图`}
+          width={800}
+        >
+          <WordGraph skillCode={wordGraphItem.code} />
+        </Modal>
+      )}
     </Layout>
   );
 };

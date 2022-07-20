@@ -55,12 +55,8 @@ export const getSkillEditorColumns = ({
   attach,
 }) => {
   const findDefault = (record) => {
-    const a = map((item) => {
-      if (includes(item.id)(product.skillIds)) {
-        return true;
-      }
-      return false;
-    })(record.skillVersions);
+    // console.log(record.skillVersions);
+    const a = map((item) => includes(item.id)(product.skillIds))(record.skillVersions);
     return findIndex((o) => o === true)(a);
   };
 
@@ -108,13 +104,15 @@ export const getSkillEditorColumns = ({
         >
           <Option value="">无选择</Option>
           {
-              map((item) => (
-                <Option
-                  key={item.version}
-                  value={item.id}
-                >
-                  {item.version}
-                </Option>
+              map((item) => (item.pubState === 1 && item.modelFile !== ''
+                ? (
+                  <Option
+                    key={item.version}
+                    value={item.id}
+                  >
+                    {item.version}
+                  </Option>
+                ) : ''
               ))(record.skillVersions)
             }
         </Select>

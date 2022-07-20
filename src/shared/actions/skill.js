@@ -13,7 +13,7 @@ export const CREATE = actionType('CREATE');
 export const REMOVE = actionType('REMOVE');
 export const UPDATE = actionType('UPDATE');
 export const READ_WORD_GRAPH = actionType('READ_WORD_GRAPH');
-export const UPLOAD = actionType('UPLOAD');
+export const YAML_EXPORT = actionType('YAML_EXPORT');
 
 export const readAll = createAction(
   READ_ALL,
@@ -70,7 +70,7 @@ export const readWordGraph = createAction(
   ({ input, skillCode }) => read('/skill/edit/word-map/index/search', { refText: input, skillCode }),
 );
 
-export const upload = createAction(
-  UPLOAD,
-  ({ file }) => post('/skill/edit/skill/excel-import', { file }),
+export const yamlImport = createAction(
+  YAML_EXPORT,
+  ({ skillId }) => read('/skill/edit/skill/skill-yaml-export', { skillId }),
 );
