@@ -20,10 +20,10 @@ const middlewares = [
   fetchMiddleware({
     fetch,
     apiDomain: `${global.location.origin}`,
-    onUnauthorized: ({ dispatch }) => {
+    onUnauthorized: ({ dispatch, payload }) => {
       message.error({
-        key: '权限错误，请重新登陆适当账号',
-        content: '权限错误，请重新登陆适当账号',
+        key: payload.msg || '权限错误，请重新登陆适当账号',
+        content: payload.msg || '权限错误，请重新登陆适当账号',
         duration: 5,
       });
       dispatch(push(getWithBaseUrl('/auth/login', getConfig('baseUrl'))));
