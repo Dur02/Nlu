@@ -190,14 +190,8 @@ const result = () => {
         dataKey: 'sentence',
         label: '说法',
       }, {
-        dataKey: 'productId',
-        label: '产品',
-      }, {
-        dataKey: 'skillCode',
-        label: '技能',
-      }, {
-        dataKey: 'type',
-        label: '类型',
+        dataKey: 'response',
+        label: '回应',
       }],
     },
     showReset: true,
@@ -209,12 +203,14 @@ const result = () => {
       onSubmit: onCreate,
       getFields,
       initialValues: {
+        skillId: null,
+        intentId: null,
         wildLeft: false,
         wildRight: false,
         type: 1,
         slots: [{
-          skillId: null,
-          response: '',
+          name: null,
+          value: '',
         }],
       },
       component: Modal,
@@ -227,6 +223,37 @@ const result = () => {
     },
   });
 
+  const expandable = {
+    expandedRowRender: (record) => {
+      const expandedColumns = [{
+        title: 'entityName',
+        dataIndex: 'entityName',
+      }, {
+        title: 'name',
+        dataIndex: 'name',
+      }, {
+        title: 'rawvalue',
+        dataIndex: 'rawvalue',
+      }, {
+        title: 'realSlot',
+        dataIndex: 'realSlot',
+      }, {
+        title: 'value',
+        dataIndex: 'value',
+      }];
+
+      return (
+        <Table
+          dataSource={record.slots}
+          tableLayout="fixed"
+          columns={expandedColumns}
+          pagination={false}
+        />
+      );
+    },
+    rowExpandable: ({ slots }) => slots,
+  };
+
   return (
     <Layout>
       {tableHeader}
@@ -236,6 +263,7 @@ const result = () => {
         columns={columns({ skillVersionEntity, onRemove, openEditor, productEntity })}
         rowKey="id"
         pagination={pagination}
+        expandable={expandable}
       />
     </Layout>
   );
