@@ -33,151 +33,147 @@ const result = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const getFields = (form) => {
-    // const productId = form.getFieldValue('productId');
-    // const skillId = form.getFieldValue('skillId');
-    const [skillState, setSkillsState] = useState();
-    const [slots, setSlots] = useState();
+  const [skillState, setSkillsState] = useState();
+  const [slotsOption, setSlotsOption] = useState();
 
-    return [{
-      label: '产品',
-      name: 'productId',
-      component: Select,
-      options: productOptions,
-      rules: [{ required: true }],
-      onChange: async (value) => {
-        setLoading(true);
-        const { data } = await readSkillVersionsByProduct({ productId: value, status: 1 });
-        // eslint-disable-next-line max-len
-        setSkillsState(map((item) => ({
-          intents: item.intents,
-          label: item.name,
-          value: item.id,
-        }))(data.skills));
-        setLoading(false);
-        form.setFieldsValue({ skillId: null, intentId: null, slots: [] });
-      },
-    }, {
-      label: '技能',
-      name: 'skillId',
-      component: Select,
-      options: skillState,
-      rules: [{ required: true }],
-      onChange: () => {
-        form.setFieldsValue({ intentId: null, slots: [] });
-      },
-      loading,
-    }, {
-      label: '意图',
-      name: 'intentId',
-      component: Select,
-      options: flow(
+  const getFields = (form) => [{
+    label: '产品',
+    name: 'productId',
+    component: Select,
+    options: productOptions,
+    rules: [{ required: true }],
+    onChange: async (value) => {
+      setLoading(true);
+      const { data } = await readSkillVersionsByProduct({ productId: value, status: 1 });
+      // eslint-disable-next-line max-len
+      setSkillsState(map((item) => ({
+        intents: item.intents,
+        label: item.name,
+        value: item.id,
+      }))(data.skills));
+      setLoading(false);
+      form.setFieldsValue({ skillId: null, intentId: null, slots: [] });
+    },
+  }, {
+    label: '技能',
+    name: 'skillId',
+    component: Select,
+    options: skillState,
+    rules: [{ required: true }],
+    onChange: () => {
+      form.setFieldsValue({ intentId: null, slots: [] });
+    },
+    loading,
+  }, {
+    label: '意图',
+    name: 'intentId',
+    component: Select,
+    options: flow(
+      filter(propEq('value', form.getFieldValue('skillId'))),
+      map((item) => ({ intents: item.intents })),
+      head,
+      at('intents'),
+      head,
+      map((item) => ({ label: item.name, value: item.id })),
+    )(skillState),
+    rules: [{ required: true }],
+    dependencies: ['skillId'],
+    onChange: () => {
+      setSlotsOption(map((item) => ({ label: item.name, value: item.name }))(JSON.parse(flow(
         filter(propEq('value', form.getFieldValue('skillId'))),
         map((item) => ({ intents: item.intents })),
         head,
         at('intents'),
         head,
-        map((item) => ({ label: item.name, value: item.id })),
-      )(skillState),
-      rules: [{ required: true }],
-      dependencies: ['skillId'],
-      onChange: () => {
-        setSlots(map((item) => ({ label: item.name, value: item.name }))(JSON.parse(flow(
-          filter(propEq('value', form.getFieldValue('skillId'))),
-          map((item) => ({ intents: item.intents })),
-          head,
-          at('intents'),
-          head,
-          filter(propEq('id', form.getFieldValue('intentId'))),
-          head,
-          prop('slots'),
-        )(skillState))));
-        form.setFieldsValue({ slots: [] });
-      },
-      loading,
+        filter(propEq('id', form.getFieldValue('intentId'))),
+        head,
+        prop('slots'),
+      )(skillState))));
+      form.setFieldsValue({ slots: [] });
+    },
+    loading,
+  }, {
+    label: '说法',
+    name: 'sentence',
+    type: 'text',
+    autoComplete: 'off',
+    rules: [{ required: true }],
+  }, {
+    label: '回复',
+    name: 'response',
+    type: 'text',
+    autoComplete: 'off',
+    rules: [{ required: true }],
+  }, {
+    label: '左模糊匹配',
+    name: 'wildLeft',
+    component: Switch,
+    valuePropName: 'checked',
+  }, {
+    label: '右模糊匹配',
+    name: 'wildRight',
+    component: Switch,
+    valuePropName: 'checked',
+  }, {
+    label: '类型',
+    name: 'type',
+    component: Radio.Group,
+    options: [{
+      label: 'DM',
+      value: 1,
     }, {
-      label: '说法',
-      name: 'sentence',
-      type: 'text',
-      autoComplete: 'off',
-      rules: [{ required: true }],
-    }, {
-      label: '回复',
-      name: 'response',
-      type: 'text',
-      autoComplete: 'off',
-      rules: [{ required: true }],
-    }, {
-      label: '左模糊匹配',
-      name: 'wildLeft',
-      component: Switch,
-      valuePropName: 'checked',
-    }, {
-      label: '右模糊匹配',
-      name: 'wildRight',
-      component: Switch,
-      valuePropName: 'checked',
-    }, {
-      label: '类型',
-      name: 'type',
-      component: Radio.Group,
-      options: [{
-        label: 'DM',
-        value: 1,
-      }, {
-        label: 'NLU',
-        value: 2,
-      }],
-    }, {
-      name: 'slots',
-      isArray: true,
-      children: (fields, operation) => (
-        <>
-          {mapWithIndex(({ key, name, ...restField }, index) => (
+      label: 'NLU',
+      value: 2,
+    }],
+  }, {
+    name: 'slots',
+    isArray: true,
+    children: (fields, operation) => (
+      <>
+        {mapWithIndex(({ key, name, ...restField }, index) => (
+          <Item
+            key={key}
+            label={index === 0 ? '语义槽' : ' '}
+            colon={index === 0}
+            labelCol={labelCol}
+            wrapperCol={wrapperCol}
+          >
             <Item
-              key={key}
-              label={index === 0 ? '语义槽' : ' '}
-              colon={index === 0}
-              labelCol={labelCol}
-              wrapperCol={wrapperCol}
+              {...restField}
+              name={[name, 'name']}
+              rules={[{ required: true }]}
             >
-              <Item
-                {...restField}
-                name={[name, 'name']}
-                rules={[{ required: true }]}
-              >
-                <Select
-                  placeholder="技能"
-                  options={slots}
-                />
-              </Item>
-              <Item
-                {...restField}
-                name={[name, 'value']}
-                rules={[{ required: true }]}
-              >
-                <Input autoComplete="off" placeholder="回复" />
-              </Item>
-              <MinusCircleOutlined
-                style={{ position: 'absolute', top: 4, right: -30, fontSize: 20 }}
-                onClick={() => operation.remove(name)}
+              <Select
+                placeholder="技能"
+                options={slotsOption}
               />
             </Item>
-          ))(fields)}
-          <Item wrapperCol={{ ...wrapperCol, offset: labelCol.span }}>
-            <Button
-              type="dashed"
-              onClick={() => operation.add()}
-              block
-              icon={<PlusOutlined />}
+            <Item
+              {...restField}
+              name={[name, 'value']}
+              rules={[{ required: true }]}
             >
-              添加语义槽
-            </Button>
+              <Input autoComplete="off" placeholder="回复" />
+            </Item>
+            <MinusCircleOutlined
+              style={{ position: 'absolute', top: 4, right: -30, fontSize: 20 }}
+              onClick={() => operation.remove(name)}
+            />
           </Item>
-        </>
-      ),
-    }];
-  };
+        ))(fields)}
+        <Item wrapperCol={{ ...wrapperCol, offset: labelCol.span }}>
+          <Button
+            type="dashed"
+            onClick={() => operation.add()}
+            block
+            icon={<PlusOutlined />}
+          >
+            添加语义槽
+          </Button>
+        </Item>
+      </>
+    ),
+  }];
 
   const {
     tableHeader,
@@ -201,7 +197,12 @@ const result = () => {
     creator: {
       title: '创建干预',
       onSubmit: onCreate,
+      onCancel: () => {
+        setSkillsState();
+        setSlotsOption();
+      },
       getFields,
+      destroyOnClose: true,
       initialValues: {
         skillId: null,
         intentId: null,
@@ -231,10 +232,10 @@ const result = () => {
       }, {
         title: 'name',
         dataIndex: 'name',
-      }, {
+      }, /* {
         title: 'rawvalue',
         dataIndex: 'rawvalue',
-      }, {
+      }, */ {
         title: 'realSlot',
         dataIndex: 'realSlot',
       }, {
