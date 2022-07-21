@@ -6,7 +6,7 @@ import { useLocalTable } from 'relient-admin/hooks';
 import { Table, Modal, Select, Switch, Radio, Button, Form, Input } from 'antd';
 import { useAction } from 'relient/actions';
 import { remove, create, update } from 'shared/actions/intervention';
-import { flow, map, filter, propEq, head, at, prop } from 'lodash/fp';
+import { flow, map, propEq, prop, find } from 'lodash/fp';
 import { readByProduct as readSkillVersionsByProductAction } from 'shared/actions/skill-version';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import selector from './intervention-selector';
@@ -32,9 +32,21 @@ const result = () => {
   const readSkillVersionsByProduct = useAction(readSkillVersionsByProductAction);
 
   const [loading, setLoading] = useState(false);
-
   const [skillState, setSkillsState] = useState();
-  const [slotsOption, setSlotsOption] = useState();
+
+  const slotsSelect = (form) => {
+    const slots = flow(
+      find(propEq('value', form.getFieldValue('skillId'))),
+      prop('intents'),
+      map((item) => ({ slots: item.slots, value: item.id })),
+      find(propEq('value', form.getFieldValue('intentId'))),
+      prop('slots'),
+    )(skillState);
+    if (form.getFieldValue('intentId') !== null && form.getFieldValue('skillId') !== null && slots !== undefined) {
+      return (map((item) => ({ label: item.name, value: item.name }))(JSON.parse(slots)));
+    }
+    return [];
+  };
 
   const getFields = (form) => [{
     label: '产品',
@@ -69,26 +81,13 @@ const result = () => {
     name: 'intentId',
     component: Select,
     options: flow(
-      filter(propEq('value', form.getFieldValue('skillId'))),
-      map((item) => ({ intents: item.intents })),
-      head,
-      at('intents'),
-      head,
+      find(propEq('value', form.getFieldValue('skillId'))),
+      prop('intents'),
       map((item) => ({ label: item.name, value: item.id })),
     )(skillState),
     rules: [{ required: true }],
     dependencies: ['skillId'],
     onChange: () => {
-      setSlotsOption(map((item) => ({ label: item.name, value: item.name }))(JSON.parse(flow(
-        filter(propEq('value', form.getFieldValue('skillId'))),
-        map((item) => ({ intents: item.intents })),
-        head,
-        at('intents'),
-        head,
-        filter(propEq('id', form.getFieldValue('intentId'))),
-        head,
-        prop('slots'),
-      )(skillState))));
       form.setFieldsValue({ slots: [] });
     },
     loading,
@@ -98,13 +97,14 @@ const result = () => {
     type: 'text',
     autoComplete: 'off',
     rules: [{ required: true }],
-  }, {
+  }, /* {
     label: '回复',
     name: 'response',
     type: 'text',
     autoComplete: 'off',
     rules: [{ required: true }],
-  }, {
+    dependencies: ['type'],
+  }, */ {
     label: '左模糊匹配',
     name: 'wildLeft',
     component: Switch,
@@ -125,54 +125,77 @@ const result = () => {
       label: 'NLU',
       value: 2,
     }],
+    onChange: () => {
+      if (form.getFieldValue('type') === 1) {
+        // eslint-disable-next-line no-console
+        console.log('隐藏语音槽');
+      } else {
+        // eslint-disable-next-line no-console
+        console.log('隐藏回复');
+      }
+    },
   }, {
-    name: 'slots',
-    isArray: true,
-    children: (fields, operation) => (
-      <>
-        {mapWithIndex(({ key, name, ...restField }, index) => (
-          <Item
-            key={key}
-            label={index === 0 ? '语义槽' : ' '}
-            colon={index === 0}
-            labelCol={labelCol}
-            wrapperCol={wrapperCol}
-          >
-            <Item
-              {...restField}
-              name={[name, 'name']}
-              rules={[{ required: true }]}
-            >
-              <Select
-                placeholder="技能"
-                options={slotsOption}
-              />
+    name: form.getFieldValue('type') === 2 ? 'slots' : 'response',
+    children: (fields, operation) => {
+      if (form.getFieldValue('type') === 2) {
+        return (
+          <>
+            {mapWithIndex(({ key, name, ...restField }, index) => (
+              <Item
+                key={key}
+                label={index === 0 ? '语义槽' : ' '}
+                colon={index === 0}
+                labelCol={labelCol}
+                wrapperCol={wrapperCol}
+                shouldUpdate={async (prevValues, curValues) => prevValues.type !== curValues.type}
+              >
+                <Item
+                  {...restField}
+                  name={[name, 'name']}
+                  rules={[{ required: true }]}
+                >
+                  <Select
+                    placeholder="技能"
+                    options={slotsSelect(form)}
+                  />
+                </Item>
+                <Item
+                  {...restField}
+                  name={[name, 'value']}
+                  rules={[{ required: true }]}
+                >
+                  <Input autoComplete="off" placeholder="回复" />
+                </Item>
+                <MinusCircleOutlined
+                  style={{ position: 'absolute', top: 4, right: -30, fontSize: 20 }}
+                  onClick={() => operation.remove(name)}
+                />
+              </Item>
+            ))(fields)}
+            <Item wrapperCol={{ ...wrapperCol, offset: labelCol.span }}>
+              <Button
+                type="dashed"
+                onClick={() => operation.add()}
+                block
+                icon={<PlusOutlined />}
+              >
+                添加语义槽
+              </Button>
             </Item>
-            <Item
-              {...restField}
-              name={[name, 'value']}
-              rules={[{ required: true }]}
-            >
-              <Input autoComplete="off" placeholder="回复" />
-            </Item>
-            <MinusCircleOutlined
-              style={{ position: 'absolute', top: 4, right: -30, fontSize: 20 }}
-              onClick={() => operation.remove(name)}
-            />
-          </Item>
-        ))(fields)}
-        <Item wrapperCol={{ ...wrapperCol, offset: labelCol.span }}>
-          <Button
-            type="dashed"
-            onClick={() => operation.add()}
-            block
-            icon={<PlusOutlined />}
-          >
-            添加语义槽
-          </Button>
+          </>
+        );
+      }
+      return (
+        <Item
+          label="回复"
+          labelCol={labelCol}
+          wrapperCol={wrapperCol}
+          shouldUpdate={async (prevValues, curValues) => prevValues.type !== curValues.type}
+        >
+          <Input autoComplete="off" placeholder="回复" />
         </Item>
-      </>
-    ),
+      );
+    },
   }];
 
   const {
@@ -199,7 +222,6 @@ const result = () => {
       onSubmit: onCreate,
       onCancel: () => {
         setSkillsState();
-        setSlotsOption();
       },
       getFields,
       destroyOnClose: true,
@@ -247,6 +269,7 @@ const result = () => {
         <Table
           dataSource={record.slots}
           tableLayout="fixed"
+          rowKey="key"
           columns={expandedColumns}
           pagination={false}
         />

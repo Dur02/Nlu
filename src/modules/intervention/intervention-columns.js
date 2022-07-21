@@ -23,8 +23,9 @@ export default ({
   dataIndex: 'response',
 }, {
   title: '类型',
-  render: (record) => {
-    if (record.type === '1') {
+  dataIndex: 'type',
+  render: (type) => {
+    if (type === '1') {
       return 'DM';
     }
     return 'NLU';
@@ -42,8 +43,19 @@ export default ({
     String(wildRight)
   ),
 }, {
-  title: '创建时间',
-  dataIndex: 'createTime',
+  title: '状态',
+  dataIndex: 'label',
+  render: (label) => {
+    switch (label) {
+      case 0:
+        return '删除';
+      case 1:
+        return '正常';
+      default:
+        return '废弃';
+    }
+  }
+  ,
 }, {
   title: '更新时间',
   dataIndex: 'updateTime',
