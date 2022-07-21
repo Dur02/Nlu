@@ -80,7 +80,10 @@ const result = () => {
     rules: [{ required: true }],
   }];
 
-  const onCreate = useAction(create);
+  const onCreate = useCallback(async (values) => {
+    await dispatch(create(values));
+    await dispatch(readMine());
+  }, []);
   const onUpdate = useAction(update);
   const createDraft = useAction(createDraftVersionAction);
   const onCreateVersion = useCallback(
