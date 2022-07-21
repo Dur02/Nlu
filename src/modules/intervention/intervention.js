@@ -9,6 +9,7 @@ import { remove, create, update } from 'shared/actions/intervention';
 import { flow, map, propEq, prop, find } from 'lodash/fp';
 import { readByProduct as readSkillVersionsByProductAction } from 'shared/actions/skill-version';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { interventionTypeOptions, NLU, DM } from 'shared/constants/intervention-type';
 import selector from './intervention-selector';
 import columns from './intervention-columns';
 
@@ -16,6 +17,21 @@ const { Item } = Form;
 const wrapperCol = { span: 14 };
 const labelCol = { span: 8 };
 const mapWithIndex = map.convert({ cap: false });
+
+const getSlotOptions = (form, skills) => {
+  const skillId = form.getFieldValue('skillId');
+  const intentId = form.getFieldValue('intentId');
+  const slots = flow(
+    find(propEq('value', skillId)),
+    prop('intents'),
+    find(propEq('id', intentId)),
+    prop('slots'),
+  )(skills);
+  if (intentId && skillId && slots) {
+    return (map(({ name }) => ({ label: name, value: name }))(JSON.parse(slots)));
+  }
+  return [];
+};
 
 const result = () => {
   const {
@@ -32,259 +48,137 @@ const result = () => {
   const readSkillVersionsByProduct = useAction(readSkillVersionsByProductAction);
 
   const [loading, setLoading] = useState(false);
-  const [skillState, setSkillsState] = useState();
-  const [typeState, setTypeState] = useState(1);
+  const [skills, setSkills] = useState();
+  const [inventionType, setInventionType] = useState(DM);
 
-  const slotsSelect = (form) => {
-    const slots = flow(
-      find(propEq('value', form.getFieldValue('skillId'))),
-      prop('intents'),
-      map((item) => ({ slots: item.slots, value: item.id })),
-      find(propEq('value', form.getFieldValue('intentId'))),
-      prop('slots'),
-    )(skillState);
-    if (form.getFieldValue('intentId') !== null && form.getFieldValue('skillId') !== null && slots !== undefined) {
-      return (map((item) => ({ label: item.name, value: item.name }))(JSON.parse(slots)));
-    }
-    return [];
-  };
-
-  const cretorField = (form) => [{
-    label: '产品',
-    name: 'productId',
-    component: Select,
-    options: productOptions,
-    rules: [{ required: true }],
-    onChange: async (value) => {
-      setLoading(true);
-      const { data } = await readSkillVersionsByProduct({ productId: value, status: 1 });
-      setSkillsState(map(({ intents, name, id }) => ({
-        intents,
-        label: name,
-        value: id,
-      }))(data.skills));
-      setLoading(false);
-      form.setFieldsValue({ skillId: null, intentId: null, slots: [] });
-    },
-  }, {
-    label: '技能',
-    name: 'skillId',
-    component: Select,
-    options: skillState,
-    rules: [{ required: true }],
-    onChange: () => {
-      form.setFieldsValue({ intentId: null, slots: [] });
-    },
-    loading,
-  }, {
-    label: '意图',
-    name: 'intentId',
-    component: Select,
-    options: flow(
-      find(propEq('value', form.getFieldValue('skillId'))),
-      prop('intents'),
-      map((item) => ({ label: item.name, value: item.id })),
-    )(skillState),
-    rules: [{ required: true }],
-    dependencies: ['skillId'],
-    onChange: () => {
-      form.setFieldsValue({ slots: [] });
-    },
-    loading,
-  }, {
-    label: '说法',
-    name: 'sentence',
-    type: 'text',
-    autoComplete: 'off',
-    rules: [{ required: true }],
-  }, {
-    label: '左模糊匹配',
-    name: 'wildLeft',
-    component: Switch,
-    valuePropName: 'checked',
-  }, {
-    label: '右模糊匹配',
-    name: 'wildRight',
-    component: Switch,
-    valuePropName: 'checked',
-  }, {
-    label: '类型',
-    name: 'type',
-    component: Radio.Group,
-    options: [{
-      label: 'DM',
-      value: 1,
+  const getFields = (form) => {
+    const baseFields = [{
+      label: '产品',
+      name: 'productId',
+      component: Select,
+      options: productOptions,
+      rules: [{ required: true }],
+      onChange: async (value) => {
+        setLoading(true);
+        const { data } = await readSkillVersionsByProduct({ productId: value, status: 1 });
+        setSkills(map(({ intents, name, id }) => ({
+          intents,
+          label: name,
+          value: id,
+        }))(data.skills));
+        setLoading(false);
+        form.setFieldsValue({ skillId: null, intentId: null, slots: [] });
+      },
     }, {
-      label: 'NLU',
-      value: 2,
-    }],
-    onChange: (e) => {
-      setTypeState(e.target.value);
-    },
-  }, {
-    name: typeState === 2 ? 'slots' : 'response',
-    children: (fields, operation) => {
-      if (typeState === 2) {
-        return (
-          <>
-            {mapWithIndex(({ key, name, ...restField }, index) => (
+      label: '技能',
+      name: 'skillId',
+      component: Select,
+      options: skills,
+      rules: [{ required: true }],
+      onChange: () => {
+        form.setFieldsValue({ intentId: null, slots: [] });
+      },
+      loading,
+    }, {
+      label: '意图',
+      name: 'intentId',
+      component: Select,
+      options: flow(
+        find(propEq('value', form.getFieldValue('skillId'))),
+        prop('intents'),
+        map((item) => ({ label: item.name, value: item.id })),
+      )(skills),
+      rules: [{ required: true }],
+      dependencies: ['skillId'],
+      onChange: () => {
+        form.setFieldsValue({ slots: [] });
+      },
+      loading,
+    }, {
+      label: '说法',
+      name: 'sentence',
+      type: 'text',
+      autoComplete: 'off',
+      rules: [{ required: true }],
+    }, {
+      label: '左模糊匹配',
+      name: 'wildLeft',
+      component: Switch,
+      valuePropName: 'checked',
+    }, {
+      label: '右模糊匹配',
+      name: 'wildRight',
+      component: Switch,
+      valuePropName: 'checked',
+    }, {
+      label: '类型',
+      name: 'type',
+      component: Radio.Group,
+      options: interventionTypeOptions,
+      onChange: ({ target: { value } }) => {
+        setInventionType(value);
+      },
+    }];
+    const slotsField = {
+      name: 'slots',
+      children: (fields, operation) => (
+        <>
+          {mapWithIndex(({ key, name, ...restField }, index) => (
+            <Item
+              key={key}
+              label={index === 0 ? '语义槽' : ' '}
+              colon={index === 0}
+              labelCol={labelCol}
+              wrapperCol={wrapperCol}
+            >
               <Item
-                key={key}
-                label={index === 0 ? '语义槽' : ' '}
-                colon={index === 0}
-                labelCol={labelCol}
-                wrapperCol={wrapperCol}
+                {...restField}
+                name={[name, 'name']}
+                rules={[{ required: true }]}
               >
-                <Item
-                  {...restField}
-                  name={[name, 'name']}
-                  rules={[{ required: true }]}
-                >
-                  <Select
-                    placeholder="技能"
-                    options={slotsSelect(form)}
-                  />
-                </Item>
-                <Item
-                  {...restField}
-                  name={[name, 'value']}
-                  rules={[{ required: true }]}
-                >
-                  <Input autoComplete="off" placeholder="回复" />
-                </Item>
-                <MinusCircleOutlined
-                  style={{ position: 'absolute', top: 4, right: -30, fontSize: 20 }}
-                  onClick={() => operation.remove(name)}
+                <Select
+                  placeholder="技能"
+                  options={getSlotOptions(form, skills)}
                 />
               </Item>
-            ))(fields)}
-            <Item wrapperCol={{ ...wrapperCol, offset: labelCol.span }}>
-              <Button
-                type="dashed"
-                onClick={() => operation.add()}
-                block
-                icon={<PlusOutlined />}
+              <Item
+                {...restField}
+                name={[name, 'value']}
+                rules={[{ required: true }]}
               >
-                添加语义槽
-              </Button>
+                <Input autoComplete="off" placeholder="回复" />
+              </Item>
+              <MinusCircleOutlined
+                style={{ position: 'absolute', top: 4, right: -30, fontSize: 20 }}
+                onClick={() => operation.remove(name)}
+              />
             </Item>
-          </>
-        );
-      }
-      return (
-        <Item
-          name="response"
-          label="回复"
-          labelCol={labelCol}
-          wrapperCol={wrapperCol}
-          rules={[{ required: true }]}
-        >
-          <Input autoComplete="off" placeholder="回复" />
-        </Item>
-      );
-    },
-  }];
-
-  // const editorField = (form) => [{
-  //   label: '说法',
-  //   name: 'sentence',
-  //   type: 'text',
-  //   autoComplete: 'off',
-  //   rules: [{ required: true }],
-  // }, {
-  //   label: '左模糊匹配',
-  //   name: 'wildLeft',
-  //   component: Switch,
-  //   valuePropName: 'checked',
-  // }, {
-  //   label: '右模糊匹配',
-  //   name: 'wildRight',
-  //   component: Switch,
-  //   valuePropName: 'checked',
-  // }, {
-  //   label: '类型',
-  //   name: 'type',
-  //   component: Radio.Group,
-  //   options: [{
-  //     label: 'DM',
-  //     value: 1,
-  //   }, {
-  //     label: 'NLU',
-  //     value: 2,
-  //   }],
-  //   onChange: () => {
-  //     if (form.getFieldValue('type') === 1) {
-  //       // eslint-disable-next-line no-console
-  //       console.log('隐藏语音槽');
-  //     } else {
-  //       // eslint-disable-next-line no-console
-  //       console.log('隐藏回复');
-  //     }
-  //   },
-  // }, {
-  //   name: form.getFieldValue('type') === 2 ? 'slots' : 'response',
-  //   children: (fields, operation) => {
-  //     if (form.getFieldValue('type') === 2) {
-  //       return (
-  //         <>
-  //           {mapWithIndex(({ key, name, ...restField }, index) => (
-  //             <Item
-  //               key={key}
-  //               label={index === 0 ? '语义槽' : ' '}
-  //               colon={index === 0}
-  //               labelCol={labelCol}
-  //               wrapperCol={wrapperCol}
-  // eslint-disable-next-line max-len
-  //               shouldUpdate={async (prevValues, curValues) => prevValues.type !== curValues.type}
-  //             >
-  //               <Item
-  //                 {...restField}
-  //                 name={[name, 'name']}
-  //                 rules={[{ required: true }]}
-  //               >
-  //                 <Select
-  //                   placeholder="技能"
-  //                   options={slotsSelect(form)}
-  //                 />
-  //               </Item>
-  //               <Item
-  //                 {...restField}
-  //                 name={[name, 'value']}
-  //                 rules={[{ required: true }]}
-  //               >
-  //                 <Input autoComplete="off" placeholder="回复" />
-  //               </Item>
-  //               <MinusCircleOutlined
-  //                 style={{ position: 'absolute', top: 4, right: -30, fontSize: 20 }}
-  //                 onClick={() => operation.remove(name)}
-  //               />
-  //             </Item>
-  //           ))(fields)}
-  //           <Item wrapperCol={{ ...wrapperCol, offset: labelCol.span }}>
-  //             <Button
-  //               type="dashed"
-  //               onClick={() => operation.add()}
-  //               block
-  //               icon={<PlusOutlined />}
-  //             >
-  //               添加语义槽
-  //             </Button>
-  //           </Item>
-  //         </>
-  //       );
-  //     }
-  //     return (
-  //       <Item
-  //         label="回复"
-  //         labelCol={labelCol}
-  //         wrapperCol={wrapperCol}
-  //         shouldUpdate={async (prevValues, curValues) => prevValues.type !== curValues.type}
-  //       >
-  //         <Input autoComplete="off" placeholder="回复" />
-  //       </Item>
-  //     );
-  //   },
-  // }];
+          ))(fields)}
+          <Item wrapperCol={{ ...wrapperCol, offset: labelCol.span }}>
+            <Button
+              type="dashed"
+              onClick={() => operation.add()}
+              block
+              icon={<PlusOutlined />}
+            >
+              添加语义槽
+            </Button>
+          </Item>
+        </>
+      ),
+    };
+    const responseField = {
+      name: 'response',
+      label: '回复',
+      rules: [{ required: true }],
+      autoComplete: 'off',
+      placeholder: '回复',
+    };
+    if (inventionType === NLU) {
+      return [...baseFields, slotsField];
+    }
+    return [...baseFields, responseField];
+  };
 
   const {
     tableHeader,
@@ -309,16 +203,16 @@ const result = () => {
       title: '创建干预',
       onSubmit: onCreate,
       onCancel: () => {
-        setSkillsState();
-        setTypeState(1);
+        setSkills();
+        setInventionType(DM);
       },
-      getFields: cretorField,
+      getFields,
       initialValues: {
         skillId: null,
         intentId: null,
         wildLeft: false,
         wildRight: false,
-        type: 1,
+        type: DM,
         slots: [{
           name: null,
           value: '',
@@ -330,10 +224,10 @@ const result = () => {
       title: '编辑产品',
       onSubmit: onUpdate,
       onCancel: () => {
-        setSkillsState();
-        setTypeState(1);
+        setSkills();
+        setInventionType(DM);
       },
-      getFields: cretorField,
+      getFields,
       component: Modal,
     },
   });
@@ -346,10 +240,7 @@ const result = () => {
       }, {
         title: 'name',
         dataIndex: 'name',
-      }, /* {
-        title: 'rawvalue',
-        dataIndex: 'rawvalue',
-      }, */ {
+      }, {
         title: 'realSlot',
         dataIndex: 'realSlot',
       }, {
@@ -381,10 +272,10 @@ const result = () => {
           onRemove,
           openEditor,
           productEntity,
-          setSkillsState,
+          setSkills,
           readSkillVersionsByProduct,
           setLoading,
-          setTypeState,
+          setInventionType,
         })}
         rowKey="id"
         pagination={pagination}
