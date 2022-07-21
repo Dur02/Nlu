@@ -1,12 +1,14 @@
 import { Button, Popconfirm } from 'antd';
 import React from 'react';
-import { prop } from 'lodash/fp';
+import { map, prop } from 'lodash/fp';
 
 export default ({
   skillVersionEntity,
   onRemove,
   openEditor,
   productEntity,
+  setSkillsState,
+  readSkillVersionsByProduct,
 }) => [{
   title: '产品ID',
   dataIndex: 'productId',
@@ -68,7 +70,14 @@ export default ({
         type="primary"
         ghost
         size="small"
-        onClick={() => {
+        onClick={async () => {
+          // eslint-disable-next-line max-len
+          const { data } = await readSkillVersionsByProduct({ productId: record.productId, status: 1 });
+          setSkillsState(map((item) => ({
+            intents: item.intents,
+            label: item.name,
+            value: item.id,
+          }))(data.skills));
           openEditor(record);
         }}
       >

@@ -33,6 +33,7 @@ const result = () => {
 
   const [loading, setLoading] = useState(false);
   const [skillState, setSkillsState] = useState();
+  const [typeState, setTypeState] = useState(1);
 
   const slotsSelect = (form) => {
     const slots = flow(
@@ -48,7 +49,7 @@ const result = () => {
     return [];
   };
 
-  const getFields = (form) => [{
+  const cretorField = (form) => [{
     label: '产品',
     name: 'productId',
     component: Select,
@@ -97,14 +98,7 @@ const result = () => {
     type: 'text',
     autoComplete: 'off',
     rules: [{ required: true }],
-  }, /* {
-    label: '回复',
-    name: 'response',
-    type: 'text',
-    autoComplete: 'off',
-    rules: [{ required: true }],
-    dependencies: ['type'],
-  }, */ {
+  }, {
     label: '左模糊匹配',
     name: 'wildLeft',
     component: Switch,
@@ -127,17 +121,15 @@ const result = () => {
     }],
     onChange: () => {
       if (form.getFieldValue('type') === 1) {
-        // eslint-disable-next-line no-console
-        console.log('隐藏语音槽');
+        setTypeState(1);
       } else {
-        // eslint-disable-next-line no-console
-        console.log('隐藏回复');
+        setTypeState(2);
       }
     },
   }, {
-    name: form.getFieldValue('type') === 2 ? 'slots' : 'response',
+    name: typeState === 2 ? 'slots' : 'response',
     children: (fields, operation) => {
-      if (form.getFieldValue('type') === 2) {
+      if (typeState === 2) {
         return (
           <>
             {mapWithIndex(({ key, name, ...restField }, index) => (
@@ -187,16 +179,119 @@ const result = () => {
       }
       return (
         <Item
+          name="response"
           label="回复"
           labelCol={labelCol}
           wrapperCol={wrapperCol}
           shouldUpdate={async (prevValues, curValues) => prevValues.type !== curValues.type}
+          rules={[{ required: true }]}
         >
           <Input autoComplete="off" placeholder="回复" />
         </Item>
       );
     },
   }];
+
+  // const editorField = (form) => [{
+  //   label: '说法',
+  //   name: 'sentence',
+  //   type: 'text',
+  //   autoComplete: 'off',
+  //   rules: [{ required: true }],
+  // }, {
+  //   label: '左模糊匹配',
+  //   name: 'wildLeft',
+  //   component: Switch,
+  //   valuePropName: 'checked',
+  // }, {
+  //   label: '右模糊匹配',
+  //   name: 'wildRight',
+  //   component: Switch,
+  //   valuePropName: 'checked',
+  // }, {
+  //   label: '类型',
+  //   name: 'type',
+  //   component: Radio.Group,
+  //   options: [{
+  //     label: 'DM',
+  //     value: 1,
+  //   }, {
+  //     label: 'NLU',
+  //     value: 2,
+  //   }],
+  //   onChange: () => {
+  //     if (form.getFieldValue('type') === 1) {
+  //       // eslint-disable-next-line no-console
+  //       console.log('隐藏语音槽');
+  //     } else {
+  //       // eslint-disable-next-line no-console
+  //       console.log('隐藏回复');
+  //     }
+  //   },
+  // }, {
+  //   name: form.getFieldValue('type') === 2 ? 'slots' : 'response',
+  //   children: (fields, operation) => {
+  //     if (form.getFieldValue('type') === 2) {
+  //       return (
+  //         <>
+  //           {mapWithIndex(({ key, name, ...restField }, index) => (
+  //             <Item
+  //               key={key}
+  //               label={index === 0 ? '语义槽' : ' '}
+  //               colon={index === 0}
+  //               labelCol={labelCol}
+  //               wrapperCol={wrapperCol}
+  // eslint-disable-next-line max-len
+  //               shouldUpdate={async (prevValues, curValues) => prevValues.type !== curValues.type}
+  //             >
+  //               <Item
+  //                 {...restField}
+  //                 name={[name, 'name']}
+  //                 rules={[{ required: true }]}
+  //               >
+  //                 <Select
+  //                   placeholder="技能"
+  //                   options={slotsSelect(form)}
+  //                 />
+  //               </Item>
+  //               <Item
+  //                 {...restField}
+  //                 name={[name, 'value']}
+  //                 rules={[{ required: true }]}
+  //               >
+  //                 <Input autoComplete="off" placeholder="回复" />
+  //               </Item>
+  //               <MinusCircleOutlined
+  //                 style={{ position: 'absolute', top: 4, right: -30, fontSize: 20 }}
+  //                 onClick={() => operation.remove(name)}
+  //               />
+  //             </Item>
+  //           ))(fields)}
+  //           <Item wrapperCol={{ ...wrapperCol, offset: labelCol.span }}>
+  //             <Button
+  //               type="dashed"
+  //               onClick={() => operation.add()}
+  //               block
+  //               icon={<PlusOutlined />}
+  //             >
+  //               添加语义槽
+  //             </Button>
+  //           </Item>
+  //         </>
+  //       );
+  //     }
+  //     return (
+  //       <Item
+  //         label="回复"
+  //         labelCol={labelCol}
+  //         wrapperCol={wrapperCol}
+  //         shouldUpdate={async (prevValues, curValues) => prevValues.type !== curValues.type}
+  //       >
+  //         <Input autoComplete="off" placeholder="回复" />
+  //       </Item>
+  //     );
+  //   },
+  // }];
 
   const {
     tableHeader,
@@ -222,9 +317,9 @@ const result = () => {
       onSubmit: onCreate,
       onCancel: () => {
         setSkillsState();
+        setTypeState(1);
       },
-      getFields,
-      destroyOnClose: true,
+      getFields: cretorField,
       initialValues: {
         skillId: null,
         intentId: null,
@@ -241,7 +336,11 @@ const result = () => {
     editor: {
       title: '编辑产品',
       onSubmit: onUpdate,
-      getFields,
+      onCancel: () => {
+        setSkillsState();
+        setTypeState(1);
+      },
+      getFields: cretorField,
       component: Modal,
     },
   });
@@ -284,7 +383,14 @@ const result = () => {
       <Table
         dataSource={getDataSource(intervention)}
         tableLayout="fixed"
-        columns={columns({ skillVersionEntity, onRemove, openEditor, productEntity })}
+        columns={columns({
+          skillVersionEntity,
+          onRemove,
+          openEditor,
+          productEntity,
+          setSkillsState,
+          readSkillVersionsByProduct,
+        })}
         rowKey="id"
         pagination={pagination}
         expandable={expandable}
