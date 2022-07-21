@@ -38,7 +38,7 @@ export const create = createAction(
   }) => post('/skill/edit/intervention', {
     intentId,
     productId,
-    response: response ? response.response : '',
+    response,
     sentence,
     skillId,
     slots,
