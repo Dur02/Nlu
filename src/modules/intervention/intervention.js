@@ -388,6 +388,7 @@ const result = () => {
           setSkillsState,
           readSkillVersionsByProduct,
           setLoading,
+          setTypeState,
         })}
         rowKey="id"
         pagination={pagination}

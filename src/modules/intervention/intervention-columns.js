@@ -10,6 +10,7 @@ export default ({
   setSkillsState,
   readSkillVersionsByProduct,
   setLoading,
+  setTypeState,
 }) => [{
   title: '产品ID',
   dataIndex: 'productId',
@@ -83,6 +84,7 @@ export default ({
             label: name,
             value: id,
           }))(data.skills));
+          setTypeState(record.type);
           setLoading(false);
         }}
       >
