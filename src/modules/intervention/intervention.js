@@ -118,8 +118,8 @@ const result = () => {
       label: 'NLU',
       value: 2,
     }],
-    onChange: (value) => {
-      setTypeState(value);
+    onChange: (e) => {
+      setTypeState(e.target.value);
     },
   }, {
     name: typeState === 2 ? 'slots' : 'response',
