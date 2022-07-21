@@ -58,8 +58,7 @@ export default ({
       default:
         return '废弃';
     }
-  }
-  ,
+  },
 }, {
   title: '更新时间',
   dataIndex: 'updateTime',

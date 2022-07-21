@@ -49,7 +49,7 @@ const result = () => {
     return [];
   };
 
-  const cretorField = (form) => [{
+  const creatorField = (form) => [{
     label: '产品',
     name: 'productId',
     component: Select,
@@ -312,7 +312,7 @@ const result = () => {
         setSkillsState();
         setTypeState(1);
       },
-      getFields: cretorField,
+      getFields: creatorField,
       initialValues: {
         skillId: null,
         intentId: null,
@@ -333,7 +333,7 @@ const result = () => {
         setSkillsState();
         setTypeState(1);
       },
-      getFields: cretorField,
+      getFields: creatorField,
       component: Modal,
     },
   });
