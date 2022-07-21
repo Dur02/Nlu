@@ -12,7 +12,7 @@ export default ({
   setLoading,
   setInventionType,
 }) => [{
-  title: '产品ID',
+  title: '产品',
   dataIndex: 'productId',
   render: (productId) => prop([productId, 'name'])(productEntity),
 }, {
@@ -23,7 +23,7 @@ export default ({
   title: '说法',
   dataIndex: 'sentence',
 }, {
-  title: '回应',
+  title: '回复',
   dataIndex: 'response',
 }, {
   title: '类型',
