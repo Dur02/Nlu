@@ -139,7 +139,6 @@ const result = () => {
                 colon={index === 0}
                 labelCol={labelCol}
                 wrapperCol={wrapperCol}
-                shouldUpdate={async (prevValues, curValues) => prevValues.type !== curValues.type}
               >
                 <Item
                   {...restField}
@@ -183,7 +182,6 @@ const result = () => {
           label="回复"
           labelCol={labelCol}
           wrapperCol={wrapperCol}
-          shouldUpdate={async (prevValues, curValues) => prevValues.type !== curValues.type}
           rules={[{ required: true }]}
         >
           <Input autoComplete="off" placeholder="回复" />
