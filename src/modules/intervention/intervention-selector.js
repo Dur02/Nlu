@@ -19,8 +19,6 @@ export default (state) => {
         }
         return item;
       }),
-      // filter((item) => (item.slots !== null)),
-      // map((item) => ({ slots: item.slots })),
     )(state),
     intents: getEntityArray('intent')(state),
     productOptions: flow(
