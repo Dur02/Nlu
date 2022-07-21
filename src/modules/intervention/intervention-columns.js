@@ -9,6 +9,7 @@ export default ({
   productEntity,
   setSkillsState,
   readSkillVersionsByProduct,
+  setLoading,
 }) => [{
   title: '产品ID',
   dataIndex: 'productId',
@@ -71,14 +72,18 @@ export default ({
         ghost
         size="small"
         onClick={async () => {
-          // eslint-disable-next-line max-len
-          const { data } = await readSkillVersionsByProduct({ productId: record.productId, status: 1 });
-          setSkillsState(map((item) => ({
-            intents: item.intents,
-            label: item.name,
-            value: item.id,
-          }))(data.skills));
           openEditor(record);
+          setLoading(true);
+          const { data } = await readSkillVersionsByProduct({
+            productId: record.productId,
+            status: 1,
+          });
+          setSkillsState(map(({ intents, name, id }) => ({
+            intents,
+            label: name,
+            value: id,
+          }))(data.skills));
+          setLoading(false);
         }}
       >
         修改
