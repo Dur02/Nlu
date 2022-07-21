@@ -118,12 +118,8 @@ const result = () => {
       label: 'NLU',
       value: 2,
     }],
-    onChange: () => {
-      if (form.getFieldValue('type') === 1) {
-        setTypeState(1);
-      } else {
-        setTypeState(2);
-      }
+    onChange: (value) => {
+      setTypeState(value);
     },
   }, {
     name: typeState === 2 ? 'slots' : 'response',
