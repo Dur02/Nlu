@@ -58,11 +58,10 @@ const result = () => {
     onChange: async (value) => {
       setLoading(true);
       const { data } = await readSkillVersionsByProduct({ productId: value, status: 1 });
-      // eslint-disable-next-line max-len
-      setSkillsState(map((item) => ({
-        intents: item.intents,
-        label: item.name,
-        value: item.id,
+      setSkillsState(map(({ intents, name, id }) => ({
+        intents,
+        label: name,
+        value: id,
       }))(data.skills));
       setLoading(false);
       form.setFieldsValue({ skillId: null, intentId: null, slots: [] });
@@ -388,6 +387,7 @@ const result = () => {
           productEntity,
           setSkillsState,
           readSkillVersionsByProduct,
+          setLoading,
         })}
         rowKey="id"
         pagination={pagination}
