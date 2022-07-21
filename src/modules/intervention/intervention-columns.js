@@ -7,10 +7,10 @@ export default ({
   onRemove,
   openEditor,
   productEntity,
-  setSkillsState,
+  setSkills,
   readSkillVersionsByProduct,
   setLoading,
-  setTypeState,
+  setInventionType,
 }) => [{
   title: '产品ID',
   dataIndex: 'productId',
@@ -79,12 +79,12 @@ export default ({
             productId: record.productId,
             status: 1,
           });
-          setSkillsState(map(({ intents, name, id }) => ({
+          setSkills(map(({ intents, name, id }) => ({
             intents,
             label: name,
             value: id,
           }))(data.skills));
-          setTypeState(record.type);
+          setInventionType(record.type);
           setLoading(false);
         }}
       >
