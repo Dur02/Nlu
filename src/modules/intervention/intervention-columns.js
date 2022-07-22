@@ -1,12 +1,13 @@
 import { Button, Popconfirm } from 'antd';
 import React from 'react';
-import { map, prop } from 'lodash/fp';
+import { map, prop, find, propEq, flow } from 'lodash/fp';
 
 export default ({
   skillVersionEntity,
   onRemove,
   openEditor,
   productEntity,
+  intentEntity,
   setSkills,
   readSkillVersionsByProduct,
   setLoading,
@@ -19,6 +20,15 @@ export default ({
   title: '技能',
   dataIndex: 'skillId',
   render: (skillId) => prop([skillId, 'name'])(skillVersionEntity),
+}, {
+  title: '意图',
+  dataIndex: 'intentId',
+  render: (intentId) => (
+    flow(
+      find(propEq('id', intentId)),
+      prop('name'),
+    )(intentEntity)
+  ),
 }, {
   title: '说法',
   dataIndex: 'sentence',
