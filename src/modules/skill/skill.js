@@ -7,17 +7,17 @@ import {
   message,
   Select,
   Input,
-  Modal,
+  Modal, Form, Button,
 } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
-import { remove, create, update, yamlImport } from 'shared/actions/skill';
+import { remove, create, update, yamlExport } from 'shared/actions/skill';
 import {
   create as createVersion,
   createDraft as createDraftVersionAction,
 } from 'shared/actions/skill-version';
 import { useAction } from 'relient/actions';
 import { push as pushAction } from 'relient/actions/history';
-import { find, propEq, flow, prop } from 'lodash/fp';
+import { find, propEq, flow, prop, map } from 'lodash/fp';
 import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import WordGraph from 'shared/components/word-graph';
 import { readMine } from 'shared/actions/user';
@@ -25,6 +25,9 @@ import { getColumns, versionColumns } from './skill-columns';
 import SkillImport from './components/skill-import';
 
 import selector from './skill-selector';
+
+const { Option } = Select;
+const { Item } = Form;
 
 const { TextArea } = Input;
 
@@ -36,7 +39,6 @@ const result = () => {
   const dispatch = useDispatch();
   const push = useAction(pushAction);
   const readProfile = useAction(readMine);
-  const exportYaml = useAction(yamlImport);
 
   const {
     detailsVisible: versionVisible,
@@ -50,6 +52,13 @@ const result = () => {
     openDetails: openWordGraph,
     closeDetails: closeWordGraph,
     detailsItem: wordGraphItem,
+  } = useDetails();
+
+  const {
+    detailsVisible: exportVisible,
+    openDetails: openExport,
+    closeDetails: closeExport,
+    detailsItem: exportItem,
   } = useDetails();
 
   const editorFields = [{
@@ -146,6 +155,32 @@ const result = () => {
     message.success('删除成功');
   }, []);
 
+  const onFinish = useCallback(async (value) => {
+    const res = await dispatch(yamlExport({ id: value.id }));
+    // console.log(res);
+    const blob = new Blob([res.data], { type: 'application/force-download' });
+    // 创建新的URL并指向File对象或者Blob对象的地址
+    const blobURL = window.URL.createObjectURL(blob);
+    // 创建a标签，用于跳转至下载链接
+    const tempLink = document.createElement('a');
+    tempLink.style.display = 'none';
+    tempLink.href = blobURL;
+    tempLink.setAttribute('download', `${value.id}.yaml`);
+    // tempLink.setAttribute(
+    //   'download', decodeURI(res.headers['content-disposition'].split(';')[1].split('=')[1]
+    // ));
+    // 兼容：某些浏览器不支持HTML5的download属性
+    if (typeof tempLink.download === 'undefined') {
+      tempLink.setAttribute('target', '_blank');
+    }
+    // 挂载a标签
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+    // 释放blob URL地址
+    window.URL.revokeObjectURL(blobURL);
+  }, []);
+
   return (
     <Layout>
       {tableHeader}
@@ -160,7 +195,7 @@ const result = () => {
           push,
           createDraft,
           readProfile,
-          exportYaml,
+          openExport,
         })}
         rowKey="id"
         pagination={pagination}
@@ -193,6 +228,50 @@ const result = () => {
           width={800}
         >
           <WordGraph skillCode={wordGraphItem.code} />
+        </Modal>
+      )}
+      {exportItem && (
+        <Modal
+          visible={exportVisible}
+          onCancel={closeExport}
+          footer={null}
+          title={`${exportItem.name} 导出`}
+          width={400}
+        >
+          <Form
+            onFinish={onFinish}
+          >
+            <Form.Item
+              name="id"
+              label="版本"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Select
+                placeholder="选择一个版本"
+                allowClear
+              >
+                {
+                  flow(
+                    map(({ id, version }) => (
+                      <Option key={id} value={id}>{version}</Option>
+                    )),
+                  )(exportItem.skillVersions)
+                }
+              </Select>
+            </Form.Item>
+            <Item
+              style={{
+                position: 'relative',
+                left: '150px',
+              }}
+            >
+              <Button htmlType="submit">导出</Button>
+            </Item>
+          </Form>
         </Modal>
       )}
     </Layout>
