@@ -157,15 +157,15 @@ const result = () => {
 
   const onFinish = useCallback(async (value) => {
     const res = await dispatch(yamlExport({ id: value.id }));
-    // console.log(res);
-    const blob = new Blob([res.data], { type: 'application/force-download' });
+    const blob = new Blob([res], { type: 'application/force-download' });
     // 创建新的URL并指向File对象或者Blob对象的地址
     const blobURL = window.URL.createObjectURL(blob);
     // 创建a标签，用于跳转至下载链接
     const tempLink = document.createElement('a');
     tempLink.style.display = 'none';
     tempLink.href = blobURL;
-    tempLink.setAttribute('download', `${value.id}.yaml`);
+    const date = new Date();
+    tempLink.setAttribute('download', `${value.name}-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.yaml`);
     // tempLink.setAttribute(
     //   'download', decodeURI(res.headers['content-disposition'].split(';')[1].split('=')[1]
     // ));
@@ -240,8 +240,19 @@ const result = () => {
         >
           <Form
             onFinish={onFinish}
+            initialValues={{
+              name: exportItem.name,
+            }}
           >
-            <Form.Item
+            <Item
+              name="name"
+              style={{
+                display: 'none',
+              }}
+            >
+              <Input />
+            </Item>
+            <Item
               name="id"
               label="版本"
               rules={[
@@ -262,7 +273,7 @@ const result = () => {
                   )(exportItem.skillVersions)
                 }
               </Select>
-            </Form.Item>
+            </Item>
             <Item
               style={{
                 position: 'relative',
