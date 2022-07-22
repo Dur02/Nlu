@@ -166,7 +166,7 @@ const result = () => {
       tempLink.style.display = 'none';
       tempLink.href = blobURL;
       const date = new Date();
-      tempLink.setAttribute('download', `${value.name}-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.yaml`);
+      tempLink.setAttribute('download', `${value.name}-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.yml`);
       // tempLink.setAttribute(
       //   'download', decodeURI(res.headers['content-disposition'].split(';')[1].split('=')[1]
       // ));
