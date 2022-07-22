@@ -113,5 +113,6 @@ export default (skillId) => (state) => {
         })(JSON.parse(output.responses)),
       })),
     )(state),
+    token: getEntity('auth.authorization')(state),
   };
 };

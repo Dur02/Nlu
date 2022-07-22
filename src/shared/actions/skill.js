@@ -13,7 +13,8 @@ export const CREATE = actionType('CREATE');
 export const REMOVE = actionType('REMOVE');
 export const UPDATE = actionType('UPDATE');
 export const READ_WORD_GRAPH = actionType('READ_WORD_GRAPH');
-export const YAML_EXPORT = actionType('YAML_EXPORT');
+export const SKILL_YAML_EXPORT = actionType('SKILL_YAML_EXPORT');
+export const OUTPUT_YAML_EXPORT = actionType('OUTPUT_YAML_EXPORT');
 
 export const readAll = createAction(
   READ_ALL,
@@ -70,7 +71,12 @@ export const readWordGraph = createAction(
   ({ input, skillCode }) => read('/skill/edit/word-map/index/search', { refText: input, skillCode }),
 );
 
-export const yamlExport = createAction(
-  YAML_EXPORT,
+export const skillYamlExport = createAction(
+  SKILL_YAML_EXPORT,
   ({ id }) => read('/skill/edit/skill/skill-yaml-export', { skillId: id }),
+);
+
+export const outputYamlExport = createAction(
+  OUTPUT_YAML_EXPORT,
+  ({ skillId }) => read('/skill/edit/skill/output-yaml-export', { skillId }),
 );
