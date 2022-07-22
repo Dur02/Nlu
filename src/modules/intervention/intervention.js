@@ -39,7 +39,7 @@ const result = () => {
     productOptions,
     productEntity,
     skillVersionEntity,
-    // intents,
+    intentEntity,
   } = useSelector(selector);
 
   const onCreate = useAction(create);
@@ -272,6 +272,7 @@ const result = () => {
           onRemove,
           openEditor,
           productEntity,
+          intentEntity,
           setSkills,
           readSkillVersionsByProduct,
           setLoading,

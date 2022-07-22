@@ -20,7 +20,7 @@ export default (state) => {
         return item;
       }),
     )(state),
-    intents: getEntityArray('intent')(state),
+    intentEntity: getEntityArray('intent')(state),
     productOptions: flow(
       getEntityArray('product'),
       filter(({ id }) => any(
