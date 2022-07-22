@@ -10,7 +10,7 @@ import {
   Modal, Form, Button,
 } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
-import { remove, create, update, yamlExport } from 'shared/actions/skill';
+import { remove, create, update, skillYamlExport } from 'shared/actions/skill';
 import {
   create as createVersion,
   createDraft as createDraftVersionAction,
@@ -157,7 +157,7 @@ const result = () => {
 
   const onFinish = useCallback(async (value) => {
     try {
-      const res = await dispatch(yamlExport({ id: value.id }));
+      const res = await dispatch(skillYamlExport({ id: value.id }));
       const blob = new Blob([res], { type: 'application/force-download' });
       // 创建新的URL并指向File对象或者Blob对象的地址
       const blobURL = window.URL.createObjectURL(blob);
