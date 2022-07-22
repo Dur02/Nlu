@@ -235,16 +235,16 @@ const result = () => {
   const expandable = {
     expandedRowRender: (record) => {
       const expandedColumns = [{
-        title: 'entityName',
+        title: 'entityName ',
         dataIndex: 'entityName',
       }, {
-        title: 'name',
+        title: '槽位名',
         dataIndex: 'name',
       }, {
-        title: 'realSlot',
+        title: '是否有效嘈位',
         dataIndex: 'realSlot',
       }, {
-        title: 'value',
+        title: '值',
         dataIndex: 'value',
       }];
 
