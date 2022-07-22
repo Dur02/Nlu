@@ -156,29 +156,35 @@ const result = () => {
   }, []);
 
   const onFinish = useCallback(async (value) => {
-    const res = await dispatch(yamlExport({ id: value.id }));
-    const blob = new Blob([res], { type: 'application/force-download' });
-    // 创建新的URL并指向File对象或者Blob对象的地址
-    const blobURL = window.URL.createObjectURL(blob);
-    // 创建a标签，用于跳转至下载链接
-    const tempLink = document.createElement('a');
-    tempLink.style.display = 'none';
-    tempLink.href = blobURL;
-    const date = new Date();
-    tempLink.setAttribute('download', `${value.name}-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.yaml`);
-    // tempLink.setAttribute(
-    //   'download', decodeURI(res.headers['content-disposition'].split(';')[1].split('=')[1]
-    // ));
-    // 兼容：某些浏览器不支持HTML5的download属性
-    if (typeof tempLink.download === 'undefined') {
-      tempLink.setAttribute('target', '_blank');
+    try {
+      const res = await dispatch(yamlExport({ id: value.id }));
+      const blob = new Blob([res], { type: 'application/force-download' });
+      // 创建新的URL并指向File对象或者Blob对象的地址
+      const blobURL = window.URL.createObjectURL(blob);
+      // 创建a标签，用于跳转至下载链接
+      const tempLink = document.createElement('a');
+      tempLink.style.display = 'none';
+      tempLink.href = blobURL;
+      const date = new Date();
+      tempLink.setAttribute('download', `${value.name}-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.yaml`);
+      // tempLink.setAttribute(
+      //   'download', decodeURI(res.headers['content-disposition'].split(';')[1].split('=')[1]
+      // ));
+      // 兼容：某些浏览器不支持HTML5的download属性
+      if (typeof tempLink.download === 'undefined') {
+        tempLink.setAttribute('target', '_blank');
+      }
+      // 挂载a标签
+      document.body.appendChild(tempLink);
+      tempLink.click();
+      document.body.removeChild(tempLink);
+      // 释放blob URL地址
+      window.URL.revokeObjectURL(blobURL);
+      closeExport();
+      message.success('导出成功');
+    } catch (e) {
+      message.error('导出失败');
     }
-    // 挂载a标签
-    document.body.appendChild(tempLink);
-    tempLink.click();
-    document.body.removeChild(tempLink);
-    // 释放blob URL地址
-    window.URL.revokeObjectURL(blobURL);
   }, []);
 
   return (
