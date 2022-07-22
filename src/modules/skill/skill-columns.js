@@ -30,7 +30,7 @@ const Operations = ({
   openVersion,
   onRemove,
   openWordGraph,
-  // exportYaml,
+  openExport,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -69,13 +69,38 @@ const Operations = ({
     setLoading(false);
   }, [readProfile, record, setLoading]);
 
-  // const onExport = useCallback(async () => {
-  //   setLoading(true);
-  //   const a = await exportYaml({ skillId: record.id });
-  //   // eslint-disable-next-line no-console
-  //   console.log(a);
-  //   setLoading(false);
-  // }, [readProfile, record, setLoading]);
+  const onExport = useCallback(async () => {
+    setLoading(true);
+    if (await hasPermission(readProfile, record.code)) {
+      openExport(record);
+    }
+    setLoading(false);
+    // setLoading(true);
+    // const result = await exportYaml({ skillId: record.id });
+    // // eslint-disable-next-line no-console
+    // console.log(result);
+    // const blob = new Blob([result.data], { type: 'application/force-download ' });
+    // console.log(blob);
+    // // 创建新的URL并指向File对象或者Blob对象的地址
+    // const blobURL = window.URL.createObjectURL(blob);
+    // console.log(blobURL);
+    // // 创建a标签，用于跳转至下载链接
+    // const tempLink = document.createElement('a');
+    // tempLink.style.display = 'none';
+    // tempLink.href = blobURL;
+    // tempLink.setAttribute('download', '随便.yaml');
+    // // 兼容：某些浏览器不支持HTML5的download属性
+    // if (typeof tempLink.download === 'undefined') {
+    //   tempLink.setAttribute('target', '_blank');
+    // }
+    // // 挂载a标签
+    // document.body.appendChild(tempLink);
+    // tempLink.click();
+    // document.body.removeChild(tempLink);
+    // // 释放blob URL地址
+    // window.URL.revokeObjectURL(blobURL);
+    // setLoading(false);
+  }, [readProfile, record, setLoading]);
 
   const onRemoveSkill = useCallback(async () => {
     setLoading(true);
@@ -142,8 +167,8 @@ const Operations = ({
       </Dropdown>
       &nbsp;&nbsp;
       <Button type="primary" size="small" ghost onClick={onPublish}>发布</Button>
-      {/* &nbsp;&nbsp; */}
-      {/* <Button type="primary" size="small" ghost onClick={onExport}>导出</Button> */}
+       &nbsp;&nbsp;
+      <Button type="primary" size="small" ghost onClick={onExport}>导出</Button>
       &nbsp;&nbsp;
       <Button type="primary" size="small" ghost onClick={() => openWordGraph(record)}>词图</Button>
       &nbsp;&nbsp;
@@ -170,7 +195,7 @@ Operations.propTypes = {
     isDraft: number,
     code: string,
   }),
-  // exportYaml: func.isRequired,
+  openExport: func.isRequired,
 };
 
 export const getColumns = ({
@@ -181,7 +206,7 @@ export const getColumns = ({
   createDraft,
   push,
   readProfile,
-  exportYaml,
+  openExport,
 }) => [{
   //   title: '图标',
   //   dataIndex: 'iconPath',
@@ -198,7 +223,7 @@ export const getColumns = ({
   dataIndex: 'version',
 }, {
   title: '操作',
-  width: 380,
+  width: 430,
   render: (record) => (
     <Operations
       record={record}
@@ -208,7 +233,7 @@ export const getColumns = ({
       openWordGraph={openWordGraph}
       push={push}
       readProfile={readProfile}
-      exportYaml={exportYaml}
+      openExport={openExport}
     />
   ),
 }];

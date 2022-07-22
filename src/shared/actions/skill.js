@@ -70,7 +70,7 @@ export const readWordGraph = createAction(
   ({ input, skillCode }) => read('/skill/edit/word-map/index/search', { refText: input, skillCode }),
 );
 
-export const yamlImport = createAction(
+export const yamlExport = createAction(
   YAML_EXPORT,
-  ({ skillId }) => read('/skill/edit/skill/skill-yaml-export', { skillId }),
+  ({ id }) => read('/skill/edit/skill/skill-yaml-export', { skillId: id }),
 );
