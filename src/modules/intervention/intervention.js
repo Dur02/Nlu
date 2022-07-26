@@ -192,7 +192,7 @@ const result = () => {
         label: '说法',
       }, {
         dataKey: 'response',
-        label: '回应',
+        label: '回复',
       }],
     },
     showReset: true,
@@ -258,7 +258,7 @@ const result = () => {
         />
       );
     },
-    rowExpandable: ({ slots }) => slots,
+    rowExpandable: ({ slots }) => slots && slots.length !== 0,
   };
 
   return (
