@@ -39,7 +39,7 @@ export default ({
   title: '类型',
   dataIndex: 'type',
   render: (type) => {
-    if (type === '1') {
+    if (type === 1) {
       return 'DM';
     }
     return 'NLU';
