@@ -236,13 +236,11 @@ const result = () => {
     filters: [{
       dataKey: 'type',
       label: '类型',
-      defaultValue: 2,
-      // onFilter: (item, dataIndex, value) => value === 3 || item.type === value,
-      // onChange: (value) => {
-      //   console.log(value);
-      //   console.log(isNil(''));
-      // },
+      defaultValue: null,
       options: [{
+        label: '全部',
+        value: null,
+      }, {
         label: 'DM',
         value: 1,
       }, {
