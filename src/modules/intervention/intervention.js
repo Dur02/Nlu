@@ -193,9 +193,6 @@ const result = () => {
       }, {
         dataKey: 'response',
         label: '回复',
-      }, {
-        dataKey: 'type',
-        label: '类型',
       }],
     },
     showReset: true,
