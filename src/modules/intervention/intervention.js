@@ -193,6 +193,9 @@ const result = () => {
       }, {
         dataKey: 'response',
         label: '回复',
+      }, {
+        dataKey: 'type',
+        label: '类型',
       }],
     },
     showReset: true,
@@ -230,6 +233,23 @@ const result = () => {
       getFields,
       component: Modal,
     },
+    filters: [{
+      dataKey: 'type',
+      label: '类型',
+      defaultValue: 2,
+      // onFilter: (item, dataIndex, value) => value === 3 || item.type === value,
+      // onChange: (value) => {
+      //   console.log(value);
+      //   console.log(isNil(''));
+      // },
+      options: [{
+        label: 'DM',
+        value: 1,
+      }, {
+        label: 'NLU',
+        value: 2,
+      }],
+    }],
   });
 
   const expandable = {
