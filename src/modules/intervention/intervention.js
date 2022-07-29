@@ -231,6 +231,14 @@ const result = () => {
       component: Modal,
     },
     filters: [{
+      dataKey: 'productId',
+      label: '产品',
+      defaultValue: null,
+      options: [{
+        label: '全部',
+        value: null,
+      }, ...productOptions],
+    }, {
       dataKey: 'type',
       label: '类型',
       defaultValue: null,
