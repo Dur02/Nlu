@@ -27,7 +27,7 @@ const result = ({
       <Dropdown
         overlay={(
           <Menu className={s.Menu} selectedKeys={[]}>
-            <Item onClick={logout}>
+            <Item onClick={logout} key="logout">
               <LogoutOutlined />
               登出
             </Item>
