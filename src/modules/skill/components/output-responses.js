@@ -2,7 +2,21 @@ import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
 import { message, Button, Tabs, Tooltip, Popconfirm, Select } from 'antd';
 import { PlusOutlined, SortAscendingOutlined, CloseOutlined } from '@ant-design/icons';
-import { map, flow, reject, propEq, first, propOr, find, prop, isBoolean, omit, size, filter } from 'lodash/fp';
+import {
+  map,
+  flow,
+  reject,
+  propEq,
+  first,
+  propOr,
+  find,
+  prop,
+  isBoolean,
+  omit,
+  size,
+  filter,
+  nth,
+} from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { getCName, getIsDefault } from 'shared/utils/helper';
 import NLG from './output-response-nlg';
@@ -144,6 +158,24 @@ const result = ({
           onClick={() => setSorterVisible(true)}
         >
           对话回复排序
+        </Button>
+        &nbsp;&nbsp;
+        <Button
+          type="primary"
+          onClick={async () => {
+            const temp = {
+              ...nth(selectedCId)(responses),
+              cnames: `${nth(selectedCId)(responses).cnames}副本`,
+              cId: String(responses.length),
+              isDefault: false,
+            };
+            await updateOutput({
+              id: outputId,
+              responses: [...responses, temp],
+            });
+          }}
+        >
+          复制
         </Button>
       </div>
       <Tabs
