@@ -20,6 +20,13 @@ const routes = [
   },
 
   {
+    path: '/test',
+    chunks: ['test'],
+    requireAuth: true,
+    load: () => import(/* webpackChunkName: 'test' */ 'modules/test'),
+  },
+
+  {
     path: '/audit',
     chunks: ['audit'],
     requireAuth: true,

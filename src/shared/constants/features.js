@@ -13,6 +13,11 @@ export const SKILL_PERMISSION = 'SKILL_PERMISSION';
 export const AUDIT_LOG = 'AUDIT_LOG';
 export const INTERVENTION = 'INTERVENTION';
 
+export const TEST = 'TEST';
+export const CASE = 'CASE';
+export const SUITE = 'SUITE';
+export const JOB = 'JOB';
+
 export const features = [{
   key: PRODUCT,
   link: '/',
@@ -54,6 +59,23 @@ export const features = [{
   key: INTERVENTION,
   link: 'intervention',
   text: '干预',
+}, {
+  key: TEST,
+  link: 'test',
+  text: '测试',
+  items: [{
+    key: CASE,
+    link: 'case',
+    text: '测试用例',
+  }, {
+    key: SUITE,
+    link: 'suite',
+    text: '测试集',
+  }, {
+    key: JOB,
+    link: 'job',
+    text: '测试任务',
+  }],
 }];
 
 setFeatures(features);
