@@ -48,13 +48,13 @@ export default ({
   title: '左匹配',
   dataIndex: 'wildLeft',
   render: (wildLeft) => (
-    String(wildLeft)
+    wildLeft === true ? '开启' : '关闭'
   ),
 }, {
   title: '右匹配',
   dataIndex: 'wildRight',
   render: (wildRight) => (
-    String(wildRight)
+    wildRight === true ? '开启' : '关闭'
   ),
 }, {
   title: '状态',
