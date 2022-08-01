@@ -239,6 +239,20 @@ const result = () => {
         value: null,
       }, ...productOptions],
     }, {
+      dataKey: 'label',
+      label: '状态',
+      defaultValue: null,
+      options: [{
+        label: '全部',
+        value: null,
+      }, {
+        label: '正常',
+        value: 1,
+      }, {
+        label: '废弃',
+        value: 2,
+      }],
+    }, {
       dataKey: 'type',
       label: '类型',
       defaultValue: null,
