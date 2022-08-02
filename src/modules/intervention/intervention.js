@@ -138,7 +138,7 @@ const result = () => {
                 rules={[{ required: true }]}
               >
                 <Select
-                  placeholder="技能"
+                  placeholder="槽位"
                   options={getSlotOptions(form, skills)}
                 />
               </Item>
@@ -147,7 +147,7 @@ const result = () => {
                 name={[name, 'value']}
                 rules={[{ required: true }]}
               >
-                <Input autoComplete="off" placeholder="回复" />
+                <Input autoComplete="off" placeholder="值" />
               </Item>
               <MinusCircleOutlined
                 style={{ position: 'absolute', top: 4, right: -30, fontSize: 20 }}

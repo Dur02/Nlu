@@ -1,6 +1,8 @@
 import React from 'react';
 import { CASE, SUITE, JOB } from 'shared/constants/features';
-
+import { readAll as readTestCase } from 'shared/actions/testCase';
+import { readAll as readTestSuite } from 'shared/actions/testSuite';
+import { map, prop } from 'lodash/fp';
 import Case from './case';
 import Suite from './suite';
 import Job from './job';
@@ -10,28 +12,70 @@ export default () => [{
   feature: CASE,
   action: async ({ store: { dispatch } }) => {
     try {
-      // eslint-disable-next-line no-console
-      console.log('111', dispatch);
+      const {
+        data: {
+          data,
+          currentPage,
+          pageSize,
+          total,
+        },
+      } = await dispatch(readTestCase({
+        page: 10,
+        pageSize: 1,
+      }));
+      return {
+        component: <Case
+          ids={map(prop('id'))(data)}
+          total={total}
+          current={currentPage - 1}
+          size={pageSize}
+        />,
+      };
     } catch (e) {
-      // ignore
+      return {
+        component: <Case
+          ids={[]}
+          total={0}
+          current={0}
+          size={0}
+        />,
+      };
     }
-    return {
-      component: <Case />,
-    };
   },
 }, {
   path: '/suite',
   feature: SUITE,
   action: async ({ store: { dispatch } }) => {
     try {
-      // eslint-disable-next-line no-console
-      console.log('111', dispatch);
+      const {
+        data: {
+          data,
+          currentPage,
+          pageSize,
+          total,
+        },
+      } = await dispatch(readTestSuite({
+        page: 10,
+        pageSize: 1,
+      }));
+      return {
+        component: <Suite
+          ids={map(prop('id'))(data)}
+          total={total}
+          current={currentPage - 1}
+          size={pageSize}
+        />,
+      };
     } catch (e) {
-      // ignore
+      return {
+        component: <Suite
+          ids={[]}
+          total={0}
+          current={0}
+          size={0}
+        />,
+      };
     }
-    return {
-      component: <Suite />,
-    };
   },
 }, {
   path: '/job',

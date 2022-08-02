@@ -15,3 +15,7 @@ export const words = new schema.Entity('words');
 export const productVersion = new schema.Entity('productVersion');
 export const skillVersion = new schema.Entity('skillVersion');
 export const intervention = new schema.Entity('intervention');
+export const testCase = new schema.Entity('testCase');
+export const testSuite = new schema.Entity('testSuite');
+export const testJob = new schema.Entity('testJob');
+export const testJobResult = new schema.Entity('testJobResult');
