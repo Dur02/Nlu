@@ -2,6 +2,9 @@ import React from 'react';
 import { CASE, SUITE, JOB } from 'shared/constants/features';
 import { readAll as readTestCase } from 'shared/actions/testCase';
 import { readAll as readTestSuite } from 'shared/actions/testSuite';
+import { readAll as readAllSkills } from 'shared/actions/skill';
+import { readAll as readAllIntents } from 'shared/actions/intent';
+import { readAll as readAllRules } from 'shared/actions/rule';
 import { map, prop } from 'lodash/fp';
 import Case from './case';
 import Suite from './suite';
@@ -11,6 +14,11 @@ export default () => [{
   path: '/case',
   feature: CASE,
   action: async ({ store: { dispatch } }) => {
+    await Promise.all([
+      dispatch(readAllSkills()),
+      dispatch(readAllIntents()),
+      dispatch(readAllRules()),
+    ]);
     try {
       const {
         data: {

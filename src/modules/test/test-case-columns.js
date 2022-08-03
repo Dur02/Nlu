@@ -1,47 +1,47 @@
 import { time } from 'relient/formatters';
 
 export default () => [{
-  title: 'audioFile',
+  title: 'ID',
+  dataIndex: 'id',
+}, {
+  title: '期待技能',
+  dataIndex: 'expectedSkill',
+}, {
+  title: '期待意图',
+  dataIndex: 'expectedIntent',
+}, {
+  title: '期待说法',
+  dataIndex: 'expectedRule',
+}, {
+  title: '描述',
+  dataIndex: 'description',
+}, {
+  title: 'joss共享地址',
+  dataIndex: 'jossShareUrl',
+}, {
+  title: '用户说',
+  dataIndex: 'refText',
+}, {
+  title: '状态',
+  dataIndex: 'status',
+}, {
+  title: '测试用例来源',
+  dataIndex: 'testCaseSource',
+}, {
+  title: '音频',
   dataIndex: 'audioFile',
 }, {
-  title: 'createTime',
+  title: '删除',
+  dataIndex: 'deleted',
+}, {
+  title: '创建时间',
   dataIndex: 'createTime',
   render: time(),
 }, {
-  title: 'creator',
+  title: '创建者',
   dataIndex: 'creator',
 }, {
-  title: 'deleted',
-  dataIndex: 'deleted',
-}, {
-  title: 'description',
-  dataIndex: 'description',
-}, {
-  title: 'expectedIntent',
-  dataIndex: 'expectedIntent',
-}, {
-  title: 'expectedRule',
-  dataIndex: 'expectedRule',
-}, {
-  title: 'expectedSkill',
-  dataIndex: 'expectedSkill',
-}, {
-  title: 'id',
-  dataIndex: 'id',
-}, {
-  title: 'jossShareUrl',
-  dataIndex: 'jossShareUrl',
-}, {
-  title: 'refText',
-  dataIndex: 'refText',
-}, {
-  title: 'status',
-  dataIndex: 'status',
-}, {
-  title: 'testCaseSource',
-  dataIndex: 'testCaseSource',
-}, {
-  title: 'updateTime',
+  title: '更新时间',
   dataIndex: 'updateTime',
   render: time(),
 }];

@@ -1,4 +1,4 @@
-import { combineActions, handleActions, merge, remove } from 'relient/reducers';
+import { combineActions, handleActions, merge } from 'relient/reducers';
 import {
   READ_ALL,
   CANCEL,
@@ -17,12 +17,11 @@ export default {
     [combineActions(
       UPDATE,
       CREATE,
+      CANCEL,
     )]: merge({
       schema: testJob,
       dataKey: 'data',
     }),
-
-    [CANCEL]: remove(testJob),
 
   }, {}),
 };

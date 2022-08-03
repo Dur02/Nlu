@@ -1,15 +1,19 @@
 import React from 'react';
 import Layout from 'shared/components/layout';
 import {
+  Modal,
   Table,
+  Select,
 } from 'antd';
 import { useAPITable } from 'relient-admin/hooks';
-import { readAll } from 'shared/actions/testCase';
+import { readAll, create } from 'shared/actions/testCase';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
-import { map } from 'lodash/fp';
+import { filter, map, propEq, find, flow, get } from 'lodash/fp';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 import columns from './test-case-columns';
+import selector from './test-case-selector';
 
 const getDataSource = (state) => map((id) => getEntity(`testCase.${id}`)(state));
 
@@ -20,6 +24,81 @@ const result = ({
   size,
 }) => {
   const readAllTestCase = useAction(readAll);
+  const onCreate = useAction(create);
+
+  const {
+    skills,
+    intents,
+    rules,
+  } = useSelector(selector);
+
+  const getFields = (form) => {
+    const baseFields = [{
+      label: '音频文件',
+      name: 'audioFile',
+      type: 'text',
+      autoComplete: 'off',
+      rules: [{ required: true }],
+    }, {
+      label: '描述',
+      name: 'description',
+      type: 'text',
+      autoComplete: 'off',
+      rules: [{ required: true }],
+    }, {
+      label: 'joss共享地址',
+      name: 'jossShareUrl',
+      type: 'text',
+      autoComplete: 'off',
+      rules: [{ required: true }],
+    }, {
+      label: '用户说',
+      name: 'refText',
+      type: 'text',
+      autoComplete: 'off',
+      rules: [{ required: true }],
+    }, {
+      label: '期待技能',
+      name: 'expectedSkill',
+      component: Select,
+      options: skills,
+      rules: [{ required: true }],
+      onChange: () => {
+        form.setFieldsValue({
+          expectedIntent: null,
+          expectedRule: null,
+          skillCode: flow(
+            find(propEq('value', form.getFieldValue('expectedSkill'))),
+            get('skillCode'),
+          )(skills),
+        });
+      },
+    }, {
+      label: '期待意图',
+      name: 'expectedIntent',
+      component: Select,
+      options: filter(propEq('skillId', form.getFieldValue('expectedSkill')))(intents),
+      dependencies: ['expectedSkill'],
+      rules: [{ required: true }],
+      onChange: () => {
+        form.setFieldsValue({ expectedRule: null });
+      },
+    }, {
+      label: '期待规则',
+      name: 'expectedRule',
+      component: Select,
+      options: filter(propEq('intentId', form.getFieldValue('expectedIntent')))(rules),
+      dependencies: ['expectedIntent'],
+      rules: [{ required: true }],
+    }, {
+      name: 'skillCode',
+      dependencies: ['expectedSkill'],
+      style: {
+        display: 'none',
+      },
+    }];
+    return baseFields;
+  };
 
   const {
     tableHeader,
@@ -34,6 +113,12 @@ const result = ({
     },
     createButton: {
       text: '创建用例',
+    },
+    creator: {
+      title: '创建干预',
+      onSubmit: onCreate,
+      getFields,
+      component: Modal,
     },
     getDataSource,
     readAction: async (values) => {
@@ -75,7 +160,7 @@ const result = ({
     <Layout>
       {tableHeader}
       <Table
-        tableLayout="fixed"
+        // tableLayout="fixed"
         dataSource={data}
         columns={columns()}
         rowKey="id"
