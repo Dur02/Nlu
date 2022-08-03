@@ -28,8 +28,8 @@ export default () => [{
           total,
         },
       } = await dispatch(readTestCase({
-        page: 10,
-        pageSize: 1,
+        page: 1,
+        pageSize: 10,
       }));
       return {
         component: <Case

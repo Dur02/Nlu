@@ -51,6 +51,7 @@ export default ({
   render: time(),
 }, {
   title: 'Action',
+  width: '400',
   render: (record) => (
     <>
       <Button

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from 'shared/components/layout';
 import {
   Modal,
   Table,
   Select,
+  Form,
 } from 'antd';
 import { useAPITable } from 'relient-admin/hooks';
 import { readAll, create, update, remove } from 'shared/actions/testCase';
@@ -23,10 +24,14 @@ const result = ({
   current,
   size,
 }) => {
+  const [creatorForm] = Form.useForm();
   const readAllTestCase = useAction(readAll);
   const onCreate = useAction(create);
   const onUpdate = useAction(update);
   const onRemove = useAction(remove);
+
+  const [intentOption, setIntentOption] = useState([]);
+  const [ruleOption, setRuleOption] = useState([]);
 
   const {
     skills,
@@ -34,73 +39,123 @@ const result = ({
     rules,
   } = useSelector(selector);
 
-  const getFields = (form) => {
-    const baseFields = [{
-      label: '音频文件',
-      name: 'audioFile',
-      type: 'text',
-      autoComplete: 'off',
-      rules: [{ required: true }],
-    }, {
-      label: '描述',
-      name: 'description',
-      type: 'text',
-      autoComplete: 'off',
-      rules: [{ required: true }],
-    }, {
-      label: 'joss共享地址',
-      name: 'jossShareUrl',
-      type: 'text',
-      autoComplete: 'off',
-      rules: [{ required: true }],
-    }, {
-      label: '用户说',
-      name: 'refText',
-      type: 'text',
-      autoComplete: 'off',
-      rules: [{ required: true }],
-    }, {
-      label: '期待技能',
-      name: 'expectedSkill',
-      component: Select,
-      options: skills,
-      rules: [{ required: true }],
-      onChange: () => {
-        form.setFieldsValue({
-          expectedIntent: null,
-          expectedRule: null,
-          skillCode: flow(
-            find(propEq('value', form.getFieldValue('expectedSkill'))),
-            get('skillCode'),
-          )(skills),
-        });
-      },
-    }, {
-      label: '期待意图',
-      name: 'expectedIntent',
-      component: Select,
-      options: filter(propEq('skillId', form.getFieldValue('expectedSkill')))(intents),
-      dependencies: ['expectedSkill'],
-      rules: [{ required: true }],
-      onChange: () => {
-        form.setFieldsValue({ expectedRule: null });
-      },
-    }, {
-      label: '期待规则',
-      name: 'expectedRule',
-      component: Select,
-      options: filter(propEq('intentId', form.getFieldValue('expectedIntent')))(rules),
-      dependencies: ['expectedIntent'],
-      rules: [{ required: true }],
-    }, {
-      name: 'skillCode',
-      dependencies: ['expectedSkill'],
-      style: {
-        display: 'none',
-      },
-    }];
-    return baseFields;
-  };
+  const getFields = (form) => [{
+    label: '音频文件',
+    name: 'audioFile',
+    type: 'text',
+    autoComplete: 'off',
+    rules: [{ required: true }],
+  }, {
+    label: '描述',
+    name: 'description',
+    type: 'text',
+    autoComplete: 'off',
+    rules: [{ required: true }],
+  }, {
+    label: 'joss共享地址',
+    name: 'jossShareUrl',
+    type: 'text',
+    autoComplete: 'off',
+    rules: [{ required: true }],
+  }, {
+    label: '用户说',
+    name: 'refText',
+    type: 'text',
+    autoComplete: 'off',
+    rules: [{ required: true }],
+  }, {
+    label: '期待技能',
+    // 因为技能可同名，在此处传skillCode而在下面传expectedSkill，并非写错
+    name: 'skillCode',
+    component: Select,
+    options: skills,
+    rules: [{ required: true }],
+    onChange: () => {
+      form.setFieldsValue({
+        expectedIntentTemp: '',
+        expectedRuleTemp: [],
+        expectedSkill: flow(
+          find(propEq('value', form.getFieldValue('skillCode'))),
+          get('label'),
+        )(skills),
+        expectedIntent: '',
+        expectedRule: '',
+      });
+      setIntentOption(filter(
+        propEq('skillId', flow(
+          find(propEq('skillCode', form.getFieldValue('skillCode'))),
+          get('key'),
+        )(skills)),
+      )(intents));
+    },
+  }, {
+    label: '期待意图',
+    name: 'expectedIntentTemp',
+    component: Select,
+    options: intentOption,
+    dependencies: ['skillCode'],
+    rules: [{ required: true }],
+    onChange: () => {
+      form.setFieldsValue({
+        expectedRuleTemp: [],
+        expectedIntent: flow(
+          find(propEq('value', form.getFieldValue('expectedIntentTemp'))),
+          get('label'),
+        )(intentOption),
+      });
+      setRuleOption(filter(
+        propEq('intentId', flow(
+          find(propEq('value', form.getFieldValue('expectedIntentTemp'))),
+          get('key'),
+        )(filter(
+          propEq('skillId', flow(
+            find(propEq('value', form.getFieldValue('skillCode'))),
+            get('key'),
+          )(skills)),
+        )(intents))),
+      )(rules));
+    },
+  }, {
+    label: '期待说法',
+    name: 'expectedRuleTemp',
+    component: Select,
+    // mode: 'tags',
+    options: ruleOption,
+    dependencies: ['expectedIntent'],
+    rules: [{ required: true }],
+    onChange: () => {
+      form.setFieldsValue({
+        expectedRule: flow(
+          find(propEq('value', form.getFieldValue('expectedRuleTemp'))),
+          get('label'),
+        )(ruleOption),
+      });
+    },
+  }, {
+    name: 'expectedSkill',
+    dependencies: ['skillCode'],
+    type: 'text',
+    autoComplete: 'off',
+    style: {
+      display: 'none',
+    },
+  }, { // 因为后端数据很多name同名的数据，此处又要求传name，于是设置多个隐藏的input传值
+    name: 'expectedIntent',
+    dependencies: ['skillCode', 'expectedIntentTemp'],
+    type: 'text',
+    autoComplete: 'off',
+    style: {
+      display: 'none',
+    },
+  }, { // 因为后端数据很多name同名的数据，此处又要求传name，于是设置多个隐藏的input传值
+    name: 'expectedRule',
+    dependencies: ['skillCode', 'expectedRuleTemp'],
+    type: 'text',
+    autoComplete: 'off',
+    style: {
+      display: 'none',
+    },
+  }];
 
   const {
     tableHeader,
@@ -121,6 +176,11 @@ const result = ({
       title: '创建用例',
       onSubmit: onCreate,
       getFields,
+      form: creatorForm,
+      onCancel: () => {
+        setIntentOption([]);
+        setRuleOption([]);
+      },
       component: Modal,
     },
     editor: {
