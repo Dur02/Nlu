@@ -6,7 +6,7 @@ import {
   Select,
 } from 'antd';
 import { useAPITable } from 'relient-admin/hooks';
-import { readAll, create } from 'shared/actions/testCase';
+import { readAll, create, update, remove } from 'shared/actions/testCase';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
 import { filter, map, propEq, find, flow, get } from 'lodash/fp';
@@ -25,6 +25,8 @@ const result = ({
 }) => {
   const readAllTestCase = useAction(readAll);
   const onCreate = useAction(create);
+  const onUpdate = useAction(update);
+  const onRemove = useAction(remove);
 
   const {
     skills,
@@ -104,6 +106,7 @@ const result = ({
     tableHeader,
     pagination,
     data,
+    openEditor,
   } = useAPITable({
     paginationInitialData: {
       ids,
@@ -115,8 +118,14 @@ const result = ({
       text: '创建用例',
     },
     creator: {
-      title: '创建干预',
+      title: '创建用例',
       onSubmit: onCreate,
+      getFields,
+      component: Modal,
+    },
+    editor: {
+      title: '编辑',
+      onSubmit: onUpdate,
       getFields,
       component: Modal,
     },
@@ -162,7 +171,10 @@ const result = ({
       <Table
         // tableLayout="fixed"
         dataSource={data}
-        columns={columns()}
+        columns={columns({
+          openEditor,
+          onRemove,
+        })}
         rowKey="id"
         pagination={pagination}
       />
