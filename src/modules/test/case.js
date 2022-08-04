@@ -142,6 +142,9 @@ const result = ({
       title: '编辑',
       onSubmit: onUpdate,
       getFields,
+      onCancel: () => {
+        setIntentOption([]);
+      },
       component: Modal,
     },
     getDataSource,
