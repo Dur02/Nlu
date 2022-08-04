@@ -162,6 +162,7 @@ const result = ({
     pagination,
     data,
     openEditor,
+    reset,
   } = useAPITable({
     paginationInitialData: {
       ids,
@@ -191,6 +192,7 @@ const result = ({
     },
     getDataSource,
     readAction: async (values) => {
+      // console.log(data);
       const {
         data: response,
       } = await readAllTestCase({
@@ -234,6 +236,8 @@ const result = ({
         columns={columns({
           openEditor,
           onRemove,
+          // skills,
+          reset,
         })}
         rowKey="id"
         pagination={pagination}

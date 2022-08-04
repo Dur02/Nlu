@@ -1,7 +1,13 @@
-import { combineActions, handleActions, merge, remove } from 'relient/reducers';
+import {
+  combineActions,
+  handleActions,
+  merge,
+  // remove,
+}
+  from 'relient/reducers';
 import {
   READ_ALL,
-  REMOVE,
+  // REMOVE,
   CREATE,
   UPDATE,
 } from '../actions/testCase';
@@ -22,7 +28,7 @@ export default {
       dataKey: 'data',
     }),
 
-    [REMOVE]: remove(testCase),
+    // [REMOVE]: remove(testCase),
 
   }, {}),
 };

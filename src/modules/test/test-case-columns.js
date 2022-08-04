@@ -1,10 +1,14 @@
 import { time } from 'relient/formatters';
 import { Button, Popconfirm } from 'antd';
 import React from 'react';
+// import { flow } from 'lodash/fp';
+import { getStatus, getTestCaseSource, getDeleted } from 'shared/constants/test-case';
 
 export default ({
   openEditor,
   onRemove,
+  // skills,
+  reset,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -29,15 +33,18 @@ export default ({
 }, {
   title: '状态',
   dataIndex: 'status',
+  render: (status) => getStatus(status),
 }, {
   title: '测试用例来源',
   dataIndex: 'testCaseSource',
+  render: (testCaseSource) => getTestCaseSource(testCaseSource),
 }, {
   title: '音频',
   dataIndex: 'audioFile',
 }, {
   title: '删除',
   dataIndex: 'deleted',
+  render: (deleted) => getDeleted(deleted),
 }, {
   title: '创建时间',
   dataIndex: 'createTime',
@@ -51,7 +58,7 @@ export default ({
   render: time(),
 }, {
   title: 'Action',
-  width: '400',
+  width: 80,
   render: (record) => (
     <>
       <Button
@@ -59,7 +66,13 @@ export default ({
         ghost
         size="small"
         onClick={async () => {
-          openEditor(record);
+          openEditor({
+            ...record,
+            expectedIntentTemp: record.expectedIntent,
+            expectedRuleTemp: record.expectedRule,
+            expectedSkill: record.skillCode,
+            skillCode: record.expectedSkill,
+          });
         }}
       >
         修改
@@ -67,8 +80,13 @@ export default ({
       &nbsp;&nbsp;
       <Popconfirm
         title="确认删除吗？删除操作不可恢复"
-        onConfirm={() => {
-          onRemove({ id: record.id });
+        onConfirm={async () => {
+          // eslint-disable-next-line no-debugger
+          // debugger;
+          await onRemove({ id: record.id });
+          // eslint-disable-next-line no-debugger
+          // debugger;
+          await reset();
         }}
       >
         <Button type="danger" size="small" ghost>删除</Button>

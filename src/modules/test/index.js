@@ -5,6 +5,7 @@ import { readAll as readTestSuite } from 'shared/actions/testSuite';
 import { readAll as readAllSkills } from 'shared/actions/skill';
 import { readAll as readAllIntents } from 'shared/actions/intent';
 import { readAll as readAllRules } from 'shared/actions/rule';
+import { readMine as readProfile } from 'shared/actions/user';
 import { map, prop } from 'lodash/fp';
 import Case from './case';
 import Suite from './suite';
@@ -18,6 +19,7 @@ export default () => [{
       dispatch(readAllSkills()),
       dispatch(readAllIntents()),
       dispatch(readAllRules()),
+      dispatch(readProfile()),
     ]);
     try {
       const {
