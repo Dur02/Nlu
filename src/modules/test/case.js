@@ -68,7 +68,6 @@ const result = ({
           get('label'),
         )(skills),
         expectedIntent: '',
-        expectedRule: '',
       });
       setIntentOption(filter(
         propEq('skillId', flow(
@@ -88,7 +87,6 @@ const result = ({
     rules: [{ required: true }],
     onChange: () => {
       form.setFieldsValue({
-        expectedRuleTemp: [],
         expectedIntent: flow(
           find(propEq('value', form.getFieldValue('expectedIntentTemp'))),
           get('label'),
@@ -103,7 +101,8 @@ const result = ({
     style: {
       display: 'none',
     },
-  }, { // 因为后端数据很多name同名的数据，此处又要求传name，于是设置多个隐藏的input传值
+  }, {
+    // 因为后端数据很多name同名的数据，此处又要求传name，于是设置多个隐藏的input传值
     name: 'expectedIntent',
     dependencies: ['skillCode', 'expectedIntentTemp'],
     type: 'text',

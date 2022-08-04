@@ -11,8 +11,4 @@ export default (state) => ({
     getEntityArray('intent'),
     map(({ id, name, skillId }) => ({ value: id, label: name, skillId, key: id })),
   )(state),
-  rules: flow(
-    getEntityArray('rule'),
-    map(({ id, sentence, intentId }) => ({ value: id, label: sentence, intentId, key: id })),
-  )(state),
 });

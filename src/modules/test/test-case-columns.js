@@ -64,22 +64,19 @@ export default ({
         ghost
         size="small"
         onClick={async () => {
-          const intentTemp = filter(
-            propEq('skillId', flow(
-              find(propEq('skillCode', record.skillCode)),
-              get('key'),
-            )(skills)),
-          )(intents);
-
           openEditor({
             ...record,
             expectedIntentTemp: record.expectedIntent,
             expectedRuleTemp: record.expectedRule,
-            expectedSkill: record.skillCode,
-            skillCode: record.expectedSkill,
+            expectedSkill: record.expectedSkill,
+            skillCode: record.skillCode,
           });
-
-          setIntentOption(intentTemp);
+          setIntentOption(filter(
+            propEq('skillId', flow(
+              find(propEq('skillCode', record.skillCode)),
+              get('key'),
+            )(skills)),
+          )(intents));
         }}
       >
         修改

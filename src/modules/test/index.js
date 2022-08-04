@@ -4,7 +4,6 @@ import { readAll as readTestCase } from 'shared/actions/test-case';
 import { readAll as readTestSuite } from 'shared/actions/test-suite';
 import { readAll as readAllSkills } from 'shared/actions/skill';
 import { readAll as readAllIntents } from 'shared/actions/intent';
-import { readAll as readAllRules } from 'shared/actions/rule';
 import { readMine as readProfile } from 'shared/actions/user';
 import { map, prop } from 'lodash/fp';
 import Case from './case';
@@ -18,7 +17,6 @@ export default () => [{
     await Promise.all([
       dispatch(readAllSkills()),
       dispatch(readAllIntents()),
-      dispatch(readAllRules()),
       dispatch(readProfile()),
     ]);
     try {
