@@ -4,7 +4,7 @@ import {
   CANCEL,
   CREATE,
   UPDATE,
-} from '../actions/testJob';
+} from '../actions/test-job';
 import { testJob } from '../schema';
 
 export default {

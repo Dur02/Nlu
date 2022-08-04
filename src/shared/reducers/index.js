@@ -16,10 +16,10 @@ import auditResourceType from './audit-resource-type';
 import auditLog from './audit-log';
 import skillPermission from './skill-permission';
 import intervention from './intervention';
-import testCase from './testCase';
-import testSuite from './testSuite';
-import testJob from './testJob';
-import testJobResult from './testJobResult';
+import testCase from './test-case';
+import testSuite from './test-suite';
+import testJob from './test-job';
+import testJobResult from './test-job-result';
 
 export default combineReducers({
   ...createReducer([

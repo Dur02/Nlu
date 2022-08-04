@@ -1,7 +1,7 @@
 import React from 'react';
 import { CASE, SUITE, JOB } from 'shared/constants/features';
-import { readAll as readTestCase } from 'shared/actions/testCase';
-import { readAll as readTestSuite } from 'shared/actions/testSuite';
+import { readAll as readTestCase } from 'shared/actions/test-case';
+import { readAll as readTestSuite } from 'shared/actions/test-suite';
 import { readAll as readAllSkills } from 'shared/actions/skill';
 import { readAll as readAllIntents } from 'shared/actions/intent';
 import { readAll as readAllRules } from 'shared/actions/rule';

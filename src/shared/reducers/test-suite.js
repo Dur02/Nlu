@@ -4,7 +4,7 @@ import {
   REMOVE,
   CREATE,
   UPDATE,
-} from '../actions/testSuite';
+} from '../actions/test-suite';
 import { testSuite } from '../schema';
 
 export default {

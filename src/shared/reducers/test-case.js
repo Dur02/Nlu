@@ -2,15 +2,15 @@ import {
   combineActions,
   handleActions,
   merge,
-  // remove,
+  remove,
 }
   from 'relient/reducers';
 import {
   READ_ALL,
-  // REMOVE,
+  REMOVE,
   CREATE,
   UPDATE,
-} from '../actions/testCase';
+} from '../actions/test-case';
 import { testCase } from '../schema';
 
 export default {
@@ -28,7 +28,7 @@ export default {
       dataKey: 'data',
     }),
 
-    // [REMOVE]: remove(testCase),
+    [REMOVE]: remove(testCase),
 
   }, {}),
 };

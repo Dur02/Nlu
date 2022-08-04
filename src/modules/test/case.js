@@ -4,19 +4,21 @@ import {
   Modal,
   Table,
   Select,
-  Form,
 } from 'antd';
 import { useAPITable } from 'relient-admin/hooks';
-import { readAll, create, update, remove } from 'shared/actions/testCase';
+import { readAll, create, update, remove as removeTestCase } from 'shared/actions/test-case';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
-import { filter, map, propEq, find, flow, get } from 'lodash/fp';
+import { filter, map, propEq, find, flow, get, remove } from 'lodash/fp';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import columns from './test-case-columns';
 import selector from './test-case-selector';
 
-const getDataSource = (state) => map((id) => getEntity(`testCase.${id}`)(state));
+const getDataSource = (state) => flow(
+  map((id) => getEntity(`testCase.${id}`)(state)),
+  remove((o) => o === undefined),
+);
 
 const result = ({
   ids,
@@ -24,14 +26,12 @@ const result = ({
   current,
   size,
 }) => {
-  const [creatorForm] = Form.useForm();
   const readAllTestCase = useAction(readAll);
   const onCreate = useAction(create);
   const onUpdate = useAction(update);
-  const onRemove = useAction(remove);
+  const onRemove = useAction(removeTestCase);
 
   const [intentOption, setIntentOption] = useState([]);
-  const [ruleOption, setRuleOption] = useState([]);
 
   const {
     skills,
@@ -40,23 +40,10 @@ const result = ({
   } = useSelector(selector);
 
   const getFields = (form) => [{
-    label: '音频文件',
-    name: 'audioFile',
-    type: 'text',
-    autoComplete: 'off',
-    rules: [{ required: true }],
-  }, {
-    label: '描述',
-    name: 'description',
-    type: 'text',
-    autoComplete: 'off',
-    rules: [{ required: true }],
-  }, {
     label: 'joss共享地址',
     name: 'jossShareUrl',
     type: 'text',
     autoComplete: 'off',
-    rules: [{ required: true }],
   }, {
     label: '用户说',
     name: 'refText',
@@ -69,6 +56,8 @@ const result = ({
     name: 'skillCode',
     component: Select,
     options: skills,
+    showSearch: true,
+    allowClear: true,
     rules: [{ required: true }],
     onChange: () => {
       form.setFieldsValue({
@@ -93,6 +82,8 @@ const result = ({
     name: 'expectedIntentTemp',
     component: Select,
     options: intentOption,
+    showSearch: true,
+    allowClear: true,
     dependencies: ['skillCode'],
     rules: [{ required: true }],
     onChange: () => {
@@ -102,33 +93,6 @@ const result = ({
           find(propEq('value', form.getFieldValue('expectedIntentTemp'))),
           get('label'),
         )(intentOption),
-      });
-      setRuleOption(filter(
-        propEq('intentId', flow(
-          find(propEq('value', form.getFieldValue('expectedIntentTemp'))),
-          get('key'),
-        )(filter(
-          propEq('skillId', flow(
-            find(propEq('value', form.getFieldValue('skillCode'))),
-            get('key'),
-          )(skills)),
-        )(intents))),
-      )(rules));
-    },
-  }, {
-    label: '期待说法',
-    name: 'expectedRuleTemp',
-    component: Select,
-    // mode: 'tags',
-    options: ruleOption,
-    dependencies: ['expectedIntent'],
-    rules: [{ required: true }],
-    onChange: () => {
-      form.setFieldsValue({
-        expectedRule: flow(
-          find(propEq('value', form.getFieldValue('expectedRuleTemp'))),
-          get('label'),
-        )(ruleOption),
       });
     },
   }, {
@@ -147,14 +111,6 @@ const result = ({
     style: {
       display: 'none',
     },
-  }, { // 因为后端数据很多name同名的数据，此处又要求传name，于是设置多个隐藏的input传值
-    name: 'expectedRule',
-    dependencies: ['skillCode', 'expectedRuleTemp'],
-    type: 'text',
-    autoComplete: 'off',
-    style: {
-      display: 'none',
-    },
   }];
 
   const {
@@ -162,7 +118,7 @@ const result = ({
     pagination,
     data,
     openEditor,
-    reset,
+    reload,
   } = useAPITable({
     paginationInitialData: {
       ids,
@@ -177,10 +133,8 @@ const result = ({
       title: '创建用例',
       onSubmit: onCreate,
       getFields,
-      form: creatorForm,
       onCancel: () => {
         setIntentOption([]);
-        setRuleOption([]);
       },
       component: Modal,
     },
@@ -231,13 +185,18 @@ const result = ({
     <Layout>
       {tableHeader}
       <Table
-        // tableLayout="fixed"
+        tableLayout="fixed"
         dataSource={data}
         columns={columns({
           openEditor,
           onRemove,
           // skills,
-          reset,
+          reload,
+          pagination,
+          setIntentOption,
+          skills,
+          intents,
+          rules,
         })}
         rowKey="id"
         pagination={pagination}
