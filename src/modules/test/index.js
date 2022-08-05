@@ -1,5 +1,6 @@
 import React from 'react';
 import { CASE, SUITE, JOB } from 'shared/constants/features';
+import { readAll as readAllProduct } from 'shared/actions/product';
 import { readAll as readTestCase } from 'shared/actions/test-case';
 import { readAll as readTestSuite } from 'shared/actions/test-suite';
 import { readAll as readTestJob } from 'shared/actions/test-job';
@@ -16,9 +17,9 @@ export default () => [{
   feature: CASE,
   action: async ({ store: { dispatch } }) => {
     await Promise.all([
+      dispatch(readProfile()),
       dispatch(readAllSkills()),
       dispatch(readAllIntents()),
-      dispatch(readProfile()),
     ]);
     try {
       await dispatch(readProfile());
@@ -72,7 +73,10 @@ export default () => [{
   feature: SUITE,
   action: async ({ store: { dispatch } }) => {
     try {
-      await dispatch(readProfile());
+      await Promise.all([
+        dispatch(readProfile()),
+        dispatch(readAllProduct()),
+      ]);
       const {
         data: {
           data,
@@ -123,7 +127,10 @@ export default () => [{
   feature: JOB,
   action: async ({ store: { dispatch } }) => {
     try {
-      await dispatch(readProfile());
+      await Promise.all([
+        dispatch(readProfile()),
+        dispatch(readAllProduct()),
+      ]);
       const {
         data: {
           data,

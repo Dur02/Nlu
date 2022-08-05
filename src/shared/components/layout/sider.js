@@ -46,13 +46,13 @@ const result = ({ selectedFeatureKeys, features, isCollapsed }) => {
   return (
     <Sider
       trigger={null}
-      width={256}
+      width={206}
       collapsible
       collapsed={isCollapsed}
       className={s.Root}
     >
       <div className={s.Title}>
-        {!isCollapsed && <h1>NLU Editor</h1>}
+        {!isCollapsed && <h3>NLU Editor</h3>}
       </div>
 
       <Menu

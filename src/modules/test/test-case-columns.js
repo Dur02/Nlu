@@ -1,6 +1,6 @@
-import { Button, message, Popconfirm } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import React from 'react';
-import { find, flow, get, propEq, filter, includes } from 'lodash/fp';
+import { find, flow, get, propEq, filter } from 'lodash/fp';
 import { getStatus, getTestCaseSource, getDeleted } from 'shared/constants/test-case';
 
 export const columns = ({
@@ -103,11 +103,7 @@ export const columns = ({
   ),
 }];
 
-export const testCaseColumns = ({
-  caseTableItem,
-  addCaseToSuite,
-  delCaseFromSuite,
-}) => [{
+export const testCaseColumns = () => [{
   title: 'ID',
   // width: 140,
   dataIndex: 'id',
@@ -142,59 +138,4 @@ export const testCaseColumns = ({
   dataIndex: 'deleted',
   width: 75,
   render: (deleted) => getDeleted(deleted),
-}, {
-  title: 'Action',
-  width: 50,
-  render: (record) => (
-    <>
-      {
-        includes(record.id)(caseTableItem.testCases) ? (
-          <Button
-            type="primary"
-            danger
-            ghost
-            size="small"
-            onClick={async () => {
-              delCaseFromSuite({ caseIds: [152, 157], suiteId: 12 });
-
-              // const { code, msg } = await delCaseFromSuite({
-              //   caseIds: [152],
-              //   suiteId: caseTableItem.id,
-              // });
-              // switch (code) {
-              //   case 'SUCCESS':
-              //     message.success(msg);
-              //     break;
-              //   default:
-              //     message.error(msg);
-              // }
-            }}
-          >
-            移除
-          </Button>
-        ) : (
-          <Button
-            type="primary"
-            ghost
-            size="small"
-            onClick={async () => {
-              const { code, msg } = await addCaseToSuite({
-                caseIds: [record.id],
-                suiteId: caseTableItem.id,
-              });
-              switch (code) {
-                case 'SUCCESS':
-                  message.success(msg);
-                  break;
-                default:
-                  message.error(msg);
-              }
-            }}
-          >
-            绑定
-          </Button>
-        )
-      }
-    </>
-  ),
 }];

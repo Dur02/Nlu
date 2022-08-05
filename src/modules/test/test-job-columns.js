@@ -11,6 +11,8 @@ export const testJobColumns = ({
   setResultTotal,
   setResultSize,
   setResultCurrent,
+  onCancel,
+  openEditor,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -55,8 +57,7 @@ export const testJobColumns = ({
             ghost
             size="small"
             onClick={async () => {
-              // eslint-disable-next-line no-console
-              console.log(record);
+              openEditor(record);
             }}
           >
             修改
@@ -70,13 +71,17 @@ export const testJobColumns = ({
             ghost
             size="small"
             onClick={async () => {
+              const { data: {
+                currentPage,
+                data,
+                total,
+                pageSize,
+              } } = await readAllJobResult({ jobId: record.id, page: 1, pageSize: 10 });
+              setResultCurrent(currentPage - 1);
+              setResultIds(map(prop('id'))(data));
+              setResultTotal(total);
+              setResultSize(pageSize);
               openResult(record);
-              const a = await readAllJobResult({ jobId: record.id, page: 1, pageSize: 10 });
-              // console.log(a);
-              setResultCurrent(a.data.currentPage - 1);
-              setResultIds(map(prop('id'))(a.data.data));
-              setResultTotal(a.data.total);
-              setResultSize(a.data.pageSize);
             }}
           >
             查看
@@ -90,8 +95,7 @@ export const testJobColumns = ({
             ghost
             size="small"
             onClick={async () => {
-              // eslint-disable-next-line no-console
-              console.log(record);
+              onCancel({ id: record.id });
             }}
           >
             取消
@@ -124,7 +128,7 @@ export const resultColumns = () => [{
   render: (passed) => (
     <span
       style={{
-        fontColor: getPassed(passed) === '失败' ? 'red' : 'green',
+        color: getPassed(passed) === '失败' ? 'red' : 'green',
       }}
     >
       {getPassed(passed)}

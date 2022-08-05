@@ -10,6 +10,8 @@ export const columns = ({
   reload,
   pagination,
   openCaseTable,
+  setSelectedRowKeys,
+  openRunForm,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -42,7 +44,7 @@ export const columns = ({
   render: time(),
 }, {
   title: 'Action',
-  width: 240,
+  width: 290,
   render: (record) => (
     <>
       <Button
@@ -50,6 +52,18 @@ export const columns = ({
         ghost
         size="small"
         onClick={async () => {
+          openRunForm(record);
+        }}
+      >
+        Run
+      </Button>
+      &nbsp;&nbsp;
+      <Button
+        type="primary"
+        ghost
+        size="small"
+        onClick={async () => {
+          setSelectedRowKeys(record.testCases);
           openCaseTable(record);
         }}
       >

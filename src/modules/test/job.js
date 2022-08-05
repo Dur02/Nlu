@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Layout from 'shared/components/layout';
-import { Modal, Table } from 'antd';
+import { Form, Modal, Select, Table } from 'antd';
 import { useAction } from 'relient/actions';
 import { readAll, create, update, cancel as cancelTestJob } from 'shared/actions/test-job';
 import { readAll as readAllResult } from 'shared/actions/test-job-result';
@@ -8,20 +8,19 @@ import { useAPITable, useDetails } from 'relient-admin/hooks';
 import moment from 'moment';
 import { flow, map, remove } from 'lodash/fp';
 import { getEntity } from 'relient/selectors';
+import { useSelector } from 'react-redux';
+import { getAllProduct } from 'shared/selectors';
 import { testJobColumns, resultColumns } from './test-job-columns';
+
+const { Item } = Form;
+const { Option } = Select;
+const wrapperCol = { span: 14 };
+const labelCol = { span: 8 };
 
 const getDataSource = (state) => flow(
   map((id) => getEntity(`testJob.${id}`)(state)),
   remove((o) => o === undefined),
 );
-
-const getFields = [{
-  label: '测试集标题',
-  name: 'title',
-  type: 'text',
-  autoComplete: 'off',
-  rules: [{ required: true }],
-}];
 
 const result = ({
   ids,
@@ -30,6 +29,50 @@ const result = ({
   size,
 }) => {
   const {
+    product,
+  } = useSelector((state) => ({
+    product: getAllProduct(state),
+  }));
+
+  const getFields = [{
+    label: '标题',
+    name: 'title',
+    type: 'text',
+    autoComplete: 'off',
+    rules: [{ required: true }],
+  }, {
+    label: '测试集ID',
+    name: 'testSuiteId',
+    type: 'text',
+    autoComplete: 'off',
+    rules: [{ required: true }],
+  }, {
+    name: 'jobConfig',
+    children: () => (
+      <>
+        <Item
+          label="任务配置"
+          labelCol={labelCol}
+          wrapperCol={wrapperCol}
+        >
+          <Item
+            name="productId"
+            rules={[{ required: true }]}
+          >
+            <Select
+              placeholder="槽位"
+            >
+              {
+                map(({ name, id }) => <Option value={id} key={id}>{name}</Option>)(product)
+              }
+            </Select>
+          </Item>
+        </Item>
+      </>
+    ),
+  }];
+
+  const {
     detailsVisible: resultVisible,
     openDetails: openResult,
     closeDetails: closeResult,
@@ -37,11 +80,8 @@ const result = ({
   } = useDetails();
 
   const readAllTestJob = useAction(readAll);
-  // eslint-disable-next-line no-unused-vars
   const onCreate = useAction(create);
-  // eslint-disable-next-line no-unused-vars
   const onUpdate = useAction(update);
-  // eslint-disable-next-line no-unused-vars
   const onCancel = useAction(cancelTestJob);
   const readAllJobResult = useAction(readAllResult);
 
@@ -54,10 +94,7 @@ const result = ({
     tableHeader,
     pagination,
     data,
-    // eslint-disable-next-line no-unused-vars
     openEditor,
-    // eslint-disable-next-line no-unused-vars
-    reload,
   } = useAPITable({
     paginationInitialData: {
       ids,
@@ -65,15 +102,21 @@ const result = ({
       current,
       size,
     },
-    // createButton: {
-    //   text: '创建测试集',
-    // },
-    // creator: {
-    //   title: '创建测试集',
-    //   onSubmit: onCreate,
-    //   fields: getFields,
-    //   component: Modal,
-    // },
+    createButton: {
+      text: '创建任务',
+    },
+    creator: {
+      title: '创建任务',
+      onSubmit: onCreate,
+      fields: getFields,
+      component: Modal,
+    },
+    editor: {
+      title: '编辑产品',
+      onSubmit: onUpdate,
+      fields: getFields,
+      component: Modal,
+    },
     getDataSource,
     readAction: async (values) => {
       const {
@@ -92,12 +135,6 @@ const result = ({
         size: response.pageSize,
         totalElements: response.total,
       };
-    },
-    editor: {
-      title: '编辑',
-      onSubmit: onUpdate,
-      fields: getFields,
-      component: Modal,
     },
     showReset: true,
     query: {
@@ -139,7 +176,6 @@ const result = ({
     tableHeader: resultTableHeader,
     pagination: resultPagination,
     data: resultData,
-    // eslint-disable-next-line no-unused-vars
     reset: resultReset,
   } = useAPITable({
     paginationInitialData: {
@@ -159,6 +195,8 @@ const result = ({
         ...values,
         page: values.page + 1,
         pageSize: values.size,
+        jobId: resultItem.id,
+        passed: values.passed === -1 ? '' : values.passed,
       });
       return {
         content: response.data,
@@ -167,18 +205,21 @@ const result = ({
         totalElements: response.total,
       };
     },
-    showReset: true,
-    query: {
-      fields: [{
-        dataKey: 'title',
-        label: '技能名字',
+    showReset: false,
+    filters: [{
+      dataKey: 'passed',
+      label: '状态',
+      defaultValue: -1,
+      options: [{
+        value: -1,
+        label: '全部',
+      }, {
+        value: 0,
+        label: '未通过 ',
+      }, {
+        value: 1,
+        label: '通过',
       }],
-      searchWhenValueChange: false,
-    },
-    datePickers: [{
-      dataKey: 'createTime',
-      label: '起止日期',
-      disabledDate: (date) => date.isAfter(new Date()),
     }],
   });
 
@@ -195,6 +236,8 @@ const result = ({
           setResultTotal,
           setResultSize,
           setResultCurrent,
+          onCancel,
+          openEditor,
         })}
         rowKey="id"
         pagination={pagination}
@@ -203,12 +246,12 @@ const result = ({
         <Modal
           visible={resultVisible}
           destroyOnClose
-          onCancel={() => {
+          onCancel={async () => {
+            resultReset();
             closeResult();
-            // suiteReset();
           }}
           footer={null}
-          title={`测试任务${resultItem.id}结果查看`}
+          title={`${resultItem.title}结果查看`}
           width={1000}
         >
           {resultTableHeader}

@@ -9,4 +9,4 @@ export const getStatus = (value) => {
 
 export const getDeleted = (value) => (value ? '已删除' : '未删除');
 
-export const getPassed = (value) => (value ? '失败' : '成功');
+export const getPassed = (value) => (value ? '成功' : '失败');

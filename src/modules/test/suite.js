@@ -1,20 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from 'shared/components/layout';
 import {
+  Button,
   Modal,
   Radio,
   Table,
+  Form,
+  Input,
+  Select, message,
 } from 'antd';
-import { useAPITable, useDetails } from 'relient-admin/hooks';
-import { readAll, create, update, remove as removeTestSuite, caseAdd, caseDel } from 'shared/actions/test-suite';
+import { useAPITable, useDetails, useForm } from 'relient-admin/hooks';
+import { readAll, create, update, remove as removeTestSuite } from 'shared/actions/test-suite';
 import { readAll as readTestCase } from 'shared/actions/test-case';
 import { suiteType, normalTest } from 'shared/constants/test-suite';
+import { create as createJob } from 'shared/actions/test-job';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
 import { flow, map, remove } from 'lodash/fp';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
+import { getAllProduct } from 'shared/selectors';
 import { columns } from './test-suite-columns';
 import { testCaseColumns } from './test-case-columns';
+
+const { Option } = Select;
 
 const getDataSource = (state) => flow(
   map((id) => getEntity(`testSuite.${id}`)(state)),
@@ -49,13 +58,18 @@ const result = ({
   caseCurrent,
   caseSize,
 }) => {
+  const {
+    product,
+  } = useSelector((state) => ({
+    product: getAllProduct(state),
+  }));
+
   const readAllTestSuite = useAction(readAll);
   const onCreate = useAction(create);
   const onUpdate = useAction(update);
   const onRemove = useAction(removeTestSuite);
   const readAllTestCase = useAction(readTestCase);
-  const addCaseToSuite = useAction(caseAdd);
-  const delCaseFromSuite = useAction(caseDel);
+  const onCreateJob = useAction(createJob);
 
   const {
     detailsVisible: caseTableVisible,
@@ -63,6 +77,15 @@ const result = ({
     closeDetails: closeCaseTable,
     detailsItem: caseTableItem,
   } = useDetails();
+
+  const {
+    detailsVisible: runFormVisible,
+    openDetails: openRunForm,
+    closeDetails: closeRunForm,
+    detailsItem: runFormItem,
+  } = useDetails();
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const {
     tableHeader,
@@ -133,6 +156,7 @@ const result = ({
     pagination: casePagination,
     data: caseData,
     // reload: caseReload,
+    reset: caseReset,
   } = useAPITable({
     paginationInitialData: {
       ids: caseIds,
@@ -179,6 +203,28 @@ const result = ({
     }],
   });
 
+  const rowSelection = {
+    onChange: (value) => {
+      setSelectedRowKeys(value);
+    },
+    // getCheckboxProps: (record) => ({
+    //   disabled: record.name === 'Disabled User',
+    //   // Column configuration not to be checked
+    //   name: record.name,
+    // }),
+  };
+
+  const { submit, submitting, form } = useForm(async (values) => {
+    try {
+      const { msg } = await onCreateJob({ ...values, jobConfig: { productId: values.productId } });
+      message.success(msg);
+    } catch (e) {
+      message.error(e.msg);
+    }
+    form.resetFields();
+    closeRunForm();
+  });
+
   return (
     <Layout>
       {tableHeader}
@@ -191,6 +237,8 @@ const result = ({
           reload,
           pagination,
           openCaseTable,
+          setSelectedRowKeys,
+          openRunForm,
         })}
         rowKey="id"
         pagination={pagination}
@@ -201,25 +249,92 @@ const result = ({
           destroyOnClose
           onCancel={() => {
             closeCaseTable();
+            caseReset();
           }}
           footer={null}
-          title={`测试集${caseTableItem.id}修改`}
+          title={`${caseTableItem.title}修改`}
           width={1100}
-          zIndex={9}
+          zIndex={10}
         >
           {caseTableHeader}
           <Table
-            // tableLayout="fixed"
             dataSource={caseData}
-            columns={testCaseColumns({
-              caseTableItem,
-              addCaseToSuite,
-              delCaseFromSuite,
-            })}
+            columns={testCaseColumns()}
+            rowSelection={{
+              type: 'checkbox',
+              selectedRowKeys,
+              ...rowSelection,
+            }}
             rowKey="id"
             size="small"
             pagination={casePagination}
           />
+          <Button
+            type="primary"
+            ghost
+            onClick={() => {
+              // eslint-disable-next-line no-console
+              console.log(selectedRowKeys);
+            }}
+          >
+            增加
+          </Button>
+        </Modal>
+      )}
+      {runFormItem && (
+        <Modal
+          visible={runFormVisible}
+          destroyOnClose
+          onCancel={() => {
+            closeRunForm();
+          }}
+          footer={null}
+          title={`Run${runFormItem.title}`}
+          zIndex={10}
+        >
+          <Form
+            name="basic"
+            labelCol={{ span: 7 }}
+            wrapperCol={{ span: 16 }}
+            initialValues={{ testSuiteId: runFormItem.id }}
+            autoComplete="off"
+            onFinish={submit}
+            form={form}
+          >
+            <Form.Item
+              label="标题"
+              name="title"
+              rules={[{ required: true, message: '请输入标题!' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="产品"
+              name="productId"
+            >
+              <Select
+                style={{ width: 314 }}
+              >
+                {
+                  map(({ name, id }) => <Option value={id} key={id}>{name}</Option>)(product)
+                }
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="测试集ID"
+              name="testSuiteId"
+              style={{
+                display: 'none',
+              }}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
+              <Button type="primary" htmlType="submit" loading={submitting}>
+                新增任务
+              </Button>
+            </Form.Item>
+          </Form>
         </Modal>
       )}
     </Layout>

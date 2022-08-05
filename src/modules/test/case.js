@@ -320,7 +320,7 @@ const result = ({
           }}
           footer={null}
           title={`测试用例${bindItem.id}绑定`}
-          width={1100}
+          width={1000}
           zIndex={9}
         >
           {suiteTableHeader}
