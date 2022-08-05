@@ -11,11 +11,14 @@ export const READ_ALL = actionType('READ_ALL');
 export const readAll = createAction(
   READ_ALL,
   ({
-    id,
+    jobId,
+    page,
+    pageSize,
+    passed,
+  }) => read('/skill/edit/test/job/result/page', {
+    jobId,
     pageSize,
     page,
-  }) => read(`/skill/edit/test/jobs/${id}/page`, {
-    pageSize,
-    page,
+    passed,
   }),
 );

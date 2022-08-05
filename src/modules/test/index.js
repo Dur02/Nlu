@@ -2,6 +2,7 @@ import React from 'react';
 import { CASE, SUITE, JOB } from 'shared/constants/features';
 import { readAll as readTestCase } from 'shared/actions/test-case';
 import { readAll as readTestSuite } from 'shared/actions/test-suite';
+import { readAll as readTestJob } from 'shared/actions/test-job';
 import { readAll as readAllSkills } from 'shared/actions/skill';
 import { readAll as readAllIntents } from 'shared/actions/intent';
 import { readMine as readProfile } from 'shared/actions/user';
@@ -20,6 +21,7 @@ export default () => [{
       dispatch(readProfile()),
     ]);
     try {
+      await dispatch(readProfile());
       const {
         data: {
           data,
@@ -31,12 +33,27 @@ export default () => [{
         page: 1,
         pageSize: 10,
       }));
+      const {
+        data: {
+          data: suiteData,
+          currentPage: suiteCurrentPage,
+          pageSize: suitePageSize,
+          total: suiteTotal,
+        },
+      } = await dispatch(readTestSuite({
+        page: 1,
+        pageSize: 10,
+      }));
       return {
         component: <Case
           ids={map(prop('id'))(data)}
           total={total}
           current={currentPage - 1}
           size={pageSize}
+          suiteIds={map(prop('id'))(suiteData)}
+          suiteTotal={suiteTotal}
+          suiteCurrent={suiteCurrentPage - 1}
+          suiteSize={suitePageSize}
         />,
       };
     } catch (e) {
@@ -55,6 +72,7 @@ export default () => [{
   feature: SUITE,
   action: async ({ store: { dispatch } }) => {
     try {
+      await dispatch(readProfile());
       const {
         data: {
           data,
@@ -63,8 +81,19 @@ export default () => [{
           total,
         },
       } = await dispatch(readTestSuite({
-        page: 10,
-        pageSize: 1,
+        page: 1,
+        pageSize: 10,
+      }));
+      const {
+        data: {
+          data: caseData,
+          currentPage: caseCurrentPage,
+          pageSize: casePageSize,
+          total: caseTotal,
+        },
+      } = await dispatch(readTestCase({
+        page: 1,
+        pageSize: 10,
       }));
       return {
         component: <Suite
@@ -72,6 +101,10 @@ export default () => [{
           total={total}
           current={currentPage - 1}
           size={pageSize}
+          caseIds={map(prop('id'))(caseData)}
+          caseTotal={caseTotal}
+          caseCurrent={caseCurrentPage - 1}
+          caseSize={casePageSize}
         />,
       };
     } catch (e) {
@@ -90,13 +123,35 @@ export default () => [{
   feature: JOB,
   action: async ({ store: { dispatch } }) => {
     try {
-      // eslint-disable-next-line no-console
-      console.log('111', dispatch);
+      await dispatch(readProfile());
+      const {
+        data: {
+          data,
+          currentPage,
+          pageSize,
+          total,
+        },
+      } = await dispatch(readTestJob({
+        page: 1,
+        pageSize: 10,
+      }));
+      return {
+        component: <Job
+          ids={map(prop('id'))(data)}
+          total={total}
+          current={currentPage - 1}
+          size={pageSize}
+        />,
+      };
     } catch (e) {
-      // ignore
+      return {
+        component: <Suite
+          ids={[]}
+          total={0}
+          current={0}
+          size={0}
+        />,
+      };
     }
-    return {
-      component: <Job />,
-    };
   },
 }];

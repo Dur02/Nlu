@@ -4,6 +4,8 @@ import {
   REMOVE,
   CREATE,
   UPDATE,
+  CASE_ADD,
+  CASE_DEL,
 } from '../actions/test-suite';
 import { testSuite } from '../schema';
 
@@ -17,6 +19,8 @@ export default {
     [combineActions(
       UPDATE,
       CREATE,
+      CASE_ADD,
+      CASE_DEL,
     )]: merge({
       schema: testSuite,
       dataKey: 'data',

@@ -10,6 +10,9 @@ export const READ_ALL = actionType('READ_ALL');
 export const CREATE = actionType('CREATE');
 export const REMOVE = actionType('REMOVE');
 export const UPDATE = actionType('UPDATE');
+export const FILTER_ADD = actionType('FILTER_ADD');
+export const CASE_ADD = actionType('CASE_ADD');
+export const CASE_DEL = actionType('CASE_DEL');
 
 export const readAll = createAction(
   READ_ALL,
@@ -64,4 +67,41 @@ export const remove = createAction(
   ({
     id,
   }) => del(`/skill/edit/test/suite/${id}`),
+);
+
+export const filterAdd = createAction(
+  FILTER_ADD,
+  ({
+    intentName,
+    refText,
+    skillName,
+    suiteId,
+  }) => post('/skill/edit/test/suite/cases/filter-add', {
+    intentName,
+    refText,
+    skillName,
+    suiteId,
+  }),
+);
+
+export const caseAdd = createAction(
+  CASE_ADD,
+  ({
+    caseIds,
+    suiteId,
+  }) => post('/skill/edit/test/suite/cases/add', {
+    caseIds,
+    suiteId,
+  }),
+);
+
+export const caseDel = createAction(
+  CASE_DEL,
+  ({
+    caseIds,
+    suiteId,
+  }) => del('/skill/edit/test/suite/cases/del', {
+    caseIds,
+    suiteId,
+  }),
 );

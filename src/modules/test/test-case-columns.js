@@ -1,36 +1,36 @@
-import { time } from 'relient/formatters';
-import { Button, Popconfirm } from 'antd';
+import { Button, message, Popconfirm } from 'antd';
 import React from 'react';
-import { find, flow, get, propEq, filter } from 'lodash/fp';
+import { find, flow, get, propEq, filter, includes } from 'lodash/fp';
 import { getStatus, getTestCaseSource, getDeleted } from 'shared/constants/test-case';
 
-export default ({
+export const columns = ({
   openEditor,
   onRemove,
-  // skills,
   reload,
   pagination,
   setIntentOption,
   skills,
   intents,
+  openBind,
 }) => [{
+  title: 'ID',
+  width: 70,
+  dataIndex: 'id',
+}, {
   title: '期待技能',
-  width: 140,
+  // width: 140,
   dataIndex: 'expectedSkill',
 }, {
   title: '期待意图',
+  // width: 140,
   dataIndex: 'expectedIntent',
 }, {
-  title: '期待说法',
-  dataIndex: 'expectedRule',
-}, {
-  title: '描述',
-  dataIndex: 'description',
-}, {
   title: 'joss共享地址',
+  width: 250,
   dataIndex: 'jossShareUrl',
 }, {
   title: '用户说',
+  // width: 180,
   dataIndex: 'refText',
 }, {
   title: '状态',
@@ -38,27 +38,31 @@ export default ({
   width: 75,
   render: (status) => getStatus(status),
 }, {
-  title: '测试用例来源',
+  title: '来源',
   dataIndex: 'testCaseSource',
-  width: 120,
+  width: 88,
   render: (testCaseSource) => getTestCaseSource(testCaseSource),
-}, {
-  title: '音频',
-  dataIndex: 'audioFile',
 }, {
   title: '删除',
   dataIndex: 'deleted',
   width: 75,
   render: (deleted) => getDeleted(deleted),
 }, {
-  title: '更新时间',
-  dataIndex: 'updateTime',
-  render: time(),
-}, {
   title: 'Action',
-  width: 80,
+  width: 200,
   render: (record) => (
     <>
+      <Button
+        type="primary"
+        ghost
+        size="small"
+        onClick={async () => {
+          openBind(record);
+        }}
+      >
+        绑定
+      </Button>
+      &nbsp;&nbsp;
       <Button
         type="primary"
         ghost
@@ -95,6 +99,102 @@ export default ({
       >
         <Button type="danger" size="small" ghost>删除</Button>
       </Popconfirm>
+    </>
+  ),
+}];
+
+export const testCaseColumns = ({
+  caseTableItem,
+  addCaseToSuite,
+  delCaseFromSuite,
+}) => [{
+  title: 'ID',
+  // width: 140,
+  dataIndex: 'id',
+}, {
+  title: '期待技能',
+  // width: 140,
+  dataIndex: 'expectedSkill',
+}, {
+  title: '期待意图',
+  // width: 140,
+  dataIndex: 'expectedIntent',
+}, {
+  title: 'joss共享地址',
+  width: 250,
+  dataIndex: 'jossShareUrl',
+}, {
+  title: '用户说',
+  // width: 180,
+  dataIndex: 'refText',
+}, {
+  title: '状态',
+  dataIndex: 'status',
+  width: 75,
+  render: (status) => getStatus(status),
+}, {
+  title: '来源',
+  dataIndex: 'testCaseSource',
+  width: 88,
+  render: (testCaseSource) => getTestCaseSource(testCaseSource),
+}, {
+  title: '删除',
+  dataIndex: 'deleted',
+  width: 75,
+  render: (deleted) => getDeleted(deleted),
+}, {
+  title: 'Action',
+  width: 50,
+  render: (record) => (
+    <>
+      {
+        includes(record.id)(caseTableItem.testCases) ? (
+          <Button
+            type="primary"
+            danger
+            ghost
+            size="small"
+            onClick={async () => {
+              delCaseFromSuite({ caseIds: [152, 157], suiteId: 12 });
+
+              // const { code, msg } = await delCaseFromSuite({
+              //   caseIds: [152],
+              //   suiteId: caseTableItem.id,
+              // });
+              // switch (code) {
+              //   case 'SUCCESS':
+              //     message.success(msg);
+              //     break;
+              //   default:
+              //     message.error(msg);
+              // }
+            }}
+          >
+            移除
+          </Button>
+        ) : (
+          <Button
+            type="primary"
+            ghost
+            size="small"
+            onClick={async () => {
+              const { code, msg } = await addCaseToSuite({
+                caseIds: [record.id],
+                suiteId: caseTableItem.id,
+              });
+              switch (code) {
+                case 'SUCCESS':
+                  message.success(msg);
+                  break;
+                default:
+                  message.error(msg);
+              }
+            }}
+          >
+            绑定
+          </Button>
+        )
+      }
     </>
   ),
 }];
