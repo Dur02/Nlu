@@ -48,14 +48,21 @@ export const update = createAction(
   UPDATE,
   ({
     id,
-  }) => put(`/skill/edit/test/jobs/${id}`),
+    jobConfig,
+    testSuiteId,
+    title,
+  }) => put(`/skill/edit/test/job/${id}`, {
+    jobConfig,
+    testSuiteId,
+    title,
+  }),
 );
 
 export const cancel = createAction(
   CANCEL,
   ({
     id,
-  }) => put(`/skill/edit/test/jobs/${id}/cancel`),
+  }) => put(`/skill/edit/test/job/${id}/cancel`),
 );
 
 export const getProcess = createAction(

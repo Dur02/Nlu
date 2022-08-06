@@ -43,7 +43,7 @@ const result = ({
   }, {
     label: '测试集ID',
     name: 'testSuiteId',
-    type: 'text',
+    type: 'number',
     autoComplete: 'off',
     rules: [{ required: true }],
   }, {
