@@ -1,4 +1,3 @@
-/* eslint-disable-next-line no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import Layout from 'shared/components/layout';
 import { Button, Form, Modal, Select, Table } from 'antd';
@@ -267,15 +266,14 @@ const result = ({
     rowExpandable: ({ jobResult }) => jobResult && jobResult !== '',
   };
 
-  // useEffect( () => {
-  //   console.log(pagination);
-  //   const timer = setInterval(async () =>{
-  //     await reload();
-  //   },10000);
-  //   return () => {
-  //     clearInterval(timer);
-  //   }
-  // }, []);
+  useEffect(() => {
+    const timer = setInterval(async () => {
+      await reload();
+    }, 10000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [reload]);
 
   return (
     <Layout>
