@@ -269,7 +269,7 @@ const result = ({
   useEffect(() => {
     const timer = setInterval(async () => {
       await reload();
-    }, 10000);
+    }, 3000);
     return () => {
       clearInterval(timer);
     };
