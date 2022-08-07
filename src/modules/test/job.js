@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+/* eslint-disable-next-line no-unused-vars */
+import React, { useEffect, useState } from 'react';
 import Layout from 'shared/components/layout';
-import { Form, Modal, Select, Table } from 'antd';
+import { Button, Form, Modal, Select, Table } from 'antd';
 import { useAction } from 'relient/actions';
 import { readAll, create, update, cancel as cancelTestJob } from 'shared/actions/test-job';
 import { readAll as readAllResult } from 'shared/actions/test-job-result';
@@ -10,8 +11,11 @@ import { flow, map, remove } from 'lodash/fp';
 import { getEntity } from 'relient/selectors';
 import { useSelector } from 'react-redux';
 import { getAllProduct } from 'shared/selectors';
+import { RedoOutlined } from '@ant-design/icons';
+import { getPassed } from 'shared/constants/test-job';
 import { testJobColumns, resultColumns } from './test-job-columns';
 
+const mapWithIndex = map.convert({ cap: false });
 const { Item } = Form;
 const { Option } = Select;
 const wrapperCol = { span: 14 };
@@ -34,44 +38,6 @@ const result = ({
     product: getAllProduct(state),
   }));
 
-  const getFields = [{
-    label: '标题',
-    name: 'title',
-    type: 'text',
-    autoComplete: 'off',
-    rules: [{ required: true }],
-  }, {
-    label: '测试集ID',
-    name: 'testSuiteId',
-    type: 'number',
-    autoComplete: 'off',
-    rules: [{ required: true }],
-  }, {
-    name: 'jobConfig',
-    children: () => (
-      <>
-        <Item
-          label="任务配置"
-          labelCol={labelCol}
-          wrapperCol={wrapperCol}
-        >
-          <Item
-            name="productId"
-            rules={[{ required: true }]}
-          >
-            <Select
-              placeholder="槽位"
-            >
-              {
-                map(({ name, id }) => <Option value={id} key={id}>{name}</Option>)(product)
-              }
-            </Select>
-          </Item>
-        </Item>
-      </>
-    ),
-  }];
-
   const {
     detailsVisible: resultVisible,
     openDetails: openResult,
@@ -89,12 +55,50 @@ const result = ({
   const [resultTotal, setResultTotal] = useState(0);
   const [resultCurrent, setResultCurrent] = useState(0);
   const [resultSize, setResultSize] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const getFields = [{
+    label: '标题',
+    name: 'title',
+    type: 'text',
+    autoComplete: 'off',
+    rules: [{ required: true }],
+  }, {
+    label: '测试集ID',
+    name: 'testSuiteId',
+    type: 'number',
+    autoComplete: 'off',
+    rules: [{ required: true }],
+  }, {
+    name: 'jobConfig',
+    children: () => (
+      <>
+        <Item
+          label="产品"
+          labelCol={labelCol}
+          wrapperCol={wrapperCol}
+        >
+          <Item
+            name="productId"
+            rules={[{ required: true }]}
+          >
+            <Select>
+              {
+                map(({ name, id }) => <Option value={id} key={id}>{name}</Option>)(product)
+              }
+            </Select>
+          </Item>
+        </Item>
+      </>
+    ),
+  }];
 
   const {
     tableHeader,
     pagination,
     data,
     openEditor,
+    reload,
   } = useAPITable({
     paginationInitialData: {
       ids,
@@ -223,9 +227,78 @@ const result = ({
     }],
   });
 
+  const expandable = {
+    expandedRowRender: (record) => {
+      const expandedColumns = [{
+        title: '实际值 ',
+        dataIndex: 'actual',
+      }, {
+        title: '期待值',
+        dataIndex: 'expected',
+      }, {
+        title: '是否有效嘈位',
+        dataIndex: 'assertion',
+      }, {
+        title: '是否通过',
+        dataIndex: 'passed',
+        render: (passed) => (
+          <span
+            style={{
+              color: getPassed(passed) === '失败' ? 'red' : 'green',
+            }}
+          >
+            {getPassed(passed)}
+          </span>
+        ),
+      }];
+
+      return (
+        <Table
+          dataSource={mapWithIndex((item, index) => ({
+            ...item, key: index,
+          }))(JSON.parse(record.jobResult))}
+          tableLayout="fixed"
+          rowKey="key"
+          columns={expandedColumns}
+          pagination={false}
+        />
+      );
+    },
+    rowExpandable: ({ jobResult }) => jobResult && jobResult !== '',
+  };
+
+  // useEffect( () => {
+  //   console.log(pagination);
+  //   const timer = setInterval(async () =>{
+  //     await reload();
+  //   },10000);
+  //   return () => {
+  //     clearInterval(timer);
+  //   }
+  // }, []);
+
   return (
     <Layout>
       {tableHeader}
+      <Button
+        icon={<RedoOutlined />}
+        type="primary"
+        size="large"
+        style={{
+          position: 'absolute',
+          top: 24,
+          left: 140,
+        }}
+        onClick={async () => {
+          setLoading(true);
+          await reload();
+          setLoading(false);
+        }}
+        loading={loading}
+        disabled={loading}
+      >
+        刷新状态
+      </Button>
       <Table
         tableLayout="fixed"
         dataSource={data}
@@ -262,6 +335,7 @@ const result = ({
             rowKey="id"
             size="small"
             pagination={resultPagination}
+            expandable={expandable}
           />
         </Modal>
       )}
