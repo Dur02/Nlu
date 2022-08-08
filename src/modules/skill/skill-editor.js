@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
-import { Tabs, Empty, Input, message, Modal, Button, Upload } from 'antd';
+import { Tabs, Empty, Input, message, Modal, Button, Upload, Table } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { SEMANTIC } from 'shared/constants/intent-type';
@@ -34,9 +34,11 @@ import selector from './skill-editor-selector';
 import s from './skill-editor.less';
 import WordGraph from '../../shared/components/word-graph';
 import GlobalSearchRules from './components/global-search-rules';
+import { columns } from './components/skill-test-columns';
 
 const { TabPane } = Tabs;
 const { Search } = Input;
+const mapWithIndex = map.convert({ cap: false });
 
 const result = ({ skillId }) => {
   useStyles(s);
@@ -104,17 +106,17 @@ const result = ({ skillId }) => {
   const [wordGraphVisible, setWordGraphVisible] = useState(false);
   const [globalSearch, setGlobalSearch] = useState(false);
   const [uploadVisible, setUploadVisible] = useState(false);
-  const [textAreaVisible, setTextAreaVisible] = useState(false);
+  const [isText, setIsText] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState([]);
 
   const closeUpload = useCallback(() => {
     setUploadVisible(false);
-  }, [uploadVisible, setUploadVisible]);
+    setIsText(false);
+  }, [uploadVisible, setUploadVisible, isText, setIsText]);
 
-  const closeTextArea = useCallback(() => {
-    setTextAreaVisible(false);
-  }, [textAreaVisible, setTextAreaVisible]);
+  const closeErrorInfo = useCallback(() => setError([]), [setError]);
 
-  const [uploading, setUploading] = useState(false);
   const onUpload = useCallback(async ({ file: { status, response } }) => {
     setUploading(true);
     if (status === 'done') {
@@ -122,11 +124,20 @@ const result = ({ skillId }) => {
         message.success('检查完成，测试文件格式正确,即将刷新数据');
         window.location.reload();
       } else if (response.data && response.data.length > 0) {
-        flow(
-          map(prop('errorMsg')),
-          join('，'),
-          message.error,
-        )(response.data);
+        if (isText) {
+          flow(
+            mapWithIndex((item, index) => ({
+              ...item, key: index + 1,
+            })),
+            setError,
+          )(response.data);
+        } else {
+          flow(
+            map(prop('errorMsg')),
+            join('，'),
+            message.error,
+          )(response.data);
+        }
       } else {
         message.error(response.msg);
       }
@@ -144,9 +155,25 @@ const result = ({ skillId }) => {
       subTitle={`${skill.name}  (${skill.version})  `}
       addonAfter={(
         <>
-          <Button type="primary" onClick={() => setUploadVisible(true)}>纯文本导入</Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              setUploadVisible(true);
+              setIsText(true);
+            }}
+          >
+            纯文本导入
+          </Button>
           &nbsp;
-          <Button type="primary" onClick={() => setUploadVisible(true)}>技能回复导入</Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              setUploadVisible(true);
+              setIsText(false);
+            }}
+          >
+            技能回复导入
+          </Button>
           &nbsp;
           <Button
             type="primary"
@@ -282,12 +309,16 @@ const result = ({ skillId }) => {
         visible={uploadVisible}
         onCancel={closeUpload}
         footer={null}
-        title="回复数据导入"
+        title={isText ? '纯文本导入' : '技能回复导入'}
         width={400}
       >
         <Upload
           name="file"
-          action={() => `/skill/edit/skill/output-yaml-import?skillId=${skillId}`}
+          action={
+            isText
+              ? `/skill/edit/skill/excel-import/rule?skillId=${skillId}`
+              : `/skill/edit/skill/output-yaml-import?skillId=${skillId}`
+          }
           showUploadList={false}
           headers={{ token }}
           onChange={onUpload}
@@ -305,30 +336,16 @@ const result = ({ skillId }) => {
         </Upload>
       </Modal>
       <Modal
-        visible={textAreaVisible}
-        onCancel={closeTextArea}
-        footer={null}
-        title="纯文本数据导入"
-        width={400}
+        visible={error.length > 0}
+        onOk={closeErrorInfo}
+        onCancel={closeErrorInfo}
+        title="错误提示"
+        width={1000}
       >
-        <Upload
-          name="file"
-          action={() => `/skill/edit/skill/excel-import/rule?skillId=${skillId}`}
-          showUploadList={false}
-          headers={{ token }}
-          onChange={onUpload}
-        >
-          <Button
-            icon={<UploadOutlined />}
-            style={{
-              position: 'relative',
-              left: '90px',
-            }}
-            loading={uploading}
-          >
-            上传
-          </Button>
-        </Upload>
+        <Table
+          columns={columns}
+          dataSource={error}
+        />
       </Modal>
     </Layout>
   );
