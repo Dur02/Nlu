@@ -13,6 +13,7 @@ export const UPDATE = actionType('UPDATE');
 export const FILTER_ADD = actionType('FILTER_ADD');
 export const CASE_ADD = actionType('CASE_ADD');
 export const CASE_DEL = actionType('CASE_DEL');
+export const CASE_REPLACE = actionType('CASE_REPLACE');
 
 export const readAll = createAction(
   READ_ALL,
@@ -101,6 +102,17 @@ export const caseDel = createAction(
     caseIds,
     suiteId,
   }) => del('/skill/edit/test/suite/cases/del', {
+    caseIds,
+    suiteId,
+  }),
+);
+
+export const caseReplace = createAction(
+  CASE_REPLACE,
+  ({
+    caseIds,
+    suiteId,
+  }) => put('/skill/edit/test/suite/cases/add-del', {
     caseIds,
     suiteId,
   }),

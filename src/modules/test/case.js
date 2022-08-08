@@ -7,7 +7,7 @@ import {
 } from 'antd';
 import { useAPITable, useDetails } from 'relient-admin/hooks';
 import { readAll, create, update, remove as removeTestCase } from 'shared/actions/test-case';
-import { readAll as readTestSuite, filterAdd, caseAdd, caseDel } from 'shared/actions/test-suite';
+import { readAll as readTestSuite, caseAdd, caseDel } from 'shared/actions/test-suite';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
 import { filter, map, propEq, find, flow, get, remove } from 'lodash/fp';
@@ -39,10 +39,7 @@ const result = ({
   const readAllTestSuite = useAction(readTestSuite);
   const addCaseToSuite = useAction(caseAdd);
   const delCaseFromSuite = useAction(caseDel);
-  const filterAddCase = useAction(filterAdd);
 
-  const [isCreator, setIsCreator] = useState(true);
-  const [suiteId, setSuiteId] = useState();
   const [intentOption, setIntentOption] = useState([]);
 
   const {
@@ -57,113 +54,84 @@ const result = ({
     detailsItem: bindItem,
   } = useDetails();
 
-  const getFields = (form) => {
-    const baseField = [{
-      label: '用户说',
-      name: 'refText',
-      type: 'text',
-      autoComplete: 'off',
-      rules: [{ required: true }],
-    }, {
-      label: isCreator ? '期待技能' : '技能名',
-      // 因为技能可同名，在此处传skillCode而在下面传expectedSkill，并非写错
-      name: 'skillCode',
-      component: Select,
-      options: skills,
-      allowClear: true,
-      rules: [{ required: true }],
-      onChange: () => {
-        form.setFieldsValue({
-          expectedIntentTemp: '',
-          expectedRuleTemp: [],
-          expectedSkill: flow(
-            find(propEq('value', form.getFieldValue('skillCode'))),
-            get('label'),
-          )(skills),
-          expectedIntent: '',
-          skillName: flow(
-            find(propEq('value', form.getFieldValue('skillCode'))),
-            get('label'),
-          )(skills),
-        });
-        setIntentOption(filter(
-          propEq('skillId', flow(
-            find(propEq('skillCode', form.getFieldValue('skillCode'))),
-            get('key'),
-          )(skills)),
-        )(intents));
-      },
-    }, {
-      label: isCreator ? '期待意图' : '意图名',
-      name: 'expectedIntentTemp',
-      component: Select,
-      options: intentOption,
-      allowClear: true,
-      dependencies: ['skillCode'],
-      rules: [{ required: true }],
-      onChange: () => {
-        form.setFieldsValue({
-          expectedIntent: flow(
-            find(propEq('value', form.getFieldValue('expectedIntentTemp'))),
-            get('label'),
-          )(intentOption),
-          intentName: flow(
-            find(propEq('value', form.getFieldValue('expectedIntentTemp'))),
-            get('label'),
-          )(intentOption),
-        });
-      },
-    }];
-    const creatorField = [{
-      label: 'joss共享地址',
-      name: 'jossShareUrl',
-      type: 'text',
-      autoComplete: 'off',
-    }, {
-      name: 'expectedSkill',
-      dependencies: ['skillCode'],
-      type: 'text',
-      autoComplete: 'off',
-      style: {
-        display: 'none',
-      },
-    }, {
-      // 因为后端数据很多name同名的数据，此处又要求传name，于是设置多个隐藏的input传值
-      name: 'expectedIntent',
-      dependencies: ['skillCode', 'expectedIntentTemp'],
-      type: 'text',
-      autoComplete: 'off',
-      style: {
-        display: 'none',
-      },
-    }];
-    const filterAddField = [{
-      name: 'skillName',
-      dependencies: ['skillCode'],
-      type: 'text',
-      autoComplete: 'off',
-      style: {
-        display: 'none',
-      },
-    }, {
-      // 因为后端数据很多name同名的数据，此处又要求传name，于是设置多个隐藏的input传值
-      name: 'intentName',
-      dependencies: ['skillCode', 'expectedIntentTemp'],
-      type: 'text',
-      autoComplete: 'off',
-      style: {
-        display: 'none',
-      },
-    }, {
-      name: 'suiteId',
-      type: 'text',
-      autoComplete: 'off',
-      style: {
-        display: 'none',
-      },
-    }];
-    return isCreator ? [...baseField, ...creatorField] : [...baseField, ...filterAddField];
-  };
+  const getFields = (form) => [{
+    label: '用户说',
+    name: 'refText',
+    type: 'text',
+    autoComplete: 'off',
+    rules: [{ required: true }],
+  }, {
+    label: '期待技能',
+    // 因为技能可同名，在此处传skillCode而在下面传expectedSkill，并非写错
+    name: 'skillCode',
+    component: Select,
+    options: skills,
+    allowClear: true,
+    rules: [{ required: true }],
+    onChange: () => {
+      form.setFieldsValue({
+        expectedIntentTemp: '',
+        expectedRuleTemp: [],
+        expectedSkill: flow(
+          find(propEq('value', form.getFieldValue('skillCode'))),
+          get('label'),
+        )(skills),
+        expectedIntent: '',
+        skillName: flow(
+          find(propEq('value', form.getFieldValue('skillCode'))),
+          get('label'),
+        )(skills),
+      });
+      setIntentOption(filter(
+        propEq('skillId', flow(
+          find(propEq('skillCode', form.getFieldValue('skillCode'))),
+          get('key'),
+        )(skills)),
+      )(intents));
+    },
+  }, {
+    label: '期待意图',
+    name: 'expectedIntentTemp',
+    component: Select,
+    options: intentOption,
+    allowClear: true,
+    dependencies: ['skillCode'],
+    rules: [{ required: true }],
+    onChange: () => {
+      form.setFieldsValue({
+        expectedIntent: flow(
+          find(propEq('value', form.getFieldValue('expectedIntentTemp'))),
+          get('label'),
+        )(intentOption),
+        intentName: flow(
+          find(propEq('value', form.getFieldValue('expectedIntentTemp'))),
+          get('label'),
+        )(intentOption),
+      });
+    },
+  }, {
+    label: 'joss共享地址',
+    name: 'jossShareUrl',
+    type: 'text',
+    autoComplete: 'off',
+  }, {
+    name: 'expectedSkill',
+    dependencies: ['skillCode'],
+    type: 'text',
+    autoComplete: 'off',
+    style: {
+      display: 'none',
+    },
+  }, {
+    // 因为后端数据很多name同名的数据，此处又要求传name，于是设置多个隐藏的input传值
+    name: 'expectedIntent',
+    dependencies: ['skillCode', 'expectedIntentTemp'],
+    type: 'text',
+    autoComplete: 'off',
+    style: {
+      display: 'none',
+    },
+  }];
 
   const {
     tableHeader,
@@ -171,7 +139,6 @@ const result = ({
     data,
     openEditor,
     reload,
-    openCreator,
   } = useAPITable({
     paginationInitialData: {
       ids,
@@ -183,14 +150,10 @@ const result = ({
       text: '创建用例',
     },
     creator: {
-      title: isCreator ? '创建用例' : '批量添加用例',
-      onSubmit: isCreator ? onCreate : filterAddCase,
+      title: '创建用例',
+      onSubmit: onCreate,
       getFields,
-      initialValues: {
-        suiteId,
-      },
       onCancel: () => {
-        setIsCreator(true);
         setIntentOption([]);
       },
       component: Modal,
@@ -331,9 +294,6 @@ const result = ({
               bindItem,
               addCaseToSuite,
               delCaseFromSuite,
-              openCreator,
-              setIsCreator,
-              setSuiteId,
             })}
             rowKey="id"
             size="small"

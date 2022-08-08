@@ -9,11 +9,10 @@ export const columns = ({
   openEditor,
   reload,
   pagination,
-  /* eslint-disable-next-line no-unused-vars */
   openCaseTable,
-  /* eslint-disable-next-line no-unused-vars */
   setSelectedRowKeys,
   openRunForm,
+  // openAddForm,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -45,8 +44,8 @@ export const columns = ({
   width: 160,
   render: time(),
 }, {
-  title: 'Action',
-  width: 210,
+  title: '操作',
+  width: 290,
   render: (record) => (
     <>
       <Button
@@ -54,22 +53,22 @@ export const columns = ({
         ghost
         size="small"
         onClick={async () => {
-        // &nbsp;&nbsp;
-        //   <Button
-        //     type="primary"
-        //     ghost
-        //     size="small"
-        //     onClick={async () => {
-        //       setSelectedRowKeys(record.testCases);
-        //       openCaseTable(record);
-        //     }}
-        //   >
-        //     修改用例
-        //   </Button>
           openRunForm(record);
         }}
       >
         Run
+      </Button>
+      &nbsp;&nbsp;
+      <Button
+        type="primary"
+        ghost
+        size="small"
+        onClick={async () => {
+          setSelectedRowKeys(record.testCases);
+          openCaseTable(record);
+        }}
+      >
+        修改用例
       </Button>
       &nbsp;&nbsp;
       <Button
@@ -104,9 +103,6 @@ export const testSuiteColumns = ({
   bindItem,
   addCaseToSuite,
   delCaseFromSuite,
-  openCreator,
-  setIsCreator,
-  setSuiteId,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -139,7 +135,7 @@ export const testSuiteColumns = ({
   render: time(),
 }, {
   title: 'Action',
-  width: 150,
+  width: 70,
   render: (record) => (
     <>
       {
@@ -188,19 +184,6 @@ export const testSuiteColumns = ({
           </Button>
         )
       }
-      &nbsp;&nbsp;
-      <Button
-        type="primary"
-        ghost
-        size="small"
-        onClick={async () => {
-          openCreator();
-          setSuiteId(record.id);
-          setIsCreator(false);
-        }}
-      >
-        批量添加
-      </Button>
     </>
   ),
 }];

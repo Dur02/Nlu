@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Layout from 'shared/components/layout';
-import { Button, Form, Modal, Select, Table } from 'antd';
+import { Button, Modal, Select, Table } from 'antd';
 import { useAction } from 'relient/actions';
 import { readAll, create, update, cancel as cancelTestJob } from 'shared/actions/test-job';
 import { readAll as readAllResult } from 'shared/actions/test-job-result';
@@ -15,10 +15,6 @@ import { getPassed } from 'shared/constants/test-job';
 import { testJobColumns, resultColumns } from './test-job-columns';
 
 const mapWithIndex = map.convert({ cap: false });
-const { Item } = Form;
-const { Option } = Select;
-const wrapperCol = { span: 14 };
-const labelCol = { span: 8 };
 
 const getDataSource = (state) => flow(
   map((id) => getEntity(`testJob.${id}`)(state)),
@@ -69,27 +65,12 @@ const result = ({
     autoComplete: 'off',
     rules: [{ required: true }],
   }, {
-    name: 'jobConfig',
-    children: () => (
-      <>
-        <Item
-          label="产品"
-          labelCol={labelCol}
-          wrapperCol={wrapperCol}
-        >
-          <Item
-            name="productId"
-            rules={[{ required: true }]}
-          >
-            <Select>
-              {
-                map(({ name, id }) => <Option value={id} key={id}>{name}</Option>)(product)
-              }
-            </Select>
-          </Item>
-        </Item>
-      </>
-    ),
+    name: ['jobConfig', 'productId'],
+    label: '产品',
+    component: Select,
+    options: map((i) => ({ ...i, value: i.id, label: i.name, key: i.id }))(product),
+    allowClear: true,
+    rules: [{ required: true }],
   }];
 
   const {
@@ -115,7 +96,7 @@ const result = ({
       component: Modal,
     },
     editor: {
-      title: '编辑产品',
+      title: '编辑任务',
       onSubmit: onUpdate,
       fields: getFields,
       component: Modal,

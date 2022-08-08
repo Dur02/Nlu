@@ -6,6 +6,7 @@ import {
   UPDATE,
   CASE_ADD,
   CASE_DEL,
+  CASE_REPLACE,
 } from '../actions/test-suite';
 import { testSuite } from '../schema';
 
@@ -21,6 +22,7 @@ export default {
       CREATE,
       CASE_ADD,
       CASE_DEL,
+      CASE_REPLACE,
     )]: merge({
       schema: testSuite,
       dataKey: 'data',

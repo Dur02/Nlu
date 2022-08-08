@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Layout from 'shared/components/layout';
 import {
   Button,
@@ -7,16 +7,17 @@ import {
   Table,
   Form,
   Input,
-  Select, message,
+  Select,
+  message,
 } from 'antd';
 import { useAPITable, useDetails, useForm } from 'relient-admin/hooks';
-import { readAll, create, update, remove as removeTestSuite } from 'shared/actions/test-suite';
+import { readAll, create, update, remove as removeTestSuite, caseReplace as caseReplaceAction } from 'shared/actions/test-suite';
 import { readAll as readTestCase } from 'shared/actions/test-case';
 import { suiteType, normalTest } from 'shared/constants/test-suite';
 import { create as createJob } from 'shared/actions/test-job';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
-import { flow, map, remove } from 'lodash/fp';
+import { flow, map, prop, remove, union } from 'lodash/fp';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { getAllProduct } from 'shared/selectors';
@@ -70,6 +71,7 @@ const result = ({
   const onRemove = useAction(removeTestSuite);
   const readAllTestCase = useAction(readTestCase);
   const onCreateJob = useAction(createJob);
+  const caseReplace = useAction(caseReplaceAction);
 
   const {
     detailsVisible: caseTableVisible,
@@ -85,7 +87,16 @@ const result = ({
     detailsItem: runFormItem,
   } = useDetails();
 
+  // const {
+  //   detailsVisible: addFormVisible,
+  //   openDetails: openAddForm,
+  //   closeDetails: closeAddForm,
+  //   detailsItem: addFormItem,
+  // } = useDetails();
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [refText, setRefText] = useState('');
+  const [skillName, setSkillName] = useState('');
 
   const {
     tableHeader,
@@ -155,7 +166,7 @@ const result = ({
     tableHeader: caseTableHeader,
     pagination: casePagination,
     data: caseData,
-    // reload: caseReload,
+    reload: caseReload,
     reset: caseReset,
   } = useAPITable({
     paginationInitialData: {
@@ -177,6 +188,8 @@ const result = ({
         pageSize: values.size,
         startTime: moment(new Date(values.createTimeAfter)).startOf('day').toISOString(),
         endTime: moment(new Date(values.createTimeBefore)).endOf('day').toISOString(),
+        refText,
+        skillName,
       });
       return {
         content: response.data,
@@ -186,16 +199,17 @@ const result = ({
       };
     },
     showReset: true,
-    query: {
-      fields: [{
-        dataKey: 'refText',
-        label: '用户说',
-      }, {
-        dataKey: 'skillName',
-        label: '技能名',
-      }],
-      searchWhenValueChange: false,
-    },
+    // query: {
+    //   fields: [{
+    //     dataKey: 'refText',
+    //     label: '用户说',
+    //   }, {
+    //     dataKey: 'skillName',
+    //     label: '技能名',
+    //   }],
+    //   searchWhenValueChange: false,
+    //   fussy: true,
+    // },
     datePickers: [{
       dataKey: 'createTime',
       label: '起止日期',
@@ -204,14 +218,19 @@ const result = ({
   });
 
   const rowSelection = {
-    onChange: (value) => {
-      setSelectedRowKeys(value);
+    onSelect: (record, selected) => {
+      const temp = prop('id')(record);
+      if (selected === true) {
+        setSelectedRowKeys(union([temp])(selectedRowKeys));
+      } else {
+        setSelectedRowKeys(remove((o) => o === temp)(selectedRowKeys));
+      }
     },
-    // getCheckboxProps: (record) => ({
-    //   disabled: record.name === 'Disabled User',
-    //   // Column configuration not to be checked
-    //   name: record.name,
-    // }),
+    selections: [
+      Table.SELECTION_ALL,
+      Table.SELECTION_INVERT,
+      Table.SELECTION_NONE,
+    ],
   };
 
   const { submit, submitting, form } = useForm(async (values) => {
@@ -224,6 +243,12 @@ const result = ({
     form.resetFields();
     closeRunForm();
   });
+
+  const getInputValue = useCallback(async (value) => {
+    setRefText(value.refText);
+    setSkillName(value.skillName);
+    await caseReset();
+  }, [refText, skillName, reload, caseReload, caseReset]);
 
   return (
     <Layout>
@@ -257,6 +282,55 @@ const result = ({
           zIndex={10}
         >
           {caseTableHeader}
+          <div
+            style={{
+              position: 'absolute',
+              top: '78px',
+            }}
+          >
+            <Form
+              name="basic"
+              layout="inline"
+              onFinish={getInputValue}
+            >
+              <Form.Item
+                label="用户说"
+                name="refText"
+                style={{
+                  width: '180px',
+                }}
+              >
+                <Input
+                  autoComplete="off"
+                  allowClear
+                  placeholder="输入用户说"
+                />
+              </Form.Item>
+              <Form.Item
+                label="技能名"
+                name="skillName"
+                style={{
+                  width: '180px',
+                }}
+              >
+                <Input
+                  allowClear
+                  autoComplete="off"
+                  placeholder="输入技能名"
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  ghost
+                  size="middle"
+                  htmlType="submit"
+                >
+                  搜索
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
           <Table
             dataSource={caseData}
             columns={testCaseColumns()}
@@ -272,9 +346,21 @@ const result = ({
           <Button
             type="primary"
             ghost
-            onClick={() => {
-              // eslint-disable-next-line no-console
-              console.log(selectedRowKeys);
+            onClick={async () => {
+              try {
+                const { msg } = await caseReplace({
+                  caseIds: selectedRowKeys,
+                  suiteId: caseTableItem.id,
+                });
+                message.success(msg);
+              } catch (e) {
+                // ignore
+              }
+            }}
+            style={{
+              position: 'relative',
+              marginTop: '22px',
+              left: '50%',
             }}
           >
             增加

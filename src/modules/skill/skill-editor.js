@@ -27,7 +27,6 @@ import {
   update as updateOutputAction,
 } from 'shared/actions/output';
 import { outputYamlExport } from 'shared/actions/skill';
-
 import Rules from './components/rules';
 import Intents from './components/intents';
 import Output from './components/output';
@@ -105,10 +104,15 @@ const result = ({ skillId }) => {
   const [wordGraphVisible, setWordGraphVisible] = useState(false);
   const [globalSearch, setGlobalSearch] = useState(false);
   const [uploadVisible, setUploadVisible] = useState(false);
+  const [textAreaVisible, setTextAreaVisible] = useState(false);
 
   const closeUpload = useCallback(() => {
     setUploadVisible(false);
   }, [uploadVisible, setUploadVisible]);
+
+  const closeTextArea = useCallback(() => {
+    setTextAreaVisible(false);
+  }, [textAreaVisible, setTextAreaVisible]);
 
   const [uploading, setUploading] = useState(false);
   const onUpload = useCallback(async ({ file: { status, response } }) => {
@@ -140,6 +144,8 @@ const result = ({ skillId }) => {
       subTitle={`${skill.name}  (${skill.version})  `}
       addonAfter={(
         <>
+          <Button type="primary" onClick={() => setUploadVisible(true)}>纯文本导入</Button>
+          &nbsp;
           <Button type="primary" onClick={() => setUploadVisible(true)}>技能回复导入</Button>
           &nbsp;
           <Button
@@ -291,6 +297,32 @@ const result = ({ skillId }) => {
             style={{
               position: 'relative',
               left: '130px',
+            }}
+            loading={uploading}
+          >
+            上传
+          </Button>
+        </Upload>
+      </Modal>
+      <Modal
+        visible={textAreaVisible}
+        onCancel={closeTextArea}
+        footer={null}
+        title="纯文本数据导入"
+        width={400}
+      >
+        <Upload
+          name="file"
+          action={() => `/skill/edit/skill/excel-import/rule?skillId=${skillId}`}
+          showUploadList={false}
+          headers={{ token }}
+          onChange={onUpload}
+        >
+          <Button
+            icon={<UploadOutlined />}
+            style={{
+              position: 'relative',
+              left: '90px',
             }}
             loading={uploading}
           >
