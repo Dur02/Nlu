@@ -17,7 +17,7 @@ import { suiteType, normalTest } from 'shared/constants/test-suite';
 import { create as createJob } from 'shared/actions/test-job';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
-import { flow, map, prop, remove, union } from 'lodash/fp';
+import { flow, map, prop, remove, union, includes } from 'lodash/fp';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { getAllProduct } from 'shared/selectors';
@@ -199,17 +199,6 @@ const result = ({
       };
     },
     showReset: true,
-    // query: {
-    //   fields: [{
-    //     dataKey: 'refText',
-    //     label: '用户说',
-    //   }, {
-    //     dataKey: 'skillName',
-    //     label: '技能名',
-    //   }],
-    //   searchWhenValueChange: false,
-    //   fussy: true,
-    // },
     datePickers: [{
       dataKey: 'createTime',
       label: '起止日期',
@@ -219,15 +208,27 @@ const result = ({
 
   const rowSelection = {
     onSelect: (record, selected) => {
-      const temp = prop('id')(record);
       if (selected === true) {
-        setSelectedRowKeys(union([temp])(selectedRowKeys));
+        setSelectedRowKeys(union([prop('id')(record)])(selectedRowKeys));
       } else {
-        setSelectedRowKeys(remove((o) => o === temp)(selectedRowKeys));
+        setSelectedRowKeys(remove((o) => o === prop('id')(record))(selectedRowKeys));
       }
     },
+    onSelectAll: (selected, selectedRows, changeRows) => {
+      if (selected === true) {
+        setSelectedRowKeys(union(map((i) => i.id)(changeRows))(selectedRowKeys));
+      } else {
+        setSelectedRowKeys(remove((o) => includes(o)(map((i) => i.id)(changeRows)),
+        )(selectedRowKeys));
+      }
+    },
+    onSelectNone: () => {
+      setSelectedRowKeys([]);
+    },
+    onSelectInvert: (selectedArray) => {
+      setSelectedRowKeys(selectedArray);
+    },
     selections: [
-      Table.SELECTION_ALL,
       Table.SELECTION_INVERT,
       Table.SELECTION_NONE,
     ],
@@ -363,7 +364,7 @@ const result = ({
               left: '50%',
             }}
           >
-            增加
+            修改
           </Button>
         </Modal>
       )}
