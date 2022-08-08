@@ -9,6 +9,7 @@ import {
   Input,
   Select,
   message,
+  DatePicker,
 } from 'antd';
 import { useAPITable, useDetails, useForm } from 'relient-admin/hooks';
 import { readAll, create, update, remove as removeTestSuite, caseReplace as caseReplaceAction } from 'shared/actions/test-suite';
@@ -21,10 +22,12 @@ import { flow, map, prop, remove, union, includes } from 'lodash/fp';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { getAllProduct } from 'shared/selectors';
+import locale from 'antd/lib/date-picker/locale/zh_CN';
 import { columns } from './test-suite-columns';
 import { testCaseColumns } from './test-case-columns';
 
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 
 const getDataSource = (state) => flow(
   map((id) => getEntity(`testSuite.${id}`)(state)),
@@ -95,8 +98,6 @@ const result = ({
   // } = useDetails();
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [refText, setRefText] = useState('');
-  const [skillName, setSkillName] = useState('');
 
   const {
     tableHeader,
@@ -163,10 +164,10 @@ const result = ({
   });
 
   const {
-    tableHeader: caseTableHeader,
+    // tableHeader: caseTableHeader,
     pagination: casePagination,
     data: caseData,
-    reload: caseReload,
+    // reload: caseReload,
     reset: caseReset,
   } = useAPITable({
     paginationInitialData: {
@@ -179,31 +180,31 @@ const result = ({
       map((id) => getEntity(`testCase.${id}`)(state)),
       remove((o) => o === undefined),
     ),
-    readAction: async (values) => {
-      const {
-        data: response,
-      } = await readAllTestCase({
-        ...values,
-        page: values.page + 1,
-        pageSize: values.size,
-        startTime: moment(new Date(values.createTimeAfter)).startOf('day').toISOString(),
-        endTime: moment(new Date(values.createTimeBefore)).endOf('day').toISOString(),
-        refText,
-        skillName,
-      });
-      return {
-        content: response.data,
-        number: response.currentPage - 1,
-        size: response.pageSize,
-        totalElements: response.total,
-      };
-    },
+    // readAction: async (values) => {
+    //   const {
+    //     data: response,
+    //   } = await readAllTestCase({
+    //     ...values,
+    //     page: values.page + 1,
+    //     pageSize: values.size,
+    //     startTime: moment(new Date(values.createTimeAfter)).startOf('day').toISOString(),
+    //     endTime: moment(new Date(values.createTimeBefore)).endOf('day').toISOString(),
+    //     refText,
+    //     skillName,
+    //   });
+    //   return {
+    //     content: response.data,
+    //     number: response.currentPage - 1,
+    //     size: response.pageSize,
+    //     totalElements: response.total,
+    //   };
+    // },
     showReset: true,
-    datePickers: [{
-      dataKey: 'createTime',
-      label: '起止日期',
-      disabledDate: (date) => date.isAfter(new Date()),
-    }],
+    // datePickers: [{
+    //   dataKey: 'createTime',
+    //   label: '起止日期',
+    //   disabledDate: (date) => date.isAfter(new Date()),
+    // }],
   });
 
   const rowSelection = {
@@ -246,10 +247,22 @@ const result = ({
   });
 
   const getInputValue = useCallback(async (value) => {
-    setRefText(value.refText);
-    setSkillName(value.skillName);
-    await caseReset();
-  }, [refText, skillName, reload, caseReload, caseReset]);
+    const {
+      data: {
+        data: dataTemp,
+      },
+    } = await readAllTestCase({
+      page: 1,
+      pageSize: 10,
+      startTime: moment(new Date(moment(value.date[0]).format('YYYY-MM-DD'))).startOf('day').toISOString(),
+      endTime: moment(new Date(moment(value.date[0]).format('YYYY-MM-DD'))).endOf('day').toISOString(),
+      refText: value.refText,
+      skillName: value.skillName,
+    });
+    // eslint-disable-next-line no-console
+    console.log(dataTemp);
+    // caseData = data;
+  }, []);
 
   return (
     <Layout>
@@ -282,11 +295,9 @@ const result = ({
           width={1100}
           zIndex={10}
         >
-          {caseTableHeader}
           <div
             style={{
-              position: 'absolute',
-              top: '78px',
+              marginBottom: '22px',
             }}
           >
             <Form
@@ -318,6 +329,19 @@ const result = ({
                   allowClear
                   autoComplete="off"
                   placeholder="输入技能名"
+                />
+              </Form.Item>
+              <Form.Item
+                label="日期"
+                name="date"
+                style={{
+                  width: '300px',
+                }}
+              >
+                <RangePicker
+                  locale={locale}
+                  placeholder={['开始日期', '结束日期']}
+                  disabledDate={(currentTemp) => currentTemp && currentTemp > moment().endOf('day')}
                 />
               </Form.Item>
               <Form.Item>
