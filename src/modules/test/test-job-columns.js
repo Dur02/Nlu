@@ -2,7 +2,7 @@ import { time } from 'relient/formatters';
 import { getStatus, getPassed } from 'shared/constants/test-job';
 import { Button } from 'antd';
 import React from 'react';
-import { map, prop } from 'lodash/fp';
+import { filter, map, prop, propEq, flow, head } from 'lodash/fp';
 
 export const testJobColumns = ({
   openResult,
@@ -13,6 +13,7 @@ export const testJobColumns = ({
   setResultCurrent,
   onCancel,
   openEditor,
+  product,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -24,6 +25,14 @@ export const testJobColumns = ({
   title: '测试集ID',
   width: 90,
   dataIndex: 'testSuiteId',
+}, {
+  title: '产品',
+  dataIndex: ['jobConfig', 'productId'],
+  render: (productId) => flow(
+    filter(propEq('id', productId)),
+    head,
+    prop('name'),
+  )(product),
 }, {
   title: '状态',
   dataIndex: 'status',

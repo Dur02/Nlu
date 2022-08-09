@@ -290,6 +290,7 @@ const result = ({
           setResultCurrent,
           onCancel,
           openEditor,
+          product,
         })}
         rowKey="id"
         pagination={pagination}

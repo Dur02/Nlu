@@ -43,11 +43,6 @@ export const columns = ({
   width: 88,
   render: (testCaseSource) => getTestCaseSource(testCaseSource),
 }, {
-  title: '删除',
-  dataIndex: 'deleted',
-  width: 75,
-  render: (deleted) => getDeleted(deleted),
-}, {
   title: 'Action',
   width: 200,
   render: (record) => (
