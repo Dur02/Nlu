@@ -88,27 +88,12 @@ export default () => [{
         page: 1,
         pageSize: 10,
       }));
-      const {
-        data: {
-          data: caseData,
-          currentPage: caseCurrentPage,
-          pageSize: casePageSize,
-          total: caseTotal,
-        },
-      } = await dispatch(readTestCase({
-        page: 1,
-        pageSize: 10,
-      }));
       return {
         component: <Suite
           ids={map(prop('id'))(data)}
           total={total}
           current={currentPage - 1}
           size={pageSize}
-          caseIds={map(prop('id'))(caseData)}
-          caseTotal={caseTotal}
-          caseCurrent={caseCurrentPage - 1}
-          caseSize={casePageSize}
         />,
       };
     } catch (e) {

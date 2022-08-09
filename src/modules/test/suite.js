@@ -57,10 +57,6 @@ const result = ({
   total,
   current,
   size,
-  caseIds,
-  caseTotal,
-  caseCurrent,
-  caseSize,
 }) => {
   const {
     product,
@@ -76,6 +72,17 @@ const result = ({
   const onCreateJob = useAction(createJob);
   const caseReplace = useAction(caseReplaceAction);
 
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [search, setSearch] = useState({});
+  const [caseData, setCaseData] = useState({ // Table数据
+    data: [],
+    total: 0,
+    currentPage: 1,
+    pageSize: 10,
+  });
+
   const {
     detailsVisible: caseTableVisible,
     openDetails: openCaseTable,
@@ -89,15 +96,6 @@ const result = ({
     closeDetails: closeRunForm,
     detailsItem: runFormItem,
   } = useDetails();
-
-  // const {
-  //   detailsVisible: addFormVisible,
-  //   openDetails: openAddForm,
-  //   closeDetails: closeAddForm,
-  //   detailsItem: addFormItem,
-  // } = useDetails();
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const {
     tableHeader,
@@ -163,49 +161,32 @@ const result = ({
     }],
   });
 
-  const {
-    // tableHeader: caseTableHeader,
-    pagination: casePagination,
-    data: caseData,
-    // reload: caseReload,
-    reset: caseReset,
-  } = useAPITable({
-    paginationInitialData: {
-      ids: caseIds,
-      total: caseTotal,
-      current: caseCurrent,
-      size: caseSize,
+  const paginationProps = {
+    defaultCurrent: 1,
+    defaultPageSize: 10,
+    showSizeChanger: true,
+    showQuickJumper: true,
+    pageSizeOptions: [10, 20, 50],
+    current: caseData.currentPage,
+    total: caseData.total,
+    pageSize: caseData.pageSize,
+    onChange: async (newPage, newPageSize) => {
+      const {
+        data: dataTemp,
+      } = await readAllTestCase({
+        page: newPage,
+        pageSize: newPageSize,
+        startTime: !search.date ? ''
+          : moment(new Date(moment(search.date[0]).format('YYYY-MM-DD'))).startOf('day').toISOString(),
+        endTime: !search.date ? ''
+          : moment(new Date(moment(search.date[1]).format('YYYY-MM-DD'))).endOf('day').toISOString(),
+        refText: search.refText,
+        skillName: search.skillName,
+      });
+      setCaseData(dataTemp);
     },
-    getDataSource: (state) => flow(
-      map((id) => getEntity(`testCase.${id}`)(state)),
-      remove((o) => o === undefined),
-    ),
-    // readAction: async (values) => {
-    //   const {
-    //     data: response,
-    //   } = await readAllTestCase({
-    //     ...values,
-    //     page: values.page + 1,
-    //     pageSize: values.size,
-    //     startTime: moment(new Date(values.createTimeAfter)).startOf('day').toISOString(),
-    //     endTime: moment(new Date(values.createTimeBefore)).endOf('day').toISOString(),
-    //     refText,
-    //     skillName,
-    //   });
-    //   return {
-    //     content: response.data,
-    //     number: response.currentPage - 1,
-    //     size: response.pageSize,
-    //     totalElements: response.total,
-    //   };
-    // },
-    showReset: true,
-    // datePickers: [{
-    //   dataKey: 'createTime',
-    //   label: '起止日期',
-    //   disabledDate: (date) => date.isAfter(new Date()),
-    // }],
-  });
+    showTotal: (caseTotal) => `共 ${caseTotal} 条`,
+  };
 
   const rowSelection = {
     onSelect: (record, selected) => {
@@ -247,22 +228,24 @@ const result = ({
   });
 
   const getInputValue = useCallback(async (value) => {
+    setSearchLoading(true);
     const {
-      data: {
-        data: dataTemp,
-      },
+      data: dataTemp,
     } = await readAllTestCase({
       page: 1,
       pageSize: 10,
-      startTime: moment(new Date(moment(value.date[0]).format('YYYY-MM-DD'))).startOf('day').toISOString(),
-      endTime: moment(new Date(moment(value.date[0]).format('YYYY-MM-DD'))).endOf('day').toISOString(),
+      startTime: !value.date ? ''
+        : moment(new Date(moment(value.date[0]).format('YYYY-MM-DD'))).startOf('day').toISOString(),
+      endTime: !value.date ? ''
+        : moment(new Date(moment(value.date[1]).format('YYYY-MM-DD'))).endOf('day').toISOString(),
       refText: value.refText,
       skillName: value.skillName,
+      intentName: value.intentName,
     });
-    // eslint-disable-next-line no-console
-    console.log(dataTemp);
-    // caseData = data;
-  }, []);
+    setSearch(value);
+    setCaseData(dataTemp);
+    setSearchLoading(false);
+  }, [readAllTestSuite, search, setSearch, caseData, setCaseData]);
 
   return (
     <Layout>
@@ -278,6 +261,8 @@ const result = ({
           openCaseTable,
           setSelectedRowKeys,
           openRunForm,
+          readAllTestCase,
+          setCaseData,
         })}
         rowKey="id"
         pagination={pagination}
@@ -287,8 +272,9 @@ const result = ({
           visible={caseTableVisible}
           destroyOnClose
           onCancel={() => {
+            setCaseData({});
+            setSearch({});
             closeCaseTable();
-            caseReset();
           }}
           footer={null}
           title={`${caseTableItem.title}修改`}
@@ -332,6 +318,19 @@ const result = ({
                 />
               </Form.Item>
               <Form.Item
+                label="意图名"
+                name="intentName"
+                style={{
+                  width: '180px',
+                }}
+              >
+                <Input
+                  autoComplete="off"
+                  allowClear
+                  placeholder="输入意图名"
+                />
+              </Form.Item>
+              <Form.Item
                 label="日期"
                 name="date"
                 style={{
@@ -349,6 +348,7 @@ const result = ({
                   type="primary"
                   ghost
                   size="middle"
+                  loading={searchLoading}
                   htmlType="submit"
                 >
                   搜索
@@ -357,7 +357,7 @@ const result = ({
             </Form>
           </div>
           <Table
-            dataSource={caseData}
+            dataSource={caseData.data}
             columns={testCaseColumns()}
             rowSelection={{
               type: 'checkbox',
@@ -366,12 +366,13 @@ const result = ({
             }}
             rowKey="id"
             size="small"
-            pagination={casePagination}
+            pagination={paginationProps}
           />
           <Button
             type="primary"
             ghost
             onClick={async () => {
+              setUpdateLoading(true);
               try {
                 const { msg } = await caseReplace({
                   caseIds: selectedRowKeys,
@@ -381,7 +382,10 @@ const result = ({
               } catch (e) {
                 // ignore
               }
+              setUpdateLoading(false);
+              closeCaseTable();
             }}
+            loading={updateLoading}
             style={{
               position: 'relative',
               marginTop: '22px',

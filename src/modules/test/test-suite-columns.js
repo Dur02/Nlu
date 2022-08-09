@@ -12,6 +12,8 @@ export const columns = ({
   openCaseTable,
   setSelectedRowKeys,
   openRunForm,
+  readAllTestCase,
+  setCaseData,
   // openAddForm,
 }) => [{
   title: 'ID',
@@ -66,6 +68,13 @@ export const columns = ({
         onClick={async () => {
           setSelectedRowKeys(record.testCases);
           openCaseTable(record);
+          const {
+            data: dataTemp,
+          } = await readAllTestCase({
+            page: 1,
+            pageSize: 10,
+          });
+          setCaseData(dataTemp);
         }}
       >
         修改用例

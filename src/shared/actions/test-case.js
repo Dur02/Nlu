@@ -19,6 +19,7 @@ export const readAll = createAction(
     startTime,
     endTime,
     skillName,
+    intentName,
     refText,
   }) => read('/skill/edit/test/case/page', {
     page,
@@ -26,6 +27,7 @@ export const readAll = createAction(
     startTime,
     endTime,
     skillName,
+    intentName,
     refText,
   }),
 );
