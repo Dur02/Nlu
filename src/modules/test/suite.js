@@ -234,7 +234,7 @@ const result = ({
       data: dataTemp,
     } = await readAllTestCase({
       page: 1,
-      pageSize: 10,
+      pageSize: caseData.pageSize,
       startTime: !value.date ? ''
         : moment(new Date(moment(value.date[0]).format('YYYY-MM-DD'))).startOf('day').toISOString(),
       endTime: !value.date ? ''
