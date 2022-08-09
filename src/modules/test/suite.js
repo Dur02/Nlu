@@ -182,6 +182,7 @@ const result = ({
           : moment(new Date(moment(search.date[1]).format('YYYY-MM-DD'))).endOf('day').toISOString(),
         refText: search.refText,
         skillName: search.skillName,
+        intentName: search.intentName,
       });
       setCaseData(dataTemp);
     },
