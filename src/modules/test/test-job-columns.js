@@ -1,5 +1,5 @@
 import { time } from 'relient/formatters';
-import { getStatus, getDeleted, getPassed } from 'shared/constants/test-job';
+import { getStatus, getPassed } from 'shared/constants/test-job';
 import { Button } from 'antd';
 import React from 'react';
 import { map, prop } from 'lodash/fp';
@@ -29,11 +29,6 @@ export const testJobColumns = ({
   dataIndex: 'status',
   width: 75,
   render: (status) => getStatus(status),
-}, {
-  title: '删除',
-  dataIndex: 'deleted',
-  width: 75,
-  render: (status) => getDeleted(status),
 }, {
   title: '创建时间',
   dataIndex: 'createTime',
