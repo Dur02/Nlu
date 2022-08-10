@@ -64,6 +64,10 @@ export default () => [{
           total={0}
           current={0}
           size={0}
+          suiteIds={[]}
+          suiteTotal={0}
+          suiteCurrent={0}
+          suiteSize={0}
         />,
       };
     }
@@ -137,7 +141,7 @@ export default () => [{
       };
     } catch (e) {
       return {
-        component: <Suite
+        component: <Job
           ids={[]}
           total={0}
           current={0}

@@ -14,10 +14,10 @@ export default () => [{
   action: async ({ store: { dispatch } }) => {
     try {
       await Promise.all([
+        dispatch(readProfile()),
         dispatch(readAllIntervention()),
         dispatch(readAllSkills()),
         dispatch(readAllProduct()),
-        dispatch(readProfile()),
         dispatch(readAllProductVersion()),
         dispatch(readAllIntents()),
       ]);
