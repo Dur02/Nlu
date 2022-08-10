@@ -4,7 +4,7 @@ import {
 } from 'relient/actions';
 import { read } from 'relient/actions/request';
 
-const actionType = actionTypeCreator('actions/testJob');
+const actionType = actionTypeCreator('actions/testJobResult');
 
 export const READ_ALL = actionType('READ_ALL');
 

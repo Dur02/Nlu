@@ -43,7 +43,7 @@ export const columns = ({
   width: 88,
   render: (testCaseSource) => getTestCaseSource(testCaseSource),
 }, {
-  title: 'Action',
+  title: '操作',
   width: 200,
   render: (record) => (
     <>

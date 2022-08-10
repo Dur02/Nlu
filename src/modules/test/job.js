@@ -169,7 +169,7 @@ const result = ({
       size: resultSize,
     },
     getDataSource: (state) => flow(
-      map((id) => getEntity(`testJob.${id}`)(state)),
+      map((id) => getEntity(`testJobResult.${id}`)(state)),
       remove((o) => o === undefined),
     ),
     readAction: async (values) => {

@@ -143,7 +143,7 @@ export const testSuiteColumns = ({
   width: 160,
   render: time(),
 }, {
-  title: 'Action',
+  title: '操作',
   width: 70,
   render: (record) => (
     <>
