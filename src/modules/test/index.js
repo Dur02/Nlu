@@ -122,6 +122,14 @@ export default () => [{
       ]);
       const {
         data: {
+          data: caseData,
+        },
+      } = await dispatch(readTestSuite({
+        page: 1,
+        pageSize: 999999,
+      }));
+      const {
+        data: {
           data,
           currentPage,
           pageSize,
@@ -137,6 +145,10 @@ export default () => [{
           total={total}
           current={currentPage - 1}
           size={pageSize}
+          caseData={map(({ id, title }) => ({
+            label: title,
+            value: id,
+          }))(caseData)}
         />,
       };
     } catch (e) {

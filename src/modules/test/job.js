@@ -26,6 +26,7 @@ const result = ({
   total,
   current,
   size,
+  caseData,
 }) => {
   const {
     product,
@@ -61,12 +62,22 @@ const result = ({
   }, {
     label: '测试集ID',
     name: 'testSuiteId',
-    type: 'number',
-    autoComplete: 'off',
+    component: Select,
+    options: caseData,
+    allowClear: true,
     rules: [{ required: true }],
+  }, {
+    label: <b>Job配置项</b>,
+    colon: false,
+    name: 'h3Title',
+    type: 'text',
+    autoComplete: 'off',
+    labelCol: { span: 4, offset: 10 },
+    wrapperCol: { span: 0 },
   }, {
     name: ['jobConfig', 'productId'],
     label: '产品',
+    placeholder: '产品',
     component: Select,
     options: map((i) => ({ ...i, value: i.id, label: i.name, key: i.id }))(product),
     allowClear: true,
@@ -291,6 +302,7 @@ const result = ({
           onCancel,
           openEditor,
           product,
+          caseData,
         })}
         rowKey="id"
         pagination={pagination}

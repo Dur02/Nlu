@@ -41,7 +41,7 @@ const getFields = [{
   autoComplete: 'off',
   rules: [{ required: true }],
 }, {
-  label: '说法输入类型',
+  label: '测试集类型',
   name: 'suiteType',
   component: Radio.Group,
   options: suiteType,
@@ -278,7 +278,7 @@ const result = ({
             closeCaseTable();
           }}
           footer={null}
-          title={`${caseTableItem.title}修改`}
+          title={`${caseTableItem.title}修改用例`}
           width={1100}
           zIndex={10}
         >

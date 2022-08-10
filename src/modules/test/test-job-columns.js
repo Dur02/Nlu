@@ -14,6 +14,7 @@ export const testJobColumns = ({
   onCancel,
   openEditor,
   product,
+  caseData,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -23,8 +24,12 @@ export const testJobColumns = ({
   dataIndex: 'title',
 }, {
   title: '测试集ID',
-  width: 90,
   dataIndex: 'testSuiteId',
+  render: (testSuiteId) => flow(
+    filter(propEq('value', testSuiteId)),
+    head,
+    prop('label'),
+  )(caseData),
 }, {
   title: '产品',
   dataIndex: ['jobConfig', 'productId'],
@@ -41,12 +46,14 @@ export const testJobColumns = ({
 }, {
   title: '创建时间',
   dataIndex: 'createTime',
+  width: 160,
   render: time(),
 }, {
   title: '创建者',
   dataIndex: 'creator',
 }, {
   title: '更新时间',
+  width: 160,
   dataIndex: 'updateTime',
   render: time(),
 }, {

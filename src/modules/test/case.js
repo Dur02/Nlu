@@ -119,18 +119,14 @@ const result = ({
     dependencies: ['skillCode'],
     type: 'text',
     autoComplete: 'off',
-    style: {
-      display: 'none',
-    },
+    hidden: true,
   }, {
     // 因为后端数据很多name同名的数据，此处又要求传name，于是设置多个隐藏的input传值
     name: 'expectedIntent',
     dependencies: ['skillCode', 'expectedIntentTemp'],
     type: 'text',
     autoComplete: 'off',
-    style: {
-      display: 'none',
-    },
+    hidden: true,
   }];
 
   const {
