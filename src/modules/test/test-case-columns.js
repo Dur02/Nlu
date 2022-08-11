@@ -1,7 +1,6 @@
 import { Button, Popconfirm } from 'antd';
 import React from 'react';
 import { find, flow, get, propEq, filter } from 'lodash/fp';
-import { getStatus, getTestCaseSource, getDeleted } from 'shared/constants/test-case';
 
 export const columns = ({
   openEditor,
@@ -33,18 +32,8 @@ export const columns = ({
   // width: 180,
   dataIndex: 'refText',
 }, {
-  title: '状态',
-  dataIndex: 'status',
-  width: 75,
-  render: (status) => getStatus(status),
-}, {
-  title: '来源',
-  dataIndex: 'testCaseSource',
-  width: 88,
-  render: (testCaseSource) => getTestCaseSource(testCaseSource),
-}, {
   title: '操作',
-  width: 200,
+  width: 250,
   render: (record) => (
     <>
       <Button
@@ -55,7 +44,7 @@ export const columns = ({
           openBind(record);
         }}
       >
-        绑定
+        添加到测试集
       </Button>
       &nbsp;&nbsp;
       <Button
@@ -118,19 +107,4 @@ export const testCaseColumns = () => [{
   title: '用户说',
   // width: 180,
   dataIndex: 'refText',
-}, {
-  title: '状态',
-  dataIndex: 'status',
-  width: 75,
-  render: (status) => getStatus(status),
-}, {
-  title: '来源',
-  dataIndex: 'testCaseSource',
-  width: 88,
-  render: (testCaseSource) => getTestCaseSource(testCaseSource),
-}, {
-  title: '删除',
-  dataIndex: 'deleted',
-  width: 75,
-  render: (deleted) => getDeleted(deleted),
 }];

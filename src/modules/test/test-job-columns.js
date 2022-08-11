@@ -1,4 +1,3 @@
-import { time } from 'relient/formatters';
 import { getStatus, getPassed } from 'shared/constants/test-job';
 import { Button } from 'antd';
 import React from 'react';
@@ -44,18 +43,8 @@ export const testJobColumns = ({
   width: 75,
   render: (status) => getStatus(status),
 }, {
-  title: '创建时间',
-  dataIndex: 'createTime',
-  width: 160,
-  render: time(),
-}, {
   title: '创建者',
   dataIndex: 'creator',
-}, {
-  title: '更新时间',
-  width: 160,
-  dataIndex: 'updateTime',
-  render: time(),
 }, {
   title: '操作',
   width: 80,

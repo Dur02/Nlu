@@ -247,6 +247,7 @@ const result = ({
           rowKey="key"
           columns={expandedColumns}
           pagination={false}
+          size="small"
         />
       );
     },

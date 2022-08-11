@@ -1,5 +1,5 @@
 import { time } from 'relient/formatters';
-import { getTestSuiteStatus, getTestSuiteType } from 'shared/constants/test-suite';
+import { getTestSuiteType } from 'shared/constants/test-suite';
 import { Button, message, Popconfirm } from 'antd';
 import React from 'react';
 import { includes } from 'lodash/fp';
@@ -30,11 +30,6 @@ export const columns = ({
   dataIndex: 'suiteType',
   width: 150,
   render: (status) => getTestSuiteType(status),
-}, {
-  title: '状态',
-  dataIndex: 'status',
-  width: 75,
-  render: (status) => getTestSuiteStatus(status),
 }, {
   title: '创建时间',
   dataIndex: 'createTime',
@@ -128,18 +123,8 @@ export const testSuiteColumns = ({
   width: 150,
   render: (status) => getTestSuiteType(status),
 }, {
-  title: '状态',
-  dataIndex: 'status',
-  width: 75,
-  render: (status) => getTestSuiteStatus(status),
-}, {
   title: '创建时间',
   dataIndex: 'createTime',
-  width: 160,
-  render: time(),
-}, {
-  title: '更新时间',
-  dataIndex: 'updateTime',
   width: 160,
   render: time(),
 }, {
