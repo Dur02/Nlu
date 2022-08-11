@@ -67,13 +67,8 @@ const result = ({
     allowClear: true,
     rules: [{ required: true }],
   }, {
-    label: <b>Job配置项</b>,
-    colon: false,
-    name: 'h3Title',
-    type: 'text',
-    autoComplete: 'off',
-    labelCol: { span: 4, offset: 10 },
-    wrapperCol: { span: 0 },
+    element: <b style={{ position: 'relative', left: '80%' }}>Job配置项</b>,
+    name: 'jonConfig',
   }, {
     name: ['jobConfig', 'productId'],
     label: '产品',
@@ -227,7 +222,7 @@ const result = ({
         title: '期待值',
         dataIndex: 'expected',
       }, {
-        title: '是否有效嘈位',
+        title: '测试项',
         dataIndex: 'assertion',
       }, {
         title: '是否通过',
@@ -317,7 +312,7 @@ const result = ({
           }}
           footer={null}
           title={`${resultItem.title}结果查看`}
-          width={1000}
+          width={800}
         >
           {resultTableHeader}
           <Table

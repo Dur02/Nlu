@@ -125,12 +125,6 @@ export const resultColumns = () => [{
   title: '测试用例ID',
   dataIndex: 'testCaseId',
 }, {
-  title: '测试集ID',
-  dataIndex: 'testSuiteId',
-}, {
-  title: '测试任务ID',
-  dataIndex: 'testJobId',
-}, {
   title: '用户说',
   dataIndex: 'refText',
 }, {
@@ -145,11 +139,4 @@ export const resultColumns = () => [{
       {getPassed(passed)}
     </span>
   ),
-}, {
-  title: '创建时间',
-  dataIndex: 'createTime',
-}, {
-  title: '更新时间',
-  dataIndex: 'updateTime',
-  render: time(),
 }];
