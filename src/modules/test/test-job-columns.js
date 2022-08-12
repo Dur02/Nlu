@@ -6,14 +6,13 @@ import { filter, map, prop, propEq, flow, head } from 'lodash/fp';
 export const testJobColumns = ({
   openResult,
   readAllJobResult,
-  setResultIds,
-  setResultTotal,
-  setResultSize,
-  setResultCurrent,
   onCancel,
   openEditor,
   product,
   caseData,
+  setResultId,
+  readResultNum,
+  setResultDetail,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -71,17 +70,17 @@ export const testJobColumns = ({
             ghost
             size="small"
             onClick={async () => {
-              const { data: {
-                currentPage,
-                data,
-                total,
-                pageSize,
-              } } = await readAllJobResult({ jobId: record.id, page: 1, pageSize: 10 });
-              setResultCurrent(currentPage - 1);
-              setResultIds(map(prop('id'))(data));
-              setResultTotal(total);
-              setResultSize(pageSize);
+              const {
+                data: {
+                  data: resultData,
+                },
+              } = await readAllJobResult({ jobId: record.id, page: 1, pageSize: 100 });
+              setResultId(map(prop('id'))(resultData));
               openResult(record);
+              const {
+                data: numData,
+              } = await readResultNum({ jobId: record.id });
+              setResultDetail(numData);
             }}
           >
             查看

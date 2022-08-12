@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Layout from 'shared/components/layout';
-import { Button, Modal, Select, Table } from 'antd';
+import { Row, Col, Modal, Select, Statistic, Table } from 'antd';
 import { useAction } from 'relient/actions';
 import { readAll, create, update, cancel as cancelTestJob } from 'shared/actions/test-job';
-import { readAll as readAllResult } from 'shared/actions/test-job-result';
+import { readAll as readAllResult, readNum } from 'shared/actions/test-job-result';
 import { useAPITable, useDetails } from 'relient-admin/hooks';
 import moment from 'moment';
-import { flow, map, remove } from 'lodash/fp';
-import { getEntity } from 'relient/selectors';
+import { flow, map, prop, propEq, remove, find, concat } from 'lodash/fp';
+import { getEntity, getEntityArray } from 'relient/selectors';
 import { useSelector } from 'react-redux';
 import { getAllProduct } from 'shared/selectors';
-import { RedoOutlined } from '@ant-design/icons';
 import { getPassed } from 'shared/constants/test-job';
 import { testJobColumns, resultColumns } from './test-job-columns';
 
+const { Option } = Select;
 const mapWithIndex = map.convert({ cap: false });
 
 const getDataSource = (state) => flow(
@@ -30,8 +30,10 @@ const result = ({
 }) => {
   const {
     product,
+    testJobResult,
   } = useSelector((state) => ({
     product: getAllProduct(state),
+    testJobResult: getEntityArray('testJobResult')(state),
   }));
 
   const {
@@ -46,12 +48,18 @@ const result = ({
   const onUpdate = useAction(update);
   const onCancel = useAction(cancelTestJob);
   const readAllJobResult = useAction(readAllResult);
+  const readResultNum = useAction(readNum);
 
-  const [resultIds, setResultIds] = useState([]);
-  const [resultTotal, setResultTotal] = useState(0);
-  const [resultCurrent, setResultCurrent] = useState(0);
-  const [resultSize, setResultSize] = useState(0);
+  // const [resultIds, setResultIds] = useState([]);
+  // const [resultTotal, setResultTotal] = useState(0);
+  // const [resultCurrent, setResultCurrent] = useState(0);
+  // const [resultSize, setResultSize] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isMore, setIsMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [passedFlag, setPassedFlag] = useState('');
+  const [resultId, setResultId] = useState([]);
+  const [resultDetail, setResultDetail] = useState([]);
 
   const getFields = [{
     label: '标题',
@@ -162,68 +170,47 @@ const result = ({
     }],
   });
 
-  const {
-    tableHeader: resultTableHeader,
-    pagination: resultPagination,
-    data: resultData,
-    reset: resultReset,
-  } = useAPITable({
-    paginationInitialData: {
-      ids: resultIds,
-      total: resultTotal,
-      current: resultCurrent,
-      size: resultSize,
-    },
-    getDataSource: (state) => flow(
-      map((id) => getEntity(`testJobResult.${id}`)(state)),
-      remove((o) => o === undefined),
-    ),
-    readAction: async (values) => {
-      const {
-        data: response,
-      } = await readAllJobResult({
-        ...values,
-        page: values.page + 1,
-        pageSize: values.size,
-        jobId: resultItem.id,
-        passed: values.passed === -1 ? '' : values.passed,
-      });
-      return {
-        content: response.data,
-        number: response.currentPage - 1,
-        size: response.pageSize,
-        totalElements: response.total,
-      };
-    },
-    showReset: false,
-    filters: [{
-      dataKey: 'passed',
-      label: '状态',
-      defaultValue: -1,
-      options: [{
-        value: -1,
-        label: '全部',
-      }, {
-        value: 0,
-        label: '未通过 ',
-      }, {
-        value: 1,
-        label: '通过',
-      }],
-    }],
-  });
-
   const expandable = {
     expandedRowRender: (record) => {
       const expandedColumns = [{
         title: '实际值 ',
         dataIndex: 'actual',
+        render: (actual) => (
+          <span
+            style={{
+              color: '#004A80',
+              fontSize: '10px',
+            }}
+          >
+            {actual}
+          </span>
+        ),
       }, {
         title: '期待值',
         dataIndex: 'expected',
+        render: (expected) => (
+          <span
+            style={{
+              color: '#004A80',
+              fontSize: '10px',
+            }}
+          >
+            {expected}
+          </span>
+        ),
       }, {
         title: '测试项',
         dataIndex: 'assertion',
+        render: (assertion) => (
+          <span
+            style={{
+              color: '#004A80',
+              fontSize: '10px',
+            }}
+          >
+            {assertion}
+          </span>
+        ),
       }, {
         title: '是否通过',
         dataIndex: 'passed',
@@ -231,6 +218,7 @@ const result = ({
           <span
             style={{
               color: getPassed(passed) === '失败' ? 'red' : 'green',
+              fontSize: '10px',
             }}
           >
             {getPassed(passed)}
@@ -254,6 +242,36 @@ const result = ({
     rowExpandable: ({ jobResult }) => jobResult && jobResult !== '',
   };
 
+  const onScrollCapture = useCallback(async (e) => {
+    const flag1 = page;
+    let flag2 = page;
+    if (Math.floor(e.target.scrollTop / 3500) === page) {
+      setPage(page + 1);
+      flag2 += 1;
+    }
+    if (flag2 !== flag1) {
+      setLoading(true);
+      const {
+        data: {
+          data: resultData,
+          total: resultTotal,
+        },
+      } = await readAllJobResult({
+        jobId: resultItem.id,
+        page: 1 + Math.floor(e.target.scrollTop / 3500),
+        pageSize: 100,
+        passed: passedFlag === -1 ? '' : passedFlag,
+      });
+      setLoading(false);
+      setIsMore(concat(resultId, map(prop('id'))(resultData)).length !== resultTotal);
+      setResultId(concat(resultId, map(prop('id'))(resultData)));
+    }
+  }, [page, setPage, resultItem, passedFlag, resultId, setResultId]);
+
+  const getResultData = useCallback(
+    () => map((id) => find(propEq('id', id))(testJobResult))(resultId),
+    [resultId, testJobResult, setResultId]);
+
   useEffect(() => {
     const timer = setInterval(async () => {
       await reload();
@@ -266,39 +284,19 @@ const result = ({
   return (
     <Layout>
       {tableHeader}
-      <Button
-        icon={<RedoOutlined />}
-        type="primary"
-        size="large"
-        style={{
-          position: 'absolute',
-          top: 24,
-          left: 140,
-        }}
-        onClick={async () => {
-          setLoading(true);
-          await reload();
-          setLoading(false);
-        }}
-        loading={loading}
-        disabled={loading}
-      >
-        刷新状态
-      </Button>
       <Table
         tableLayout="fixed"
         dataSource={data}
         columns={testJobColumns({
           openResult,
           readAllJobResult,
-          setResultIds,
-          setResultTotal,
-          setResultSize,
-          setResultCurrent,
           onCancel,
           openEditor,
           product,
           caseData,
+          setResultId,
+          readResultNum,
+          setResultDetail,
         })}
         rowKey="id"
         pagination={pagination}
@@ -308,23 +306,76 @@ const result = ({
           visible={resultVisible}
           destroyOnClose
           onCancel={async () => {
-            resultReset();
+            // resultReset();
+            setPage(1);
+            setLoading(false);
+            setIsMore(true);
+            setResultId([]);
+            setPassedFlag(-1);
             closeResult();
           }}
           footer={null}
           title={`${resultItem.title}结果查看`}
           width={800}
         >
-          {resultTableHeader}
-          <Table
-            // tableLayout="fixed"
-            dataSource={resultData}
-            columns={resultColumns()}
-            rowKey="id"
-            size="small"
-            pagination={resultPagination}
-            expandable={expandable}
-          />
+          <div className="tableContainer" onScrollCapture={onScrollCapture}>
+            <Row gutter={32}>
+              <Col offset={3} span={5}>
+                <Statistic title="成功" value={resultDetail.passedNum} valueStyle={{ color: '#3f8600' }} />
+              </Col>
+              <Col span={5}>
+                <Statistic title="失败" value={resultDetail.failNum} valueStyle={{ color: '#cf1322' }} />
+              </Col>
+              <Col span={5}>
+                <Statistic title="成功比" value={100 * resultDetail.passedPercent} precision={2} suffix="%" />
+              </Col>
+              <Col span={5}>
+                <Statistic title="总数" value={resultDetail.totalNum} />
+              </Col>
+            </Row>
+            <Select
+              defaultValue={-1}
+              style={{
+                width: 120,
+                margin: '22px auto',
+              }}
+              onSelect={async (value) => {
+                setLoading(true);
+                const {
+                  data: {
+                    data: resultData,
+                  },
+                } = await readAllJobResult({
+                  jobId: resultItem.id,
+                  page: 1,
+                  pageSize: 100,
+                  passed: value === -1 ? '' : value,
+                });
+                setLoading(false);
+                setPage(1);
+                setPassedFlag(value);
+                setResultId(map(prop('id'))(resultData));
+              }}
+            >
+              <Option value={-1}>全部</Option>
+              <Option value={0}>未通过</Option>
+              <Option value={1}>通过</Option>
+            </Select>
+            <Table
+              dataSource={getResultData()}
+              columns={resultColumns()}
+              rowKey="id"
+              size="small"
+              pagination={false}
+              expandable={expandable}
+              scroll={{
+                scrollToFirstRowOnChange: true,
+                y: 400,
+              }}
+            />
+            { loading ? <div style={{ textAlign: 'center' }}>加载中...</div> : null }
+            { !isMore ? <div style={{ textAlign: 'center' }}>已全部加载</div> : null }
+          </div>
         </Modal>
       )}
     </Layout>
