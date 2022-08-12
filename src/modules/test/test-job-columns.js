@@ -51,7 +51,7 @@ export const testJobColumns = ({
       case 2:
         return <span><WarningOutlined style={{ color: 'red' }} />已取消</span>;
       default:
-        return <Progress percent={100 * record.progress} size="small" />;
+        return <Progress percent={Math.floor(100 * record.progress)} size="small" />;
     }
   },
 }, {
