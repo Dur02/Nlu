@@ -241,7 +241,7 @@ const result = ({
     query: {
       fields: [{
         dataKey: 'title',
-        label: '技能名字',
+        label: '测试集名',
       }],
       searchWhenValueChange: false,
     },

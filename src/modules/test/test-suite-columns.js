@@ -31,6 +31,10 @@ export const columns = ({
   width: 150,
   render: (status) => getTestSuiteType(status),
 }, {
+  title: '测试用例个数',
+  // width: 180,
+  dataIndex: 'testCaseNum',
+}, {
   title: '创建时间',
   dataIndex: 'createTime',
   width: 160,
@@ -40,10 +44,6 @@ export const columns = ({
   dataIndex: 'updateTime',
   width: 160,
   render: time(),
-}, {
-  title: '测试用例个数',
-  // width: 180,
-  dataIndex: 'testCaseNum',
 }, {
   title: '操作',
   width: 290,
