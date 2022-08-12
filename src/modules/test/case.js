@@ -191,6 +191,9 @@ const result = ({
       }, {
         dataKey: 'skillName',
         label: '技能名',
+      }, {
+        dataKey: 'intentName',
+        label: '意图名',
       }],
       searchWhenValueChange: false,
     },

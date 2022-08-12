@@ -41,6 +41,10 @@ export const columns = ({
   width: 160,
   render: time(),
 }, {
+  title: '测试用例个数',
+  // width: 180,
+  dataIndex: 'testCaseNum',
+}, {
   title: '操作',
   width: 290,
   render: (record) => (

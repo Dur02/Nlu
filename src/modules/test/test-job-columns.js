@@ -1,5 +1,6 @@
-import { getStatus, getPassed } from 'shared/constants/test-job';
-import { Button } from 'antd';
+import { getPassed } from 'shared/constants/test-job';
+import { Button, Progress } from 'antd';
+import { ClockCircleOutlined, CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import React from 'react';
 import { filter, map, prop, propEq, flow, head } from 'lodash/fp';
 
@@ -37,13 +38,22 @@ export const testJobColumns = ({
     prop('name'),
   )(product),
 }, {
-  title: '状态',
-  dataIndex: 'status',
-  width: 75,
-  render: (status) => getStatus(status),
-}, {
   title: '创建者',
   dataIndex: 'creator',
+}, {
+  title: '进度',
+  render: (record) => {
+    switch (record.status) {
+      case 0:
+        return <span><ClockCircleOutlined style={{ color: 'yellow' }} />排队中</span>;
+      case 1:
+        return <span><CheckCircleOutlined style={{ color: 'green' }} />已完成</span>;
+      case 2:
+        return <span><WarningOutlined style={{ color: 'red' }} />已取消</span>;
+      default:
+        return <Progress percent={100 * record.progress} size="small" />;
+    }
+  },
 }, {
   title: '操作',
   width: 80,

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Layout from 'shared/components/layout';
 import { Row, Col, Modal, Select, Statistic, Table } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import { useAction } from 'relient/actions';
 import { readAll, create, update, cancel as cancelTestJob } from 'shared/actions/test-job';
 import { readAll as readAllResult, readNum } from 'shared/actions/test-job-result';
@@ -275,7 +276,7 @@ const result = ({
   useEffect(() => {
     const timer = setInterval(async () => {
       await reload();
-    }, 3000);
+    }, 5000);
     return () => {
       clearInterval(timer);
     };
@@ -319,7 +320,7 @@ const result = ({
           width={800}
         >
           <div className="tableContainer" onScrollCapture={onScrollCapture}>
-            <Row gutter={32}>
+            <Row gutter={32} justify="center" align="middle">
               <Col offset={3} span={5}>
                 <Statistic title="成功" value={resultDetail.passedNum} valueStyle={{ color: '#3f8600' }} />
               </Col>
@@ -344,6 +345,7 @@ const result = ({
                 const {
                   data: {
                     data: resultData,
+                    total: resultTotal,
                   },
                 } = await readAllJobResult({
                   jobId: resultItem.id,
@@ -352,6 +354,7 @@ const result = ({
                   passed: value === -1 ? '' : value,
                 });
                 setLoading(false);
+                setIsMore(map(prop('id'))(resultData).length !== resultTotal);
                 setPage(1);
                 setPassedFlag(value);
                 setResultId(map(prop('id'))(resultData));
@@ -373,7 +376,7 @@ const result = ({
                 y: 400,
               }}
             />
-            { loading ? <div style={{ textAlign: 'center' }}>加载中...</div> : null }
+            { loading ? <div style={{ textAlign: 'center' }}><LoadingOutlined />加载中...</div> : null }
             { !isMore ? <div style={{ textAlign: 'center' }}>已全部加载</div> : null }
           </div>
         </Modal>

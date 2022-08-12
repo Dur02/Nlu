@@ -32,10 +32,6 @@ export const columns = ({
   // width: 180,
   dataIndex: 'refText',
 }, {
-  title: '测试用例个数',
-  // width: 180,
-  dataIndex: 'testCaseNum',
-}, {
   title: '操作',
   width: 250,
   render: (record) => (
