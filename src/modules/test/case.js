@@ -281,7 +281,7 @@ const result = ({
             suiteReset();
           }}
           footer={null}
-          title={`测试用例${bindItem.id}绑定`}
+          title={`测试用例${bindItem.id}添加`}
           width={1000}
           zIndex={9}
         >

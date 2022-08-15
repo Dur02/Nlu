@@ -178,7 +178,7 @@ export const testSuiteColumns = ({
               }
             }}
           >
-            绑定
+            添加
           </Button>
         )
       }
