@@ -66,10 +66,7 @@ const result = ({
     render: (sentence, { id }) => (
       <EditableCell
         value={sentence}
-        onSubmit={async (value) => {
-          await updateRule({ sentence: value, id });
-          message.success('编辑说法成功');
-        }}
+        onSubmit={(value) => onUpdateRule({ sentence: value, id })}
       />
     ),
   }, {
