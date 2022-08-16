@@ -12,7 +12,9 @@ import { getEntity, getEntityArray } from 'relient/selectors';
 import { useSelector } from 'react-redux';
 import { getAllProduct } from 'shared/selectors';
 import { getPassed } from 'shared/constants/test-job';
+import useStyles from 'isomorphic-style-loader/useStyles';
 import { testJobColumns, resultColumns } from './test-job-columns';
+import s from './job.less';
 
 // const { Item } = Form;
 const { Option } = Select;
@@ -30,6 +32,8 @@ const result = ({
   size,
   caseData,
 }) => {
+  useStyles(s);
+
   const {
     product,
     testJobResult,
@@ -183,7 +187,7 @@ const result = ({
         render: (actual) => (
           <span
             style={{
-              color: '#004A80',
+              color: '#207ab7',
               fontSize: '10px',
             }}
           >
@@ -196,7 +200,7 @@ const result = ({
         render: (expected) => (
           <span
             style={{
-              color: '#004A80',
+              color: '#207ab7',
               fontSize: '10px',
             }}
           >
@@ -209,7 +213,7 @@ const result = ({
         render: (assertion) => (
           <span
             style={{
-              color: '#004A80',
+              color: '#207ab7',
               fontSize: '10px',
             }}
           >
@@ -232,16 +236,19 @@ const result = ({
       }];
 
       return (
-        <Table
-          dataSource={mapWithIndex((item, index) => ({
-            ...item, key: index,
-          }))(JSON.parse(record.jobResult))}
-          tableLayout="fixed"
-          rowKey="key"
-          columns={expandedColumns}
-          pagination={false}
-          size="small"
-        />
+        <>
+          <Table
+            dataSource={mapWithIndex((item, index) => ({
+              ...item, key: index,
+            }))(JSON.parse(record.jobResult))}
+            tableLayout="fixed"
+            rowKey="key"
+            columns={expandedColumns}
+            pagination={false}
+            size="small"
+            bordered
+          />
+        </>
       );
     },
     rowExpandable: ({ jobResult }) => jobResult && jobResult !== '',
@@ -375,6 +382,8 @@ const result = ({
               size="small"
               pagination={false}
               expandable={expandable}
+              bordered
+              rowClassName={() => s.fuck}
               scroll={{
                 scrollToFirstRowOnChange: true,
                 y: 400,
