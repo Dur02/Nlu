@@ -56,7 +56,7 @@ export const testJobColumns = ({
   },
 }, {
   title: '操作',
-  width: 80,
+  width: 140,
   render: (record) => (
     <>
       {
@@ -75,26 +75,40 @@ export const testJobColumns = ({
       }
       {
         record.status === 1 && (
-          <Button
-            type="primary"
-            ghost
-            size="small"
-            onClick={async () => {
-              const {
-                data: {
-                  data: resultData,
-                },
-              } = await readAllJobResult({ jobId: record.id, page: 1, pageSize: 100 });
-              setResultId(map(prop('id'))(resultData));
-              openResult(record);
-              const {
-                data: numData,
-              } = await readResultNum({ jobId: record.id });
-              setResultDetail(numData);
-            }}
-          >
-            查看
-          </Button>
+          <>
+            <Button
+              type="primary"
+              ghost
+              size="small"
+              onClick={async () => {
+                const {
+                  data: {
+                    data: resultData,
+                  },
+                } = await readAllJobResult({ jobId: record.id, page: 1, pageSize: 100 });
+                setResultId(map(prop('id'))(resultData));
+                openResult(record);
+                const {
+                  data: numData,
+                } = await readResultNum({ jobId: record.id });
+                setResultDetail(numData);
+              }}
+            >
+              查看
+            </Button>
+            &nbsp;&nbsp;
+            <Button
+              type="primary"
+              ghost
+              size="small"
+              onClick={async () => {
+                // eslint-disable-next-line no-console
+                console.log(record.id);
+              }}
+            >
+              导出
+            </Button>
+          </>
         )
       }
       {

@@ -33,7 +33,7 @@ export const columns = ({
   dataIndex: 'refText',
 }, {
   title: '操作',
-  width: 250,
+  width: 300,
   render: (record) => (
     <>
       <Button
@@ -68,6 +68,18 @@ export const columns = ({
         }}
       >
         修改
+      </Button>
+      &nbsp;&nbsp;
+      <Button
+        type="primary"
+        ghost
+        size="small"
+        onClick={async () => {
+          // eslint-disable-next-line no-console
+          console.log(record.id);
+        }}
+      >
+        导出
       </Button>
       &nbsp;&nbsp;
       <Popconfirm

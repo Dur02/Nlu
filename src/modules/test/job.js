@@ -14,6 +14,7 @@ import { getAllProduct } from 'shared/selectors';
 import { getPassed } from 'shared/constants/test-job';
 import { testJobColumns, resultColumns } from './test-job-columns';
 
+// const { Item } = Form;
 const { Option } = Select;
 const mapWithIndex = map.convert({ cap: false });
 
@@ -44,6 +45,13 @@ const result = ({
     detailsItem: resultItem,
   } = useDetails();
 
+  // const {
+  //   detailsVisible: exportVisible,
+  //   openDetails: openExport,
+  //   closeDetails: closeExport,
+  //   detailsItem: exportItem,
+  // } = useDetails();
+
   const readAllTestJob = useAction(readAll);
   const onCreate = useAction(create);
   const onUpdate = useAction(update);
@@ -51,10 +59,6 @@ const result = ({
   const readAllJobResult = useAction(readAllResult);
   const readResultNum = useAction(readNum);
 
-  // const [resultIds, setResultIds] = useState([]);
-  // const [resultTotal, setResultTotal] = useState(0);
-  // const [resultCurrent, setResultCurrent] = useState(0);
-  // const [resultSize, setResultSize] = useState(0);
   const [loading, setLoading] = useState(false);
   const [isMore, setIsMore] = useState(true);
   const [page, setPage] = useState(1);

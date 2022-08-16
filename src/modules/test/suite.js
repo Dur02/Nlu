@@ -23,6 +23,7 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { getAllProduct } from 'shared/selectors';
 import locale from 'antd/lib/date-picker/locale/zh_CN';
+import { UploadOutlined } from '@ant-design/icons';
 import { columns } from './test-suite-columns';
 import { testCaseColumns } from './test-case-columns';
 
@@ -201,8 +202,9 @@ const result = ({
       if (selected === true) {
         setSelectedRowKeys(union(map((i) => i.id)(changeRows))(selectedRowKeys));
       } else {
-        setSelectedRowKeys(remove((o) => includes(o)(map((i) => i.id)(changeRows)),
-        )(selectedRowKeys));
+        setSelectedRowKeys(remove((o) => includes(o)(
+          map((i) => i.id)(changeRows),
+        ))(selectedRowKeys));
       }
     },
     onSelectNone: () => {
@@ -251,6 +253,20 @@ const result = ({
   return (
     <Layout>
       {tableHeader}
+      <Button
+        icon={<UploadOutlined />}
+        type="primary"
+        // loading={isUploading}
+        // onClick={openImportModal}
+        size="large"
+        style={{
+          position: 'absolute',
+          top: 24,
+          left: 156,
+        }}
+      >
+        导入
+      </Button>
       <Table
         tableLayout="fixed"
         dataSource={data}

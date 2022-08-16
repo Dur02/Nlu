@@ -3,16 +3,17 @@ import Layout from 'shared/components/layout';
 import {
   Modal,
   Table,
-  Select,
+  Select, Button,
 } from 'antd';
 import { useAPITable, useDetails } from 'relient-admin/hooks';
 import { readAll, create, update, remove as removeTestCase } from 'shared/actions/test-case';
 import { readAll as readTestSuite, caseAdd, caseDel } from 'shared/actions/test-suite';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
-import { filter, map, propEq, find, flow, get, remove } from 'lodash/fp';
+import { filter, map, propEq, find, flow, get, remove, union, prop, includes } from 'lodash/fp';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
+import { UploadOutlined } from '@ant-design/icons';
 import { columns } from './test-case-columns';
 import { testSuiteColumns } from './test-suite-columns';
 import selector from './test-case-selector';
@@ -32,6 +33,11 @@ const result = ({
   suiteCurrent,
   suiteSize,
 }) => {
+  const {
+    skills,
+    intents,
+  } = useSelector(selector);
+
   const readAllTestCase = useAction(readAll);
   const onCreate = useAction(create);
   const onUpdate = useAction(update);
@@ -41,11 +47,7 @@ const result = ({
   const delCaseFromSuite = useAction(caseDel);
 
   const [intentOption, setIntentOption] = useState([]);
-
-  const {
-    skills,
-    intents,
-  } = useSelector(selector);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const {
     detailsVisible: bindVisible,
@@ -252,9 +254,71 @@ const result = ({
     }],
   });
 
+  const rowSelection = {
+    selectedRowKeys,
+    onSelect: (record, selected) => {
+      if (selected === true) {
+        setSelectedRowKeys(union([prop('id')(record)])(selectedRowKeys));
+      } else {
+        setSelectedRowKeys(remove((o) => o === prop('id')(record))(selectedRowKeys));
+      }
+    },
+    onSelectAll: (selected, selectedRows, changeRows) => {
+      if (selected === true) {
+        setSelectedRowKeys(union(map((i) => i.id)(changeRows))(selectedRowKeys));
+      } else {
+        setSelectedRowKeys(remove((o) => includes(o)(
+          map((i) => i.id)(changeRows),
+        ))(selectedRowKeys));
+      }
+    },
+    onSelectNone: () => {
+      setSelectedRowKeys([]);
+    },
+    onSelectInvert: (selectedArray) => {
+      setSelectedRowKeys(selectedArray);
+    },
+    selections: [
+      Table.SELECTION_INVERT,
+      Table.SELECTION_NONE,
+    ],
+  };
+
   return (
     <Layout>
       {tableHeader}
+      <Button
+        icon={<UploadOutlined />}
+        type="primary"
+        // loading={isUploading}
+        // onClick={openImportModal}
+        size="large"
+        style={{
+          position: 'absolute',
+          top: 24,
+          left: 140,
+        }}
+      >
+        导入
+      </Button>
+      {
+        selectedRowKeys.length !== 0 ? (
+          <Button
+            type="danger"
+            ghost
+            // loading={isUploading}
+            // onClick={openImportModal}
+            size="large"
+            style={{
+              position: 'absolute',
+              top: 24,
+              left: 246,
+            }}
+          >
+            批量删除
+          </Button>
+        ) : null
+      }
       <Table
         // tableLayout="fixed"
         dataSource={data}
@@ -271,6 +335,7 @@ const result = ({
         })}
         rowKey="id"
         pagination={pagination}
+        rowSelection={rowSelection}
       />
       {bindItem && (
         <Modal
