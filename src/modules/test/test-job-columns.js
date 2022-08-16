@@ -56,7 +56,7 @@ export const testJobColumns = ({
   },
 }, {
   title: '操作',
-  width: 140,
+  width: 80,
   render: (record) => (
     <>
       {
@@ -96,18 +96,20 @@ export const testJobColumns = ({
             >
               查看
             </Button>
-            &nbsp;&nbsp;
-            <Button
-              type="primary"
-              ghost
-              size="small"
-              onClick={async () => {
-                // eslint-disable-next-line no-console
-                console.log(record.id);
-              }}
-            >
-              导出
-            </Button>
+            {
+            //   &nbsp;&nbsp;
+            //   <Button
+            //   type="primary"
+            //   ghost
+            //   size="small"
+            //   onClick={async () => {
+            //   // eslint-disable-next-line no-console
+            //   console.log(record.id);
+            // }}
+            //   >
+            //   导出
+            //   </Button>
+            }
           </>
         )
       }

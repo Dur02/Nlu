@@ -3,7 +3,8 @@ import Layout from 'shared/components/layout';
 import {
   Modal,
   Table,
-  Select, Button,
+  Select,
+  // Button,
 } from 'antd';
 import { useAPITable, useDetails } from 'relient-admin/hooks';
 import { readAll, create, update, remove as removeTestCase } from 'shared/actions/test-case';
@@ -13,7 +14,7 @@ import { getEntity } from 'relient/selectors';
 import { filter, map, propEq, find, flow, get, remove, union, prop, includes } from 'lodash/fp';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
-import { UploadOutlined } from '@ant-design/icons';
+// import { UploadOutlined } from '@ant-design/icons';
 import { columns } from './test-case-columns';
 import { testSuiteColumns } from './test-suite-columns';
 import selector from './test-case-selector';
@@ -254,6 +255,7 @@ const result = ({
     }],
   });
 
+  // eslint-disable-next-line no-unused-vars
   const rowSelection = {
     selectedRowKeys,
     onSelect: (record, selected) => {
@@ -287,37 +289,39 @@ const result = ({
   return (
     <Layout>
       {tableHeader}
-      <Button
-        icon={<UploadOutlined />}
-        type="primary"
-        // loading={isUploading}
-        // onClick={openImportModal}
-        size="large"
-        style={{
-          position: 'absolute',
-          top: 24,
-          left: 140,
-        }}
-      >
-        导入
-      </Button>
       {
-        selectedRowKeys.length !== 0 ? (
-          <Button
-            type="danger"
-            ghost
-            // loading={isUploading}
-            // onClick={openImportModal}
-            size="large"
-            style={{
-              position: 'absolute',
-              top: 24,
-              left: 246,
-            }}
-          >
-            批量删除
-          </Button>
-        ) : null
+      //   <Button
+      //     icon={<UploadOutlined />}
+      //     type="primary"
+      //     // loading={isUploading}
+      //     // onClick={openImportModal}
+      //     size="large"
+      //     style={{
+      //       position: 'absolute',
+      //       top: 24,
+      //       left: 140,
+      //     }}
+      //   >
+      //     导入
+      //   </Button>
+      // {
+      //   selectedRowKeys.length !== 0 ? (
+      //   <Button
+      //   type="danger"
+      //   ghost
+      //   // loading={isUploading}
+      //   // onClick={openImportModal}
+      //   size="large"
+      //   style={{
+      //   position: 'absolute',
+      //   top: 24,
+      //   left: 246,
+      // }}
+      //   >
+      //   批量删除
+      //   </Button>
+      //   ) : null
+      // }
       }
       <Table
         // tableLayout="fixed"
@@ -335,7 +339,7 @@ const result = ({
         })}
         rowKey="id"
         pagination={pagination}
-        rowSelection={rowSelection}
+        // rowSelection={rowSelection}
       />
       {bindItem && (
         <Modal
