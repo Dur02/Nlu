@@ -56,7 +56,7 @@ export const testJobColumns = ({
   },
 }, {
   title: '操作',
-  width: 140,
+  width: 80,
   render: (record) => (
     <>
       {
