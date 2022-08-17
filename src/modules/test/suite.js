@@ -426,8 +426,8 @@ const result = ({
         >
           <Form
             name="basic"
-            labelCol={{ span: 7 }}
-            wrapperCol={{ span: 16 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 14 }}
             initialValues={{ testSuiteId: runFormItem.id }}
             autoComplete="off"
             onFinish={submit}
@@ -440,13 +440,15 @@ const result = ({
             >
               <Input />
             </Form.Item>
+            <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
+              <b style={{ position: 'relative', left: '3%' }}>Job配置项</b>
+            </Form.Item>
             <Form.Item
               label="产品"
               name="productId"
+              rules={[{ required: true, message: '请输入产品!' }]}
             >
-              <Select
-                style={{ width: 314 }}
-              >
+              <Select>
                 {
                   map(({ name, id }) => <Option value={id} key={id}>{name}</Option>)(product)
                 }
