@@ -46,7 +46,7 @@ export const columns = ({
   render: time(),
 }, {
   title: '操作',
-  width: 290,
+  width: 350,
   render: (record) => (
     <>
       <Button
@@ -88,6 +88,18 @@ export const columns = ({
         }}
       >
         修改信息
+      </Button>
+      &nbsp;&nbsp;
+      <Button
+        type="primary"
+        ghost
+        size="small"
+        onClick={async () => {
+          // eslint-disable-next-line no-console
+          console.log(record.id);
+        }}
+      >
+        导出
       </Button>
       &nbsp;&nbsp;
       <Popconfirm
