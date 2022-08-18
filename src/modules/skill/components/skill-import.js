@@ -159,9 +159,10 @@ const result = () => {
         <Form
           form={form}
           autoComplete="off"
-          labelCol={{ span: 5 }}
+          labelCol={{ span: 6 }}
           wrapperCol={{ span: 16 }}
           initialValues={{
+            fileType: 'yaml',
             skillCode: '',
           }}
           style={{
@@ -173,7 +174,7 @@ const result = () => {
             name="fileType"
             rules={[{ required: true }]}
           >
-            <Select defaultValue="yaml" onChange={(value) => (value === 'yaml' ? setIsYaml(true) : setIsYaml(false))}>
+            <Select onChange={(value) => (value === 'yaml' ? setIsYaml(true) : setIsYaml(false))}>
               <Option value="yaml">Yaml</Option>
               <Option value="excel">Excel</Option>
             </Select>

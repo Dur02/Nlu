@@ -10,11 +10,12 @@ import {
   Select,
   message,
   DatePicker,
+  Upload,
 } from 'antd';
 import { useAPITable, useDetails, useForm } from 'relient-admin/hooks';
-import { readAll, create, update, remove as removeTestSuite, caseReplace as caseReplaceAction } from 'shared/actions/test-suite';
+import { readAll, update, remove as removeTestSuite, caseReplace as caseReplaceAction } from 'shared/actions/test-suite';
 import { readAll as readTestCase } from 'shared/actions/test-case';
-import { suiteType, normalTest } from 'shared/constants/test-suite';
+import { suiteType } from 'shared/constants/test-suite';
 import { create as createJob } from 'shared/actions/test-job';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
@@ -23,35 +24,18 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { getAllProduct } from 'shared/selectors';
 import locale from 'antd/lib/date-picker/locale/zh_CN';
-import { UploadOutlined } from '@ant-design/icons';
 import { columns } from './test-suite-columns';
 import { testCaseColumns } from './test-case-columns';
+import TestSuiteCreate from './component/test-suite-create';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const { useWatch } = Form;
 
 const getDataSource = (state) => flow(
   map((id) => getEntity(`testSuite.${id}`)(state)),
   remove((o) => o === undefined),
 );
-
-const getFields = [{
-  label: '测试集标题',
-  name: 'title',
-  type: 'text',
-  autoComplete: 'off',
-  rules: [{ required: true }],
-}, {
-  label: '测试集类型',
-  name: 'suiteType',
-  component: Radio.Group,
-  options: suiteType,
-}, {
-  label: '描述',
-  name: 'description',
-  type: 'text',
-  autoComplete: 'off',
-}];
 
 const result = ({
   ids,
@@ -61,12 +45,13 @@ const result = ({
 }) => {
   const {
     product,
+    token,
   } = useSelector((state) => ({
     product: getAllProduct(state),
+    token: getEntity('auth.authorization')(state),
   }));
 
   const readAllTestSuite = useAction(readAll);
-  const onCreate = useAction(create);
   const onUpdate = useAction(update);
   const onRemove = useAction(removeTestSuite);
   const readAllTestCase = useAction(readTestCase);
@@ -98,6 +83,53 @@ const result = ({
     detailsItem: runFormItem,
   } = useDetails();
 
+  const getFields = (form) => {
+    const formTitle = useWatch('title', form);
+    const formSuiteType = useWatch('suiteType', form);
+
+    return [{
+      label: '测试集标题',
+      name: 'title',
+      type: 'text',
+      autoComplete: 'off',
+      rules: [{ required: true }],
+    }, {
+      label: '测试集类型',
+      name: 'suiteType',
+      component: Radio.Group,
+      options: suiteType,
+    }, {
+      label: '描述',
+      name: 'description',
+      type: 'text',
+      autoComplete: 'off',
+    }, {
+      label: '文件导入',
+      name: 'file',
+      element: (
+        <>
+          <Upload
+            name="file"
+            // onChange={(file) => {
+            //   onUpload(file, form);
+            // }}
+            showUploadList={false}
+            action={() => `/skill/edit/test/suite/import?title=${formTitle}&suiteType=${formSuiteType}`}
+            headers={{ token }}
+          >
+            <Button
+              // icon={<UploadOutlined />}
+              // loading={isUploading}
+              disabled={!formTitle && !formSuiteType}
+            >
+              上传
+            </Button>
+          </Upload>
+        </>
+      ),
+    }];
+  };
+
   const {
     tableHeader,
     pagination,
@@ -111,18 +143,18 @@ const result = ({
       current,
       size,
     },
-    createButton: {
-      text: '创建测试集',
-    },
-    creator: {
-      title: '创建测试集',
-      onSubmit: onCreate,
-      fields: getFields,
-      component: Modal,
-      initialValues: {
-        suiteType: normalTest,
-      },
-    },
+    // createButton: {
+    //   text: '创建测试集',
+    // },
+    // creator: {
+    //   title: '创建测试集',
+    //   onSubmit: onCreate,
+    //   getFields,
+    //   component: Modal,
+    //   initialValues: {
+    //     suiteType: normalTest,
+    //   },
+    // },
     getDataSource,
     readAction: async (values) => {
       const {
@@ -144,7 +176,7 @@ const result = ({
     editor: {
       title: '编辑',
       onSubmit: onUpdate,
-      fields: getFields,
+      getFields,
       component: Modal,
     },
     showReset: true,
@@ -253,20 +285,10 @@ const result = ({
   return (
     <Layout>
       {tableHeader}
-      <Button
-        icon={<UploadOutlined />}
-        type="primary"
-        // loading={isUploading}
-        // onClick={openImportModal}
-        size="large"
-        style={{
-          position: 'absolute',
-          top: 24,
-          left: 156,
-        }}
-      >
-        导入
-      </Button>
+      <TestSuiteCreate
+        token={token}
+        reload={reload}
+      />
       <Table
         tableLayout="fixed"
         dataSource={data}

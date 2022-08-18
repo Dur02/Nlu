@@ -34,27 +34,23 @@ export default () => [{
         page: 1,
         pageSize: 10,
       }));
-      const {
-        data: {
-          data: suiteData,
-          currentPage: suiteCurrentPage,
-          pageSize: suitePageSize,
-          total: suiteTotal,
-        },
-      } = await dispatch(readTestSuite({
-        page: 1,
-        pageSize: 10,
-      }));
+      // const {
+      //   data: {
+      //     data: suiteData,
+      //     currentPage: suiteCurrentPage,
+      //     pageSize: suitePageSize,
+      //     total: suiteTotal,
+      //   },
+      // } = await dispatch(readTestSuite({
+      //   page: 1,
+      //   pageSize: 10,
+      // }));
       return {
         component: <Case
           ids={map(prop('id'))(data)}
           total={total}
           current={currentPage - 1}
           size={pageSize}
-          suiteIds={map(prop('id'))(suiteData)}
-          suiteTotal={suiteTotal}
-          suiteCurrent={suiteCurrentPage - 1}
-          suiteSize={suitePageSize}
         />,
       };
     } catch (e) {
@@ -64,10 +60,6 @@ export default () => [{
           total={0}
           current={0}
           size={0}
-          suiteIds={[]}
-          suiteTotal={0}
-          suiteCurrent={0}
-          suiteSize={0}
         />,
       };
     }

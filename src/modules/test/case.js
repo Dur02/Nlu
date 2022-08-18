@@ -4,18 +4,22 @@ import {
   Modal,
   Table,
   Select,
+  // eslint-disable-next-line no-unused-vars
   Button,
 } from 'antd';
+// eslint-disable-next-line no-unused-vars
 import { useAPITable, useDetails } from 'relient-admin/hooks';
+// eslint-disable-next-line no-unused-vars
 import { readAll, create, update, remove as removeTestCase } from 'shared/actions/test-case';
-import { readAll as readTestSuite, caseAdd, caseDel } from 'shared/actions/test-suite';
+// import { readAll as readTestSuite, caseAdd, caseDel } from 'shared/actions/test-suite';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
+// eslint-disable-next-line no-unused-vars
 import { filter, map, propEq, find, flow, get, remove, union, prop, includes } from 'lodash/fp';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
-import { UploadOutlined } from '@ant-design/icons';
 import { columns } from './test-case-columns';
+// eslint-disable-next-line no-unused-vars
 import { testSuiteColumns } from './test-suite-columns';
 import selector from './test-case-selector';
 
@@ -29,10 +33,10 @@ const result = ({
   total,
   current,
   size,
-  suiteIds,
-  suiteTotal,
-  suiteCurrent,
-  suiteSize,
+  // suiteIds,
+  // suiteTotal,
+  // suiteCurrent,
+  // suiteSize,
 }) => {
   const {
     skills,
@@ -42,20 +46,20 @@ const result = ({
   const readAllTestCase = useAction(readAll);
   const onCreate = useAction(create);
   const onUpdate = useAction(update);
-  const onRemove = useAction(removeTestCase);
-  const readAllTestSuite = useAction(readTestSuite);
-  const addCaseToSuite = useAction(caseAdd);
-  const delCaseFromSuite = useAction(caseDel);
+  // const onRemove = useAction(removeTestCase);
+  // const readAllTestSuite = useAction(readTestSuite);
+  // const addCaseToSuite = useAction(caseAdd);
+  // const delCaseFromSuite = useAction(caseDel);
 
   const [intentOption, setIntentOption] = useState([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  // const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
-  const {
-    detailsVisible: bindVisible,
-    openDetails: openBind,
-    closeDetails: closeBind,
-    detailsItem: bindItem,
-  } = useDetails();
+  // const {
+  //   detailsVisible: bindVisible,
+  //   openDetails: openBind,
+  //   closeDetails: closeBind,
+  //   detailsItem: bindItem,
+  // } = useDetails();
 
   const getFields = (form) => [{
     label: '用户说',
@@ -136,8 +140,8 @@ const result = ({
     tableHeader,
     pagination,
     data,
-    openEditor,
-    reload,
+    // openEditor,
+    // reload,
   } = useAPITable({
     paginationInitialData: {
       ids,
@@ -207,165 +211,143 @@ const result = ({
     }],
   });
 
-  const {
-    tableHeader: suiteTableHeader,
-    pagination: suitePagination,
-    data: suiteData,
-    reset: suiteReset,
-  } = useAPITable({
-    paginationInitialData: {
-      ids: suiteIds,
-      total: suiteTotal,
-      current: suiteCurrent,
-      size: suiteSize,
-    },
-    getDataSource: (state) => flow(
-      map((id) => getEntity(`testSuite.${id}`)(state)),
-      remove((o) => o === undefined),
-    ),
-    readAction: async (values) => {
-      const {
-        data: response,
-      } = await readAllTestSuite({
-        ...values,
-        page: values.page + 1,
-        pageSize: values.size,
-        startTime: moment(new Date(values.createTimeAfter)).startOf('day').toISOString(),
-        endTime: moment(new Date(values.createTimeBefore)).endOf('day').toISOString(),
-      });
-      return {
-        content: response.data,
-        number: response.currentPage - 1,
-        size: response.pageSize,
-        totalElements: response.total,
-      };
-    },
-    showReset: true,
-    query: {
-      fields: [{
-        dataKey: 'title',
-        label: '测试集名',
-      }],
-      searchWhenValueChange: false,
-    },
-    datePickers: [{
-      dataKey: 'createTime',
-      label: '起止日期',
-      disabledDate: (date) => date.isAfter(new Date()),
-    }],
-  });
+  // const {
+  //   tableHeader: suiteTableHeader,
+  //   pagination: suitePagination,
+  //   data: suiteData,
+  //   reset: suiteReset,
+  // } = useAPITable({
+  //   paginationInitialData: {
+  //     ids: suiteIds,
+  //     total: suiteTotal,
+  //     current: suiteCurrent,
+  //     size: suiteSize,
+  //   },
+  //   getDataSource: (state) => flow(
+  //     map((id) => getEntity(`testSuite.${id}`)(state)),
+  //     remove((o) => o === undefined),
+  //   ),
+  //   readAction: async (values) => {
+  //     const {
+  //       data: response,
+  //     } = await readAllTestSuite({
+  //       ...values,
+  //       page: values.page + 1,
+  //       pageSize: values.size,
+  //       startTime: moment(new Date(values.createTimeAfter)).startOf('day').toISOString(),
+  //       endTime: moment(new Date(values.createTimeBefore)).endOf('day').toISOString(),
+  //     });
+  //     return {
+  //       content: response.data,
+  //       number: response.currentPage - 1,
+  //       size: response.pageSize,
+  //       totalElements: response.total,
+  //     };
+  //   },
+  //   showReset: true,
+  //   query: {
+  //     fields: [{
+  //       dataKey: 'title',
+  //       label: '测试集名',
+  //     }],
+  //     searchWhenValueChange: false,
+  //   },
+  //   datePickers: [{
+  //     dataKey: 'createTime',
+  //     label: '起止日期',
+  //     disabledDate: (date) => date.isAfter(new Date()),
+  //   }],
+  // });
 
-  const rowSelection = {
-    selectedRowKeys,
-    onSelect: (record, selected) => {
-      if (selected === true) {
-        setSelectedRowKeys(union([prop('id')(record)])(selectedRowKeys));
-      } else {
-        setSelectedRowKeys(remove((o) => o === prop('id')(record))(selectedRowKeys));
-      }
-    },
-    onSelectAll: (selected, selectedRows, changeRows) => {
-      if (selected === true) {
-        setSelectedRowKeys(union(map((i) => i.id)(changeRows))(selectedRowKeys));
-      } else {
-        setSelectedRowKeys(remove((o) => includes(o)(
-          map((i) => i.id)(changeRows),
-        ))(selectedRowKeys));
-      }
-    },
-    onSelectNone: () => {
-      setSelectedRowKeys([]);
-    },
-    onSelectInvert: (selectedArray) => {
-      setSelectedRowKeys(selectedArray);
-    },
-    selections: [
-      Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
-    ],
-  };
+  // const rowSelection = {
+  //   selectedRowKeys,
+  //   onSelect: (record, selected) => {
+  //     if (selected === true) {
+  //       setSelectedRowKeys(union([prop('id')(record)])(selectedRowKeys));
+  //     } else {
+  //       setSelectedRowKeys(remove((o) => o === prop('id')(record))(selectedRowKeys));
+  //     }
+  //   },
+  //   onSelectAll: (selected, selectedRows, changeRows) => {
+  //     if (selected === true) {
+  //       setSelectedRowKeys(union(map((i) => i.id)(changeRows))(selectedRowKeys));
+  //     } else {
+  //       setSelectedRowKeys(remove((o) => includes(o)(
+  //         map((i) => i.id)(changeRows),
+  //       ))(selectedRowKeys));
+  //     }
+  //   },
+  //   onSelectNone: () => {
+  //     setSelectedRowKeys([]);
+  //   },
+  //   onSelectInvert: (selectedArray) => {
+  //     setSelectedRowKeys(selectedArray);
+  //   },
+  //   selections: [
+  //     Table.SELECTION_INVERT,
+  //     Table.SELECTION_NONE,
+  //   ],
+  // };
 
   return (
     <Layout>
       {tableHeader}
-      <Button
-        icon={<UploadOutlined />}
-        type="primary"
-        // loading={isUploading}
-        // onClick={openImportModal}
-        size="large"
-        style={{
-          position: 'absolute',
-          top: 24,
-          left: 140,
-        }}
-      >
-        导入
-      </Button>
       {
-        selectedRowKeys.length !== 0 ? (
-          <Button
-            type="danger"
-            ghost
-            // loading={isUploading}
-            // onClick={openImportModal}
-            size="large"
-            style={{
-              position: 'absolute',
-              top: 24,
-              left: 246,
-            }}
-          >
-            批量删除
-          </Button>
-        ) : null
+        // selectedRowKeys.length !== 0 ? (
+        //   <Button
+        //     type="danger"
+        //     ghost
+        //     // loading={isUploading}
+        //     // onClick={openImportModal}
+        //     size="large"
+        //     style={{
+        //       position: 'absolute',
+        //       top: 24,
+        //       left: 140,
+        //     }}
+        //   >
+        //     批量删除
+        //   </Button>
+        // ) : null
       }
       <Table
         // tableLayout="fixed"
         dataSource={data}
-        columns={columns({
-          openEditor,
-          onRemove,
-          reload,
-          pagination,
-          setIntentOption,
-          skills,
-          intents,
-          openBind,
-          readAllTestSuite,
-        })}
+        columns={columns()}
         rowKey="id"
         pagination={pagination}
-        rowSelection={rowSelection}
+        // rowSelection={rowSelection}
       />
-      {bindItem && (
-        <Modal
-          visible={bindVisible}
-          destroyOnClose
-          onCancel={() => {
-            closeBind();
-            suiteReset();
-          }}
-          footer={null}
-          title={`测试用例${bindItem.id}添加`}
-          width={1000}
-          zIndex={9}
-        >
-          {suiteTableHeader}
-          <Table
-            // tableLayout="fixed"
-            dataSource={suiteData}
-            columns={testSuiteColumns({
-              bindItem,
-              addCaseToSuite,
-              delCaseFromSuite,
-            })}
-            rowKey="id"
-            size="small"
-            pagination={suitePagination}
-          />
-        </Modal>
-      )}
+      {
+        // bindItem && (
+        //   <Modal
+        //     visible={bindVisible}
+        //     destroyOnClose
+        //     onCancel={() => {
+        //       closeBind();
+        //       suiteReset();
+        //     }}
+        //     footer={null}
+        //     title={`测试用例${bindItem.id}添加`}
+        //     width={1000}
+        //     zIndex={9}
+        //   >
+        //     {suiteTableHeader}
+        //     <Table
+        //       // tableLayout="fixed"
+        //       dataSource={suiteData}
+        //       columns={testSuiteColumns({
+        //         bindItem,
+        //         addCaseToSuite,
+        //         delCaseFromSuite,
+        //       })}
+        //       rowKey="id"
+        //       size="small"
+        //       pagination={suitePagination}
+        //     />
+        //   </Modal>
+        // )
+      }
     </Layout>
   );
 };
