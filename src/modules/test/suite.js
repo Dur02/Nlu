@@ -10,13 +10,12 @@ import {
   Select,
   message,
   DatePicker,
-  Upload,
 } from 'antd';
-import { useAPITable, useDetails, useForm } from 'relient-admin/hooks';
+import { useAPITable, useDetails } from 'relient-admin/hooks';
 import { readAll, update, remove as removeTestSuite, caseReplace as caseReplaceAction } from 'shared/actions/test-suite';
 import { readAll as readTestCase } from 'shared/actions/test-case';
-import { suiteType } from 'shared/constants/test-suite';
 import { create as createJob } from 'shared/actions/test-job';
+import { suiteType } from 'shared/constants/test-suite';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
 import { flow, map, prop, remove, union, includes } from 'lodash/fp';
@@ -27,15 +26,37 @@ import locale from 'antd/lib/date-picker/locale/zh_CN';
 import { columns } from './test-suite-columns';
 import { testCaseColumns } from './test-case-columns';
 import TestSuiteCreate from './component/test-suite-create';
+import { errorColumns } from './component/test-suite-import-columns';
+// import TestSuiteEdit from  './component/test-suite-edit';
 
+const mapWithIndex = map.convert({ cap: false });
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-const { useWatch } = Form;
+// const { useForm, useWatch } = Form;
+const { useForm } = Form;
 
 const getDataSource = (state) => flow(
   map((id) => getEntity(`testSuite.${id}`)(state)),
   remove((o) => o === undefined),
 );
+
+const getFields = [{
+  label: '测试集标题',
+  name: 'title',
+  type: 'text',
+  autoComplete: 'off',
+  rules: [{ required: true }],
+}, {
+  label: '测试集类型',
+  name: 'suiteType',
+  component: Radio.Group,
+  options: suiteType,
+}, {
+  label: '描述',
+  name: 'description',
+  type: 'text',
+  autoComplete: 'off',
+}];
 
 const result = ({
   ids,
@@ -68,6 +89,15 @@ const result = ({
     currentPage: 1,
     pageSize: 10,
   });
+  const [error, setError] = useState([]);
+  const [uploading, setUploading] = useState(false);
+
+  // const {
+  //   detailsVisible: editorVisible,
+  //   openDetails: openEditor,
+  //   closeDetails: closeEditor,
+  //   detailsItem: editorItem,
+  // } = useDetails();
 
   const {
     detailsVisible: caseTableVisible,
@@ -83,53 +113,6 @@ const result = ({
     detailsItem: runFormItem,
   } = useDetails();
 
-  const getFields = (form) => {
-    const formTitle = useWatch('title', form);
-    const formSuiteType = useWatch('suiteType', form);
-
-    return [{
-      label: '测试集标题',
-      name: 'title',
-      type: 'text',
-      autoComplete: 'off',
-      rules: [{ required: true }],
-    }, {
-      label: '测试集类型',
-      name: 'suiteType',
-      component: Radio.Group,
-      options: suiteType,
-    }, {
-      label: '描述',
-      name: 'description',
-      type: 'text',
-      autoComplete: 'off',
-    }, {
-      label: '文件导入',
-      name: 'file',
-      element: (
-        <>
-          <Upload
-            name="file"
-            // onChange={(file) => {
-            //   onUpload(file, form);
-            // }}
-            showUploadList={false}
-            action={() => `/skill/edit/test/suite/import?title=${formTitle}&suiteType=${formSuiteType}`}
-            headers={{ token }}
-          >
-            <Button
-              // icon={<UploadOutlined />}
-              // loading={isUploading}
-              disabled={!formTitle && !formSuiteType}
-            >
-              上传
-            </Button>
-          </Upload>
-        </>
-      ),
-    }];
-  };
-
   const {
     tableHeader,
     pagination,
@@ -143,18 +126,12 @@ const result = ({
       current,
       size,
     },
-    // createButton: {
-    //   text: '创建测试集',
-    // },
-    // creator: {
-    //   title: '创建测试集',
-    //   onSubmit: onCreate,
-    //   getFields,
-    //   component: Modal,
-    //   initialValues: {
-    //     suiteType: normalTest,
-    //   },
-    // },
+    editor: {
+      title: '编辑',
+      onSubmit: onUpdate,
+      fields: getFields,
+      component: Modal,
+    },
     getDataSource,
     readAction: async (values) => {
       const {
@@ -172,12 +149,6 @@ const result = ({
         size: response.pageSize,
         totalElements: response.total,
       };
-    },
-    editor: {
-      title: '编辑',
-      onSubmit: onUpdate,
-      getFields,
-      component: Modal,
     },
     showReset: true,
     query: {
@@ -282,6 +253,25 @@ const result = ({
     setSearchLoading(false);
   }, [readAllTestSuite, search, setSearch, caseData, setCaseData]);
 
+  const onUpload = useCallback(async ({ file: { status, response } }) => {
+    setUploading(true);
+    if (status === 'done') {
+      if (response.code === 'SUCCESS') {
+        message.success('检查完成，测试文件格式正确');
+        await reload();
+        message.success('上传成功');
+      } else if (response.data && response.data.length > 0) {
+        flow(mapWithIndex((item, index) => ({ ...item, key: index + 1 })), setError)(response.data);
+      } else {
+        message.error(response.msg);
+      }
+      setUploading(false);
+    } else if (status === 'error') {
+      message.error(response ? response.msg : '上传失败，请稍后再试');
+      setUploading(false);
+    }
+  }, [setUploading]);
+
   return (
     <Layout>
       {tableHeader}
@@ -302,6 +292,9 @@ const result = ({
           openRunForm,
           readAllTestCase,
           setCaseData,
+          uploading,
+          onUpload,
+          token,
         })}
         rowKey="id"
         pagination={pagination}
@@ -493,6 +486,32 @@ const result = ({
           </Form>
         </Modal>
       )}
+      <Modal
+        visible={error.length > 0}
+        onOk={() => {
+          setError([]);
+        }}
+        onCancel={() => {
+          setError([]);
+        }}
+        title="错误提示"
+        width={1000}
+      >
+        <Table
+          columns={errorColumns}
+          dataSource={error}
+        />
+      </Modal>
+      {
+        // <TestSuiteEdit
+        //   editorItem={editorItem}
+        //   editorVisible={editorVisible}
+        //   closeEditor={closeEditor}
+        //   onUpdate={onUpdate}
+        //   token={token}
+        //   reload={reload}
+        // />
+      }
     </Layout>
   );
 };

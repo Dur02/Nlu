@@ -4,7 +4,6 @@ import { getWithBaseUrl } from 'relient/url';
 import getConfig from 'relient/config';
 import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import { flow, map } from 'lodash/fp';
-import { useDispatch } from 'react-redux';
 import { string, func } from 'prop-types';
 import { create } from 'shared/actions/test-suite';
 import { useAction } from 'relient/actions';
@@ -17,8 +16,6 @@ const result = ({
   token,
   reload,
 }) => {
-  const dispatch = useDispatch();
-
   const onCreate = useAction(create);
 
   const [form] = useForm();
@@ -30,7 +27,7 @@ const result = ({
   const [creating, setCreating] = useState(false);
   const [Uploading, setUploading] = useState(false);
 
-  const getInputValue = useCallback(async (values) => {
+  const submit = useCallback(async (values) => {
     setCreating(true);
     try {
       const { msg } = await onCreate({ ...values });
@@ -39,7 +36,7 @@ const result = ({
       message.error(e.msg);
     }
     form.resetFields();
-    reload();
+    await reload();
     setCreating(false);
     setCreateVisible(false);
   }, []);
@@ -65,7 +62,7 @@ const result = ({
       form.resetFields();
       setCreateVisible(false);
     }
-  }, [setUploading, setCreateVisible, form, dispatch]);
+  }, [setUploading, setCreateVisible, form]);
 
   return (
     <>
@@ -125,7 +122,7 @@ const result = ({
             suiteType: 0,
           }}
           autoComplete="off"
-          onFinish={getInputValue}
+          onFinish={submit}
         >
           <Form.Item
             label="标题"

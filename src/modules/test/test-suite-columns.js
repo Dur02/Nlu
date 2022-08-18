@@ -1,8 +1,9 @@
 import { time } from 'relient/formatters';
 import { getTestSuiteType } from 'shared/constants/test-suite';
-import { Button, message, Popconfirm } from 'antd';
+import { Button, message, Popconfirm, Upload } from 'antd';
 import React from 'react';
 import { includes } from 'lodash/fp';
+import { UploadOutlined } from '@ant-design/icons';
 
 export const columns = ({
   onRemove,
@@ -14,7 +15,9 @@ export const columns = ({
   openRunForm,
   readAllTestCase,
   setCaseData,
-  // openAddForm,
+  uploading,
+  onUpload,
+  token,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -46,7 +49,7 @@ export const columns = ({
   render: time(),
 }, {
   title: '操作',
-  width: 290,
+  width: 370,
   render: (record) => (
     <>
       <Button
@@ -78,6 +81,26 @@ export const columns = ({
       >
         修改用例
       </Button>
+      &nbsp;&nbsp;
+      <Upload
+        name="file"
+        onChange={onUpload}
+        showUploadList={false}
+        action={
+          () => `/skill/edit/test/suite/import?title=${record.title}&suiteType=${record.suiteType}&testSuiteId=${record.id}`
+        }
+        headers={{ token }}
+      >
+        <Button
+          type="primary"
+          ghost
+          icon={<UploadOutlined />}
+          loading={uploading}
+          size="small"
+        >
+          导入
+        </Button>
+      </Upload>
       &nbsp;&nbsp;
       <Button
         type="primary"
