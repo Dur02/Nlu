@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
 import { Button, Input, message, Popconfirm, Switch, Table } from 'antd';
-import { prop } from 'lodash/fp';
+import { prop, flow, map } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { useLocalTable } from 'relient-admin/hooks';
 import EditableCell from 'shared/components/editable-cell';
@@ -27,6 +27,7 @@ const result = ({
 }) => {
   useStyles(s);
 
+  const [selectedIds, setSelectedIds] = useState([]);
   const [newSentence, setNewSentence] = useState('');
   const onChangeSentence = useCallback(
     ({ target: { value } }) => setNewSentence(value),
@@ -45,6 +46,10 @@ const result = ({
     await removeRule({ id });
     message.success('删除成功');
   }, []);
+  const onRemoveSelectedRules = useCallback(async () => {
+    await Promise.all(map((id) => removeRule({ id }))(selectedIds));
+    message.success('删除成功');
+  }, [selectedIds]);
 
   const {
     tableHeader,
@@ -91,21 +96,52 @@ const result = ({
     ),
   }];
 
+  const dataSource = getDataSource(rules);
+
   return (
     <div className={s.Root}>
       <div className={s.Rules}>
-        <Search
-          onSearch={onCreateRule}
-          onChange={onChangeSentence}
-          value={newSentence}
-          placeholder="请输入说法"
-          enterButton="添加"
-          className={s.Search}
-        />
         <div>
+          <Search
+            onSearch={onCreateRule}
+            onChange={onChangeSentence}
+            value={newSentence}
+            placeholder="请输入说法"
+            enterButton="添加"
+            className={s.Search}
+          />
           {tableHeader}
+          <div style={{ marginTop: -40, marginBottom: 20 }}>
+            <Button
+              onClick={() => flow(map(prop('id')), setSelectedIds)(dataSource)}
+              size="small"
+              type="primary"
+            >
+              选中全部
+            </Button>
+            &nbsp;&nbsp;
+            <Button
+              onClick={() => setSelectedIds([])}
+              size="small"
+            >
+              取消全部
+            </Button>
+            &nbsp;&nbsp;
+            <Popconfirm
+              title="确认删除吗？删除操作不可恢复"
+              onConfirm={onRemoveSelectedRules}
+            >
+              <Button type="danger" ghost size="small">删除选中</Button>
+            </Popconfirm>
+          </div>
           <Table
-            dataSource={getDataSource(rules)}
+            dataSource={dataSource}
+            rowSelection={{
+              onChange: (selectedRowKeys) => {
+                setSelectedIds(selectedRowKeys);
+              },
+              selectedRowKeys: selectedIds,
+            }}
             columns={columns}
             rowKey="id"
             pagination={pagination}
