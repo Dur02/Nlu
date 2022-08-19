@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Popconfirm } from 'antd';
-import moment from 'moment';
 
 export const columns = () => [{
   title: 'ID',
@@ -81,13 +80,12 @@ export const columns = () => [{
 // }
 
 export const testCaseColumns = ({
-  onRemove,
+  delCase,
+  caseTableItem,
   pagination,
-  readAllTestCase,
-  search,
-  testSuiteId,
-  setCaseData,
   openUpdateCase,
+  caseForm,
+  caseReload,
 }) => [{
   title: 'ID',
   // width: 140,
@@ -111,50 +109,33 @@ export const testCaseColumns = ({
 }, {
   title: '操作',
   width: 120,
-  render: (record) => {
-    const reload = async (current) => {
-      const { data } = await readAllTestCase({
-        page: current,
-        pageSize: pagination.pageSize,
-        startTime: !search.date ? ''
-          : moment(new Date(moment(search.date[0]).format('YYYY-MM-DD'))).startOf('day').toISOString(),
-        endTime: !search.date ? ''
-          : moment(new Date(moment(search.date[1]).format('YYYY-MM-DD'))).endOf('day').toISOString(),
-        refText: search.refText,
-        skillName: search.skillName,
-        intentName: search.intentName,
-        testSuiteId,
-      });
-      setCaseData(data);
-    };
-
-    return (
-      <>
-        <Button
-          type="primary"
-          ghost
-          size="small"
-          onClick={() => {
-            openUpdateCase(record);
-          }}
-        >
-          修改
-        </Button>
-        &nbsp;&nbsp;
-        <Popconfirm
-          title="确认删除吗？删除操作不可恢复"
-          onConfirm={async () => {
-            await onRemove({ id: record.id });
-            if ((pagination.current - 1) * pagination.pageSize < pagination.total - 1) {
-              await reload(pagination.current);
-            } else {
-              await reload(pagination.current - 1);
-            }
-          }}
-        >
-          <Button type="danger" size="small" ghost>删除</Button>
-        </Popconfirm>
-      </>
-    );
-  },
+  render: (record) => (
+    <>
+      <Button
+        type="primary"
+        ghost
+        size="small"
+        onClick={() => {
+          caseForm.setFieldsValue({ ...record });
+          openUpdateCase(record);
+        }}
+      >
+        修改
+      </Button>
+      &nbsp;&nbsp;
+      <Popconfirm
+        title="确认删除吗？删除操作不可恢复"
+        onConfirm={async () => {
+          await delCase({ caseIds: [record.id], suiteId: caseTableItem.id });
+          if ((pagination.current - 1) * pagination.pageSize < pagination.total - 1) {
+            await caseReload(pagination.current);
+          } else {
+            await caseReload(pagination.current - 1);
+          }
+        }}
+      >
+        <Button type="danger" size="small" ghost>删除</Button>
+      </Popconfirm>
+    </>
+  ),
 }];

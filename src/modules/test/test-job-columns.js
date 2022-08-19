@@ -14,6 +14,7 @@ export const testJobColumns = ({
   setResultId,
   readResultNum,
   setResultDetail,
+  openExport,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -56,7 +57,7 @@ export const testJobColumns = ({
   },
 }, {
   title: '操作',
-  width: 80,
+  width: 140,
   render: (record) => (
     <>
       {
@@ -95,6 +96,17 @@ export const testJobColumns = ({
               }}
             >
               查看
+            </Button>
+            &nbsp;&nbsp;
+            <Button
+              type="primary"
+              ghost
+              size="small"
+              onClick={() => {
+                openExport(record);
+              }}
+            >
+              导出
             </Button>
           </>
         )

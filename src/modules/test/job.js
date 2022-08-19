@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Layout from 'shared/components/layout';
-import { Row, Col, Modal, Select, Statistic, Table } from 'antd';
+import { Row, Col, Modal, Select, Statistic, Table, Form, Radio, Button, message } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAction } from 'relient/actions';
 import { readAll, create, update, cancel as cancelTestJob } from 'shared/actions/test-job';
-import { readAll as readAllResult, readNum } from 'shared/actions/test-job-result';
+import { readAll as readAllResult, readNum, resultExport } from 'shared/actions/test-job-result';
 import { useAPITable, useDetails } from 'relient-admin/hooks';
 import moment from 'moment';
 import { flow, map, prop, propEq, remove, find, concat } from 'lodash/fp';
@@ -49,12 +49,12 @@ const result = ({
     detailsItem: resultItem,
   } = useDetails();
 
-  // const {
-  //   detailsVisible: exportVisible,
-  //   openDetails: openExport,
-  //   closeDetails: closeExport,
-  //   detailsItem: exportItem,
-  // } = useDetails();
+  const {
+    detailsVisible: exportVisible,
+    openDetails: openExport,
+    closeDetails: closeExport,
+    detailsItem: exportItem,
+  } = useDetails();
 
   const readAllTestJob = useAction(readAll);
   const onCreate = useAction(create);
@@ -62,6 +62,7 @@ const result = ({
   const onCancel = useAction(cancelTestJob);
   const readAllJobResult = useAction(readAllResult);
   const readResultNum = useAction(readNum);
+  const onResultExport = useAction(resultExport);
 
   const [loading, setLoading] = useState(false);
   const [isMore, setIsMore] = useState(true);
@@ -284,6 +285,34 @@ const result = ({
     () => map((id) => find(propEq('id', id))(testJobResult))(resultId),
     [resultId, testJobResult, setResultId]);
 
+  const exportSubmit = useCallback(async (values) => {
+    setLoading(true);
+    try {
+      const res = await onResultExport({ jobId: exportItem.id, ...values });
+      const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' });
+      const blobURL = window.URL.createObjectURL(blob);
+      const tempLink = document.createElement('a');
+      tempLink.style.display = 'none';
+      tempLink.href = blobURL;
+      const date = new Date();
+      tempLink.setAttribute(
+        'download',
+        `${exportItem.title}(自动化测试结果导出)-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.xlsx`,
+      );
+      if (typeof tempLink.download === 'undefined') {
+        tempLink.setAttribute('target', '_blank');
+      }
+      document.body.appendChild(tempLink);
+      tempLink.click();
+      document.body.removeChild(tempLink);
+      window.URL.revokeObjectURL(blobURL);
+      message.success('导出成功');
+    } catch (e) {
+      message.error('导出失败');
+    }
+    setLoading(false);
+  }, [exportItem, loading, setLoading]);
+
   useEffect(() => {
     const timer = setInterval(async () => {
       await reload();
@@ -309,10 +338,62 @@ const result = ({
           setResultId,
           readResultNum,
           setResultDetail,
+          openExport,
         })}
         rowKey="id"
         pagination={pagination}
       />
+      {
+        exportItem && (
+          <Modal
+            visible={exportVisible}
+            onCancel={() => {
+              closeExport();
+            }}
+            destroyOnClose
+            title={`${exportItem.title}修改`}
+            width={500}
+            footer={null}
+          >
+            <Form
+              name="basic"
+              labelCol={{ span: 7 }}
+              wrapperCol={{ span: 14 }}
+              autoComplete="off"
+              initialValues={{
+                passed: 1,
+              }}
+              onFinish={exportSubmit}
+            >
+              <Form.Item
+                label="类型"
+                name="passed"
+                rules={[{ required: true, message: '请输入类型!' }]}
+              >
+                <Radio.Group>
+                  <Radio value={0}>未通过</Radio>
+                  <Radio value={1}>已通过</Radio>
+                </Radio.Group>
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{
+                  offset: 10,
+                }}
+              >
+                <Button
+                  type="primary"
+                  ghost
+                  size="middle"
+                  htmlType="submit"
+                  loading={loading}
+                >
+                  导出
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
+        )
+      }
       {resultItem && (
         <Modal
           visible={resultVisible}

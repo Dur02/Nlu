@@ -5,8 +5,8 @@ import getConfig from 'relient/config';
 import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import { flow, map } from 'lodash/fp';
 import { string, func } from 'prop-types';
-import { create as onCreateCase } from 'shared/actions/test-case';
 import { create } from 'shared/actions/test-suite';
+import { create as onCreateCase } from 'shared/actions/test-case';
 import { useAction } from 'relient/actions';
 import { errorColumns } from './test-suite-import-columns';
 
@@ -20,7 +20,7 @@ const result = ({
   const createCase = useAction(onCreateCase);
   const createSuite = useAction(create);
 
-  const [CaseForm] = useForm();
+  const [caseForm] = useForm();
   const [suiteForm] = useForm();
   const formTitle = useWatch('title', suiteForm);
   const formSuiteType = useWatch('suiteType', suiteForm);
@@ -40,7 +40,7 @@ const result = ({
     } catch (e) {
       // message.error(e.msg);
     }
-    CaseForm.resetFields();
+    caseForm.resetFields();
     // await reload();
     setCreating(false);
     setCaseVisible(false);
@@ -236,7 +236,7 @@ const result = ({
         footer={null}
       >
         <Form
-          form={CaseForm}
+          form={caseForm}
           name="basic"
           labelCol={{ span: 7 }}
           wrapperCol={{ span: 14 }}
@@ -272,6 +272,14 @@ const result = ({
             label="joss共享地址"
             name="jossShareUrl"
             autoComplete="off"
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="测试集ID"
+            name="testSuiteId"
+            autoComplete="off"
+            rules={[{ required: true, message: '请输入测试集ID!' }]}
           >
             <Input />
           </Form.Item>

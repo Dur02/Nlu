@@ -46,6 +46,7 @@ export const create = createAction(
     jossShareUrl,
     refText,
     skillCode,
+    testSuiteId,
   }) => post('/skill/edit/test/case', {
     audioFile,
     description,
@@ -55,6 +56,7 @@ export const create = createAction(
     jossShareUrl,
     refText,
     skillCode,
+    testSuiteId,
   }),
 );
 

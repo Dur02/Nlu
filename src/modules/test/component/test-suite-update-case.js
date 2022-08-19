@@ -8,10 +8,10 @@ import {
   message,
   DatePicker,
 } from 'antd';
-import { readAll } from 'shared/actions/test-suite';
-import { readAll as readTestCase, removeByList, remove as removeCase, update } from 'shared/actions/test-case';
+import { readAll, caseDel } from 'shared/actions/test-suite';
+import { readAll as readTestCase, update } from 'shared/actions/test-case';
 import { useAction } from 'relient/actions';
-import { map, prop, remove, union, includes, flow, reject, concat } from 'lodash/fp';
+import { map, prop, remove, union, includes, flow, reject, concat, sortBy, reverse } from 'lodash/fp';
 import moment from 'moment';
 import locale from 'antd/lib/date-picker/locale/zh_CN';
 import { bool, func, object } from 'prop-types';
@@ -28,13 +28,11 @@ const result = ({
   closeCaseTable,
   caseData,
   setCaseData,
-  reload,
 }) => {
   const [caseForm] = useForm();
 
   const onUpdate = useAction(update);
-  const onRemove = useAction(removeCase);
-  const removeSome = useAction(removeByList);
+  const delCase = useAction(caseDel);
   const readAllTestSuite = useAction(readAll);
   const readAllTestCase = useAction(readTestCase);
 
@@ -134,12 +132,16 @@ const result = ({
     setCreating(true);
     try {
       const { data, msg } = await onUpdate({ id: updateCaseItem.id, ...values });
-      // eslint-disable-next-line no-console
-      console.log(flow(
-        reject(updateCaseItem),
-        concat([data]),
-      )(caseData.data));
-      // setCaseData();
+      setCaseData({
+        data: reverse(flow(
+          reject(updateCaseItem),
+          concat([data]),
+          sortBy(['id']),
+        )(caseData.data)),
+        total: paginationProps.total,
+        currentPage: paginationProps.current,
+        pageSize: paginationProps.pageSize,
+      });
       message.success(msg);
     } catch (e) {
       // message.error(e.msg);
@@ -148,6 +150,22 @@ const result = ({
     setCreating(false);
     closeUpdateCase();
   }, [creating, setCreating, onUpdate, caseForm, closeUpdateCase, updateCaseItem, caseData]);
+
+  const caseReload = async (current) => {
+    const { data } = await readAllTestCase({
+      page: current,
+      pageSize: paginationProps.pageSize,
+      startTime: !search.date ? ''
+        : moment(new Date(moment(search.date[0]).format('YYYY-MM-DD'))).startOf('day').toISOString(),
+      endTime: !search.date ? ''
+        : moment(new Date(moment(search.date[1]).format('YYYY-MM-DD'))).endOf('day').toISOString(),
+      refText: search.refText,
+      skillName: search.skillName,
+      intentName: search.intentName,
+      testSuiteId: caseTableItem.id,
+    });
+    setCaseData(data);
+  };
 
   return (
     <>
@@ -243,13 +261,12 @@ const result = ({
           <Table
             dataSource={caseData.data}
             columns={testCaseColumns({
-              onRemove,
+              delCase,
+              caseTableItem,
               pagination: paginationProps,
-              readAllTestCase,
-              search,
-              testSuiteId: caseTableItem.id,
-              setCaseData,
               openUpdateCase,
+              caseForm,
+              caseReload,
             })}
             rowSelection={{
               type: 'checkbox',
@@ -268,23 +285,32 @@ const result = ({
                 onClick={async () => {
                   setUpdateLoading(true);
                   try {
-                    const { msg } = await removeSome({
-                      ids: selectedRowKeys,
+                    const { msg } = await delCase({
+                      caseIds: selectedRowKeys,
+                      suiteId: caseTableItem.id,
                     });
                     message.success(msg);
+                    if (
+                      (paginationProps.current - 1) * paginationProps.pageSize
+                      < paginationProps.total - selectedRowKeys.length
+                    ) {
+                      await caseReload(paginationProps.current);
+                    } else {
+                      await caseReload(paginationProps.current - 1);
+                    }
+                    setSelectedRowKeys([]);
                   } catch (e) {
+                    // closeCaseTable();
                     // ignore
                   }
-                  await reload();
-                  setSelectedRowKeys([]);
                   setUpdateLoading(false);
-                  closeCaseTable();
                 }}
                 loading={updateLoading}
                 style={{
                   position: 'relative',
                   marginTop: '22px',
                   left: '50%',
+                  transform: 'translateX(-50%)',
                 }}
               >
                 批量删除
@@ -296,17 +322,10 @@ const result = ({
               <Modal
                 visible={updateCaseVisible}
                 onCancel={() => {
-                  // console.log('reset前-------------');
-                  // console.log(updateCaseItem.refText);
-                  // console.log(caseForm.getFieldValue('refText'));
-                  // caseForm.resetFields();
-                  // console.log('reset后-------------');
-                  // console.log(updateCaseItem.refText);
-                  // console.log(caseForm.getFieldValue('refText'));
                   closeUpdateCase();
                 }}
                 destroyOnClose
-                title={`${updateCaseItem.id}修改 ${updateCaseItem.refText}`}
+                title={`${updateCaseItem.id}修改`}
                 width={500}
                 footer={null}
               >
@@ -315,12 +334,6 @@ const result = ({
                   name="basic"
                   labelCol={{ span: 7 }}
                   wrapperCol={{ span: 14 }}
-                  initialValues={{
-                    refText: updateCaseItem.refText,
-                    expectedSkill: updateCaseItem.expectedSkill,
-                    expectedIntent: updateCaseItem.expectedIntent,
-                    jossShareUrl: updateCaseItem.jossShareUrl,
-                  }}
                   autoComplete="off"
                   onFinish={caseSubmit}
                 >
@@ -358,10 +371,6 @@ const result = ({
                       offset: 10,
                     }}
                   >
-                    <p>{updateCaseItem.refText}</p>
-                    <p>{updateCaseItem.expectedSkill}</p>
-                    <p>{updateCaseItem.expectedIntent}</p>
-                    <p>{updateCaseItem.jossShareUrl}</p>
                     <Button
                       type="primary"
                       ghost
