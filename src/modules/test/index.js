@@ -34,17 +34,6 @@ export default () => [{
         page: 1,
         pageSize: 10,
       }));
-      // const {
-      //   data: {
-      //     data: suiteData,
-      //     currentPage: suiteCurrentPage,
-      //     pageSize: suitePageSize,
-      //     total: suiteTotal,
-      //   },
-      // } = await dispatch(readTestSuite({
-      //   page: 1,
-      //   pageSize: 10,
-      // }));
       return {
         component: <Case
           ids={map(prop('id'))(data)}
@@ -72,6 +61,8 @@ export default () => [{
       await Promise.all([
         dispatch(readProfile()),
         dispatch(readAllProduct()),
+        dispatch(readAllSkills()),
+        dispatch(readAllIntents()),
       ]);
       const {
         data: {

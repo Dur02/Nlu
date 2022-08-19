@@ -4,23 +4,15 @@ import {
   Modal,
   Table,
   Select,
-  // eslint-disable-next-line no-unused-vars
-  Button,
 } from 'antd';
-// eslint-disable-next-line no-unused-vars
-import { useAPITable, useDetails } from 'relient-admin/hooks';
-// eslint-disable-next-line no-unused-vars
-import { readAll, create, update, remove as removeTestCase } from 'shared/actions/test-case';
-// import { readAll as readTestSuite, caseAdd, caseDel } from 'shared/actions/test-suite';
+import { useAPITable } from 'relient-admin/hooks';
+import { readAll, create, update } from 'shared/actions/test-case';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
-// eslint-disable-next-line no-unused-vars
-import { filter, map, propEq, find, flow, get, remove, union, prop, includes } from 'lodash/fp';
+import { filter, map, propEq, find, flow, get, remove } from 'lodash/fp';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { columns } from './test-case-columns';
-// eslint-disable-next-line no-unused-vars
-import { testSuiteColumns } from './test-suite-columns';
 import selector from './test-case-selector';
 
 const getDataSource = (state) => flow(
@@ -33,10 +25,6 @@ const result = ({
   total,
   current,
   size,
-  // suiteIds,
-  // suiteTotal,
-  // suiteCurrent,
-  // suiteSize,
 }) => {
   const {
     skills,
@@ -46,20 +34,8 @@ const result = ({
   const readAllTestCase = useAction(readAll);
   const onCreate = useAction(create);
   const onUpdate = useAction(update);
-  // const onRemove = useAction(removeTestCase);
-  // const readAllTestSuite = useAction(readTestSuite);
-  // const addCaseToSuite = useAction(caseAdd);
-  // const delCaseFromSuite = useAction(caseDel);
 
   const [intentOption, setIntentOption] = useState([]);
-  // const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-
-  // const {
-  //   detailsVisible: bindVisible,
-  //   openDetails: openBind,
-  //   closeDetails: closeBind,
-  //   detailsItem: bindItem,
-  // } = useDetails();
 
   const getFields = (form) => [{
     label: '用户说',

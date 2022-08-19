@@ -1,39 +1,29 @@
 import React, { useCallback, useState } from 'react';
 import Layout from 'shared/components/layout';
 import {
-  Button,
   Modal,
   Radio,
   Table,
-  Form,
-  Input,
-  Select,
   message,
-  DatePicker,
 } from 'antd';
 import { useAPITable, useDetails } from 'relient-admin/hooks';
-import { readAll, update, remove as removeTestSuite, caseReplace as caseReplaceAction } from 'shared/actions/test-suite';
+import { readAll, update, remove as removeTestSuite } from 'shared/actions/test-suite';
 import { readAll as readTestCase } from 'shared/actions/test-case';
 import { create as createJob } from 'shared/actions/test-job';
 import { suiteType } from 'shared/constants/test-suite';
 import { useAction } from 'relient/actions';
 import { getEntity } from 'relient/selectors';
-import { flow, map, prop, remove, union, includes } from 'lodash/fp';
+import { flow, map, remove } from 'lodash/fp';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { getAllProduct } from 'shared/selectors';
-import locale from 'antd/lib/date-picker/locale/zh_CN';
 import { columns } from './test-suite-columns';
-import { testCaseColumns } from './test-case-columns';
 import TestSuiteCreate from './component/test-suite-create';
 import { errorColumns } from './component/test-suite-import-columns';
-// import TestSuiteEdit from  './component/test-suite-edit';
+import UpdateCase from './component/test-suite-update-case';
+import RunForm from './component/test-suite-run-form';
 
 const mapWithIndex = map.convert({ cap: false });
-const { Option } = Select;
-const { RangePicker } = DatePicker;
-// const { useForm, useWatch } = Form;
-const { useForm } = Form;
 
 const getDataSource = (state) => flow(
   map((id) => getEntity(`testSuite.${id}`)(state)),
@@ -77,12 +67,7 @@ const result = ({
   const onRemove = useAction(removeTestSuite);
   const readAllTestCase = useAction(readTestCase);
   const onCreateJob = useAction(createJob);
-  const caseReplace = useAction(caseReplaceAction);
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [updateLoading, setUpdateLoading] = useState(false);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [search, setSearch] = useState({});
   const [caseData, setCaseData] = useState({ // Table数据
     data: [],
     total: 0,
@@ -91,13 +76,6 @@ const result = ({
   });
   const [error, setError] = useState([]);
   const [uploading, setUploading] = useState(false);
-
-  // const {
-  //   detailsVisible: editorVisible,
-  //   openDetails: openEditor,
-  //   closeDetails: closeEditor,
-  //   detailsItem: editorItem,
-  // } = useDetails();
 
   const {
     detailsVisible: caseTableVisible,
@@ -165,94 +143,6 @@ const result = ({
     }],
   });
 
-  const paginationProps = {
-    defaultCurrent: 1,
-    defaultPageSize: 10,
-    showSizeChanger: true,
-    showQuickJumper: true,
-    pageSizeOptions: [10, 20, 50],
-    current: caseData.currentPage,
-    total: caseData.total,
-    pageSize: caseData.pageSize,
-    onChange: async (newPage, newPageSize) => {
-      const {
-        data: dataTemp,
-      } = await readAllTestCase({
-        page: newPage,
-        pageSize: newPageSize,
-        startTime: !search.date ? ''
-          : moment(new Date(moment(search.date[0]).format('YYYY-MM-DD'))).startOf('day').toISOString(),
-        endTime: !search.date ? ''
-          : moment(new Date(moment(search.date[1]).format('YYYY-MM-DD'))).endOf('day').toISOString(),
-        refText: search.refText,
-        skillName: search.skillName,
-        intentName: search.intentName,
-      });
-      setCaseData(dataTemp);
-    },
-    showTotal: (caseTotal) => `共 ${caseTotal} 条`,
-  };
-
-  const rowSelection = {
-    onSelect: (record, selected) => {
-      if (selected === true) {
-        setSelectedRowKeys(union([prop('id')(record)])(selectedRowKeys));
-      } else {
-        setSelectedRowKeys(remove((o) => o === prop('id')(record))(selectedRowKeys));
-      }
-    },
-    onSelectAll: (selected, selectedRows, changeRows) => {
-      if (selected === true) {
-        setSelectedRowKeys(union(map((i) => i.id)(changeRows))(selectedRowKeys));
-      } else {
-        setSelectedRowKeys(remove((o) => includes(o)(
-          map((i) => i.id)(changeRows),
-        ))(selectedRowKeys));
-      }
-    },
-    onSelectNone: () => {
-      setSelectedRowKeys([]);
-    },
-    onSelectInvert: (selectedArray) => {
-      setSelectedRowKeys(selectedArray);
-    },
-    selections: [
-      Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
-    ],
-  };
-
-  const { submit, submitting, form } = useForm(async (values) => {
-    try {
-      const { msg } = await onCreateJob({ ...values, jobConfig: { productId: values.productId } });
-      message.success(msg);
-    } catch (e) {
-      message.error(e.msg);
-    }
-    form.resetFields();
-    closeRunForm();
-  });
-
-  const getInputValue = useCallback(async (value) => {
-    setSearchLoading(true);
-    const {
-      data: dataTemp,
-    } = await readAllTestCase({
-      page: 1,
-      pageSize: caseData.pageSize,
-      startTime: !value.date ? ''
-        : moment(new Date(moment(value.date[0]).format('YYYY-MM-DD'))).startOf('day').toISOString(),
-      endTime: !value.date ? ''
-        : moment(new Date(moment(value.date[1]).format('YYYY-MM-DD'))).endOf('day').toISOString(),
-      refText: value.refText,
-      skillName: value.skillName,
-      intentName: value.intentName,
-    });
-    setSearch(value);
-    setCaseData(dataTemp);
-    setSearchLoading(false);
-  }, [readAllTestSuite, search, setSearch, caseData, setCaseData]);
-
   const onUpload = useCallback(async ({ file: { status, response } }) => {
     setUploading(true);
     if (status === 'done') {
@@ -288,7 +178,6 @@ const result = ({
           reload,
           pagination,
           openCaseTable,
-          setSelectedRowKeys,
           openRunForm,
           readAllTestCase,
           setCaseData,
@@ -299,193 +188,21 @@ const result = ({
         rowKey="id"
         pagination={pagination}
       />
-      {caseTableItem && (
-        <Modal
-          visible={caseTableVisible}
-          destroyOnClose
-          onCancel={() => {
-            setCaseData({});
-            setSearch({});
-            closeCaseTable();
-          }}
-          footer={null}
-          title={`${caseTableItem.title}修改用例`}
-          width={1100}
-          zIndex={10}
-        >
-          <div
-            style={{
-              marginBottom: '22px',
-            }}
-          >
-            <Form
-              name="basic"
-              layout="inline"
-              onFinish={getInputValue}
-            >
-              <Form.Item
-                label="用户说"
-                name="refText"
-                style={{
-                  width: '180px',
-                }}
-              >
-                <Input
-                  autoComplete="off"
-                  allowClear
-                  placeholder="输入用户说"
-                />
-              </Form.Item>
-              <Form.Item
-                label="技能名"
-                name="skillName"
-                style={{
-                  width: '180px',
-                }}
-              >
-                <Input
-                  allowClear
-                  autoComplete="off"
-                  placeholder="输入技能名"
-                />
-              </Form.Item>
-              <Form.Item
-                label="意图名"
-                name="intentName"
-                style={{
-                  width: '180px',
-                }}
-              >
-                <Input
-                  autoComplete="off"
-                  allowClear
-                  placeholder="输入意图名"
-                />
-              </Form.Item>
-              <Form.Item
-                label="日期"
-                name="date"
-                style={{
-                  width: '300px',
-                }}
-              >
-                <RangePicker
-                  locale={locale}
-                  placeholder={['开始日期', '结束日期']}
-                  disabledDate={(currentTemp) => currentTemp && currentTemp > moment().endOf('day')}
-                />
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  type="primary"
-                  ghost
-                  size="middle"
-                  loading={searchLoading}
-                  htmlType="submit"
-                >
-                  搜索
-                </Button>
-              </Form.Item>
-            </Form>
-          </div>
-          <Table
-            dataSource={caseData.data}
-            columns={testCaseColumns()}
-            rowSelection={{
-              type: 'checkbox',
-              selectedRowKeys,
-              ...rowSelection,
-            }}
-            rowKey="id"
-            size="small"
-            pagination={paginationProps}
-          />
-          <Button
-            type="primary"
-            ghost
-            onClick={async () => {
-              setUpdateLoading(true);
-              try {
-                const { msg } = await caseReplace({
-                  caseIds: selectedRowKeys,
-                  suiteId: caseTableItem.id,
-                });
-                message.success(msg);
-              } catch (e) {
-                // ignore
-              }
-              setUpdateLoading(false);
-              closeCaseTable();
-            }}
-            loading={updateLoading}
-            style={{
-              position: 'relative',
-              marginTop: '22px',
-              left: '50%',
-            }}
-          >
-            修改
-          </Button>
-        </Modal>
-      )}
-      {runFormItem && (
-        <Modal
-          visible={runFormVisible}
-          destroyOnClose
-          onCancel={() => {
-            closeRunForm();
-          }}
-          footer={null}
-          title={`Run${runFormItem.title}`}
-          zIndex={10}
-        >
-          <Form
-            name="basic"
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 14 }}
-            initialValues={{ testSuiteId: runFormItem.id }}
-            autoComplete="off"
-            onFinish={submit}
-            form={form}
-          >
-            <Form.Item
-              label="标题"
-              name="title"
-              rules={[{ required: true, message: '请输入标题!' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
-              <b style={{ position: 'relative', left: '3%' }}>Job配置项</b>
-            </Form.Item>
-            <Form.Item
-              label="产品"
-              name="productId"
-              rules={[{ required: true, message: '请输入产品!' }]}
-            >
-              <Select>
-                {
-                  map(({ name, id }) => <Option value={id} key={id}>{name}</Option>)(product)
-                }
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label="测试集ID"
-              name="testSuiteId"
-              style={{
-                display: 'none',
-              }}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
-              <Button type="primary" htmlType="submit" loading={submitting}>
-                新增任务
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-      )}
+      <UpdateCase
+        caseTableItem={caseTableItem}
+        caseTableVisible={caseTableVisible}
+        closeCaseTable={closeCaseTable}
+        caseData={caseData}
+        setCaseData={setCaseData}
+        reload={reload}
+      />
+      <RunForm
+        runFormItem={runFormItem}
+        runFormVisible={runFormVisible}
+        closeRunForm={closeRunForm}
+        onCreateJob={onCreateJob}
+        product={product}
+      />
       <Modal
         visible={error.length > 0}
         onOk={() => {
@@ -502,16 +219,6 @@ const result = ({
           dataSource={error}
         />
       </Modal>
-      {
-        // <TestSuiteEdit
-        //   editorItem={editorItem}
-        //   editorVisible={editorVisible}
-        //   closeEditor={closeEditor}
-        //   onUpdate={onUpdate}
-        //   token={token}
-        //   reload={reload}
-        // />
-      }
     </Layout>
   );
 };

@@ -5,6 +5,7 @@ import getConfig from 'relient/config';
 import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import { flow, map } from 'lodash/fp';
 import { string, func } from 'prop-types';
+import { create as onCreateCase } from 'shared/actions/test-case';
 import { create } from 'shared/actions/test-suite';
 import { useAction } from 'relient/actions';
 import { errorColumns } from './test-suite-import-columns';
@@ -16,30 +17,48 @@ const result = ({
   token,
   reload,
 }) => {
-  const onCreate = useAction(create);
+  const createCase = useAction(onCreateCase);
+  const createSuite = useAction(create);
 
-  const [form] = useForm();
-  const formTitle = useWatch('title', form);
-  const formSuiteType = useWatch('suiteType', form);
+  const [CaseForm] = useForm();
+  const [suiteForm] = useForm();
+  const formTitle = useWatch('title', suiteForm);
+  const formSuiteType = useWatch('suiteType', suiteForm);
 
-  const [createVisible, setCreateVisible] = useState(false);
+  const [caseVisible, setCaseVisible] = useState(false);
+  const [suiteVisible, setSuiteVisible] = useState(false);
   const [error, setError] = useState([]);
   const [creating, setCreating] = useState(false);
   const [Uploading, setUploading] = useState(false);
+  // const [intentOption, setIntentOption] = useState([]);
 
-  const submit = useCallback(async (values) => {
+  const caseSubmit = useCallback(async (values) => {
     setCreating(true);
     try {
-      const { msg } = await onCreate({ ...values });
+      const { msg } = await createCase({ ...values });
       message.success(msg);
     } catch (e) {
-      message.error(e.msg);
+      // message.error(e.msg);
     }
-    form.resetFields();
+    CaseForm.resetFields();
+    // await reload();
+    setCreating(false);
+    setCaseVisible(false);
+  }, []);
+
+  const suiteSubmit = useCallback(async (values) => {
+    setCreating(true);
+    try {
+      const { msg } = await createSuite({ ...values });
+      message.success(msg);
+    } catch (e) {
+      // message.error(e.msg);
+    }
+    suiteForm.resetFields();
     await reload();
     setCreating(false);
-    setCreateVisible(false);
-  }, []);
+    setSuiteVisible(false);
+  }, [creating, setCreating, suiteForm, suiteVisible, setSuiteVisible]);
 
   const onUpload = useCallback(async ({ file: { status, response } }) => {
     setUploading(true);
@@ -54,15 +73,15 @@ const result = ({
         message.error(response.msg);
       }
       setUploading(false);
-      form.resetFields();
-      setCreateVisible(false);
+      suiteForm.resetFields();
+      setSuiteVisible(false);
     } else if (status === 'error') {
       message.error(response ? response.msg : '上传失败，请稍后再试');
       setUploading(false);
-      form.resetFields();
-      setCreateVisible(false);
+      suiteForm.resetFields();
+      setSuiteVisible(false);
     }
-  }, [setUploading, setCreateVisible, form]);
+  }, [setUploading, setSuiteVisible, suiteForm]);
 
   return (
     <>
@@ -75,10 +94,24 @@ const result = ({
           left: 24,
         }}
         onClick={() => {
-          setCreateVisible(true);
+          setSuiteVisible(true);
         }}
       >
         创建测试集
+      </Button>
+      <Button
+        type="primary"
+        size="large"
+        style={{
+          position: 'absolute',
+          top: 20,
+          left: 156,
+        }}
+        onClick={() => {
+          setCaseVisible(true);
+        }}
+      >
+        创建用例
       </Button>
       <a
         href={`${getWithBaseUrl('/template2.xlsx', getConfig('baseUrl'))}`}
@@ -96,25 +129,27 @@ const result = ({
             style={{
               position: 'absolute',
               top: 20,
-              left: 156,
+              left: 270,
             }}
           />
         </Tooltip>
       </a>
       <Modal
-        visible={createVisible}
+        visible={suiteVisible}
         onOk={() => {
-          setCreateVisible(false);
+          suiteForm.resetFields();
+          setSuiteVisible(false);
         }}
         onCancel={() => {
-          setCreateVisible(false);
+          suiteForm.resetFields();
+          setSuiteVisible(false);
         }}
         title="创建测试集"
         width={500}
         footer={null}
       >
         <Form
-          form={form}
+          form={suiteForm}
           name="basic"
           labelCol={{ span: 7 }}
           wrapperCol={{ span: 14 }}
@@ -122,7 +157,7 @@ const result = ({
             suiteType: 0,
           }}
           autoComplete="off"
-          onFinish={submit}
+          onFinish={suiteSubmit}
         >
           <Form.Item
             label="标题"
@@ -187,6 +222,78 @@ const result = ({
           </Form.Item>
         </Form>
       </Modal>
+
+      <Modal
+        visible={caseVisible}
+        onOk={() => {
+          setCaseVisible(false);
+        }}
+        onCancel={() => {
+          setCaseVisible(false);
+        }}
+        title="创建用例"
+        width={500}
+        footer={null}
+      >
+        <Form
+          form={CaseForm}
+          name="basic"
+          labelCol={{ span: 7 }}
+          wrapperCol={{ span: 14 }}
+          initialValues={{
+            suiteType: 0,
+          }}
+          autoComplete="off"
+          onFinish={caseSubmit}
+        >
+          <Form.Item
+            label="用户说"
+            name="refText"
+            autoComplete="off"
+            rules={[{ required: true, message: '请输入用户说!' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="期待技能"
+            name="expectedSkill"
+            rules={[{ required: true, message: '请输入期待技能!' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="期待意图"
+            name="expectedIntent"
+            rules={[{ required: true, message: '请输入期待意图!' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="joss共享地址"
+            name="jossShareUrl"
+            autoComplete="off"
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            wrapperCol={{
+              offset: 10,
+            }}
+          >
+            <Button
+              type="primary"
+              ghost
+              size="middle"
+              // loading={submitting}
+              htmlType="submit"
+              loading={creating}
+            >
+              创建
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
       <Modal
         visible={error.length > 0}
         onOk={() => {

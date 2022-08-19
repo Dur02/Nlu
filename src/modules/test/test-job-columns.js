@@ -22,7 +22,7 @@ export const testJobColumns = ({
   title: '标题',
   dataIndex: 'title',
 }, {
-  title: '测试集ID',
+  title: '测试集名',
   dataIndex: 'testSuiteId',
   render: (testSuiteId) => flow(
     filter(propEq('value', testSuiteId)),

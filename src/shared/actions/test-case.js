@@ -10,6 +10,7 @@ export const READ_ALL = actionType('READ_ALL');
 export const CREATE = actionType('CREATE');
 export const REMOVE = actionType('REMOVE');
 export const UPDATE = actionType('UPDATE');
+export const REMOVE_BY_LIST = actionType('REMOVE_BY_LIST');
 
 export const readAll = createAction(
   READ_ALL,
@@ -21,6 +22,7 @@ export const readAll = createAction(
     skillName,
     intentName,
     refText,
+    testSuiteId,
   }) => read('/skill/edit/test/case/page', {
     page,
     pageSize,
@@ -29,6 +31,7 @@ export const readAll = createAction(
     skillName,
     intentName,
     refText,
+    testSuiteId,
   }),
 );
 
@@ -84,4 +87,13 @@ export const remove = createAction(
   ({
     id,
   }) => del(`/skill/edit/test/case/${id}`),
+);
+
+export const removeByList = createAction(
+  REMOVE_BY_LIST,
+  ({
+    ids,
+  }) => del('/skill/edit/test/case/list', {
+    ids,
+  }),
 );

@@ -11,7 +11,6 @@ export const columns = ({
   reload,
   pagination,
   openCaseTable,
-  setSelectedRowKeys,
   openRunForm,
   readAllTestCase,
   setCaseData,
@@ -68,13 +67,13 @@ export const columns = ({
         ghost
         size="small"
         onClick={async () => {
-          setSelectedRowKeys(record.testCases);
           openCaseTable(record);
           const {
             data: dataTemp,
           } = await readAllTestCase({
             page: 1,
             pageSize: 10,
+            testSuiteId: record.id,
           });
           setCaseData(dataTemp);
         }}
