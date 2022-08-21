@@ -290,13 +290,17 @@ const result = ({
                       suiteId: caseTableItem.id,
                     });
                     message.success(msg);
-                    if (
-                      (paginationProps.current - 1) * paginationProps.pageSize
-                      < paginationProps.total - selectedRowKeys.length
-                    ) {
-                      await caseReload(paginationProps.current);
+                    const totalPage = Math.floor(
+                      (paginationProps.total - selectedRowKeys.length) / paginationProps.pageSize,
+                    ) + (
+                      (paginationProps.total - selectedRowKeys.length)
+                      % paginationProps.pageSize !== 0 ? 1 : 0
+                    );
+                    // 当修改后剩余的总页数小于当前页码时，把当前页码设为修改后的总页数，否则就重新加载当前页码的内容
+                    if (paginationProps.current > totalPage) {
+                      await caseReload(totalPage);
                     } else {
-                      await caseReload(paginationProps.current - 1);
+                      await caseReload(paginationProps.current);
                     }
                     setSelectedRowKeys([]);
                   } catch (e) {
