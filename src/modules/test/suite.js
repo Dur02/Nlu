@@ -7,7 +7,7 @@ import {
   message,
 } from 'antd';
 import { useAPITable, useDetails } from 'relient-admin/hooks';
-import { readAll, update, remove as removeTestSuite } from 'shared/actions/test-suite';
+import { readAll, update, remove as removeTestSuite, suiteExport } from 'shared/actions/test-suite';
 import { readAll as readTestCase } from 'shared/actions/test-case';
 import { create as createJob } from 'shared/actions/test-job';
 import { suiteType } from 'shared/constants/test-suite';
@@ -67,6 +67,7 @@ const result = ({
   const onRemove = useAction(removeTestSuite);
   const readAllTestCase = useAction(readTestCase);
   const onCreateJob = useAction(createJob);
+  const onSuiteExport = useAction(suiteExport);
 
   const [caseData, setCaseData] = useState({ // Table数据
     data: [],
@@ -184,6 +185,7 @@ const result = ({
           uploading,
           onUpload,
           token,
+          onSuiteExport,
         })}
         rowKey="id"
         pagination={pagination}

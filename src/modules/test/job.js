@@ -289,7 +289,7 @@ const result = ({
     setLoading(true);
     try {
       const res = await onResultExport({ jobId: exportItem.id, ...values });
-      const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' });
+      const blob = new Blob([res], { type: 'text/plain; charset=utf-8' });
       const blobURL = window.URL.createObjectURL(blob);
       const tempLink = document.createElement('a');
       tempLink.style.display = 'none';
@@ -297,7 +297,7 @@ const result = ({
       const date = new Date();
       tempLink.setAttribute(
         'download',
-        `${exportItem.title}(自动化测试结果导出)-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.xlsx`,
+        `${exportItem.title}(自动化测试结果导出)-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.csv`,
       );
       if (typeof tempLink.download === 'undefined') {
         tempLink.setAttribute('target', '_blank');
@@ -334,7 +334,7 @@ const result = ({
           onCancel,
           openEditor,
           product,
-          caseData,
+          // caseData,
           setResultId,
           readResultNum,
           setResultDetail,

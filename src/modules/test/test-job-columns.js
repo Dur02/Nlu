@@ -10,7 +10,7 @@ export const testJobColumns = ({
   onCancel,
   openEditor,
   product,
-  caseData,
+  // caseData,
   setResultId,
   readResultNum,
   setResultDetail,
@@ -23,13 +23,13 @@ export const testJobColumns = ({
   title: '标题',
   dataIndex: 'title',
 }, {
-  title: '测试集名',
+  title: '测试集ID',
   dataIndex: 'testSuiteId',
-  render: (testSuiteId) => flow(
-    filter(propEq('value', testSuiteId)),
-    head,
-    prop('label'),
-  )(caseData),
+  // render: (testSuiteId) => flow(
+  //   filter(propEq('value', testSuiteId)),
+  //   head,
+  //   prop('label'),
+  // )(caseData),
 }, {
   title: '产品',
   dataIndex: ['jobConfig', 'productId'],

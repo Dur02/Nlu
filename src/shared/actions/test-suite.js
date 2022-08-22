@@ -14,6 +14,7 @@ export const FILTER_ADD = actionType('FILTER_ADD');
 export const CASE_ADD = actionType('CASE_ADD');
 export const CASE_DEL = actionType('CASE_DEL');
 export const CASE_REPLACE = actionType('CASE_REPLACE');
+export const SUITE_EXPORT = actionType('SUITE_EXPORT');
 
 export const readAll = createAction(
   READ_ALL,
@@ -115,5 +116,14 @@ export const caseReplace = createAction(
   }) => put('/skill/edit/test/suite/cases/add-del', {
     caseIds,
     suiteId,
+  }),
+);
+
+export const suiteExport = createAction(
+  SUITE_EXPORT,
+  ({
+    testSuiteId,
+  }) => read('/skill/edit/test/suite/export', {
+    testSuiteId,
   }),
 );

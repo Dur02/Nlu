@@ -3,7 +3,7 @@ import { getTestSuiteType } from 'shared/constants/test-suite';
 import { Button, message, Popconfirm, Upload } from 'antd';
 import React from 'react';
 import { includes } from 'lodash/fp';
-import { UploadOutlined } from '@ant-design/icons';
+// import {DownloadOutlined, UploadOutlined} from '@ant-design/icons';
 
 export const columns = ({
   onRemove,
@@ -17,6 +17,7 @@ export const columns = ({
   uploading,
   onUpload,
   token,
+  onSuiteExport,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -24,9 +25,6 @@ export const columns = ({
 }, {
   title: '标题',
   dataIndex: 'title',
-}, {
-  title: '描述',
-  dataIndex: 'description',
 }, {
   title: '测试集类型',
   dataIndex: 'suiteType',
@@ -36,6 +34,9 @@ export const columns = ({
   title: '测试用例个数',
   // width: 180,
   dataIndex: 'testCaseNum',
+}, {
+  title: '描述',
+  dataIndex: 'description',
 }, {
   title: '创建时间',
   dataIndex: 'createTime',
@@ -48,7 +49,7 @@ export const columns = ({
   render: time(),
 }, {
   title: '操作',
-  width: 370,
+  width: 400,
   render: (record) => (
     <>
       <Button
@@ -93,13 +94,49 @@ export const columns = ({
         <Button
           type="primary"
           ghost
-          icon={<UploadOutlined />}
+          // icon={<UploadOutlined />}
           loading={uploading}
           size="small"
         >
           导入
         </Button>
       </Upload>
+      &nbsp;&nbsp;
+      <Button
+        type="primary"
+        ghost
+        // icon={<DownloadOutlined />}
+        size="small"
+        onClick={async () => {
+          // setLoading(true);
+          try {
+            const res = await onSuiteExport({ testSuiteId: record.id });
+            const blob = new Blob([res], { type: 'text/plain; charset=utf-8' });
+            const blobURL = window.URL.createObjectURL(blob);
+            const tempLink = document.createElement('a');
+            tempLink.style.display = 'none';
+            tempLink.href = blobURL;
+            const date = new Date();
+            tempLink.setAttribute(
+              'download',
+              `${record.title}-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.csv`,
+            );
+            if (typeof tempLink.download === 'undefined') {
+              tempLink.setAttribute('target', '_blank');
+            }
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+            window.URL.revokeObjectURL(blobURL);
+            message.success('导出成功');
+          } catch (e) {
+            message.error('导出失败');
+          }
+          // setLoading(false);
+        }}
+      >
+        导出
+      </Button>
       &nbsp;&nbsp;
       <Button
         type="primary"
