@@ -43,13 +43,8 @@ export const columns = ({
   width: 160,
   render: time(),
 }, {
-  title: '更新时间',
-  dataIndex: 'updateTime',
-  width: 160,
-  render: time(),
-}, {
   title: '操作',
-  width: 400,
+  width: 380,
   render: (record) => (
     <>
       <Button
@@ -79,7 +74,7 @@ export const columns = ({
           setCaseData(dataTemp);
         }}
       >
-        修改用例
+        用例
       </Button>
       &nbsp;&nbsp;
       <Upload

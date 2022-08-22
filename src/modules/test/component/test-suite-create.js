@@ -6,7 +6,6 @@ import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import { flow, map } from 'lodash/fp';
 import { string, func } from 'prop-types';
 import { create } from 'shared/actions/test-suite';
-import { create as onCreateCase } from 'shared/actions/test-case';
 import { useAction } from 'relient/actions';
 import { errorColumns } from './test-suite-import-columns';
 
@@ -17,37 +16,20 @@ const result = ({
   token,
   reload,
 }) => {
-  const createCase = useAction(onCreateCase);
   const createSuite = useAction(create);
 
-  const [caseForm] = useForm();
   const [suiteForm] = useForm();
   const formTitle = useWatch('title', suiteForm);
   const formSuiteType = useWatch('suiteType', suiteForm);
 
-  const [caseVisible, setCaseVisible] = useState(false);
   const [suiteVisible, setSuiteVisible] = useState(false);
   const [error, setError] = useState([]);
-  const [creating, setCreating] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [Uploading, setUploading] = useState(false);
   // const [intentOption, setIntentOption] = useState([]);
 
-  const caseSubmit = useCallback(async (values) => {
-    setCreating(true);
-    try {
-      const { msg } = await createCase({ ...values });
-      message.success(msg);
-    } catch (e) {
-      // message.error(e.msg);
-    }
-    caseForm.resetFields();
-    // await reload();
-    setCreating(false);
-    setCaseVisible(false);
-  }, []);
-
   const suiteSubmit = useCallback(async (values) => {
-    setCreating(true);
+    setLoading(true);
     try {
       const { msg } = await createSuite({ ...values });
       message.success(msg);
@@ -56,9 +38,9 @@ const result = ({
     }
     suiteForm.resetFields();
     await reload();
-    setCreating(false);
+    setLoading(false);
     setSuiteVisible(false);
-  }, [creating, setCreating, suiteForm, suiteVisible, setSuiteVisible]);
+  }, [loading, setLoading, suiteForm, suiteVisible, setSuiteVisible]);
 
   const onUpload = useCallback(async ({ file: { status, response } }) => {
     setUploading(true);
@@ -99,20 +81,22 @@ const result = ({
       >
         创建测试集
       </Button>
-      <Button
-        type="primary"
-        size="large"
-        style={{
-          position: 'absolute',
-          top: 20,
-          left: 156,
-        }}
-        onClick={() => {
-          setCaseVisible(true);
-        }}
-      >
-        创建用例
-      </Button>
+      {
+        // <Button
+        //   type="primary"
+        //   size="large"
+        //   style={{
+        //     position: 'absolute',
+        //     top: 20,
+        //     left: 156,
+        //   }}
+        //   onClick={() => {
+        //     setCaseVisible(true);
+        //   }}
+        // >
+        //   创建用例
+        // </Button>
+      }
       <a
         href={`${getWithBaseUrl('/template2.xlsx', getConfig('baseUrl'))}`}
         download="用例导入模板.xlsx"
@@ -129,7 +113,7 @@ const result = ({
             style={{
               position: 'absolute',
               top: 20,
-              left: 270,
+              left: 156,
             }}
           />
         </Tooltip>
@@ -215,93 +199,13 @@ const result = ({
               size="middle"
               // loading={submitting}
               htmlType="submit"
-              loading={creating}
+              loading={loading}
             >
               创建
             </Button>
           </Form.Item>
         </Form>
       </Modal>
-
-      <Modal
-        visible={caseVisible}
-        onOk={() => {
-          setCaseVisible(false);
-        }}
-        onCancel={() => {
-          setCaseVisible(false);
-        }}
-        title="创建用例"
-        width={500}
-        footer={null}
-      >
-        <Form
-          form={caseForm}
-          name="basic"
-          labelCol={{ span: 7 }}
-          wrapperCol={{ span: 14 }}
-          initialValues={{
-            suiteType: 0,
-          }}
-          autoComplete="off"
-          onFinish={caseSubmit}
-        >
-          <Form.Item
-            label="用户说"
-            name="refText"
-            autoComplete="off"
-            rules={[{ required: true, message: '请输入用户说!' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="期待技能"
-            name="expectedSkill"
-            rules={[{ required: true, message: '请输入期待技能!' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="期待意图"
-            name="expectedIntent"
-            rules={[{ required: true, message: '请输入期待意图!' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="joss共享地址"
-            name="jossShareUrl"
-            autoComplete="off"
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="测试集ID"
-            name="testSuiteId"
-            autoComplete="off"
-            rules={[{ required: true, message: '请输入测试集ID!' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            wrapperCol={{
-              offset: 10,
-            }}
-          >
-            <Button
-              type="primary"
-              ghost
-              size="middle"
-              // loading={submitting}
-              htmlType="submit"
-              loading={creating}
-            >
-              创建
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-
       <Modal
         visible={error.length > 0}
         onOk={() => {

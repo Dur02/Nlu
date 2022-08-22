@@ -288,7 +288,7 @@ const result = ({
   const exportSubmit = useCallback(async (values) => {
     setLoading(true);
     try {
-      const res = await onResultExport({ jobId: exportItem.id, ...values });
+      const res = await onResultExport({ jobId: exportItem.id, passed: values.passed === -1 ? '' : values.passed });
       const blob = new Blob([res], { type: 'text/plain; charset=utf-8' });
       const blobURL = window.URL.createObjectURL(blob);
       const tempLink = document.createElement('a');
@@ -311,12 +311,13 @@ const result = ({
       message.error('导出失败');
     }
     setLoading(false);
+    closeExport();
   }, [exportItem, loading, setLoading]);
 
   useEffect(() => {
     const timer = setInterval(async () => {
       await reload();
-    }, 5000);
+    }, 15000);
     return () => {
       clearInterval(timer);
     };
@@ -361,7 +362,7 @@ const result = ({
               wrapperCol={{ span: 14 }}
               autoComplete="off"
               initialValues={{
-                passed: 1,
+                passed: -1,
               }}
               onFinish={exportSubmit}
             >
@@ -371,6 +372,7 @@ const result = ({
                 rules={[{ required: true, message: '请输入类型!' }]}
               >
                 <Radio.Group>
+                  <Radio value={-1}>全部</Radio>
                   <Radio value={0}>未通过</Radio>
                   <Radio value={1}>已通过</Radio>
                 </Radio.Group>

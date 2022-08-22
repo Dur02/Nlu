@@ -9,7 +9,7 @@ import {
   DatePicker,
 } from 'antd';
 import { readAll, caseDel } from 'shared/actions/test-suite';
-import { readAll as readTestCase, update } from 'shared/actions/test-case';
+import { create as onCreateCase, readAll as readTestCase, update } from 'shared/actions/test-case';
 import { useAction } from 'relient/actions';
 import { map, prop, remove, union, includes, flow, reject, concat, sortBy, reverse } from 'lodash/fp';
 import moment from 'moment';
@@ -29,18 +29,20 @@ const result = ({
   caseData,
   setCaseData,
 }) => {
-  const [caseForm] = useForm();
+  const [caseCreateForm] = useForm();
+  const [caseUpdateForm] = useForm();
 
   const onUpdate = useAction(update);
   const delCase = useAction(caseDel);
   const readAllTestSuite = useAction(readAll);
   const readAllTestCase = useAction(readTestCase);
+  const createCase = useAction(onCreateCase);
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [search, setSearch] = useState({});
-  const [creating, setCreating] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const {
     detailsVisible: updateCaseVisible,
@@ -128,8 +130,8 @@ const result = ({
     setSearchLoading(false);
   }, [readAllTestSuite, search, setSearch, caseData, setCaseData]);
 
-  const caseSubmit = useCallback(async (values) => {
-    setCreating(true);
+  const caseUpdateSubmit = useCallback(async (values) => {
+    setLoading(true);
     try {
       const { data, msg } = await onUpdate({ id: updateCaseItem.id, ...values });
       setCaseData({
@@ -146,10 +148,10 @@ const result = ({
     } catch (e) {
       // message.error(e.msg);
     }
-    caseForm.resetFields();
-    setCreating(false);
+    caseUpdateForm.resetFields();
+    setLoading(false);
     closeUpdateCase();
-  }, [creating, setCreating, onUpdate, caseForm, closeUpdateCase, updateCaseItem, caseData]);
+  }, [loading, setLoading, onUpdate, caseUpdateForm, closeUpdateCase, updateCaseItem, caseData]);
 
   const caseReload = async (current) => {
     const { data } = await readAllTestCase({
@@ -167,6 +169,19 @@ const result = ({
     setCaseData(data);
   };
 
+  const caseCreateSubmit = useCallback(async (values) => {
+    setLoading(true);
+    try {
+      const { msg } = await createCase({ ...values });
+      message.success(msg);
+    } catch (e) {
+      // message.error(e.msg);
+    }
+    caseCreateForm.resetFields();
+    await caseReload(paginationProps.current);
+    setLoading(false);
+  }, [caseTableItem]);
+
   return (
     <>
       {caseTableItem && (
@@ -183,6 +198,85 @@ const result = ({
           width={1100}
           zIndex={10}
         >
+          <div
+            style={{
+              marginBottom: '22px',
+            }}
+          >
+            <Form
+              form={caseCreateForm}
+              name="basic"
+              layout="inline"
+              autoComplete="off"
+              onFinish={caseCreateSubmit}
+              initialValues={{
+                testSuiteId: caseTableItem.id,
+              }}
+            >
+              <Form.Item
+                label="用户说"
+                name="refText"
+                autoComplete="off"
+                style={{
+                  width: '200px',
+                }}
+                rules={[{ required: true, message: '请输入用户说!' }]}
+              >
+                <Input placeholder="输入用户说" />
+              </Form.Item>
+              <Form.Item
+                label="期待技能"
+                name="expectedSkill"
+                autoComplete="off"
+                style={{
+                  width: '200px',
+                }}
+                rules={[{ required: true, message: '请输入期待技能!' }]}
+              >
+                <Input placeholder="输入期待技能" />
+              </Form.Item>
+              <Form.Item
+                label="期待意图"
+                name="expectedIntent"
+                autoComplete="off"
+                style={{
+                  width: '200px',
+                }}
+                rules={[{ required: true, message: '请输入期待意图!' }]}
+              >
+                <Input placeholder="输入期待意图" />
+              </Form.Item>
+              <Form.Item
+                label="joss共享地址"
+                name="jossShareUrl"
+                autoComplete="off"
+                style={{
+                  width: '240px',
+                }}
+              >
+                <Input placeholder="输入joss共享地址" />
+              </Form.Item>
+              <Form.Item
+                label="测试集ID"
+                name="testSuiteId"
+                hidden
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  ghost
+                  size="middle"
+                  // loading={submitting}
+                  htmlType="submit"
+                  loading={loading}
+                >
+                  创建
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
           <div
             style={{
               marginBottom: '22px',
@@ -265,7 +359,7 @@ const result = ({
               caseTableItem,
               pagination: paginationProps,
               openUpdateCase,
-              caseForm,
+              caseForm: caseUpdateForm,
               caseReload,
             })}
             rowSelection={{
@@ -334,12 +428,12 @@ const result = ({
                 footer={null}
               >
                 <Form
-                  form={caseForm}
+                  form={caseUpdateForm}
                   name="basic"
                   labelCol={{ span: 7 }}
                   wrapperCol={{ span: 14 }}
                   autoComplete="off"
-                  onFinish={caseSubmit}
+                  onFinish={caseUpdateSubmit}
                 >
                   <Form.Item
                     label="用户说"
@@ -380,7 +474,7 @@ const result = ({
                       ghost
                       size="middle"
                       htmlType="submit"
-                      loading={creating}
+                      loading={loading}
                     >
                       修改
                     </Button>
