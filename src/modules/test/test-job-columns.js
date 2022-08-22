@@ -3,6 +3,7 @@ import { Button, Progress } from 'antd';
 import { ClockCircleOutlined, CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import React from 'react';
 import { filter, map, prop, propEq, flow, head } from 'lodash/fp';
+import { time } from 'relient/formatters';
 
 export const testJobColumns = ({
   openResult,
@@ -39,9 +40,6 @@ export const testJobColumns = ({
     prop('name'),
   )(product),
 }, {
-  title: '创建者',
-  dataIndex: 'creator',
-}, {
   title: '进度',
   render: (record) => {
     switch (record.status) {
@@ -55,6 +53,14 @@ export const testJobColumns = ({
         return <Progress percent={Math.floor(100 * record.progress)} size="small" />;
     }
   },
+}, {
+  title: '创建者',
+  dataIndex: 'creator',
+}, {
+  title: '创建时间',
+  dataIndex: 'createTime',
+  width: 160,
+  render: time(),
 }, {
   title: '操作',
   width: 140,
