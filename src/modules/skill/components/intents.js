@@ -106,6 +106,7 @@ const result = ({
       <Menu
         onClick={onIntentClick}
         selectedKeys={[intentId && intentId.toString()]}
+        className={s.Menu}
       >
         {flow(
           intentSearchText

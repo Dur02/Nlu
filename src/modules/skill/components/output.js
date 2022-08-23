@@ -53,7 +53,7 @@ const result = ({
   }, [intentId]);
 
   return (
-    <div>
+    <div className={s.Root}>
       <h3 className={s.Title}>选择控件</h3>
       <div className={s.Tips}>
         平台提供多种默认控件类型和样式。每种控件类型，对数据格式、对话流程、终端UI（有屏设备）配置各有不同。若您有更多的创意，可以上传自定义控件。
