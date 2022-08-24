@@ -133,7 +133,7 @@ const result = ({
     query: {
       fields: [{
         dataKey: 'title',
-        label: '测试集名',
+        label: '标题',
       }],
       searchWhenValueChange: false,
     },

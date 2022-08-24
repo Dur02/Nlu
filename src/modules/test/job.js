@@ -335,7 +335,7 @@ const result = ({
           onCancel,
           openEditor,
           product,
-          // caseData,
+          caseData,
           setResultId,
           readResultNum,
           setResultDetail,

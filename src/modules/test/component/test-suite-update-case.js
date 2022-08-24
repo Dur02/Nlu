@@ -82,14 +82,14 @@ const result = ({
 
   const rowSelection = {
     onSelect: (record, selected) => {
-      if (selected === true) {
+      if (selected) {
         setSelectedRowKeys(union([prop('id')(record)])(selectedRowKeys));
       } else {
         setSelectedRowKeys(remove((o) => o === prop('id')(record))(selectedRowKeys));
       }
     },
     onSelectAll: (selected, selectedRows, changeRows) => {
-      if (selected === true) {
+      if (selected) {
         setSelectedRowKeys(union(map((i) => i.id)(changeRows))(selectedRowKeys));
       } else {
         setSelectedRowKeys(remove((o) => includes(o)(

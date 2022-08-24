@@ -60,6 +60,7 @@ export default () => [{
     try {
       await Promise.all([
         dispatch(readProfile()),
+        dispatch(readAllProduct()),
       ]);
       const {
         data: {

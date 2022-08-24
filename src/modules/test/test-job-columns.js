@@ -1,5 +1,5 @@
 import { getPassed } from 'shared/constants/test-job';
-import { Button, Progress } from 'antd';
+import { Button, Progress, Tag } from 'antd';
 import { ClockCircleOutlined, CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import React from 'react';
 import { filter, map, prop, propEq, flow, head } from 'lodash/fp';
@@ -11,7 +11,7 @@ export const testJobColumns = ({
   onCancel,
   openEditor,
   product,
-  // caseData,
+  caseData,
   setResultId,
   readResultNum,
   setResultDetail,
@@ -24,13 +24,13 @@ export const testJobColumns = ({
   title: '标题',
   dataIndex: 'title',
 }, {
-  title: '测试集ID',
+  title: '测试集名字',
   dataIndex: 'testSuiteId',
-  // render: (testSuiteId) => flow(
-  //   filter(propEq('value', testSuiteId)),
-  //   head,
-  //   prop('label'),
-  // )(caseData),
+  render: (testSuiteId) => flow(
+    filter(propEq('value', testSuiteId)),
+    head,
+    prop('label'),
+  )(caseData) || <Tag color="error">已被删除</Tag>,
 }, {
   title: '产品',
   dataIndex: ['jobConfig', 'productId'],
