@@ -7,6 +7,7 @@ import {
   Input,
   message,
   DatePicker,
+  Select,
 } from 'antd';
 import { readAll, caseDel } from 'shared/actions/test-suite';
 import { create as onCreateCase, readAll as readTestCase, update } from 'shared/actions/test-case';
@@ -19,7 +20,7 @@ import { useDetails } from 'relient-admin/hooks';
 import { testCaseColumns } from '../test-case-columns';
 
 const { useForm } = Form;
-
+const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const result = ({
@@ -42,7 +43,8 @@ const result = ({
   const [updateLoading, setUpdateLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [search, setSearch] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
   const {
     detailsVisible: updateCaseVisible,
@@ -131,7 +133,7 @@ const result = ({
   }, [readAllTestSuite, search, setSearch, caseData, setCaseData]);
 
   const caseUpdateSubmit = useCallback(async (values) => {
-    setLoading(true);
+    setUpdating(true);
     try {
       const { data, msg } = await onUpdate({ id: updateCaseItem.id, ...values });
       setCaseData({
@@ -149,9 +151,9 @@ const result = ({
       // message.error(e.msg);
     }
     caseUpdateForm.resetFields();
-    setLoading(false);
+    setUpdating(false);
     closeUpdateCase();
-  }, [loading, setLoading, onUpdate, caseUpdateForm, closeUpdateCase, updateCaseItem, caseData]);
+  }, [updating, setUpdating, onUpdate, caseUpdateForm, closeUpdateCase, updateCaseItem, caseData]);
 
   const caseReload = async (current) => {
     const { data } = await readAllTestCase({
@@ -170,7 +172,7 @@ const result = ({
   };
 
   const caseCreateSubmit = useCallback(async (values) => {
-    setLoading(true);
+    setCreating(true);
     try {
       const { msg } = await createCase({ ...values });
       message.success(msg);
@@ -179,8 +181,8 @@ const result = ({
     }
     caseCreateForm.resetFields();
     await caseReload(paginationProps.current);
-    setLoading(false);
-  }, [caseTableItem]);
+    setCreating(false);
+  }, [caseTableItem, paginationProps, updating, setUpdating, caseCreateForm]);
 
   return (
     <>
@@ -192,6 +194,7 @@ const result = ({
             setCaseData({});
             setSearch({});
             setSelectedRowKeys([]);
+            caseCreateForm.resetFields();
             closeCaseTable();
           }}
           footer={null}
@@ -212,6 +215,7 @@ const result = ({
               onFinish={caseCreateSubmit}
               initialValues={{
                 testSuiteId: caseTableItem.id,
+                level: 1,
               }}
             >
               <Form.Item
@@ -219,7 +223,7 @@ const result = ({
                 name="refText"
                 autoComplete="off"
                 style={{
-                  width: '200px',
+                  width: '165px',
                 }}
                 rules={[{ required: true, message: '请输入用户说!' }]}
               >
@@ -230,7 +234,7 @@ const result = ({
                 name="expectedSkill"
                 autoComplete="off"
                 style={{
-                  width: '200px',
+                  width: '190px',
                 }}
                 rules={[{ required: true, message: '请输入期待技能!' }]}
               >
@@ -241,7 +245,7 @@ const result = ({
                 name="expectedIntent"
                 autoComplete="off"
                 style={{
-                  width: '200px',
+                  width: '190px',
                 }}
                 rules={[{ required: true, message: '请输入期待意图!' }]}
               >
@@ -252,10 +256,21 @@ const result = ({
                 name="jossShareUrl"
                 autoComplete="off"
                 style={{
-                  width: '240px',
+                  width: '230px',
                 }}
               >
                 <Input placeholder="输入joss共享地址" />
+              </Form.Item>
+              <Form.Item
+                label="级别"
+                name="level"
+              >
+                <Select>
+                  <Option value={1}>1</Option>
+                  <Option value={2}>2</Option>
+                  <Option value={3}>3</Option>
+                  <Option value={4}>4</Option>
+                </Select>
               </Form.Item>
               <Form.Item
                 label="测试集ID"
@@ -269,9 +284,9 @@ const result = ({
                   type="primary"
                   ghost
                   size="middle"
-                  // loading={submitting}
+                  // updating={submitting}
                   htmlType="submit"
-                  loading={loading}
+                  loading={creating}
                 >
                   创建
                 </Button>
@@ -292,30 +307,28 @@ const result = ({
                 label="用户说"
                 name="refText"
                 style={{
-                  width: '180px',
+                  width: '150px',
                 }}
               >
                 <Input
                   autoComplete="off"
-                  allowClear
                   placeholder="输入用户说"
                 />
               </Form.Item>
               <Form.Item
-                label="技能名"
+                label="期待技能"
                 name="skillName"
                 style={{
                   width: '180px',
                 }}
               >
                 <Input
-                  allowClear
                   autoComplete="off"
-                  placeholder="输入技能名"
+                  placeholder="输入期待技能"
                 />
               </Form.Item>
               <Form.Item
-                label="意图名"
+                label="期待意图"
                 name="intentName"
                 style={{
                   width: '180px',
@@ -323,8 +336,7 @@ const result = ({
               >
                 <Input
                   autoComplete="off"
-                  allowClear
-                  placeholder="输入意图名"
+                  placeholder="输入期待意图"
                 />
               </Form.Item>
               <Form.Item
@@ -360,7 +372,7 @@ const result = ({
               caseTableItem,
               pagination: paginationProps,
               openUpdateCase,
-              caseForm: caseUpdateForm,
+              caseUpdateForm,
               caseReload,
             })}
             rowSelection={{
@@ -429,12 +441,22 @@ const result = ({
                 footer={null}
               >
                 <Form
+                  // 当使用useForm控制表单时，resetFields时初始值会是上一次的值而不能动态变化，因为modal和form的生命周期不一致
+                  // 当modal内嵌form，而form需要动态变化初始值时
+                  // 使用useForm搭配setFieldsValue或者不使用useForm使modal和form生命一致，通过initialValues设置初始值
                   form={caseUpdateForm}
                   name="basic"
                   labelCol={{ span: 7 }}
                   wrapperCol={{ span: 14 }}
                   autoComplete="off"
                   onFinish={caseUpdateSubmit}
+                  // initialValues={{
+                  //   refText: updateCaseItem.refText,
+                  //   expectedSkill: updateCaseItem.expectedSkill,
+                  //   expectedIntent: updateCaseItem.expectedIntent,
+                  //   jossShareUrl: updateCaseItem.jossShareUrl,
+                  //   level: updateCaseItem.level,
+                  // }}
                 >
                   <Form.Item
                     label="用户说"
@@ -466,6 +488,21 @@ const result = ({
                     <Input />
                   </Form.Item>
                   <Form.Item
+                    label="级别"
+                    name="level"
+                    // style={{
+                    //   width: '110px',
+                    // }}
+                    // rules={[{ required: true, message: '请输入级别!' }]}
+                  >
+                    <Select>
+                      <Option value={1}>1</Option>
+                      <Option value={2}>2</Option>
+                      <Option value={3}>3</Option>
+                      <Option value={4}>4</Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
                     wrapperCol={{
                       offset: 10,
                     }}
@@ -475,7 +512,7 @@ const result = ({
                       ghost
                       size="middle"
                       htmlType="submit"
-                      loading={loading}
+                      loading={updating}
                     >
                       修改
                     </Button>

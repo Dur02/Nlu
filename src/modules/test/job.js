@@ -78,7 +78,7 @@ const result = ({
     autoComplete: 'off',
     rules: [{ required: true }],
   }, {
-    label: '测试集ID',
+    label: '测试集名',
     name: 'testSuiteId',
     component: Select,
     options: caseData,

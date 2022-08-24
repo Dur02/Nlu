@@ -84,12 +84,16 @@ export const testCaseColumns = ({
   caseTableItem,
   pagination,
   openUpdateCase,
-  caseForm,
+  caseUpdateForm,
   caseReload,
 }) => [{
   title: 'ID',
   // width: 140,
   dataIndex: 'id',
+}, {
+  title: '用户说',
+  // width: 180,
+  dataIndex: 'refText',
 }, {
   title: '期待技能',
   // width: 140,
@@ -103,9 +107,8 @@ export const testCaseColumns = ({
   width: 250,
   dataIndex: 'jossShareUrl',
 }, {
-  title: '用户说',
-  // width: 180,
-  dataIndex: 'refText',
+  title: '级别',
+  dataIndex: 'level',
 }, {
   title: '操作',
   width: 120,
@@ -116,7 +119,8 @@ export const testCaseColumns = ({
         ghost
         size="small"
         onClick={() => {
-          caseForm.setFieldsValue({ ...record });
+          // 设置form初始值，initialValues不能动态变化
+          caseUpdateForm.setFieldsValue({ ...record });
           openUpdateCase(record);
         }}
       >

@@ -81,22 +81,6 @@ const result = ({
       >
         创建测试集
       </Button>
-      {
-        // <Button
-        //   type="primary"
-        //   size="large"
-        //   style={{
-        //     position: 'absolute',
-        //     top: 20,
-        //     left: 156,
-        //   }}
-        //   onClick={() => {
-        //     setCaseVisible(true);
-        //   }}
-        // >
-        //   创建用例
-        // </Button>
-      }
       <a
         href={`${getWithBaseUrl('/template2.xlsx', getConfig('baseUrl'))}`}
         download="用例导入模板.xlsx"

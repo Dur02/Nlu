@@ -47,6 +47,7 @@ export const create = createAction(
     refText,
     skillCode,
     testSuiteId,
+    level,
   }) => post('/skill/edit/test/case', {
     audioFile,
     description,
@@ -57,6 +58,7 @@ export const create = createAction(
     refText,
     skillCode,
     testSuiteId,
+    level,
   }),
 );
 
@@ -72,6 +74,7 @@ export const update = createAction(
     jossShareUrl,
     refText,
     skillCode,
+    level,
   }) => put(`/skill/edit/test/case/${id}`, {
     audioFile,
     description,
@@ -81,6 +84,7 @@ export const update = createAction(
     jossShareUrl,
     refText,
     skillCode,
+    level,
   }),
 );
 
