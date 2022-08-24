@@ -191,6 +191,7 @@ const result = ({
           onCancel={() => {
             setCaseData({});
             setSearch({});
+            setSelectedRowKeys([]);
             closeCaseTable();
           }}
           footer={null}
