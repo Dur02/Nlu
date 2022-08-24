@@ -21,6 +21,7 @@ const result = ({
   const [suiteForm] = useForm();
   const formTitle = useWatch('title', suiteForm);
   const formSuiteType = useWatch('suiteType', suiteForm);
+  const description = useWatch('description', suiteForm);
 
   const [suiteVisible, setSuiteVisible] = useState(false);
   const [error, setError] = useState([]);
@@ -159,7 +160,7 @@ const result = ({
               onChange={onUpload}
               showUploadList={false}
               action={
-                () => `/skill/edit/test/suite/import?title=${formTitle}&suiteType=${formSuiteType}`
+                () => `/skill/edit/test/suite/import?title=${formTitle}&suiteType=${formSuiteType}&description=${description}`
               }
               headers={{ token }}
             >
