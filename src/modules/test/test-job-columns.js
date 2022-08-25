@@ -136,10 +136,6 @@ export const testJobColumns = ({
 }];
 
 export const resultColumns = () => [{
-  title: 'ID',
-  dataIndex: 'id',
-  // width: 70,
-}, {
   title: '测试用例ID',
   dataIndex: 'testCaseId',
 }, {

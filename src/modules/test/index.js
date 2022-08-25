@@ -4,8 +4,8 @@ import { readAll as readAllProduct } from 'shared/actions/product';
 import { readAll as readTestCase } from 'shared/actions/test-case';
 import { readAll as readTestSuite } from 'shared/actions/test-suite';
 import { readAll as readTestJob } from 'shared/actions/test-job';
-import { readAll as readAllSkills } from 'shared/actions/skill';
-import { readAll as readAllIntents } from 'shared/actions/intent';
+// import { readAll as readAllSkills } from 'shared/actions/skill';
+// import { readAll as readAllIntents } from 'shared/actions/intent';
 import { readMine as readProfile } from 'shared/actions/user';
 import { map, prop } from 'lodash/fp';
 import Case from './case';
@@ -18,8 +18,8 @@ export default () => [{
   action: async ({ store: { dispatch } }) => {
     await Promise.all([
       dispatch(readProfile()),
-      dispatch(readAllSkills()),
-      dispatch(readAllIntents()),
+      // dispatch(readAllSkills()),
+      // dispatch(readAllIntents()),
     ]);
     try {
       await dispatch(readProfile());
