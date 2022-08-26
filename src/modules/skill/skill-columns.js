@@ -197,6 +197,11 @@ export const getColumns = ({
   title: '最新版本',
   dataIndex: 'version',
 }, {
+  title: '最后更新',
+  dataIndex: 'createDate',
+  render: time(),
+  width: 200,
+}, {
   title: '操作',
   width: 430,
   render: (record) => (
