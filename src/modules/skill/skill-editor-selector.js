@@ -31,7 +31,6 @@ export default (skillId) => (state) => {
       const rules = flow(
         getEntityArray('rule'),
         filter(propEq('intentId', intent.id)),
-        orderBy(['id'], ['asc']),
         map((rule) => {
           const slots = JSON.parse(rule.slots);
           return {
@@ -56,6 +55,7 @@ export default (skillId) => (state) => {
             )(rule.sentence),
           };
         }),
+        orderBy(['sentenceDisplay.length'], ['asc']),
       )(state);
       return {
         ...intent,
