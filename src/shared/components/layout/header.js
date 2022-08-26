@@ -10,7 +10,7 @@ const { Header } = Layout;
 const { Item } = Menu;
 
 const result = ({
-  name,
+  nickName,
   logout,
   isCollapsed,
   toggleSider,
@@ -35,7 +35,7 @@ const result = ({
         )}
       >
         <div className={s.Action}>
-          <span>{name}</span>
+          <span>{nickName}</span>
         </div>
       </Dropdown>
     </Header>
@@ -43,7 +43,7 @@ const result = ({
 };
 
 result.propTypes = {
-  name: string,
+  nickName: string,
   logout: func.isRequired,
   isCollapsed: bool.isRequired,
   toggleSider: func.isRequired,
