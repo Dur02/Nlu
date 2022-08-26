@@ -4,8 +4,8 @@ import { Drawer, message, Table, Switch, Button, Popconfirm } from 'antd';
 import { map, any, flow, prop, reject, propEq, eq, find } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { booleanSwitchOptions, getBooleanText } from 'shared/constants/boolean';
-import { PlainText } from 'relient-admin/components';
+import { booleanSwitchOptions } from 'shared/constants/boolean';
+import EditableSwitchCell from 'shared/components/editable-switch-cell';
 
 import WordsList from './words-list';
 import Prompt from './intent-slot-prompt';
@@ -53,7 +53,7 @@ const result = ({
   const onClosePromptEditor = useCallback(() => setPromptEditorSlotName(null), []);
 
   const onUpdateSlot = useCallback(
-    (values, formInstance, editItem) => {
+    (values, _, editItem) => {
       const { name } = values;
       if (any(flow(
         prop('name'),
@@ -82,35 +82,10 @@ const result = ({
     message.success('删除成功');
   }, [intentId, slots]);
 
-  const fields = [{
-    label: '是否必须',
-    name: 'required',
-    component: Switch,
-    valuePropName: 'checked',
-    ...booleanSwitchOptions,
-  }, {
-    label: '是否有效槽位',
-    name: 'isSlot',
-    component: Switch,
-    valuePropName: 'checked',
-    ...booleanSwitchOptions,
-  }, {
-    label: '词库',
-    name: 'lexiconsNames',
-    rules: [{ required: true }],
-    component: WordsList,
-    words,
-    createWords,
-    updateWords,
-    removeWords,
-    skillId,
-  }];
-
   const {
     tableHeader,
     getDataSource,
     pagination,
-    openEditor,
   } = useLocalTable({
     query: {
       fussy: true,
@@ -134,18 +109,29 @@ const result = ({
         name: 'name',
         type: 'text',
         rules: [{ required: true }],
-      }, ...fields],
-      component: Drawer,
-      width: 600,
-    },
-    editor: {
-      title: '编辑语义槽',
-      onSubmit: onUpdateSlot,
-      fields: [{
-        label: '名称',
-        name: 'name',
-        component: PlainText,
-      }, ...fields],
+      }, {
+        label: '是否必须',
+        name: 'required',
+        component: Switch,
+        valuePropName: 'checked',
+        ...booleanSwitchOptions,
+      }, {
+        label: '是否有效槽位',
+        name: 'isSlot',
+        component: Switch,
+        valuePropName: 'checked',
+        ...booleanSwitchOptions,
+      }, {
+        label: '词库',
+        name: 'lexiconsNames',
+        rules: [{ required: true }],
+        component: WordsList,
+        words,
+        createWords,
+        updateWords,
+        removeWords,
+        skillId,
+      }],
       component: Drawer,
       width: 600,
     },
@@ -158,23 +144,41 @@ const result = ({
     title: '必须',
     dataIndex: 'required',
     width: 60,
-    render: getBooleanText,
+    render: (required, record) => (
+      <EditableSwitchCell
+        value={required}
+        onChange={(value) => onUpdateSlot({ ...record, required: value }, undefined, record)}
+      />
+    ),
   }, {
     title: '有效',
     dataIndex: 'isSlot',
     width: 60,
-    render: getBooleanText,
+    render: (isSlot, record) => (
+      <EditableSwitchCell
+        value={isSlot}
+        onChange={(value) => onUpdateSlot({ ...record, isSlot: value }, undefined, record)}
+      />
+    ),
   }, {
     title: '词库',
-    dataIndex: 'lexiconsNamesJoint',
+    dataIndex: 'lexiconsNames',
+    render: (lexiconsNames, record) => (
+      <WordsList
+        onChange={(value) => onUpdateSlot({ ...record, lexiconsNames: value }, undefined, record)}
+        value={lexiconsNames}
+        words={words}
+        createWords={createWords}
+        updateWords={updateWords}
+        removeWords={removeWords}
+        skillId={skillId}
+      />
+    ),
   }, {
     title: '操作',
     width: 80,
     render: (record) => (
       <>
-        <div className={s.Button}>
-          <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
-        </div>
         {prop('required')(record) && (
           <div className={s.Button}>
             <Button type="primary" size="small" ghost onClick={() => setPromptEditorSlotName(record.name)}>提问</Button>

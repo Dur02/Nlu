@@ -163,14 +163,14 @@ const result = ({
             </Button>
           </div>
         ))(selectedWords)}
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => setTableVisible(true)}
+        >
+          添加
+        </Button>
       </div>
-      <Button
-        type="primary"
-        size="small"
-        onClick={() => setTableVisible(true)}
-      >
-        添加
-      </Button>
       <Drawer
         forceRender
         visible={tableVisible}

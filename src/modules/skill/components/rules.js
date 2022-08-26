@@ -4,7 +4,7 @@ import { Button, Input, message, Popconfirm, Switch, Table } from 'antd';
 import { prop, map, size, reject, eq } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { useLocalTable } from 'relient-admin/hooks';
-import EditableCell from 'shared/components/editable-cell';
+import EditableInputCell from 'shared/components/editable-input-cell';
 
 import IntentSlots from './intent-slots';
 import s from './rules.less';
@@ -70,7 +70,7 @@ const result = ({
     title: '已添加说法',
     dataIndex: 'sentence',
     render: (sentence, { id }) => (
-      <EditableCell
+      <EditableInputCell
         value={sentence}
         onSubmit={(value) => onUpdateRule({ sentence: value, id })}
       />
