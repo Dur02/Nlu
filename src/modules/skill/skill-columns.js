@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { Button, Popconfirm, Dropdown, Menu, Space, message, Spin } from 'antd';
 import { getVersionStatusText } from 'shared/constants/version-status';
 import { time } from 'relient/formatters';
-import { includes, map, drop } from 'lodash/fp';
+import { includes, map } from 'lodash/fp';
 import { DownOutlined } from '@ant-design/icons';
 import { func, number, string, shape, array } from 'prop-types';
 
@@ -128,7 +128,7 @@ const Operations = ({
               <Item key={item.id} onClick={onEditHistory(item)}>
                 {item.version}
               </Item>
-            ))(drop(1)(record.skillVersions))}
+            ))(record.skillVersions)}
           </Menu>
         )}
         placement="bottom"
