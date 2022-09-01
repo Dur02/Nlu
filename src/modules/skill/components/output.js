@@ -48,9 +48,12 @@ const result = ({
   const [resourceForm] = useForm();
 
   useEffect(() => {
+    setNameVisible(output.component === CUSTOM);
+    setComponent(output.component);
+    setLocationVisible(output.resource === WEBHOOK || output.resource === NATIVE);
     componentForm.resetFields();
     resourceForm.resetFields();
-  }, [intentId]);
+  }, [output, intentId]);
 
   return (
     <div className={s.Root}>
