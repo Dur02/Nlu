@@ -297,7 +297,7 @@ const result = ({
       const date = new Date();
       tempLink.setAttribute(
         'download',
-        `${exportItem.title}(自动化测试结果导出)-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.csv`,
+        `${exportItem.title}(自动化测试结果导出)-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.csv`,
       );
       if (typeof tempLink.download === 'undefined') {
         tempLink.setAttribute('target', '_blank');

@@ -114,7 +114,7 @@ export const columns = ({
             const date = new Date();
             tempLink.setAttribute(
               'download',
-              `${record.title}-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.csv`,
+              `${record.title}-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.csv`,
             );
             if (typeof tempLink.download === 'undefined') {
               tempLink.setAttribute('target', '_blank');

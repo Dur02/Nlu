@@ -188,7 +188,7 @@ const result = ({ skillId }) => {
                 const date = new Date();
                 tempLink.setAttribute(
                   'download',
-                  `${skill.name}(技能回复)-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.yml`,
+                  `${skill.name}(技能回复)-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.yml`,
                 );
                 if (typeof tempLink.download === 'undefined') {
                   tempLink.setAttribute('target', '_blank');
