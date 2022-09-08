@@ -41,6 +41,13 @@ const routes = [
   },
 
   {
+    path: '/help',
+    chunks: ['help'],
+    requireAuth: true,
+    load: () => import(/* webpackChunkName: 'help' */ 'modules/help'),
+  },
+
+  {
     path: '/',
     chunks: ['product'],
     requireAuth: true,
@@ -53,6 +60,7 @@ const routes = [
     requireAuth: true,
     load: () => import(/* webpackChunkName: 'not-found' */ 'modules/not-found'),
   },
+
 ];
 
 // The error page is available by permanent url for development mode

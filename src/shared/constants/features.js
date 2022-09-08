@@ -18,6 +18,8 @@ export const CASE = 'CASE';
 export const SUITE = 'SUITE';
 export const JOB = 'JOB';
 
+export const HELP = 'HELP';
+
 export const features = [{
   key: PRODUCT,
   link: '/',
@@ -76,6 +78,10 @@ export const features = [{
     link: 'job',
     text: '测试任务',
   }],
+}, {
+  key: HELP,
+  link: 'help',
+  text: '帮助',
 }];
 
 setFeatures(features);
