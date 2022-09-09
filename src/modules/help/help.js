@@ -12,7 +12,7 @@ const blockContent = `AntV 是蚂蚁金服全新一代数据可视化解决方�
 const result = () => (
   <Layout>
     <Row>
-      <Col span={22}>
+      <Col span={21}>
         <Typography>
           <Title>Introduction</Title>
           <Paragraph>
@@ -156,7 +156,7 @@ const result = () => (
           </Paragraph>
         </Typography>
       </Col>
-      <Col span={2}>
+      <Col span={2} offset={1}>
         <Anchor>
           <Link href="#components-anchor-demo-basic" title="Basic demo" />
           <Link href="#components-anchor-demo-static" title="Static demo" />
