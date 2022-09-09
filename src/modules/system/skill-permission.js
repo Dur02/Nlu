@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Layout from 'shared/components/layout';
 import {
@@ -12,7 +12,7 @@ import { useDetails, useLocalTable } from 'relient-admin/hooks';
 import { update as updateSkillPermission } from 'shared/actions/skill-permission';
 import { getEntityArray } from 'relient/selectors';
 import { getSkillOptions, getSkillsWithCodeKey } from 'shared/selectors';
-import { flow, map, prop, join } from 'lodash/fp';
+import { flow, map, prop, join, difference, concat, find, propEq } from 'lodash/fp';
 import { useAction } from 'relient/actions';
 
 const result = () => {
@@ -64,13 +64,6 @@ const result = () => {
       fussy: true,
     },
     showReset: true,
-    // editor: {
-    //   title: '编辑技能权限',
-    //   onSubmit: onUpdate(),
-    //   fields: editorFields,
-    //   component: Modal,
-    //   width: 900,
-    // },
   });
 
   const columns = [{
@@ -128,6 +121,18 @@ const result = () => {
     },
   };
 
+  const getPermissionData = useCallback(
+    () => {
+      const temp = concat(
+        difference(map(({ value }) => value)(skillOptions), permissionItem.skillCodes),
+        permissionItem.skillCodes,
+      );
+      return flow(
+        map((item) => ({ label: find(propEq('value', item))(skillOptions).label, value: item })),
+      )(temp);
+    }, [permissionItem],
+  );
+
   return (
     <Layout>
       {tableHeader}
@@ -148,7 +153,7 @@ const result = () => {
           >
             <Table
               size="small"
-              dataSource={skillOptions}
+              dataSource={getPermissionData()}
               columns={permissionColumns}
               rowKey="value"
               rowSelection={{
