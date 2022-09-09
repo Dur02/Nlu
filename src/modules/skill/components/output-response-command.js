@@ -24,7 +24,7 @@ const result = ({
     setFinalValue(format(target.value));
   }, [setFinalValue]);
   const onSave = useCallback(() => {
-    onChange(`command://${finalValue}`);
+    onChange(`${finalValue}`);
   }, [finalValue, onChange]);
 
   return (
