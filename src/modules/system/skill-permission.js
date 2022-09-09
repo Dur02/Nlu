@@ -1,18 +1,19 @@
-import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import Layout from 'shared/components/layout';
 import {
   Table,
-  Select,
   Modal,
   Button,
+  message,
 } from 'antd';
-import { useLocalTable } from 'relient-admin/hooks';
-import { PlainText } from 'relient-admin/components';
+import { useDetails, useLocalTable } from 'relient-admin/hooks';
+// import { PlainText } from 'relient-admin/components';
 import { update as updateSkillPermission } from 'shared/actions/skill-permission';
 import { getEntityArray } from 'relient/selectors';
 import { getSkillOptions, getSkillsWithCodeKey } from 'shared/selectors';
 import { flow, map, prop, join } from 'lodash/fp';
+import { useAction } from 'relient/actions';
 
 const result = () => {
   const {
@@ -36,28 +37,21 @@ const result = () => {
     };
   });
 
-  const editorFields = [{
-    label: '用户名称',
-    name: 'name',
-    component: PlainText,
-  }, {
-    label: '技能权限',
-    name: 'skillCodes',
-    component: Select,
-    mode: 'multiple',
-    options: skillOptions,
-  }];
+  const {
+    detailsVisible: permissionVisible,
+    openDetails: openPermission,
+    closeDetails: closePermission,
+    detailsItem: permissionItem,
+  } = useDetails();
 
-  const dispatch = useDispatch();
-  const onUpdate = useCallback(async ({ skillCodes }, _, { userId }) => {
-    await dispatch(updateSkillPermission({ userId, skillCodes }));
-  }, [updateSkillPermission, dispatch]);
+  const onUpdate = useAction(updateSkillPermission);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const {
     tableHeader,
     getDataSource,
     pagination,
-    openEditor,
+    // openEditor,
   } = useLocalTable({
     query: {
       fields: [{
@@ -70,12 +64,13 @@ const result = () => {
       fussy: true,
     },
     showReset: true,
-    editor: {
-      title: '编辑技能权限',
-      onSubmit: onUpdate,
-      fields: editorFields,
-      component: Modal,
-    },
+    // editor: {
+    //   title: '编辑技能权限',
+    //   onSubmit: onUpdate(),
+    //   fields: editorFields,
+    //   component: Modal,
+    //   width: 900,
+    // },
   });
 
   const columns = [{
@@ -95,7 +90,10 @@ const result = () => {
       <>
         <Button
           type="primary"
-          onClick={() => openEditor(record)}
+          onClick={() => {
+            setSelectedRowKeys(record.skillCodes);
+            openPermission(record);
+          }}
           style={{ marginBottom: 10, marginRight: 10 }}
           size="small"
           ghost
@@ -106,6 +104,30 @@ const result = () => {
     ),
   }];
 
+  const permissionColumns = [{
+    title: '名字',
+    dataIndex: 'label',
+  }, {
+    title: '编号',
+    dataIndex: 'value',
+  }];
+
+  const rowSelection = {
+    onSelect: (_, __, selectedRows) => {
+      setSelectedRowKeys(map(({ value }) => value)(selectedRows));
+    },
+    onSelectAll: (selected) => {
+      if (selected) {
+        setSelectedRowKeys(map(({ value }) => value)(skillOptions));
+      } else {
+        setSelectedRowKeys([]);
+      }
+    },
+    onSelectNone: () => {
+      setSelectedRowKeys([]);
+    },
+  };
+
   return (
     <Layout>
       {tableHeader}
@@ -115,6 +137,50 @@ const result = () => {
         rowKey="userId"
         pagination={pagination}
       />
+      {
+        permissionItem && (
+          <Modal
+            open={permissionVisible}
+            onCancel={closePermission}
+            onOk={closePermission}
+            footer={null}
+            title="编辑技能权限"
+          >
+            <Table
+              size="small"
+              dataSource={skillOptions}
+              columns={permissionColumns}
+              rowKey="value"
+              rowSelection={{
+                type: 'checkbox',
+                selectedRowKeys,
+                ...rowSelection,
+              }}
+            />
+            <Button
+              style={{
+                position: 'relative',
+                left: '50%',
+                transform: 'translateX(-50%)',
+              }}
+              onClick={async () => {
+                try {
+                  const { msg } = await onUpdate({
+                    userId: permissionItem.userId,
+                    skillCodes: selectedRowKeys,
+                  });
+                  message.success(msg);
+                  closePermission();
+                } catch (e) {
+                  message.error(e.msg);
+                }
+              }}
+            >
+              更改
+            </Button>
+          </Modal>
+        )
+      }
     </Layout>
   );
 };

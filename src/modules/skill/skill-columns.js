@@ -1,12 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { Button, Popconfirm, Dropdown, Menu, Space, message, Spin } from 'antd';
+import { Button, Popconfirm, message, Spin, Select } from 'antd';
 import { getVersionStatusText } from 'shared/constants/version-status';
 import { time } from 'relient/formatters';
-import { includes, map } from 'lodash/fp';
-import { DownOutlined } from '@ant-design/icons';
+import { find, includes, map, propEq } from 'lodash/fp';
 import { func, number, string, shape, array } from 'prop-types';
-
-const { Item } = Menu;
 
 const hasPermission = async (readProfile, code) => {
   try {
@@ -52,10 +49,11 @@ const Operations = ({
     setLoading(false);
   }, [readProfile, record.code, record.id, setLoading]);
 
-  const onEditHistory = useCallback((item) => async () => {
+  const onEditHistory = useCallback(async (value) => {
+    const temp = find(propEq('id', value))(record.skillVersions);
     setLoading(true);
-    if (await hasPermission(readProfile, item.code)) {
-      push(`/skill/${item.id}`);
+    if (await hasPermission(readProfile, temp.code)) {
+      push(`/skill/${temp.id}`);
     } else {
       setLoading(false);
     }
@@ -121,31 +119,25 @@ const Operations = ({
           &nbsp;&nbsp;
         </>
       )}
-      <Dropdown
-        overlay={(
-          <Menu>
-            {map((item) => (
-              <Item key={item.id} onClick={onEditHistory(item)}>
-                {item.version}
-              </Item>
-            ))(record.skillVersions)}
-          </Menu>
-        )}
-        placement="bottom"
-      >
-        <Button type="primary" size="small" ghost>
-          <Space>
-            历史版本
-            <DownOutlined />
-          </Space>
-        </Button>
-      </Dropdown>
-      &nbsp;&nbsp;
       <Button type="primary" size="small" ghost onClick={onPublish}>发布</Button>
        &nbsp;&nbsp;
       <Button type="primary" size="small" ghost onClick={onExport}>导出</Button>
       &nbsp;&nbsp;
       <Button type="primary" size="small" ghost onClick={() => openWordGraph(record)}>词图</Button>
+      &nbsp;&nbsp;
+      <Select
+        size="small"
+        style={{ width: '100px' }}
+        defaultValue={-1}
+        onChange={onEditHistory}
+      >
+        <Select.Option value={-1}>历史版本</Select.Option>
+        {map((item) => (
+          <Select.Option value={item.id} key={item.id}>
+            {item.version}
+          </Select.Option>
+        ))(record.skillVersions)}
+      </Select>
       &nbsp;&nbsp;
       <Popconfirm
         title="确认删除吗？删除操作不可恢复"
@@ -203,7 +195,7 @@ export const getColumns = ({
   width: 200,
 }, {
   title: '操作',
-  width: 430,
+  width: 450,
   render: (record) => (
     <Operations
       record={record}
