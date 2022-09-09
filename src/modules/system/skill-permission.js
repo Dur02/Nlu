@@ -140,7 +140,7 @@ const result = () => {
       {
         permissionItem && (
           <Modal
-            open={permissionVisible}
+            visible={permissionVisible}
             onCancel={closePermission}
             onOk={closePermission}
             footer={null}
