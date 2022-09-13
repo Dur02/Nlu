@@ -19,6 +19,7 @@ const result = () => (
               dataSource={sysIntentTableData}
               pagination={false}
               size="small"
+              rowKey="id"
             />
           </Paragraph>
           {/* <Divider /> */}

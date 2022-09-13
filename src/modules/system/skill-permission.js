@@ -149,7 +149,7 @@ const result = () => {
             onCancel={closePermission}
             onOk={closePermission}
             footer={null}
-            title="编辑技能权限"
+            title={`编辑${permissionItem.nickName}技能权限`}
           >
             <Table
               size="small"
