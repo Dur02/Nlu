@@ -128,7 +128,7 @@ const result = () => {
         permissionItem.skillCodes,
       );
       return flow(
-        map((item) => ({ label: find(propEq('value', item))(skillOptions).label, value: item })),
+        map((item) => ({ label: prop('label')(find(propEq('value', item))(skillOptions)) || item, value: item })),
       )(temp);
     }, [permissionItem],
   );
@@ -177,7 +177,7 @@ const result = () => {
                   message.success(msg);
                   closePermission();
                 } catch (e) {
-                  message.error(e.msg);
+                  // message.error(e.msg);
                 }
               }}
             >
