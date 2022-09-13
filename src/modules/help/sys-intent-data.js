@@ -153,6 +153,7 @@ export const sysIntentTableData = [{
 export const sysIntentTableColumns = [{
   title: '系统内置词库',
   dataIndex: 'sysIntent',
+  width: 100,
 }, {
   title: '数据示例',
   dataIndex: 'example',
