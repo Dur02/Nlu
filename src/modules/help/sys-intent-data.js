@@ -47,7 +47,7 @@ export const sysIntentTableData = [{
   id: 10,
   sysIntent: 'sys.相对时间',
   example: '下周五晚上8点',
-  execute: '',
+  execute: '内部代码解析处理，由TimeProcessor来处理，循环周期不处理，如每周三',
 }, {
   id: 11,
   sysIntent: 'sys.年份',
