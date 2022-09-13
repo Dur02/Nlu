@@ -222,44 +222,58 @@ const result = ({
                 label="用户说"
                 name="refText"
                 autoComplete="off"
-                style={{
-                  width: '165px',
-                }}
                 rules={[{ required: true, message: '请输入用户说!' }]}
               >
-                <Input placeholder="输入用户说" />
+                <Input
+                  placeholder="输入用户说"
+                  style={{
+                    width: '100px',
+                  }}
+                />
               </Form.Item>
               <Form.Item
                 label="期待技能"
                 name="expectedSkill"
                 autoComplete="off"
-                style={{
-                  width: '190px',
-                }}
                 rules={[{ required: true, message: '请输入期待技能!' }]}
               >
-                <Input placeholder="输入期待技能" />
+                <Input
+                  placeholder="输入期待技能"
+                  style={{
+                    width: '110px',
+                  }}
+                />
               </Form.Item>
               <Form.Item
                 label="期待意图"
                 name="expectedIntent"
                 autoComplete="off"
-                style={{
-                  width: '190px',
-                }}
+                // style={{
+                //   width: '190px',
+                // }}
                 rules={[{ required: true, message: '请输入期待意图!' }]}
               >
-                <Input placeholder="输入期待意图" />
+                <Input
+                  placeholder="输入期待意图"
+                  style={{
+                    width: '110px',
+                  }}
+                />
               </Form.Item>
               <Form.Item
                 label="joss共享地址"
                 name="jossShareUrl"
                 autoComplete="off"
-                style={{
-                  width: '230px',
-                }}
+                // style={{
+                //   width: '230px',
+                // }}
               >
-                <Input placeholder="输入joss共享地址" />
+                <Input
+                  placeholder="输入joss共享地址"
+                  style={{
+                    width: '135px',
+                  }}
+                />
               </Form.Item>
               <Form.Item
                 label="级别"
@@ -306,50 +320,62 @@ const result = ({
               <Form.Item
                 label="用户说"
                 name="refText"
-                style={{
-                  width: '150px',
-                }}
+                // style={{
+                //   width: '150px',
+                // }}
               >
                 <Input
                   autoComplete="off"
                   placeholder="输入用户说"
+                  style={{
+                    width: '100px',
+                  }}
                 />
               </Form.Item>
               <Form.Item
                 label="期待技能"
                 name="skillName"
-                style={{
-                  width: '180px',
-                }}
+                // style={{
+                //   width: '180px',
+                // }}
               >
                 <Input
                   autoComplete="off"
                   placeholder="输入期待技能"
+                  style={{
+                    width: '115px',
+                  }}
                 />
               </Form.Item>
               <Form.Item
                 label="期待意图"
                 name="intentName"
-                style={{
-                  width: '180px',
-                }}
+                // style={{
+                //   width: '180px',
+                // }}
               >
                 <Input
                   autoComplete="off"
                   placeholder="输入期待意图"
+                  style={{
+                    width: '115px',
+                  }}
                 />
               </Form.Item>
               <Form.Item
                 label="日期"
                 name="date"
-                style={{
-                  width: '300px',
-                }}
+                // style={{
+                //   width: '300px',
+                // }}
               >
                 <RangePicker
                   locale={locale}
                   placeholder={['开始日期', '结束日期']}
                   disabledDate={(currentTemp) => currentTemp && currentTemp > moment().endOf('day')}
+                  style={{
+                    width: '250px',
+                  }}
                 />
               </Form.Item>
               <Form.Item>
