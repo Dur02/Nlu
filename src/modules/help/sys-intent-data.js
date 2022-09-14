@@ -122,7 +122,7 @@ export const sysIntentTableData = [{
   id: 25,
   sysIntent: 'sys.序列号',
   example: '第一，第二',
-  execute: '内部代码解析处理，左判断“第”中间判断是否是数值，需要包含：sys.页码才会触发',
+  execute: '内部代码解析处理，左判断“第”中间判断是否是数值，需要包含：sys.序列号才会触发',
 }, {
   id: 26,
   sysIntent: 'sys.页码',

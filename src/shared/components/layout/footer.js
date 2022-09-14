@@ -14,7 +14,7 @@ const result = ({ className }) => {
       <div className={s.Copyright}>
         Copyright&nbsp;
         <CopyrightOutlined />
-        &nbsp;2020 NLU Editor All Rights Reserved.
+        &nbsp;2022 NLU Editor All Rights Reserved.
       </div>
       <div className={s.Version}>Version: {global.version}</div>
     </div>
