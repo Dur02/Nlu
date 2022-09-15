@@ -133,6 +133,22 @@ const result = () => {
     }, [permissionItem],
   );
 
+  const {
+    tableHeader: skillTableHeader,
+    getDataSource: getSkillData,
+    // pagination: skillPagination,
+    // openEditor,
+  } = useLocalTable({
+    query: {
+      fields: [{
+        dataKey: 'label',
+        label: '名称',
+      }],
+      fussy: true,
+    },
+    showReset: true,
+  });
+
   return (
     <Layout>
       {tableHeader}
@@ -151,9 +167,11 @@ const result = () => {
             footer={null}
             title={`编辑${permissionItem.nickName}技能权限`}
           >
+            {skillTableHeader}
             <Table
               size="small"
-              dataSource={getPermissionData()}
+              dataSource={getSkillData(getPermissionData())}
+              // pagination={skillPagination}
               columns={permissionColumns}
               rowKey="value"
               rowSelection={{
