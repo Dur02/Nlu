@@ -6,19 +6,22 @@ import {
   Modal,
   Button,
   Tree,
+  Typography,
 } from 'antd';
 import { useLocalTable } from 'relient-admin/hooks';
 import { create, update } from 'shared/actions/role';
 import { useAction } from 'relient/actions';
 import { flow, prop, map, join } from 'lodash/fp';
-import { gerRoles, getResourceOptions } from 'shared/selectors';
+import { getRoles, getResourceOptions } from 'shared/selectors';
+// import { getEntityArray } from 'relient/selectors';
 
+const { Paragraph } = Typography;
 const result = () => {
   const {
     roles,
     resourceOptions,
   } = useSelector((state) => ({
-    roles: gerRoles(state),
+    roles: getRoles(state),
     resourceOptions: getResourceOptions(state),
   }));
 
@@ -82,7 +85,20 @@ const result = () => {
   }, {
     title: '权限',
     dataIndex: 'resources',
-    render: flow(map(prop('resourceName')), join(', ')),
+    render: (record) => (
+      <Paragraph
+        ellipsis={{
+          rows: 3,
+          expandable: true,
+          // suffix: '--William Shakespeare',
+          // onEllipsis: ellipsis => {
+          //   console.log('Ellipsis changed:', ellipsis);
+          // },
+        }}
+      >
+        {flow(map(prop('resourceName')), join(', '))(record)}
+      </Paragraph>
+    ),
   }, {
     title: '操作',
     key: 'operations',

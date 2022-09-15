@@ -17,7 +17,7 @@ export const getCurrentUser = (state) => flow(
   prop(getEntity('auth.currentUserId')(state)),
 )(state);
 
-export const gerRoles = (state) => flow(
+export const getRoles = (state) => flow(
   getEntityArray('role'),
   reject(propEq('id', 1)),
   map((role) => ({
@@ -69,8 +69,8 @@ export const getResourceOptions = (state, father = 0) => {
     filter(propEq('father', father)),
   )(state);
   if (resources.length > 0) {
-    return map(({ id, resourceName }) => ({
-      title: resourceName,
+    return map(({ id, resourceName, method }) => ({
+      title: `${resourceName} ${method ? `(${method})` : ''}`,
       key: id,
       children: getResourceOptions(state, id),
     }))(resources);
