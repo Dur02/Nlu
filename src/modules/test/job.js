@@ -252,7 +252,7 @@ const result = ({
         </>
       );
     },
-    rowExpandable: ({ jobResult }) => jobResult && jobResult !== '',
+    rowExpandable: ({ jobResult }) => jobResult && jobResult !== '' && jobResult !== '[]',
   };
 
   const onScrollCapture = useCallback(async (e) => {
