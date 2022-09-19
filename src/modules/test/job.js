@@ -352,7 +352,7 @@ const result = ({
               closeExport();
             }}
             destroyOnClose
-            title={`${exportItem.title}修改`}
+            title={`${exportItem.title}导出`}
             width={500}
             footer={null}
           >
