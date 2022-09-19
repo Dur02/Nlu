@@ -26,8 +26,9 @@ const result = ({
     }
   }, [setEditing]);
   const onBlur = useCallback(() => {
+    setEditingValue(value);
     setEditing(false);
-  }, [setEditing]);
+  }, [setEditingValue, setEditing, value]);
   const onKeyPress = useCallback(async ({ key }) => {
     if (key === 'Enter') {
       setSubmitting(true);
