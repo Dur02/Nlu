@@ -436,6 +436,8 @@ const result = ({
               }}
               onSelect={async (value) => {
                 setLoading(true);
+                // 切换结果类型后把滚动条重新移动到最上方，否则会进行多次请求直至上次滚动到的页数
+                document.querySelector('#resultTable .ant-table-body').scrollTop = 0;
                 const {
                   data: {
                     data: resultData,
@@ -459,6 +461,7 @@ const result = ({
               <Option value={1}>通过</Option>
             </Select>
             <Table
+              id="resultTable"
               dataSource={getResultData()}
               columns={resultColumns()}
               rowKey="id"

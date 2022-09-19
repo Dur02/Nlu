@@ -44,7 +44,7 @@ export const testJobColumns = ({
   render: (record) => {
     switch (record.status) {
       case 0:
-        return <span><ClockCircleOutlined style={{ color: 'yellow' }} />排队中</span>;
+        return <span><ClockCircleOutlined style={{ color: 'orange' }} />排队中</span>;
       case 1:
         return <span><CheckCircleOutlined style={{ color: 'green' }} />已完成</span>;
       case 2:
