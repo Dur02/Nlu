@@ -179,6 +179,17 @@ const result = ({
         </Button>
       </div>
       <Tabs
+        // tabBarStyle={{
+        //   maxWidth: '300px',
+        //   display: 'block',
+        //   whiteSpace: 'normal',
+        //   padding: '0',
+        //   wordWrap: 'break-word',
+        //   wordBreak: 'break-all',
+        //   textOverflow: 'ellipsis',
+        //   overflow: 'hidden',
+        //   justifyContent: 'space-between',
+        // }}
         activeKey={selectedCId}
         onTabClick={setSelectedCId}
         className={s.Tabs}
