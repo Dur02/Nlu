@@ -10,6 +10,7 @@ import { getFeatureBy } from 'relient/features';
 import getConfig from 'relient/config';
 import { getWithBaseUrl } from 'relient/url';
 import relientAdminStyle from 'relient-admin/styles.css';
+import { DownOutlined } from '@ant-design/icons';
 import FloatWindows from '../floating-windows';
 import Sider from './sider';
 import globalStyle from './global_.less';
@@ -36,7 +37,10 @@ const result = ({
     global.document.location.replace(getWithBaseUrl('/auth/login', getConfig('baseUrl')));
   }, [logoutAction]);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  // const [isPopover, setIsPopover] = useState(false);
   const toggleSider = useCallback(() => setIsCollapsed(!isCollapsed), [isCollapsed]);
+  // const changeIcon = useCallback(() => setIsPopover(!isPopover), [isPopover]);
+  // const resetIcon = useCallback(() => setIsPopover(false), [isPopover]);
 
   // console.log(subTitle);
   // console.log(last(selectedFeatureKeys));
@@ -71,6 +75,9 @@ const result = ({
               last(selectedFeatureKeys) === 'SKILL' && subTitle !== '' ? (
                 <Popover content={<FloatWindows />} trigger="click">
                   {subTitle}
+                  <span style={{ padding: '15px 0 0 8px' }}>
+                    <DownOutlined />
+                  </span>
                 </Popover>
               ) : subTitle
             }

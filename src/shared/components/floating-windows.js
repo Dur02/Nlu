@@ -88,8 +88,8 @@ const result = () => {
         dataKey: 'name',
         label: '名称',
       }],
+      fussy: true,
     },
-    showReset: true,
   });
 
   return (
@@ -97,7 +97,7 @@ const result = () => {
       {tableHeader}
       <Table
         style={{
-          width: '525px',
+          width: '367px',
         }}
         rowKey="id"
         size="small"
