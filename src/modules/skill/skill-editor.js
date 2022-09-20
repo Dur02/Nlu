@@ -152,7 +152,7 @@ const result = ({ skillId }) => {
 
   return (
     <Layout
-      subTitle={`${skill.name}  (${skill.version})  `}
+      subTitle={`${skill.name}(${skill.version})`}
       addonAfter={(
         <>
           <Button

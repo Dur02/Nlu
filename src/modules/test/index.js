@@ -22,7 +22,6 @@ export default () => [{
       // dispatch(readAllIntents()),
     ]);
     try {
-      await dispatch(readProfile());
       const {
         data: {
           data,

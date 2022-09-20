@@ -54,9 +54,8 @@ const Operations = ({
     setLoading(true);
     if (await hasPermission(readProfile, temp.code)) {
       push(`/skill/${temp.id}`);
-    } else {
-      setLoading(false);
     }
+    setLoading(false);
   }, [readProfile, setLoading]);
 
   const onPublish = useCallback(async () => {

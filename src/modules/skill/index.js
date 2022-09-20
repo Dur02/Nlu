@@ -34,6 +34,8 @@ export default () => [{
     const skillId = Number(id);
     try {
       await Promise.all([
+        // dispatch(readProfile()),
+        dispatch(readAllSkillVersion()),
         dispatch(readOneSkill({ id: skillId })),
         dispatch(readAllWords({ skillId })),
         dispatch(readAllWords({ type: 'SYSTEM' })),

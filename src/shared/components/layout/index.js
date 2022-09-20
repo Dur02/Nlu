@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { string, node, bool } from 'prop-types';
-import { Layout, Card } from 'antd';
+import { Layout, Card, Popover } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout as logoutAction } from 'shared/actions/auth';
 import useStyles from 'isomorphic-style-loader/useStyles';
@@ -10,6 +10,7 @@ import { getFeatureBy } from 'relient/features';
 import getConfig from 'relient/config';
 import { getWithBaseUrl } from 'relient/url';
 import relientAdminStyle from 'relient-admin/styles.css';
+import FloatWindows from '../floating-windows';
 import Sider from './sider';
 import globalStyle from './global_.less';
 import s from './index.less';
@@ -37,6 +38,10 @@ const result = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const toggleSider = useCallback(() => setIsCollapsed(!isCollapsed), [isCollapsed]);
 
+  // console.log(subTitle);
+  // console.log(last(selectedFeatureKeys));
+  // console.log(last(selectedFeatureKeys) === 'SKILL' && subTitle !== '');
+
   return (
     <Layout hasSider className={s.Root}>
       <Sider
@@ -61,7 +66,15 @@ const result = ({
               : getFeatureBy('text')(last(selectedFeatureKeys)))}
           </h1>
           {subTitle && <div className={s.Separator}>/</div>}
-          <div className={s.SubTitle}>{subTitle}</div>
+          <div className={s.SubTitle}>
+            {
+              last(selectedFeatureKeys) === 'SKILL' && subTitle !== '' ? (
+                <Popover content={<FloatWindows />} trigger="click">
+                  {subTitle}
+                </Popover>
+              ) : subTitle
+            }
+          </div>
           {addonAfter && <div className={s.AddonAfter}>{addonAfter}</div>}
         </div>
 
