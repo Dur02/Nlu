@@ -99,7 +99,7 @@ const result = () => {
         style={{
           width: '525px',
         }}
-        // rowKey="id"
+        rowKey="id"
         size="small"
         dataSource={getDataSource(skills)}
         columns={columns}
