@@ -47,7 +47,7 @@ const result = () => {
       push(`/skill/${temp.id}`);
     }
     setLoading(false);
-  }, []);
+  }, [setLoading]);
 
   const columns = [
     {
@@ -63,7 +63,7 @@ const result = () => {
           <Select
             size="small"
             style={{ width: '100px' }}
-            defaultValue={-1}
+            value={-1}
             onChange={((value) => onEditHistory(skillVersions, value))}
           >
             <Select.Option value={-1}>历史版本</Select.Option>
@@ -99,7 +99,7 @@ const result = () => {
         style={{
           width: '525px',
         }}
-        rowKey="id"
+        // rowKey="id"
         size="small"
         dataSource={getDataSource(skills)}
         columns={columns}
