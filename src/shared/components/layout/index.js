@@ -72,7 +72,7 @@ const result = ({
           {subTitle && <div className={s.Separator}>/</div>}
           <div className={s.SubTitle}>
             {
-              last(selectedFeatureKeys) === 'SKILL' && subTitle !== '' ? (
+              subTitle && last(selectedFeatureKeys) === 'SKILL' ? (
                 <Popover content={<FloatWindows />} trigger="click">
                   {subTitle}
                   <DownOutlined style={{ paddingLeft: '8px', fontSize: '15px' }} />
