@@ -228,7 +228,7 @@ const result = ({
           >
             <h4 className={s.Title}>条件描述</h4>
             {isDefault ? cnames : (
-              <Button type="link" onClick={() => setEditorConditionCId(cId)}>{getCName(condition)}</Button>
+              <Button style={{ wordWrap: 'break-word', wordBreak: 'break-all', whiteSpace: 'normal' }} type="link" onClick={() => setEditorConditionCId(cId)}>{getCName(condition)}</Button>
             )}
 
             <h4 className={s.Title}>回复内容</h4>

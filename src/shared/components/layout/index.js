@@ -75,9 +75,7 @@ const result = ({
               last(selectedFeatureKeys) === 'SKILL' && subTitle !== '' ? (
                 <Popover content={<FloatWindows />} trigger="click">
                   {subTitle}
-                  <span style={{ padding: '15px 0 0 8px' }}>
-                    <DownOutlined />
-                  </span>
+                  <DownOutlined style={{ paddingLeft: '8px', fontSize: '15px' }} />
                 </Popover>
               ) : subTitle
             }
