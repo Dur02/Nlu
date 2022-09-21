@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { message, Select, Spin, Table } from 'antd';
+import React from 'react';
+import { message, Select, Table } from 'antd';
 import { useSelector } from 'react-redux';
 import { push as pushAction } from 'relient/actions/history';
 import { filter, find, flow, includes, map, propEq } from 'lodash/fp';
@@ -22,7 +22,10 @@ const hasPermission = async (readProfile, code) => {
   }
 };
 
-const result = () => {
+const result = ({
+  // visible,
+  setVisible,
+}) => {
   const {
     skills,
   } = useSelector((state) => {
@@ -37,17 +40,18 @@ const result = () => {
 
   const readProfile = useAction(readMine);
   const push = useAction(pushAction);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
-  const onEditHistory = useCallback(async (skillVersions, value) => {
-    const temp = find(propEq('id', value))(skillVersions);
-    setLoading(true);
-    if (await hasPermission(readProfile, temp.code)) {
-      message.success('跳转中，请稍候');
-      push(`/skill/${temp.id}`);
-    }
-    setLoading(false);
-  }, [setLoading]);
+  // const onEditHistory = useCallback(async (skillVersions, value) => {
+  //   const temp = find(propEq('id', value))(skillVersions);
+  //   // setLoading(true);
+  //   setVisible(false);
+  //   if (await hasPermission(readProfile, temp.code)) {
+  //     await push(`/skill/${temp.id}`);
+  //     message.success('跳转中，请稍候');
+  //   }
+  //   // setLoading(false);
+  // }, [setVisible, readProfile]);
 
   const columns = [
     {
@@ -59,21 +63,29 @@ const result = () => {
       title: '版本',
       dataIndex: 'skillVersions',
       render: (skillVersions) => (
-        <Spin spinning={loading}>
-          <Select
-            size="small"
-            style={{ width: '100px' }}
-            value={-1}
-            onChange={((value) => onEditHistory(skillVersions, value))}
-          >
-            <Select.Option value={-1}>历史版本</Select.Option>
-            {map((item) => (
-              <Select.Option value={item.id} key={item.id}>
-                {item.version}
-              </Select.Option>
-            ))(skillVersions)}
-          </Select>
-        </Spin>
+        <Select
+          size="small"
+          style={{ width: '100px' }}
+          // open={open}
+          value={-1}
+          onChange={async (value) => {
+            const temp = find(propEq('id', value))(skillVersions);
+            // setLoading(true);
+            setVisible(false);
+            if (await hasPermission(readProfile, temp.code)) {
+              await push(`/skill/${temp.id}`);
+              message.success('跳转中，请稍候');
+            }
+            // setLoading(false);
+          }}
+        >
+          <Select.Option value={-1}>历史版本</Select.Option>
+          {map((item) => (
+            <Select.Option value={item.id} key={item.id}>
+              {item.version}
+            </Select.Option>
+          ))(skillVersions)}
+        </Select>
       ),
       // width: 200,
     },

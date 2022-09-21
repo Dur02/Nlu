@@ -36,15 +36,12 @@ const result = ({
     dispatch(logoutAction());
     global.document.location.replace(getWithBaseUrl('/auth/login', getConfig('baseUrl')));
   }, [logoutAction]);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  // const [isPopover, setIsPopover] = useState(false);
-  const toggleSider = useCallback(() => setIsCollapsed(!isCollapsed), [isCollapsed]);
-  // const changeIcon = useCallback(() => setIsPopover(!isPopover), [isPopover]);
-  // const resetIcon = useCallback(() => setIsPopover(false), [isPopover]);
 
-  // console.log(subTitle);
-  // console.log(last(selectedFeatureKeys));
-  // console.log(last(selectedFeatureKeys) === 'SKILL' && subTitle !== '');
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  const toggleSider = useCallback(() => setIsCollapsed(!isCollapsed), [isCollapsed]);
+  const handleOpenChange = useCallback((newOpen) => setVisible(newOpen), [visible]);
 
   return (
     <Layout hasSider className={s.Root}>
@@ -73,7 +70,13 @@ const result = ({
           <div className={s.SubTitle}>
             {
               subTitle && last(selectedFeatureKeys) === 'SKILL' ? (
-                <Popover content={<FloatWindows />} trigger="click">
+                <Popover
+                  content={<FloatWindows setVisible={setVisible} />}
+                  trigger="click"
+                  visible={visible}
+                  onVisibleChange={handleOpenChange}
+                  // onOpenChange={handleOpenChange}
+                >
                   {subTitle}
                   <DownOutlined style={{ paddingLeft: '8px', fontSize: '15px' }} />
                 </Popover>
@@ -85,9 +88,11 @@ const result = ({
 
         <div className={className} style={{ margin: '24px 24px 0' }}>
           {multipleCard ? children : (
-            <Card bordered={false}>
-              {children}
-            </Card>
+            <>
+              <Card bordered={false}>
+                {children}
+              </Card>
+            </>
           )}
         </div>
         <Footer />

@@ -32,6 +32,7 @@ export default () => [{
   feature: SKILL,
   action: async ({ params: { id }, store: { dispatch } }) => {
     const skillId = Number(id);
+    // console.log(skillId);
     try {
       await Promise.all([
         // dispatch(readProfile()),
