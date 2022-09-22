@@ -22,7 +22,10 @@ const getContent = (words) => {
   }
 };
 
-export default (skillId) => (state) => {
+export default (skillId, tempId) => (state) => {
+  if (tempId !== -1 && tempId !== skillId) {
+    return {};
+  }
   const intents = flow(
     getEntityArray('intent'),
     filter(propEq('skillId', skillId)),

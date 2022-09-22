@@ -1,7 +1,6 @@
 import React from 'react';
 import Layout from 'shared/components/layout';
 import {
-  Button,
   Table,
 } from 'antd';
 import { useAPITable } from 'relient-admin/hooks';
@@ -13,7 +12,6 @@ import { time } from 'relient/formatters';
 import { useSelector } from 'react-redux';
 import { getAuditResourceTypeOptions } from 'shared/selectors';
 import moment from 'moment';
-import { push as pushAction } from 'relient/actions/history';
 
 const getDataSource = (state) => map((id) => getEntity(`auditLog.${id}`)(state));
 
@@ -156,11 +154,8 @@ const result = ({
     rowExpandable: ({ contentDiffVos }) => contentDiffVos && contentDiffVos.length > 0,
   };
 
-  const push = useAction(pushAction);
-
   return (
     <Layout>
-      <Button onClick={() => push('/skill/822')}>随便</Button>
       {tableHeader}
       <Table
         tableLayout="fixed"

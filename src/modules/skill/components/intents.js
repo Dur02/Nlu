@@ -5,8 +5,6 @@ import useStyles from 'isomorphic-style-loader/useStyles';
 import { map, flow, filter, identity, includes, every, size, find, propEq, prop } from 'lodash/fp';
 import { SEMANTIC } from 'shared/constants/intent-type';
 
-import { useAction } from 'relient/actions';
-import { push as pushAction } from 'relient/actions/history';
 import s from './intents.less';
 
 const { Item } = Menu;
@@ -76,8 +74,6 @@ const result = ({
     ({ name }) => every((intent) => intent.name !== name)(intents),
   )(builtinIntents);
 
-  const push = useAction(pushAction);
-
   const intentOptions = (
     <Menu onClick={onCreateIntent}>
       <Item key={SEMANTIC}>
@@ -107,7 +103,6 @@ const result = ({
           className={s.Search}
         />
       </div>
-      <Button onClick={() => push('/skill/822')}>随便</Button>
       <Menu
         onClick={onIntentClick}
         selectedKeys={[intentId && intentId.toString()]}

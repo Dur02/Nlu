@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { string, node, bool } from 'prop-types';
-import { Layout, Card, Popover } from 'antd';
+import { Layout, Card } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout as logoutAction } from 'shared/actions/auth';
 import useStyles from 'isomorphic-style-loader/useStyles';
@@ -10,8 +10,6 @@ import { getFeatureBy } from 'relient/features';
 import getConfig from 'relient/config';
 import { getWithBaseUrl } from 'relient/url';
 import relientAdminStyle from 'relient-admin/styles.css';
-import { DownOutlined } from '@ant-design/icons';
-import FloatWindows from '../floating-windows';
 import Sider from './sider';
 import globalStyle from './global_.less';
 import s from './index.less';
@@ -38,10 +36,8 @@ const result = ({
   }, [logoutAction]);
 
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [visible, setVisible] = useState(false);
 
   const toggleSider = useCallback(() => setIsCollapsed(!isCollapsed), [isCollapsed]);
-  const handleOpenChange = useCallback((newOpen) => setVisible(newOpen), [visible]);
 
   return (
     <Layout hasSider className={s.Root}>
@@ -67,22 +63,7 @@ const result = ({
               : getFeatureBy('text')(last(selectedFeatureKeys)))}
           </h1>
           {subTitle && <div className={s.Separator}>/</div>}
-          <div className={s.SubTitle}>
-            {
-              subTitle && last(selectedFeatureKeys) === 'SKILL' ? (
-                <Popover
-                  content={<FloatWindows setVisible={setVisible} />}
-                  trigger="click"
-                  visible={visible}
-                  onVisibleChange={handleOpenChange}
-                  // onOpenChange={handleOpenChange}
-                >
-                  {subTitle}
-                  <DownOutlined style={{ paddingLeft: '8px', fontSize: '15px' }} />
-                </Popover>
-              ) : subTitle
-            }
-          </div>
+          <div className={s.SubTitle}>{subTitle}</div>
           {addonAfter && <div className={s.AddonAfter}>{addonAfter}</div>}
         </div>
 

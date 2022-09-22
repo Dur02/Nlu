@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { message, Select, Table } from 'antd';
 import { useSelector } from 'react-redux';
 import { push as pushAction } from 'relient/actions/history';
@@ -24,7 +24,7 @@ const hasPermission = async (readProfile, code) => {
 
 const result = ({
   // visible,
-  setVisible,
+  setTempId,
 }) => {
   const {
     skills,
@@ -42,16 +42,15 @@ const result = ({
   const push = useAction(pushAction);
   // const [loading, setLoading] = useState(false);
 
-  // const onEditHistory = useCallback(async (skillVersions, value) => {
-  //   const temp = find(propEq('id', value))(skillVersions);
-  //   // setLoading(true);
-  //   setVisible(false);
-  //   if (await hasPermission(readProfile, temp.code)) {
-  //     await push(`/skill/${temp.id}`);
-  //     message.success('跳转中，请稍候');
-  //   }
-  //   // setLoading(false);
-  // }, [setVisible, readProfile]);
+  const onEditHistory = useCallback(async (skillVersions, value) => {
+    const temp = find(propEq('id', value))(skillVersions);
+    // setLoading(true);
+    setTempId(value);
+    if (await hasPermission(readProfile, temp.code)) {
+      push(`/skill/${temp.id}`);
+      message.success('跳转中，请稍候');
+    }
+  }, [setTempId, readProfile]);
 
   const columns = [
     {
@@ -68,16 +67,7 @@ const result = ({
           style={{ width: '100px' }}
           // open={open}
           value={-1}
-          onChange={async (value) => {
-            const temp = find(propEq('id', value))(skillVersions);
-            // setLoading(true);
-            setVisible(false);
-            if (await hasPermission(readProfile, temp.code)) {
-              await push(`/skill/${temp.id}`);
-              message.success('跳转中，请稍候');
-            }
-            // setLoading(false);
-          }}
+          onChange={(value) => onEditHistory(skillVersions, value)}
         >
           <Select.Option value={-1}>历史版本</Select.Option>
           {map((item) => (

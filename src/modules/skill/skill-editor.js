@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import Layout from 'shared/components/layout';
-import { Tabs, Empty, Input, message, Modal, Button, Upload, Table } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Tabs, Empty, Input, message, Modal, Button, Upload, Table, Popover, Spin } from 'antd';
+import { DownOutlined, UploadOutlined } from '@ant-design/icons';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { SEMANTIC } from 'shared/constants/intent-type';
 import {
@@ -35,6 +35,7 @@ import s from './skill-editor.less';
 import WordGraph from '../../shared/components/word-graph';
 import GlobalSearchRules from './components/global-search-rules';
 import { columns } from './components/skill-test-columns';
+import FloatWindows from '../../shared/components/floating-windows';
 
 const { TabPane } = Tabs;
 const { Search } = Input;
@@ -43,6 +44,17 @@ const mapWithIndex = map.convert({ cap: false });
 const result = ({ skillId }) => {
   useStyles(s);
 
+  const [selectedIntentId, setSelectedIntentId] = useState(null);
+  const [intentNameText, setIntentNameText] = useState('');
+  const [wordGraphVisible, setWordGraphVisible] = useState(false);
+  const [globalSearch, setGlobalSearch] = useState(false);
+  const [uploadVisible, setUploadVisible] = useState(false);
+  const [isText, setIsText] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState([]);
+  // const [isPush, setIsPush] = useState(false);
+  const [tempId, setTempId] = useState(-1);
+
   const {
     intents,
     skill,
@@ -50,11 +62,11 @@ const result = ({ skillId }) => {
     words,
     outputs,
     token,
-  } = useSelector(selector(skillId));
-  const [selectedIntentId, setSelectedIntentId] = useState(null);
-  const [intentNameText, setIntentNameText] = useState('');
-  const selectedIntent = find(propEq('id', selectedIntentId))(intents);
+  } = useSelector(selector(skillId, tempId), shallowEqual);
+
+  const selectedIntent = find(propEq('id', selectedIntentId))({});
   const selectedOutput = find(propEq('intentId', selectedIntentId))(outputs);
+
   const globalRules = flow(
     map(({ name, id, rules }) => (
       map((item2) => ({
@@ -88,11 +100,12 @@ const result = ({ skillId }) => {
   const onChangeIntentId = useCallback(({ id, name }) => {
     setSelectedIntentId(id);
     setIntentNameText(name);
-  }, []);
+  }, [selectedIntentId, intentNameText]);
+
   const onChangeIntentNameText = useCallback(
     ({ target: { value } }) => setIntentNameText(value),
-    [],
-  );
+    [intentNameText]);
+
   const onSaveIntentNameText = useCallback(async () => {
     if (!flow(
       prop('name'),
@@ -102,13 +115,6 @@ const result = ({ skillId }) => {
       message.success('编辑意图名称成功');
     }
   }, [intentNameText, selectedIntent]);
-
-  const [wordGraphVisible, setWordGraphVisible] = useState(false);
-  const [globalSearch, setGlobalSearch] = useState(false);
-  const [uploadVisible, setUploadVisible] = useState(false);
-  const [isText, setIsText] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState([]);
 
   const closeUpload = useCallback(() => {
     setUploadVisible(false);
@@ -148,11 +154,21 @@ const result = ({ skillId }) => {
       setUploading(false);
       setUploadVisible(false);
     }
-  }, []);
+  }, [uploading, uploadVisible]);
 
-  return (
+  return (tempId === -1 || tempId === skillId) ? (
     <Layout
-      subTitle={`${skill.name}(${skill.version})`}
+      subTitle={(
+        <Popover
+          content={<FloatWindows setTempId={setTempId} />}
+          trigger="click"
+          // visible={visible}
+          // onVisibleChange={handleOpenChange}
+        >
+          {`${skill.name}(${skill.version})`}
+          <DownOutlined style={{ paddingLeft: '8px', fontSize: '15px' }} />
+        </Popover>
+      )}
       addonAfter={(
         <>
           <Button
@@ -347,6 +363,17 @@ const result = ({ skillId }) => {
           dataSource={error}
         />
       </Modal>
+    </Layout>
+  ) : (
+    <Layout>
+      <Spin
+        style={{
+          position: 'relative',
+          left: '50%',
+          transform: 'translateX(-50%)',
+        }}
+        spinning
+      />
     </Layout>
   );
 };
