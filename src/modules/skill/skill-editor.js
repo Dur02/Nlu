@@ -64,7 +64,7 @@ const result = ({ skillId }) => {
     token,
   } = useSelector(selector(skillId, tempId), shallowEqual);
 
-  const selectedIntent = find(propEq('id', selectedIntentId))({});
+  const selectedIntent = find(propEq('id', selectedIntentId))(intents);
   const selectedOutput = find(propEq('intentId', selectedIntentId))(outputs);
 
   const globalRules = flow(

@@ -24,9 +24,11 @@ export const readAll = createAction(
   ({
     page = DEFAULT_CURRENT,
     size = DEFAULT_SIZE,
+    skillId,
   } = {}) => read('/skill/edit/output/all', {
     current: page,
     size,
+    skillId,
   }),
 );
 

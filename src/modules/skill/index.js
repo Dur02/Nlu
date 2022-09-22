@@ -42,8 +42,8 @@ export default () => [{
         dispatch(readAllWords({ type: 'SYSTEM' })),
         dispatch(readAllRule({ skillId })),
         dispatch(readAllBuiltinIntent()),
-        dispatch(readAllIntent()),
-        dispatch(readAllOutput()),
+        dispatch(readAllIntent({ skillId })),
+        dispatch(readAllOutput({ skillId })),
       ]);
     } catch (e) {
       return {
