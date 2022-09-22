@@ -20,6 +20,8 @@ import testCase from './test-case';
 import testSuite from './test-suite';
 import testJob from './test-job';
 import testJobResult from './test-job-result';
+import intentMap from './intent-map';
+import intentMapInfo from './intent-map-info';
 
 export default combineReducers({
   ...createReducer([
@@ -43,5 +45,7 @@ export default combineReducers({
     testSuite,
     testJob,
     testJobResult,
+    intentMap,
+    intentMapInfo,
   ]),
 });

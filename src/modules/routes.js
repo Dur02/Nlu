@@ -41,6 +41,13 @@ const routes = [
   },
 
   {
+    path: '/intentMap',
+    chunks: ['intentMap'],
+    requireAuth: true,
+    load: () => import(/* webpackChunkName: 'intentMap' */ 'modules/intent-map'),
+  },
+
+  {
     path: '/help',
     chunks: ['help'],
     requireAuth: true,

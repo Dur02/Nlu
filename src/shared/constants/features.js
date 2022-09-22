@@ -18,6 +18,8 @@ export const CASE = 'CASE';
 export const SUITE = 'SUITE';
 export const JOB = 'JOB';
 
+export const INTENT_MAP = 'INTENT_MAP';
+
 export const HELP = 'HELP';
 
 export const features = [{
@@ -78,6 +80,10 @@ export const features = [{
     link: 'job',
     text: '测试任务',
   }],
+}, {
+  key: INTENT_MAP,
+  link: 'intentMap',
+  text: '意图映射',
 }, {
   key: HELP,
   link: 'help',
