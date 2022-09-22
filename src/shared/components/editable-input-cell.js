@@ -32,11 +32,16 @@ const result = ({
   const onKeyPress = useCallback(async ({ key }) => {
     if (key === 'Enter') {
       setSubmitting(true);
-      await onSubmit(editingValue);
+      try {
+        await onSubmit(editingValue);
+      } catch (e) {
+        setEditingValue(value);
+        setSubmitting(false);
+      }
       setSubmitting(false);
       setEditing(false);
     }
-  }, [editingValue]);
+  }, [editingValue, submitting]);
 
   return editing ? (
     <Spin spinning={submitting}>
