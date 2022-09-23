@@ -28,10 +28,12 @@ export const readAll = createAction(
 export const create = createAction(
   CREATE,
   ({
-    intentId,
+    skillCode,
+    intentName,
     intentMapName,
   }) => post('/skill/edit/intent-map', {
-    intentId,
+    skillCode,
+    intentName,
     intentMapName,
   }),
 );
@@ -40,10 +42,12 @@ export const update = createAction(
   UPDATE,
   ({
     id,
-    intentId,
+    skillCode,
+    intentName,
   }) => put('/skill/edit/intent-map', {
     id,
-    intentId,
+    skillCode,
+    intentName,
   }),
 );
 

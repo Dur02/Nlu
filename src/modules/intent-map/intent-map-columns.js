@@ -1,12 +1,15 @@
 import { time } from 'relient/formatters';
 import { Button, Popconfirm } from 'antd';
 import React from 'react';
+import { find, findKey, flow, map, prop, propEq } from 'lodash/fp';
 
 export default ({
   openEditor,
   onRemove,
   pagination,
   reload,
+  setIntentOption,
+  skillInfos,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -15,17 +18,14 @@ export default ({
   title: '意图名',
   dataIndex: 'intentName',
 }, {
-  title: '技能ID',
-  dataIndex: 'skillId',
+  title: '技能编号',
+  dataIndex: 'skillCode',
 }, {
   title: '技能名',
   dataIndex: 'skillName',
 }, {
-  title: 'st意图名',
-  dataIndex: 'stIntentName',
-}, {
-  title: '任务',
-  dataIndex: 'task',
+  title: '意图映射名',
+  dataIndex: 'intentMapName',
 }, {
   title: '更新时间',
   dataIndex: 'updateTime',
@@ -42,9 +42,19 @@ export default ({
         ghost
         onClick={() => {
           openEditor(record);
+          const selectedSkill = flow(
+            find(propEq('skillCode', record.skillCode)),
+            prop('intentNames'),
+          )(skillInfos);
+          setIntentOption(
+            map((item) => ({
+              label: findKey((o) => o === item)(selectedSkill),
+              value: item,
+            }))(selectedSkill),
+          );
         }}
       >
-        更新
+        修改
       </Button>
       &nbsp;&nbsp;
       <Popconfirm

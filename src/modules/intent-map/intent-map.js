@@ -45,15 +45,14 @@ const result = ({
     )(state),
   }));
 
-  const getFields = (form) => [{
+  const getUpdateField = (form) => [{
     label: '技能',
-    name: 'skillId',
+    name: 'skillCode',
     component: Select,
     options: map(({ skillCode, skillName }) => ({
       label: skillName,
       value: skillCode,
     }))(skillInfos),
-    // allowClear: true,
     rules: [{ required: true }],
     onChange: async (skillCode) => {
       const selectedSkill = flow(
@@ -63,27 +62,28 @@ const result = ({
       setIntentOption(
         map((item) => ({
           label: findKey((o) => o === item)(selectedSkill),
-          value: item,
+          value: findKey((o) => o === item)(selectedSkill),
         }))(selectedSkill),
       );
-      form.setFieldsValue({ intentId: null, intentMapName: null });
+      form.setFieldsValue({ intentId: null });
     },
   }, {
     label: '意图',
-    name: 'intentId',
+    name: 'intentName',
     component: Select,
     options: intentOption,
-    // allowClear: true,
     rules: [{ required: true }],
-    onChange: (intentId) => {
-      const selectedIntent = find(({ value }) => value === intentId)(intentOption);
-      form.setFieldsValue({ intentMapName: selectedIntent ? selectedIntent.label : '' });
-    },
-  }, {
-    label: '意图映射名',
+    // onChange: (intentId) => {
+    // const selectedIntent = find(({ value }) => value === intentId)(intentOption);
+    // form.setFieldsValue({ intentMapName: selectedIntent ? selectedIntent.label : '' });
+    // },
+  }];
+
+  const getCreateField = (form) => [...getUpdateField(form), {
+    label: '意图映射',
     name: 'intentMapName',
-    disabled: true,
-    hidden: true,
+    component: Select,
+    options: intentMapInfoOptions,
     rules: [{ required: true }],
   }];
 
@@ -106,14 +106,20 @@ const result = ({
     creator: {
       title: '创建映射',
       onSubmit: onCreate,
-      getFields,
+      getFields: getCreateField,
       component: Modal,
+      onCancel: () => {
+        setIntentOption([]);
+      },
     },
     editor: {
       title: '更新',
       onSubmit: onUpdate,
-      getFields,
+      getFields: getUpdateField,
       component: Modal,
+      onCancel: () => {
+        setIntentOption([]);
+      },
     },
     getDataSource,
     readAction: async (values) => {
@@ -133,7 +139,7 @@ const result = ({
     },
     filters: [{
       dataKey: 'intentMapName',
-      label: '资源类型',
+      label: '意图映射名',
       defaultValue: '',
       options: [{
         value: '',
@@ -153,6 +159,8 @@ const result = ({
           onRemove,
           pagination,
           reload,
+          setIntentOption,
+          skillInfos,
         })}
         rowKey="id"
         // expandable={expandable}
