@@ -2,7 +2,7 @@ import React from 'react';
 import { INTENT_MAP } from 'shared/constants/features';
 import { readAll, readInfo } from 'shared/actions/intent-map';
 import { readMine as readProfile } from 'shared/actions/user';
-import { map, prop } from 'lodash/fp';
+// import { map, prop } from 'lodash/fp';
 import IntentMap from './intent-map';
 
 export default () => [{
@@ -14,22 +14,24 @@ export default () => [{
         dispatch(readInfo()),
       ]);
       const {
-        data: {
-          records,
-          current,
-          size,
-          total,
-        },
+        data,
+        // data: {
+        //   records,
+        //   current,
+        //   size,
+        //   total,
+        // },
       } = await dispatch(readAll({
         pageSize: 10,
         page: 1,
       }));
       return {
         component: <IntentMap
-          ids={map(prop('id'))(records)}
-          total={total}
-          current={current - 1}
-          size={size}
+          // ids={map(prop('id'))(records)}
+          // total={total}
+          // current={current - 1}
+          // size={size}
+          initialData={data}
         />,
       };
     } catch (e) {

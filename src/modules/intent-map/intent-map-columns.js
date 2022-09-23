@@ -4,18 +4,19 @@ import React from 'react';
 import { find, findKey, flow, map, prop, propEq } from 'lodash/fp';
 
 export default ({
-  openEditor,
   onRemove,
-  pagination,
+  paginationProps,
   reload,
-  setIntentOption,
+  openEditor,
   skillInfos,
+  setIntentOption,
+  updateForm,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
   width: 70,
 }, {
-  title: '意图名',
+  title: '规则意图名',
   dataIndex: 'intentName',
 }, {
   title: '技能编号',
@@ -24,7 +25,7 @@ export default ({
   title: '技能名',
   dataIndex: 'skillName',
 }, {
-  title: '意图映射名',
+  title: '统计意图名',
   dataIndex: 'intentMapName',
 }, {
   title: '更新时间',
@@ -52,6 +53,7 @@ export default ({
               value: findKey((o) => o === item)(selectedSkill),
             }))(selectedSkill),
           );
+          updateForm.setFieldsValue({ ...record });
         }}
       >
         修改
@@ -61,10 +63,12 @@ export default ({
         title="确认删除吗？删除操作不可恢复"
         onConfirm={async () => {
           await onRemove({ id: record.id });
-          if ((pagination.current - 1) * pagination.pageSize < pagination.total - 1) {
-            await reload();
+          if (
+            (paginationProps.current - 1) * paginationProps.pageSize < paginationProps.total - 1
+          ) {
+            await reload(paginationProps.current);
           } else {
-            await reload(pagination.current - 2);
+            await reload(paginationProps.current - 1);
           }
         }}
       >
