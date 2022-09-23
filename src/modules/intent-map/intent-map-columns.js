@@ -49,7 +49,7 @@ export default ({
           setIntentOption(
             map((item) => ({
               label: findKey((o) => o === item)(selectedSkill),
-              value: item,
+              value: findKey((o) => o === item)(selectedSkill),
             }))(selectedSkill),
           );
         }}
