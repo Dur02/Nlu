@@ -28,6 +28,7 @@ const result = ({
 
   const [createForm] = useForm();
   const [updateForm] = useForm();
+
   const [intentOption, setIntentOption] = useState([]);
   const [data, setData] = useState({ // Table数据
     records: initialData.records,
@@ -76,7 +77,7 @@ const result = ({
       });
       setData(dataTemp);
     },
-    showTotal: (dataTotal) => `共 ${dataTotal} 条`,
+    // showTotal: (total) => `共 ${total} 条`,
   };
 
   const reload = async (current) => {
@@ -99,15 +100,14 @@ const result = ({
       await reload(paginationProps.current);
       message.success(msg);
     } catch (e) {
-      // message.error(e.msg);
+      message.error(e.msg);
     }
     createForm.resetFields();
-    // await reload();
     setLoading(false);
     setCreateVisible(false);
   }, [loading, setLoading, createForm, createVisible, setCreateVisible]);
 
-  const caseUpdateSubmit = useCallback(async (values) => {
+  const updateSubmit = useCallback(async (values) => {
     setLoading(true);
     try {
       const { msg } = await onUpdate({
@@ -115,16 +115,6 @@ const result = ({
         ...values,
       });
       await reload(paginationProps.current);
-      // setData({
-      //   records: reverse(flow(
-      //     reject(editorItem),
-      //     concat([dataTemp]),
-      //     sortBy(['id']),
-      //   )(data.records)),
-      //   total: paginationProps.total,
-      //   currentPage: paginationProps.current,
-      //   pageSize: paginationProps.pageSize,
-      // });
       message.success(msg);
     } catch (e) {
       message.error(e.msg);
@@ -146,7 +136,7 @@ const result = ({
         创建映射
       </Button>
       <Tabs
-        // defaultActiveKey="1"
+        defaultActiveKey="全部"
         tabPosition="left"
         style={{
           height: paginationProps.pageSize * 67 || data.size * 67,
@@ -162,18 +152,15 @@ const result = ({
                 // tableLayout="fixed"
                 dataSource={data.records}
                 columns={columns({
-                  // openEditor,
                   onRemove,
                   paginationProps,
                   reload,
                   openEditor,
-                  // reload,
                   setIntentOption,
                   skillInfos,
                   updateForm,
                 })}
                 rowKey="id"
-                // expandable={expandable}
                 pagination={paginationProps}
               />,
             })),
@@ -302,7 +289,7 @@ const result = ({
               labelCol={{ span: 7 }}
               wrapperCol={{ span: 14 }}
               autoComplete="off"
-              onFinish={caseUpdateSubmit}
+              onFinish={updateSubmit}
               // initialValues={{
               //   refText: updateCaseItem.refText,
               //   expectedSkill: updateCaseItem.expectedSkill,
@@ -356,7 +343,6 @@ const result = ({
                   type="primary"
                   ghost
                   size="middle"
-                  // loading={submitting}
                   htmlType="submit"
                   loading={loading}
                 >
