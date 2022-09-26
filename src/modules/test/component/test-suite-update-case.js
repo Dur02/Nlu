@@ -79,7 +79,7 @@ const result = ({
       });
       setCaseData(dataTemp);
     },
-    showTotal: (caseTotal) => `共 ${caseTotal} 条`,
+    // showTotal: (caseTotal) => `共 ${caseTotal} 条`,
   };
 
   const rowSelection = {

@@ -77,7 +77,7 @@ const result = ({
       });
       setData(dataTemp);
     },
-    showTotal: () => '共 cnm 条',
+    showTotal: (total) => `共 ${total} 条`,
   };
 
   const reload = async (current) => {
