@@ -228,7 +228,7 @@ const result = ({
                     value: findKey((o) => o === item)(selectedSkill),
                   }))(selectedSkill),
                 );
-                createForm.setFieldsValue({ intentId: null });
+                createForm.setFieldsValue({ intentName: null });
               }}
             />
           </Form.Item>
@@ -321,7 +321,7 @@ const result = ({
                         value: findKey((o) => o === item)(selectedSkill),
                       }))(selectedSkill),
                     );
-                    createForm.setFieldsValue({ intentId: null });
+                    updateForm.setFieldsValue({ intentName: null });
                   }}
                 />
               </Form.Item>
