@@ -30,6 +30,7 @@ export default ({
 }, {
   title: '更新时间',
   dataIndex: 'updateTime',
+  width: 160,
   render: time(),
   // width: 180,
 }, {

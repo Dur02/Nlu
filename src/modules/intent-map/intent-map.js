@@ -124,6 +124,20 @@ const result = ({
     setLoading(false);
   }, [updateForm, editorItem, loading, setLoading]);
 
+  const getHeight = () => {
+    const temp = paginationProps.pageSize || data.size;
+    switch (temp) {
+      case 10:
+        return 680;
+      case 20:
+        return 1250;
+      case 50:
+        return 3000;
+      default:
+        return 5250;
+    }
+  };
+
   return (
     <Layout>
       <Button
@@ -139,7 +153,7 @@ const result = ({
         defaultActiveKey="全部"
         tabPosition="left"
         style={{
-          height: paginationProps.pageSize * 67 || data.size * 67,
+          height: getHeight(),
           position: 'relative',
           top: 10,
         }}
