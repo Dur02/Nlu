@@ -83,8 +83,8 @@ const result = ({
         创建测试集
       </Button>
       <a
-        href={`${getWithBaseUrl('/template2.xlsx', getConfig('baseUrl'))}`}
-        download="用例导入模板.xlsx"
+        href={`${getWithBaseUrl('/template2.csv', getConfig('baseUrl'))}`}
+        download="用例导入模板.csv"
       >
         <Tooltip
           title="下载模板"
