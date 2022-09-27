@@ -39,10 +39,12 @@ export default () => [{
     }
     return {
       component: <IntentMap
-        ids={[]}
-        total={0}
-        current={0}
-        size={0}
+        initialData={{
+          records: [],
+          total: 0,
+          current: 0,
+          size: 10,
+        }}
       />,
     };
   },
