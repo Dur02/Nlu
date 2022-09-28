@@ -68,12 +68,13 @@ const result = () => {
 
   const onCreate = useAction(create);
   const onUpdate = useAction(update);
-  const onAttach = useCallback(async ({ skillId, productId, skillName, preload }) => {
+  const onAttach = useCallback(async ({ skillId, productId, skillName, preLoad }) => {
     await dispatch(attachSkills({
       id: productId,
-      skillInfos: { skillId, skillName, preload },
+      skillInfos: { skillId, skillName, preLoad },
     }));
     await dispatch(readAll());
+    // 原本为什么需要在新增技能后刷新此技能的版本信息？暂没发现用处先注释
     // await dispatch(readAllVersion({ productId }));
     message.success('添加成功');
   }, []);

@@ -63,6 +63,7 @@ export const getSkillEditorColumns = ({
     if (findVersionDefault(record) === -1) {
       return false;
     }
+    // console.log(record.skillVersions[findVersionDefault(record)].id);
     return get(`${record.skillVersions[findVersionDefault(record)].id}`)(product.preLoadStatus);
   };
 
@@ -95,16 +96,15 @@ export const getSkillEditorColumns = ({
                     skillName: record.name,
                   });
                 }
+                // console.log(record.skillVersions[findVersionDefault(record)].id);
                 if (value !== '') {
                   await attach({
                     skillId: value,
                     productId: product.id,
                     skillName: record.name,
-                    preload: findLoadDefault(record),
+                    preLoad: findLoadDefault(record),
                   });
                 }
-                // console.log(product);
-                // console.log(record);
               }
           }
           style={{
@@ -136,20 +136,19 @@ export const getSkillEditorColumns = ({
               skillId: record.skillVersions[findVersionDefault(record)].id,
               productId: product.id,
               skillName: record.name,
-              preload: findLoadDefault(record),
             });
             await attach({
               skillId: record.skillVersions[findVersionDefault(record)].id,
               productId: product.id,
               skillName: record.name,
-              preload: value,
+              preLoad: value,
             });
           }}
           style={{ width: '100px' }}
           disabled={findVersionDefault(record) === -1}
         >
-          <Option value>预加载</Option>
           <Option value={false}>懒加载</Option>
+          <Option value>预加载</Option>
         </Select>
       </>
     ),
