@@ -1,5 +1,5 @@
 import {
-  string,
+  number,
 } from 'prop-types';
 import React, { useCallback, useState } from 'react';
 import { readWordGraph as readWordGraphAction } from 'shared/actions/skill';
@@ -26,7 +26,7 @@ const getLightColor = (index) => flow(
 )(presetColors);
 
 const result = ({
-  skillCode,
+  skillId,
 }) => {
   useStyles(s);
   const [input, setInput] = useState('');
@@ -48,7 +48,7 @@ const result = ({
     if (input) {
       setLoading(true);
       try {
-        const data = await dispatch(readWordGraphAction({ input, skillCode }));
+        const data = await dispatch(readWordGraphAction({ input, skillId }));
         setResponse(data.data);
         setLoading(false);
       } catch (err) {
@@ -182,7 +182,7 @@ const result = ({
 };
 
 result.propTypes = {
-  skillCode: string,
+  skillId: number,
 };
 
 result.displayName = __filename;

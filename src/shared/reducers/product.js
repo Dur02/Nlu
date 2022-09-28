@@ -27,11 +27,11 @@ export default {
       dataKey: 'data',
     }),
 
-    [ATTACH_SKILLS]: (state, { meta: { id, skillIds } }) => ({
+    [ATTACH_SKILLS]: (state, { meta: { id, skillInfos } }) => ({
       ...state,
       [id]: {
         ...state[id],
-        skillIds: [...skillIds, ...state[id].skillIds],
+        skillIds: [skillInfos.skillId, ...state[id].skillIds],
       },
     }),
 

@@ -49,7 +49,7 @@ export const remove = createAction(
 
 export const attachSkills = createAction(
   ATTACH_SKILLS,
-  ({ id, skillIds, skillName }) => post(`/skill/edit/product/${id}/skill`, { skillIds, skillName }),
+  ({ id, skillInfos }) => post(`/skill/edit/product/${id}/skill`, { skillInfos: [skillInfos] }),
 );
 
 export const detachSkills = createAction(

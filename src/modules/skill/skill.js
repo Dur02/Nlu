@@ -233,7 +233,7 @@ const result = () => {
           title={`${wordGraphItem.name} 词图`}
           width={800}
         >
-          <WordGraph skillCode={wordGraphItem.code} />
+          <WordGraph skillId={wordGraphItem.id} />
         </Modal>
       )}
       {exportItem && (

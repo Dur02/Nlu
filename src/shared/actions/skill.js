@@ -68,7 +68,7 @@ export const remove = createAction(
 
 export const readWordGraph = createAction(
   READ_WORD_GRAPH,
-  ({ input, skillCode }) => read('/skill/edit/word-map/index/search', { refText: input, skillCode }),
+  ({ input, skillId }) => read('/skill/edit/word-map/index/search', { refText: input, skillId }),
 );
 
 export const skillYamlExport = createAction(

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
 import { Tabs, Empty, Input, message, Modal, Button, Upload, Table, Popover, Spin } from 'antd';
 import { DownOutlined, UploadOutlined } from '@ant-design/icons';
@@ -62,7 +62,7 @@ const result = ({ skillId }) => {
     words,
     outputs,
     token,
-  } = useSelector(selector(skillId, tempId), shallowEqual);
+  } = useSelector(selector(skillId, tempId));
 
   const selectedIntent = find(propEq('id', selectedIntentId))(intents);
   const selectedOutput = find(propEq('intentId', selectedIntentId))(outputs);
@@ -298,7 +298,7 @@ const result = ({ skillId }) => {
         footer={null}
         centered="true"
       >
-        <WordGraph skillCode={skill.code} />
+        <WordGraph skillId={skillId} />
       </Modal>
       <Modal
         visible={globalSearch}

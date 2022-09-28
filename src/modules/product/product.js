@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
 import { Table, Drawer, message, Input, Modal } from 'antd';
 import { useLocalTable, useDetails } from 'relient-admin/hooks';
-import { remove, create, update, detachSkills, attachSkills } from 'shared/actions/product';
-import { create as createVersion, readAll as readAllVersion } from 'shared/actions/product-version';
+import { readAll, remove, create, update, detachSkills, attachSkills } from 'shared/actions/product';
+import { create as createVersion } from 'shared/actions/product-version';
 import { useAction } from 'relient/actions';
 import { find, propEq, flow, prop } from 'lodash/fp';
 import WordGraph from 'shared/components/product-word-graph';
@@ -68,13 +68,19 @@ const result = () => {
 
   const onCreate = useAction(create);
   const onUpdate = useAction(update);
-  const onAttach = useCallback(async ({ skillId, productId, skillName }) => {
-    await dispatch(attachSkills({ id: productId, skillIds: [skillId], skillName: [skillName] }));
-    await dispatch(readAllVersion({ productId }));
+  const onAttach = useCallback(async ({ skillId, productId, skillName, preload }) => {
+    await dispatch(attachSkills({
+      id: productId,
+      skillInfos: { skillId, skillName, preload },
+    }));
+    await dispatch(readAll());
+    // await dispatch(readAllVersion({ productId }));
     message.success('添加成功');
   }, []);
   const onDetach = useCallback(async ({ skillId, productId, skillName }) => {
-    await dispatch(detachSkills({ id: productId, skillIds: [skillId], skillName: [skillName] }));
+    await dispatch(detachSkills({
+      id: productId, skillIds: [skillId], skillName: [skillName],
+    }));
     message.success('去掉成功');
   }, []);
   const onCreateVersion = useCallback(
