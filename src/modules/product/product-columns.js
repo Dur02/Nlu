@@ -1,9 +1,9 @@
 import { Button, Popconfirm, Select } from 'antd';
-import React from 'react';
-// import { includes, findIndex, eq, nth } from 'lodash/fp';
+import React, { useState } from 'react';
 import { includes, map, findIndex, get } from 'lodash/fp';
 import { getVersionStatusText } from 'shared/constants/version-status';
 import { time } from 'relient/formatters';
+import { object, func } from 'prop-types';
 
 const { Option } = Select;
 
@@ -49,111 +49,138 @@ export const getColumns = ({
   ),
 }];
 
-export const getSkillEditorColumns = ({
+const Operations = ({
+  record,
   product,
-  detach,
   attach,
+  detach,
+  // findVersionDefault,
+  // findLoadDefault,
 }) => {
-  const findVersionDefault = (record) => {
+  const findVersionDefault = () => {
     const a = map((item) => includes(item.id)(product.skillIds))(record.skillVersions);
     return findIndex((o) => o === true)(a);
   };
 
-  const findLoadDefault = (record) => {
+  const findLoadDefault = () => {
     if (findVersionDefault(record) === -1) {
+      // setPreLoadValue(false);
       return false;
     }
-    // console.log(record.skillVersions[findVersionDefault(record)].id);
     return get(`${record.skillVersions[findVersionDefault(record)].id}`)(product.preLoadStatus);
   };
 
-  return [{
-    //   title: '图标',
-    //   dataIndex: 'iconPath',
-    //   render: (iconPath) => <img alt="icon" src={iconPath} width={40} />,
-    // }, {
-    title: '名称',
-    dataIndex: 'name',
-  }, {
-    title: '类别',
-    dataIndex: 'category',
-  }, {
-    title: '版本',
-    render: (record) => (
-      <>
-        <Select
-          defaultValue={
-              findVersionDefault(record) === -1
-                ? ''
-                : record.skillVersions[findVersionDefault(record)].id
-          }
-          onChange={
-              async (value) => {
-                if (findVersionDefault(record) !== -1) {
-                  await detach({
-                    skillId: record.skillVersions[findVersionDefault(record)].id,
-                    productId: product.id,
-                    skillName: record.name,
-                  });
-                }
-                // console.log(record.skillVersions[findVersionDefault(record)].id);
-                if (value !== '') {
-                  await attach({
-                    skillId: value,
-                    productId: product.id,
-                    skillName: record.name,
-                    preLoad: findLoadDefault(record),
-                  });
-                }
-              }
-          }
-          style={{
-            width: '100px',
-          }}
-        >
-          <Option value="">无选择</Option>
-          {
-              map((item) => (item.pubState === 1 && item.modelFile !== ''
-                ? (
-                  <Option
-                    key={item.version}
-                    value={item.id}
-                  >
-                    {item.version}
-                  </Option>
-                ) : ''
-              ))(record.skillVersions)
+  const [preLoadValue, setPreLoadValue] = useState(findLoadDefault());
+
+  return (
+    <>
+      <Select
+        defaultValue={
+          findVersionDefault(record) === -1
+            ? ''
+            : record.skillVersions[findVersionDefault(record)].id
+        }
+        onChange={
+          async (value) => {
+            if (findVersionDefault(record) !== -1) {
+              await detach({
+                skillId: record.skillVersions[findVersionDefault(record)].id,
+                productId: product.id,
+                skillName: record.name,
+              });
             }
-        </Select>
-        &nbsp;&nbsp;
-        <Select
-          defaultValue={findLoadDefault(record)}
-          // value={findLoadDefault(record)}
-          onChange={async (value) => {
-            // console.log(value);
-            // console.log(record.skillVersions[findVersionDefault(record)].id);
-            await detach({
-              skillId: record.skillVersions[findVersionDefault(record)].id,
-              productId: product.id,
-              skillName: record.name,
-            });
-            await attach({
-              skillId: record.skillVersions[findVersionDefault(record)].id,
-              productId: product.id,
-              skillName: record.name,
-              preLoad: value,
-            });
-          }}
-          style={{ width: '100px' }}
-          disabled={findVersionDefault(record) === -1}
-        >
-          <Option value={false}>懒加载</Option>
-          <Option value>预加载</Option>
-        </Select>
-      </>
-    ),
-  }];
+            if (value !== '') {
+              await attach({
+                skillId: value,
+                productId: product.id,
+                skillName: record.name,
+                preLoad: preLoadValue,
+              });
+            } else {
+              setPreLoadValue(false);
+            }
+          }
+        }
+        style={{ width: '100px' }}
+      >
+        <Option value="">无选择</Option>
+        {
+          map((item) => (item.pubState === 1 && item.modelFile !== ''
+            ? (
+              <Option
+                key={item.version}
+                value={item.id}
+              >
+                {item.version}
+              </Option>
+            ) : ''
+          ))(record.skillVersions)
+        }
+      </Select>
+      &nbsp;&nbsp;
+      <Select
+        // defaultValue={findLoadDefault(record)}
+        value={preLoadValue}
+        onChange={async (value) => {
+          await detach({
+            skillId: record.skillVersions[findVersionDefault(record)].id,
+            productId: product.id,
+            skillName: record.name,
+          });
+          await attach({
+            skillId: record.skillVersions[findVersionDefault(record)].id,
+            productId: product.id,
+            skillName: record.name,
+            preLoad: value,
+          });
+          setPreLoadValue(value);
+        }}
+        style={{ width: '100px' }}
+        disabled={findVersionDefault(record) === -1}
+      >
+        <Option value={false}>懒加载</Option>
+        <Option value>预加载</Option>
+      </Select>
+    </>
+  );
 };
+
+Operations.propTypes = {
+  record: object.isRequired,
+  product: object.isRequired,
+  attach: func.isRequired,
+  detach: func.isRequired,
+  // findVersionDefault: func.isRequired,
+  // findLoadDefault: func.isRequired,
+};
+
+export const getSkillEditorColumns = ({
+  product,
+  detach,
+  attach,
+}) => [{
+  //   title: '图标',
+  //   dataIndex: 'iconPath',
+  //   render: (iconPath) => <img alt="icon" src={iconPath} width={40} />,
+  // }, {
+  title: '名称',
+  dataIndex: 'name',
+}, {
+  title: '类别',
+  dataIndex: 'category',
+}, {
+  title: '版本',
+  render: (record) => (
+    <Operations
+      record={record}
+      product={product}
+      attach={attach}
+      detach={detach}
+      // findVersionDefault={findVersionDefault}
+      // findLoadDefault={findLoadDefault}
+    />
+  ),
+}];
 
 export const versionColumns = [{
   title: '版本号',

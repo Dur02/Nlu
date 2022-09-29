@@ -1,5 +1,5 @@
 import { merge, handleActions, remove, combineActions } from 'relient/reducers';
-import { reject, includes } from 'lodash/fp';
+import { reject, includes, pick } from 'lodash/fp';
 import { product } from '../schema';
 import {
   READ_ALL,
@@ -32,6 +32,7 @@ export default {
       [id]: {
         ...state[id],
         skillIds: [skillInfos.skillId, ...state[id].skillIds],
+        preLoadStatus: { ...state[id].preLoadStatus, [skillInfos.skillId]: skillInfos.preLoad },
       },
     }),
 
@@ -40,6 +41,9 @@ export default {
       [id]: {
         ...state[id],
         skillIds: reject((skillId) => includes(skillId)(skillIds))(state[id].skillIds),
+        preLoadStatus: pick(
+          reject((skillId) => includes(skillId)(skillIds))(state[id].skillIds),
+        )(state[id].preLoadStatus),
       },
     }),
 
