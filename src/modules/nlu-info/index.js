@@ -2,7 +2,7 @@ import React from 'react';
 import { NLU_INFO } from 'shared/constants/features';
 import { readMine as readProfile } from 'shared/actions/user';
 import { readAll } from 'shared/actions/nlu-info';
-import Info from './info';
+import NluInfo from './nlu-info';
 
 export default () => [{
   feature: NLU_INFO,
@@ -16,7 +16,7 @@ export default () => [{
       // ignore
     }
     return {
-      component: <Info />,
+      component: <NluInfo />,
     };
   },
 }];
