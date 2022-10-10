@@ -48,6 +48,13 @@ const routes = [
   },
 
   {
+    path: '/nluInfo',
+    chunks: ['nluInfo'],
+    requireAuth: true,
+    load: () => import(/* webpackChunkName: 'nluInfo' */ 'modules/nlu-info'),
+  },
+
+  {
     path: '/help',
     chunks: ['help'],
     requireAuth: true,

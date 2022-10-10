@@ -134,7 +134,7 @@ const result = ({
       case 50:
         return 3000;
       default:
-        return 5250;
+        return 5650;
     }
   };
 
