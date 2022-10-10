@@ -21,4 +21,4 @@ export const testJob = new schema.Entity('testJob');
 export const testJobResult = new schema.Entity('testJobResult');
 export const intentMap = new schema.Entity('intentMap');
 export const intentMapInfo = new schema.Entity('intentMapInfo');
-export const nluInfo = new schema.Entity('nluInfo');
+export const information = new schema.Entity('information');

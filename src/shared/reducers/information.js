@@ -1,12 +1,12 @@
 import { handleActions } from 'relient/reducers';
 import {
   READ_ALL,
-} from '../actions/nlu-info';
+} from '../actions/information';
 // import { nluInfo } from '../schema';
 
 export default {
-  nluInfo: handleActions({
-    [READ_ALL]: (nluInfo, { payload }) => (payload.productSkillInfos),
+  information: handleActions({
+    [READ_ALL]: (information, { payload }) => (payload.productSkillInfos),
 
     // [READ_INFO]: (intentMapInfo, { payload }) => ({
     //   intentMapNames: payload.data.intentMapNames,

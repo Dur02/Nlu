@@ -22,7 +22,7 @@ import testJob from './test-job';
 import testJobResult from './test-job-result';
 import intentMap from './intent-map';
 import intentMapInfo from './intent-map-info';
-import nluInfo from './nlu-info';
+import information from './information';
 
 export default combineReducers({
   ...createReducer([
@@ -48,6 +48,6 @@ export default combineReducers({
     testJobResult,
     intentMap,
     intentMapInfo,
-    nluInfo,
+    information,
   ]),
 });

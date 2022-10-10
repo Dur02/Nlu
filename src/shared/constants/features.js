@@ -20,7 +20,7 @@ export const JOB = 'JOB';
 
 export const INTENT_MAP = 'INTENT_MAP';
 
-export const NLU_INFO = 'NLU_INFO';
+export const INFORMATION = 'INFORMATION';
 
 export const HELP = 'HELP';
 
@@ -87,8 +87,8 @@ export const features = [{
   link: 'intentMap',
   text: '意图映射',
 }, {
-  key: NLU_INFO,
-  link: 'nluInfo',
+  key: INFORMATION,
+  link: 'information',
   text: 'NLU信息',
 }, {
   key: HELP,

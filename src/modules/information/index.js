@@ -1,11 +1,11 @@
 import React from 'react';
-import { NLU_INFO } from 'shared/constants/features';
+import { INFORMATION } from 'shared/constants/features';
 import { readMine as readProfile } from 'shared/actions/user';
-import { readAll } from 'shared/actions/nlu-info';
-import NluInfo from './nlu-info';
+import { readAll } from 'shared/actions/information';
+import NluInfo from './information';
 
 export default () => [{
-  feature: NLU_INFO,
+  feature: INFORMATION,
   action: async ({ store: { dispatch } }) => {
     try {
       await Promise.all([

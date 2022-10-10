@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { flow, map, flattenDepth, findKey, concat, prop } from 'lodash/fp';
 import { getEntity } from 'relient/selectors';
 import { Table, Tabs } from 'antd';
-import columns from './info-coulumns';
+import columns from './information-coulumns';
 
 const mapWithIndex = map.convert({ cap: false });
 
@@ -13,12 +13,12 @@ const result = () => {
     productSkillInfos,
     tabOption,
   } = useSelector((state) => ({
-    productSkillInfos: getEntity('nluInfo')(state),
+    productSkillInfos: getEntity('information')(state),
     tabOption: concat([{ label: '全部', key: '全部' }], flow(
-      getEntity('nluInfo'),
+      getEntity('information'),
       map((item) => ({
-        label: findKey((o) => o === item)(getEntity('nluInfo')(state)),
-        key: findKey((o) => o === item)(getEntity('nluInfo')(state)),
+        label: findKey((o) => o === item)(getEntity('information')(state)),
+        key: findKey((o) => o === item)(getEntity('information')(state)),
       })),
     )(state)),
   }));
