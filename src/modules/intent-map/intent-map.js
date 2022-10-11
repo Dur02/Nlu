@@ -2,10 +2,19 @@ import React, { useCallback, useState } from 'react';
 import Layout from 'shared/components/layout';
 import { readAll, remove as removeIntentMap, update, create } from 'shared/actions/intent-map';
 import { useAction } from 'relient/actions';
-import { flow, map, prop, find, propEq, findKey, concat, reject } from 'lodash/fp';
+import {
+  flow,
+  map,
+  prop,
+  find,
+  propEq,
+  findKey,
+  concat,
+  reject,
+} from 'lodash/fp';
 import { getEntity } from 'relient/selectors';
 import { useSelector } from 'react-redux';
-import { Modal, Table, Select, Tabs, Button, Form, message } from 'antd';
+import { Modal, Table, Select, Tabs, Button, Form, message, Tooltip } from 'antd';
 import { useDetails } from 'relient-admin/hooks';
 import columns from './intent-map-columns';
 
@@ -152,16 +161,23 @@ const result = ({
       <Tabs
         defaultActiveKey="全部"
         tabPosition="left"
+        tabBarStyle={{
+          width: 140,
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+        }}
         style={{
           height: getHeight(),
           position: 'relative',
           top: 10,
+          // width: 100,
         }}
         items={
           flow(
             map(({ label }) => ({
               key: label,
-              label,
+              label: <Tooltip title={label} placement="topLeft">{label}</Tooltip>,
               children: <Table
                 // tableLayout="fixed"
                 dataSource={data.records}
@@ -213,9 +229,6 @@ const result = ({
           name="basic"
           labelCol={{ span: 7 }}
           wrapperCol={{ span: 14 }}
-          initialValues={{
-            suiteType: 0,
-          }}
           autoComplete="off"
           onFinish={createSubmit}
         >
@@ -225,6 +238,9 @@ const result = ({
             rules={[{ required: true }]}
           >
             <Select
+              showSearch
+              allowClear
+              optionFilterProp="label"
               options={
                 map(({ skillCode, skillName }) => ({
                   label: skillName,
@@ -252,7 +268,14 @@ const result = ({
             rules={[{ required: true }]}
           >
             <Select
+              showSearch
+              allowClear
               options={intentOption}
+              onChange={(value) => {
+                if (findKey((o) => o.label === value)(intentMapInfoOptions)) {
+                  createForm.setFieldsValue({ intentMapName: `${value}` });
+                }
+              }}
             />
           </Form.Item>
           <Form.Item
@@ -262,6 +285,8 @@ const result = ({
           >
             <Select
               options={reject({ label: '全部', value: '全部' })(intentMapInfoOptions)}
+              showSearch
+              allowClear
             />
           </Form.Item>
           <Form.Item
@@ -318,6 +343,9 @@ const result = ({
                 rules={[{ required: true }]}
               >
                 <Select
+                  showSearch
+                  allowClear
+                  optionFilterProp="label"
                   options={
                     map(({ skillCode, skillName }) => ({
                       label: skillName,
@@ -345,6 +373,8 @@ const result = ({
                 rules={[{ required: true }]}
               >
                 <Select
+                  showSearch
+                  allowClear
                   options={intentOption}
                 />
               </Form.Item>
