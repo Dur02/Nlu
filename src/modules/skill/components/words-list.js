@@ -148,7 +148,11 @@ const result = ({
         {map((item) => (
           <div className={s.AddedWords} key={item.id}>
             <Button
-              onClick={() => openEditor(item)}
+              onClick={() => {
+                if (item.skillId) {
+                  openEditor(item);
+                }
+              }}
               size="small"
               ghost
               type="primary"
