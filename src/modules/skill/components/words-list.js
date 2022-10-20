@@ -151,6 +151,8 @@ const result = ({
               onClick={() => {
                 if (item.skillId) {
                   openEditor(item);
+                } else {
+                  message.error('系统词库不可编辑');
                 }
               }}
               size="small"

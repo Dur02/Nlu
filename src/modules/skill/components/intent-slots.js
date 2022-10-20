@@ -202,6 +202,7 @@ const result = ({
     <div className={s.Root}>
       {tableHeader}
       <Table
+        size="small"
         dataSource={getDataSource(slots)}
         columns={columns}
         rowKey="name"

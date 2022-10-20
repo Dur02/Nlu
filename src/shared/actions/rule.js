@@ -40,12 +40,14 @@ export const create = createAction(
     sentence,
     slots,
     taskClassify,
+    ruleConfig,
   }) => post('/skill/edit/rule', {
     skillId,
     intentId,
     sentence,
     taskClassify,
     slots: slots && JSON.stringify(map(pick(['pos', 'name', 'value']))(slots)),
+    ruleConfig,
   }),
 );
 
@@ -57,11 +59,15 @@ export const update = createAction(
     slots,
     taskClassify,
     skillId,
+    intentId, // 在2022.10.20更新分级预料加入，此前没有使用intentId，但没有影响？为什么这个参数要存在？
+    ruleConfig,
   }) => put(`/skill/edit/rule/${id}`, {
     sentence,
     taskClassify,
     slots: slots && JSON.stringify(map(pick(['pos', 'name', 'value']))(slots)),
     skillId,
+    intentId,
+    ruleConfig,
   }),
 );
 
