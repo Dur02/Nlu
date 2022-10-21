@@ -126,9 +126,8 @@ const result = ({
       />
     ),
   }, {
-    title: '前后台',
-    width: 85,
-    // dataIndex: 'sentence',
+    title: 'app前台/app后台',
+    width: 130,
     render: (record) => {
       const options = [
         { label: '后台', value: '后台' },
@@ -173,9 +172,8 @@ const result = ({
       );
     },
   }, {
-    title: '全半双工',
-    width: 100,
-    // dataIndex: 'sentence',
+    title: '全双工/半双工',
+    width: 110,
     render: (record) => {
       const options = [
         { label: '全双工', value: '全双工' },
@@ -220,6 +218,17 @@ const result = ({
       );
     },
   }, {
+  //   title: '强说法/弱说法',
+  //   // width: 100,
+  //   render: (record) => (
+  //     <Switch
+  //       checkedChildren="强说法"
+  //       unCheckedChildren="弱说法"
+  //       onChange={(checked) => onUpdateRule({ id: record.id, taskClassify: checked })}
+  //       checked={prop('taskClassify')(record)}
+  //     />
+  //   ),
+  // }, {
     title: '操作',
     width: 140,
     render: (record) => (
