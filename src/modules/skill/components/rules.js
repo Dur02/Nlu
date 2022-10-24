@@ -119,6 +119,8 @@ const result = ({
   const columns = [{
     title: '已添加说法',
     dataIndex: 'sentence',
+    // width: "150px",
+    // fixed: 'left',
     render: (sentence, { id }) => (
       <EditableInputCell
         value={sentence}
@@ -127,7 +129,7 @@ const result = ({
     ),
   }, {
     title: 'app前台/app后台',
-    width: 130,
+    width: '130px',
     render: (record) => {
       const options = [
         { label: '后台', value: '后台' },
@@ -173,7 +175,7 @@ const result = ({
     },
   }, {
     title: '全双工/半双工',
-    width: 110,
+    width: '110px',
     render: (record) => {
       const options = [
         { label: '全双工', value: '全双工' },
@@ -230,7 +232,8 @@ const result = ({
   //   ),
   // }, {
     title: '操作',
-    width: 140,
+    width: '140px',
+    // fixed: 'right',
     render: (record) => (
       <>
         <Switch
@@ -300,6 +303,10 @@ const result = ({
             columns={columns}
             rowKey="id"
             pagination={pagination}
+            // scroll={{
+            //   // x: "800px",
+            //   y: "600px",
+            // }}
           />
         </div>
       </div>

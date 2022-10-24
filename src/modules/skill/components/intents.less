@@ -22,4 +22,10 @@
 .Menu {
   max-height: 100vh;
   overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.Menu::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
 }

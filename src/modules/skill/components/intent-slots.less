@@ -3,6 +3,8 @@
 .Root {
   max-height: 100vh;
   overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 
   @media @large {
     border-left: 1px solid @border-color-split;
@@ -16,6 +18,10 @@
     margin-top: 20px;
     padding-top: 20px;
   }
+}
+
+.Root::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
 }
 
 .Button {
