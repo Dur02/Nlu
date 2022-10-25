@@ -4,6 +4,8 @@ import { Drawer, Button, Table, Popconfirm, message } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { map, flow, find, propEq, reject, eq, includes, join, prop, compact, difference } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
+import { useDispatch } from 'react-redux';
+import { readAll as readAllIntent } from 'shared/actions/intent';
 
 import WordsContent from './words-content';
 import s from './words-list.less';
@@ -44,6 +46,7 @@ const result = ({
 }) => {
   useStyles(s);
 
+  const dispatch = useDispatch();
   const [tableVisible, setTableVisible] = useState(false);
   const onCreateWords = useCallback((values) => createWords({ skillId, ...values }), [skillId]);
   const onRemoveWords = useCallback(async ({ id }) => {
@@ -84,7 +87,10 @@ const result = ({
     },
     editor: {
       title: '编辑词库',
-      onSubmit: updateWords,
+      onSubmit: async (param) => {
+        await updateWords(param);
+        await dispatch(readAllIntent({ skillId }));
+      },
       fields,
       component: Drawer,
       width: 600,
@@ -179,10 +185,11 @@ const result = ({
               }}
               size="small"
               ghost
-              type="danger"
+              type="primary"
             >
-              {item}(词库缺失)
+              {item}
             </Button>
+            <span style={{ color: '#FF4D4F' }}>(词库缺失)</span>
           </div>
         ))(difference(value, map(({ name }) => name)(selectedWords)))}
         <Button
