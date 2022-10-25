@@ -2,11 +2,13 @@ import React, { useCallback, useState } from 'react';
 import { array, func, number } from 'prop-types';
 import { Drawer, Button, Table, Popconfirm, message } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { map, flow, find, propEq, reject, eq, includes, join, prop, compact } from 'lodash/fp';
+import { map, flow, find, propEq, reject, eq, includes, join, prop, compact, difference } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
 
 import WordsContent from './words-content';
 import s from './words-list.less';
+
+const mapWithIndex = map.convert({ cap: false });
 
 const fields = [{
   label: '名称',
@@ -169,6 +171,20 @@ const result = ({
             </Button>
           </div>
         ))(selectedWords)}
+        {mapWithIndex((item, index) => (
+          <div className={s.AddedWords} key={index}>
+            <Button
+              onClick={() => {
+                message.error('系统词库缺失');
+              }}
+              size="small"
+              ghost
+              type="danger"
+            >
+              {item}(词库缺失)
+            </Button>
+          </div>
+        ))(difference(value, map(({ name }) => name)(selectedWords)))}
         <Button
           type="primary"
           size="small"
