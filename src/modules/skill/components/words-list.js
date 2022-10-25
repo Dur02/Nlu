@@ -175,7 +175,7 @@ const result = ({
           <div className={s.AddedWords} key={index}>
             <Button
               onClick={() => {
-                message.error('系统词库缺失');
+                message.error('词库缺失');
               }}
               size="small"
               ghost
