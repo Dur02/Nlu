@@ -154,7 +154,7 @@ const result = ({
                 if (item.skillId) {
                   openEditor(item);
                 } else {
-                  message.error('系统词库不可编辑');
+                  message.error('词库不可编辑');
                 }
               }}
               size="small"
