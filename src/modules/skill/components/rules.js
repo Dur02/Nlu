@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
-import { Button, Input, message, Popconfirm, Switch, Table, Checkbox } from 'antd';
+import { Button, Input, message, Popconfirm, Switch, Table } from 'antd';
+// import { Button, Input, message, Popconfirm, Switch, Table, Checkbox } from 'antd';
 import { prop, map, size, reject, eq } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { useLocalTable } from 'relient-admin/hooks';
@@ -10,7 +11,7 @@ import IntentSlots from './intent-slots';
 import s from './rules.less';
 
 const { Search } = Input;
-const { Group } = Checkbox;
+// const { Group } = Checkbox;
 
 const result = ({
   createRule,
@@ -57,49 +58,49 @@ const result = ({
     message.success('删除成功');
   }, [selectedIds]);
 
-  const onDuplexTypeChange = useCallback(async ({ id, duplexType, ruleConfig }) => {
-    if (ruleConfig == null) {
-      await updateRule({
-        id,
-        ruleConfig: {
-          appGroundType: 0,
-          duplexType,
-          skillId,
-        },
-      });
-    } else {
-      await updateRule({
-        id,
-        ruleConfig: {
-          ...ruleConfig,
-          duplexType,
-        },
-      });
-    }
-    message.success('编辑成功');
-  }, [newSentence, intentId, skillId]);
-
-  const onAppGroundTypeChange = useCallback(async ({ id, appGroundType, ruleConfig }) => {
-    if (ruleConfig == null) {
-      await updateRule({
-        id,
-        ruleConfig: {
-          appGroundType,
-          duplexType: 0,
-          skillId,
-        },
-      });
-    } else {
-      await updateRule({
-        id,
-        ruleConfig: {
-          ...ruleConfig,
-          appGroundType,
-        },
-      });
-    }
-    message.success('编辑成功');
-  }, [newSentence, intentId, skillId]);
+  // const onDuplexTypeChange = useCallback(async ({ id, duplexType, ruleConfig }) => {
+  //   if (ruleConfig == null) {
+  //     await updateRule({
+  //       id,
+  //       ruleConfig: {
+  //         appGroundType: 0,
+  //         duplexType,
+  //         skillId,
+  //       },
+  //     });
+  //   } else {
+  //     await updateRule({
+  //       id,
+  //       ruleConfig: {
+  //         ...ruleConfig,
+  //         duplexType,
+  //       },
+  //     });
+  //   }
+  //   message.success('编辑成功');
+  // }, [newSentence, intentId, skillId]);
+  //
+  // const onAppGroundTypeChange = useCallback(async ({ id, appGroundType, ruleConfig }) => {
+  //   if (ruleConfig == null) {
+  //     await updateRule({
+  //       id,
+  //       ruleConfig: {
+  //         appGroundType,
+  //         duplexType: 0,
+  //         skillId,
+  //       },
+  //     });
+  //   } else {
+  //     await updateRule({
+  //       id,
+  //       ruleConfig: {
+  //         ...ruleConfig,
+  //         appGroundType,
+  //       },
+  //     });
+  //   }
+  //   message.success('编辑成功');
+  // }, [newSentence, intentId, skillId]);
 
   const {
     tableHeader,
@@ -119,7 +120,7 @@ const result = ({
   const columns = [{
     title: '已添加说法',
     dataIndex: 'sentence',
-    // width: "150px",
+    // width: 150,
     // fixed: 'left',
     render: (sentence, { id }) => (
       <EditableInputCell
@@ -128,111 +129,146 @@ const result = ({
       />
     ),
   }, {
-    title: 'app前台/app后台',
-    width: '130px',
-    render: (record) => {
-      const options = [
-        { label: '后台', value: '后台' },
-        { label: '前台', value: '前台' },
-      ];
-      return (
-        <Group
-          options={options}
-          defaultValue={() => {
-            if (!record.ruleConfig) {
-              return [];
+    //   title: 'app前台/app后台',
+    //   width: 130,
+    //   render: (record) => {
+    //     const options = [
+    //       { label: '后台', value: '后台' },
+    //       { label: '前台', value: '前台' },
+    //     ];
+    //     return (
+    //       <Group
+    //         options={options}
+    //         defaultValue={() => {
+    //           if (!record.ruleConfig) {
+    //             return [];
+    //           }
+    //           switch (record.ruleConfig.appGroundType) {
+    //             case 1:
+    //               return ['后台'];
+    //             case 2:
+    //               return ['前台'];
+    //             case 3:
+    //               return ['后台', '前台'];
+    //             default:
+    //               return [];
+    //           }
+    //         }}
+    //         onChange={(checkedValue) => {
+    //           const getAppFroundType = (checkedArray) => {
+    //             if (checkedArray.length === 2) {
+    //               return 3;
+    //             }
+    //             if (checkedArray.length === 0) {
+    //               return 0;
+    //             }
+    //             return JSON.stringify(checkedArray) === JSON.stringify(['后台']) ? 1 : 2;
+    //           };
+    //           const appGroundType = getAppFroundType(checkedValue);
+    //           return onAppGroundTypeChange({
+    //             id: record.id,
+    //             appGroundType,
+    //             ruleConfig: record.ruleConfig,
+    //           });
+    //         }}
+    //       />
+    //     );
+    //   },
+    // }, {
+    //   title: '全双工/半双工',
+    //   width: 110,
+    //   render: (record) => {
+    //     const options = [
+    //       { label: '全双工', value: '全双工' },
+    //       { label: '半双工', value: '半双工' },
+    //     ];
+    //     return (
+    //       <Group
+    //         options={options}
+    //         defaultValue={() => {
+    //           if (!record.ruleConfig) {
+    //             return [];
+    //           }
+    //           switch (record.ruleConfig.duplexType) {
+    //             case 1:
+    //               return ['半双工'];
+    //             case 2:
+    //               return ['全双工'];
+    //             case 3:
+    //               return ['半双工', '全双工'];
+    //             default:
+    //               return [];
+    //           }
+    //         }}
+    //         onChange={(checkedValue) => {
+    //           const getDuplexType = (checkedArray) => {
+    //             if (checkedArray.length === 2) {
+    //               return 3;
+    //             }
+    //             if (checkedArray.length === 0) {
+    //               return 0;
+    //             }
+    //             return JSON.stringify(checkedArray) === JSON.stringify(['半双工']) ? 1 : 2;
+    //           };
+    //           const duplexType = getDuplexType(checkedValue);
+    //           return onDuplexTypeChange({
+    //             id: record.id,
+    //             duplexType,
+    //             ruleConfig: record.ruleConfig,
+    //           });
+    //         }}
+    //       />
+    //     );
+    //   },
+    // }, {
+    //   title: '强说法/弱说法',
+    //   width: 110,
+    //   render: (record) => (
+    //     <Switch
+    //       checkedChildren="强说法"
+    //       unCheckedChildren="弱说法"
+    //       onChange={(checked) => onUpdateRule({ id: record.id, taskClassify: checked })}
+    //       checked={prop('taskClassify')(record)}
+    //     />
+    //   ),
+    // }, {
+    title: '是否编译',
+    width: 80,
+    render: (record) => (
+      <>
+        <Switch
+          checkedChildren="是"
+          unCheckedChildren="否"
+          onChange={async (checked) => {
+            if (record.ruleConfig) {
+              await updateRule({
+                id: record.id,
+                ruleConfig: {
+                  ...record.ruleConfig,
+                  compileFlag: checked ? 1 : 0,
+                  skillId,
+                },
+              });
+            } else {
+              await updateRule({
+                id: record.id,
+                ruleConfig: {
+                  appGroundType: 0,
+                  duplexType: 0,
+                  compileFlag: checked ? 1 : 0,
+                  skillId,
+                },
+              });
             }
-            switch (record.ruleConfig.appGroundType) {
-              case 1:
-                return ['后台'];
-              case 2:
-                return ['前台'];
-              case 3:
-                return ['后台', '前台'];
-              default:
-                return [];
-            }
+            message.success('编辑成功');
           }}
-          onChange={(checkedValue) => {
-            const getAppFroundType = (checkedArray) => {
-              if (checkedArray.length === 2) {
-                return 3;
-              }
-              if (checkedArray.length === 0) {
-                return 0;
-              }
-              return JSON.stringify(checkedArray) === JSON.stringify(['后台']) ? 1 : 2;
-            };
-            const appGroundType = getAppFroundType(checkedValue);
-            return onAppGroundTypeChange({
-              id: record.id,
-              appGroundType,
-              ruleConfig: record.ruleConfig,
-            });
-          }}
+          checked={prop('compileFlag')(record.ruleConfig)}
         />
-      );
-    },
+      </>
+    ),
   }, {
-    title: '全双工/半双工',
-    width: '110px',
-    render: (record) => {
-      const options = [
-        { label: '全双工', value: '全双工' },
-        { label: '半双工', value: '半双工' },
-      ];
-      return (
-        <Group
-          options={options}
-          defaultValue={() => {
-            if (!record.ruleConfig) {
-              return [];
-            }
-            switch (record.ruleConfig.duplexType) {
-              case 1:
-                return ['半双工'];
-              case 2:
-                return ['全双工'];
-              case 3:
-                return ['半双工', '全双工'];
-              default:
-                return [];
-            }
-          }}
-          onChange={(checkedValue) => {
-            const getDuplexType = (checkedArray) => {
-              if (checkedArray.length === 2) {
-                return 3;
-              }
-              if (checkedArray.length === 0) {
-                return 0;
-              }
-              return JSON.stringify(checkedArray) === JSON.stringify(['半双工']) ? 1 : 2;
-            };
-            const duplexType = getDuplexType(checkedValue);
-            return onDuplexTypeChange({
-              id: record.id,
-              duplexType,
-              ruleConfig: record.ruleConfig,
-            });
-          }}
-        />
-      );
-    },
-  }, {
-  //   title: '强说法/弱说法',
-  //   // width: 100,
-  //   render: (record) => (
-  //     <Switch
-  //       checkedChildren="强说法"
-  //       unCheckedChildren="弱说法"
-  //       onChange={(checked) => onUpdateRule({ id: record.id, taskClassify: checked })}
-  //       checked={prop('taskClassify')(record)}
-  //     />
-  //   ),
-  // }, {
     title: '操作',
-    width: '140px',
+    width: 150,
     // fixed: 'right',
     render: (record) => (
       <>
@@ -304,8 +340,8 @@ const result = ({
             rowKey="id"
             pagination={pagination}
             // scroll={{
-            //   // x: "800px",
-            //   y: "600px",
+            //   x: 500,
+            //   y: 500,
             // }}
           />
         </div>
