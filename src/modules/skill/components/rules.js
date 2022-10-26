@@ -232,7 +232,7 @@ const result = ({
     //     />
     //   ),
     // }, {
-    title: '是否编译',
+    title: '动态编译',
     width: 80,
     render: (record) => (
       <>
