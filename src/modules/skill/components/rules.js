@@ -237,6 +237,9 @@ const result = ({
     render: (record) => (
       <>
         <Switch
+          style={{
+            color: 'red',
+          }}
           checkedChildren="是"
           unCheckedChildren="否"
           onChange={async (checked) => {
@@ -245,7 +248,7 @@ const result = ({
                 id: record.id,
                 ruleConfig: {
                   ...record.ruleConfig,
-                  compileFlag: checked ? 1 : 0,
+                  compileFlag: checked ? 1 : 2,
                   skillId,
                 },
               });
@@ -255,14 +258,19 @@ const result = ({
                 ruleConfig: {
                   appGroundType: 0,
                   duplexType: 0,
-                  compileFlag: checked ? 1 : 0,
+                  compileFlag: checked ? 1 : 2,
                   skillId,
                 },
               });
             }
             message.success('编辑成功');
           }}
-          checked={prop('compileFlag')(record.ruleConfig)}
+          defaultChecked={() => {
+            if (record.ruleConfig !== null && record.ruleConfig.compileFlag === 2) {
+              return false;
+            }
+            return true;
+          }}
         />
       </>
     ),
