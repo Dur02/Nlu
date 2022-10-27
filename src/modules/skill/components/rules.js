@@ -58,13 +58,13 @@ const result = ({
     message.success('删除成功');
   }, [selectedIds]);
 
-  // const onDuplexTypeChange = useCallback(async ({ id, name, duplexType, ruleConfig }) => {
+  // const onCheckboxChange = useCallback(async ({ id, key, value, ruleConfig }) => {
   //   if (ruleConfig == null) {
   //     await updateRule({
   //       id,
   //       ruleConfig: {
-  //         appGroundType: 0,
-  //         duplexType,
+  //         appGroundType: key === 'appGroundType' ? value : 0,
+  //         duplexType: key === 'duplexType' ? value : 0,
   //         compileFlag: 1,
   //         skillId,
   //       },
@@ -74,30 +74,8 @@ const result = ({
   //       id,
   //       ruleConfig: {
   //         ...ruleConfig,
-  //         duplexType,
-  //       },
-  //     });
-  //   }
-  //   message.success('编辑成功');
-  // }, [newSentence, intentId, skillId]);
-  //
-  // const onAppGroundTypeChange = useCallback(async ({ id, appGroundType, ruleConfig }) => {
-  //   if (ruleConfig == null) {
-  //     await updateRule({
-  //       id,
-  //       ruleConfig: {
-  //         appGroundType,
-  //         duplexType: 0,
-  //         compileFlag: 1,
-  //         skillId,
-  //       },
-  //     });
-  //   } else {
-  //     await updateRule({
-  //       id,
-  //       ruleConfig: {
-  //         ...ruleConfig,
-  //         appGroundType,
+  //         appGroundType: key === 'appGroundType' ? value : ruleConfig.appGroundType,
+  //         duplexType: key === 'duplexType' ? value : ruleConfig.duplexType,
   //       },
   //     });
   //   }
@@ -122,8 +100,8 @@ const result = ({
   const columns = [{
     title: '已添加说法',
     dataIndex: 'sentence',
-    width: 150,
-    fixed: 'left',
+    // width: 150,
+    // fixed: 'left',
     render: (sentence, { id }) => (
       <EditableInputCell
         value={sentence}
@@ -167,9 +145,10 @@ const result = ({
     //             return JSON.stringify(checkedArray) === JSON.stringify(['后台']) ? 1 : 2;
     //           };
     //           const appGroundType = getAppFroundType(checkedValue);
-    //           return onAppGroundTypeChange({
+    //           return onCheckboxChange({
     //             id: record.id,
-    //             appGroundType,
+    //             key: "appGroundType",
+    //             value: appGroundType,
     //             ruleConfig: record.ruleConfig,
     //           });
     //         }}
@@ -213,9 +192,10 @@ const result = ({
     //             return JSON.stringify(checkedArray) === JSON.stringify(['半双工']) ? 1 : 2;
     //           };
     //           const duplexType = getDuplexType(checkedValue);
-    //           return onDuplexTypeChange({
+    //           return onCheckboxChange({
     //             id: record.id,
-    //             duplexType,
+    //             key: "duplexType",
+    //             value: duplexType,
     //             ruleConfig: record.ruleConfig,
     //           });
     //         }}
@@ -230,6 +210,7 @@ const result = ({
         <Switch
           style={{
             color: 'red',
+            width: '68px',
           }}
           checkedChildren="是"
           unCheckedChildren="否"
@@ -267,7 +248,7 @@ const result = ({
     ),
   }, {
     title: '操作',
-    width: 150,
+    width: 140,
     fixed: 'right',
     render: (record) => (
       <>
@@ -338,10 +319,10 @@ const result = ({
             columns={columns}
             rowKey="id"
             pagination={pagination}
-            scroll={{
-              x: 500,
-              // y: 500,
-            }}
+            // scroll={{
+            //   x: 500,
+            //   // y: 500,
+            // }}
           />
         </div>
       </div>
