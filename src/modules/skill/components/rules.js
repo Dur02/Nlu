@@ -58,13 +58,14 @@ const result = ({
     message.success('删除成功');
   }, [selectedIds]);
 
-  // const onDuplexTypeChange = useCallback(async ({ id, duplexType, ruleConfig }) => {
+  // const onDuplexTypeChange = useCallback(async ({ id, name, duplexType, ruleConfig }) => {
   //   if (ruleConfig == null) {
   //     await updateRule({
   //       id,
   //       ruleConfig: {
   //         appGroundType: 0,
   //         duplexType,
+  //         compileFlag: 1,
   //         skillId,
   //       },
   //     });
@@ -87,6 +88,7 @@ const result = ({
   //       ruleConfig: {
   //         appGroundType,
   //         duplexType: 0,
+  //         compileFlag: 1,
   //         skillId,
   //       },
   //     });
@@ -120,8 +122,8 @@ const result = ({
   const columns = [{
     title: '已添加说法',
     dataIndex: 'sentence',
-    // width: 150,
-    // fixed: 'left',
+    width: 150,
+    fixed: 'left',
     render: (sentence, { id }) => (
       <EditableInputCell
         value={sentence}
@@ -221,18 +223,7 @@ const result = ({
     //     );
     //   },
     // }, {
-    //   title: '强说法/弱说法',
-    //   width: 110,
-    //   render: (record) => (
-    //     <Switch
-    //       checkedChildren="强说法"
-    //       unCheckedChildren="弱说法"
-    //       onChange={(checked) => onUpdateRule({ id: record.id, taskClassify: checked })}
-    //       checked={prop('taskClassify')(record)}
-    //     />
-    //   ),
-    // }, {
-    title: '动态编译',
+    title: '语序调整',
     width: 80,
     render: (record) => (
       <>
@@ -277,7 +268,7 @@ const result = ({
   }, {
     title: '操作',
     width: 150,
-    // fixed: 'right',
+    fixed: 'right',
     render: (record) => (
       <>
         <Switch
@@ -347,10 +338,10 @@ const result = ({
             columns={columns}
             rowKey="id"
             pagination={pagination}
-            // scroll={{
-            //   x: 500,
-            //   y: 500,
-            // }}
+            scroll={{
+              x: 500,
+              // y: 500,
+            }}
           />
         </div>
       </div>
