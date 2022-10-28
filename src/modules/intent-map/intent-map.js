@@ -16,13 +16,17 @@ import { getEntity } from 'relient/selectors';
 import { useSelector } from 'react-redux';
 import { Modal, Table, Select, Tabs, Button, Form, message, Tooltip } from 'antd';
 import { useDetails } from 'relient-admin/hooks';
+import useStyles from 'isomorphic-style-loader/useStyles';
 import columns from './intent-map-columns';
+import s from './intent-map.less';
 
 const { useForm } = Form;
 
 const result = ({
   initialData,
 }) => {
+  useStyles(s);
+
   const readAllIntentMap = useAction(readAll);
   const onRemove = useAction(removeIntentMap);
   const onUpdate = useAction(update);
@@ -133,20 +137,6 @@ const result = ({
     setLoading(false);
   }, [updateForm, editorItem, loading, setLoading]);
 
-  // const getHeight = () => {
-  //   const temp = paginationProps.pageSize || data.size;
-  //   switch (temp) {
-  //     case 10:
-  //       return 1000;
-  //     case 20:
-  //       return 2000;
-  //     case 50:
-  //       return 5000;
-  //     default:
-  //       return 7000;
-  //   }
-  // };
-
   return (
     <Layout>
       <Button
@@ -161,17 +151,14 @@ const result = ({
       <Tabs
         defaultActiveKey="全部"
         tabPosition="left"
+        className={s.Tabs}
         tabBarStyle={{
-          width: 140,
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis',
+          textAlign: 'left !important',
         }}
         style={{
-          // height: getHeight(),
+          height: 800,
           position: 'relative',
           top: 10,
-          // width: 100,
         }}
         items={
           flow(
@@ -190,6 +177,9 @@ const result = ({
                   skillInfos,
                   updateForm,
                 })}
+                scroll={{
+                  y: 600,
+                }}
                 rowKey="id"
                 pagination={paginationProps}
               />,
