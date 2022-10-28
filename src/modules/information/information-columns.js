@@ -1,17 +1,18 @@
 export default [{
   title: 'ID',
   dataIndex: 'id',
+  width: 100,
 }, {
   title: '技能名',
   dataIndex: 'name',
 }, {
   title: '技能code',
   dataIndex: 'code',
-  width: 120,
+  // width: 120,
 }, {
   title: '技能版本',
   dataIndex: 'version',
-  width: 90,
+  width: 120,
 }, {
   title: '模型路径',
   dataIndex: 'modelPath',

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { flow, map, flattenDepth, findKey, concat, prop } from 'lodash/fp';
 import { getEntity } from 'relient/selectors';
 import { Table, Tabs } from 'antd';
-import columns from './information-coulumns';
+import columns from './information-columns';
 
 const mapWithIndex = map.convert({ cap: false });
 
@@ -39,7 +39,7 @@ const result = () => {
     showQuickJumper: true,
     pageSizeOptions: [10, 20, 50, 100],
     current,
-    // 切换tab再换回来原表格会保持页码不变，要实现切换页签后重置页码的吗需要一个state
+    // 切换tab再换回来原表格会保持页码不变，要实现切换页签后重置页码的话需要一个state
     total: data.length,
     pageSize,
     onChange: async (newPage, newPageSize) => {
@@ -49,27 +49,13 @@ const result = () => {
     showTotal: (total) => `共 ${total} 条`,
   };
 
-  const getHeight = () => {
-    const temp = paginationProps.pageSize;
-    switch (temp) {
-      case 10:
-        return 680;
-      case 20:
-        return 1250;
-      case 50:
-        return 3000;
-      default:
-        return 5650;
-    }
-  };
-
   return (
     <Layout>
       <Tabs
         defaultActiveKey="全部"
         tabPosition="left"
         style={{
-          height: getHeight(),
+          height: 800,
           position: 'relative',
           top: 10,
         }}
@@ -80,6 +66,9 @@ const result = () => {
               key,
               children: <Table
                 // tableLayout="fixed"
+                scroll={{
+                  y: 600,
+                }}
                 dataSource={data}
                 columns={columns}
                 rowKey="key"
