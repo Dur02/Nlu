@@ -200,6 +200,7 @@ const result = ({
           </div>
         ))(difference(value, map(({ name }) => name)(selectedWords)))}
         <Button
+          className={s.AddedWords}
           type="primary"
           size="small"
           onClick={() => setTableVisible(true)}
