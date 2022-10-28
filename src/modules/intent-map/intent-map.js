@@ -133,19 +133,19 @@ const result = ({
     setLoading(false);
   }, [updateForm, editorItem, loading, setLoading]);
 
-  const getHeight = () => {
-    const temp = paginationProps.pageSize || data.size;
-    switch (temp) {
-      case 10:
-        return 680;
-      case 20:
-        return 1250;
-      case 50:
-        return 3000;
-      default:
-        return 5650;
-    }
-  };
+  // const getHeight = () => {
+  //   const temp = paginationProps.pageSize || data.size;
+  //   switch (temp) {
+  //     case 10:
+  //       return 780;
+  //     case 20:
+  //       return 1250;
+  //     case 50:
+  //       return 3000;
+  //     default:
+  //       return 5650;
+  //   }
+  // };
 
   return (
     <Layout>
@@ -168,7 +168,7 @@ const result = ({
           textOverflow: 'ellipsis',
         }}
         style={{
-          height: getHeight(),
+          // height: getHeight(),
           position: 'relative',
           top: 10,
           // width: 100,
