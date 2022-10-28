@@ -99,8 +99,8 @@ const result = ({
   const columns = [{
     title: '已添加说法',
     dataIndex: 'sentence',
-    // width: 150,
-    // fixed: 'left',
+    width: 150,
+    fixed: 'left',
     render: (sentence, { id }) => (
       <EditableInputCell
         value={sentence}
