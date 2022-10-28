@@ -137,13 +137,13 @@ const result = ({
   //   const temp = paginationProps.pageSize || data.size;
   //   switch (temp) {
   //     case 10:
-  //       return 780;
+  //       return 1000;
   //     case 20:
-  //       return 1250;
+  //       return 2000;
   //     case 50:
-  //       return 3000;
+  //       return 5000;
   //     default:
-  //       return 5650;
+  //       return 7000;
   //   }
   // };
 
