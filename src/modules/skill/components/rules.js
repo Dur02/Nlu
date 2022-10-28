@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
-import { Button, Input, message, Popconfirm, Switch, Table } from 'antd';
-// import { Button, Input, message, Popconfirm, Switch, Table, Checkbox } from 'antd';
+import { Button, Input, message, Popconfirm, Switch, Table, Checkbox } from 'antd';
 import { prop, map, size, reject, eq } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { useLocalTable } from 'relient-admin/hooks';
@@ -11,8 +10,8 @@ import IntentSlots from './intent-slots';
 import s from './rules.less';
 
 const { Search } = Input;
-// const { Group } = Checkbox;
-
+const { Group } = Checkbox;
+//
 const result = ({
   createRule,
   updateRule,
@@ -58,29 +57,29 @@ const result = ({
     message.success('删除成功');
   }, [selectedIds]);
 
-  // const onCheckboxChange = useCallback(async ({ id, key, value, ruleConfig }) => {
-  //   if (ruleConfig == null) {
-  //     await updateRule({
-  //       id,
-  //       ruleConfig: {
-  //         appGroundType: key === 'appGroundType' ? value : 0,
-  //         duplexType: key === 'duplexType' ? value : 0,
-  //         compileFlag: 1,
-  //         skillId,
-  //       },
-  //     });
-  //   } else {
-  //     await updateRule({
-  //       id,
-  //       ruleConfig: {
-  //         ...ruleConfig,
-  //         appGroundType: key === 'appGroundType' ? value : ruleConfig.appGroundType,
-  //         duplexType: key === 'duplexType' ? value : ruleConfig.duplexType,
-  //       },
-  //     });
-  //   }
-  //   message.success('编辑成功');
-  // }, [newSentence, intentId, skillId]);
+  const onCheckboxChange = useCallback(async ({ id, key, value, ruleConfig }) => {
+    if (ruleConfig == null) {
+      await updateRule({
+        id,
+        ruleConfig: {
+          appGroundType: key === 'appGroundType' ? value : 0,
+          duplexType: key === 'duplexType' ? value : 0,
+          compileFlag: 1,
+          skillId,
+        },
+      });
+    } else {
+      await updateRule({
+        id,
+        ruleConfig: {
+          ...ruleConfig,
+          appGroundType: key === 'appGroundType' ? value : ruleConfig.appGroundType,
+          duplexType: key === 'duplexType' ? value : ruleConfig.duplexType,
+        },
+      });
+    }
+    message.success('编辑成功');
+  }, [newSentence, intentId, skillId]);
 
   const {
     tableHeader,
@@ -109,100 +108,100 @@ const result = ({
       />
     ),
   }, {
-    //   title: 'app前台/app后台',
-    //   width: 130,
-    //   render: (record) => {
-    //     const options = [
-    //       { label: '后台', value: '后台' },
-    //       { label: '前台', value: '前台' },
-    //     ];
-    //     return (
-    //       <Group
-    //         options={options}
-    //         defaultValue={() => {
-    //           if (!record.ruleConfig) {
-    //             return [];
-    //           }
-    //           switch (record.ruleConfig.appGroundType) {
-    //             case 1:
-    //               return ['后台'];
-    //             case 2:
-    //               return ['前台'];
-    //             case 3:
-    //               return ['后台', '前台'];
-    //             default:
-    //               return [];
-    //           }
-    //         }}
-    //         onChange={(checkedValue) => {
-    //           const getAppFroundType = (checkedArray) => {
-    //             if (checkedArray.length === 2) {
-    //               return 3;
-    //             }
-    //             if (checkedArray.length === 0) {
-    //               return 0;
-    //             }
-    //             return JSON.stringify(checkedArray) === JSON.stringify(['后台']) ? 1 : 2;
-    //           };
-    //           const appGroundType = getAppFroundType(checkedValue);
-    //           return onCheckboxChange({
-    //             id: record.id,
-    //             key: "appGroundType",
-    //             value: appGroundType,
-    //             ruleConfig: record.ruleConfig,
-    //           });
-    //         }}
-    //       />
-    //     );
-    //   },
-    // }, {
-    //   title: '全双工/半双工',
-    //   width: 110,
-    //   render: (record) => {
-    //     const options = [
-    //       { label: '全双工', value: '全双工' },
-    //       { label: '半双工', value: '半双工' },
-    //     ];
-    //     return (
-    //       <Group
-    //         options={options}
-    //         defaultValue={() => {
-    //           if (!record.ruleConfig) {
-    //             return [];
-    //           }
-    //           switch (record.ruleConfig.duplexType) {
-    //             case 1:
-    //               return ['半双工'];
-    //             case 2:
-    //               return ['全双工'];
-    //             case 3:
-    //               return ['半双工', '全双工'];
-    //             default:
-    //               return [];
-    //           }
-    //         }}
-    //         onChange={(checkedValue) => {
-    //           const getDuplexType = (checkedArray) => {
-    //             if (checkedArray.length === 2) {
-    //               return 3;
-    //             }
-    //             if (checkedArray.length === 0) {
-    //               return 0;
-    //             }
-    //             return JSON.stringify(checkedArray) === JSON.stringify(['半双工']) ? 1 : 2;
-    //           };
-    //           const duplexType = getDuplexType(checkedValue);
-    //           return onCheckboxChange({
-    //             id: record.id,
-    //             key: "duplexType",
-    //             value: duplexType,
-    //             ruleConfig: record.ruleConfig,
-    //           });
-    //         }}
-    //       />
-    //     );
-    //   },
-    // }, {
+    title: 'app前台/app后台',
+    width: 130,
+    render: (record) => {
+      const options = [
+        { label: '后台', value: '后台' },
+        { label: '前台', value: '前台' },
+      ];
+      return (
+        <Group
+          options={options}
+          defaultValue={() => {
+            if (!record.ruleConfig) {
+              return [];
+            }
+            switch (record.ruleConfig.appGroundType) {
+              case 1:
+                return ['后台'];
+              case 2:
+                return ['前台'];
+              case 3:
+                return ['后台', '前台'];
+              default:
+                return [];
+            }
+          }}
+          onChange={(checkedValue) => {
+            const getAppFroundType = (checkedArray) => {
+              if (checkedArray.length === 2) {
+                return 3;
+              }
+              if (checkedArray.length === 0) {
+                return 0;
+              }
+              return JSON.stringify(checkedArray) === JSON.stringify(['后台']) ? 1 : 2;
+            };
+            const appGroundType = getAppFroundType(checkedValue);
+            return onCheckboxChange({
+              id: record.id,
+              key: 'appGroundType',
+              value: appGroundType,
+              ruleConfig: record.ruleConfig,
+            });
+          }}
+        />
+      );
+    },
+  }, {
+    title: '全双工/半双工',
+    width: 110,
+    render: (record) => {
+      const options = [
+        { label: '全双工', value: '全双工' },
+        { label: '半双工', value: '半双工' },
+      ];
+      return (
+        <Group
+          options={options}
+          defaultValue={() => {
+            if (!record.ruleConfig) {
+              return [];
+            }
+            switch (record.ruleConfig.duplexType) {
+              case 1:
+                return ['半双工'];
+              case 2:
+                return ['全双工'];
+              case 3:
+                return ['半双工', '全双工'];
+              default:
+                return [];
+            }
+          }}
+          onChange={(checkedValue) => {
+            const getDuplexType = (checkedArray) => {
+              if (checkedArray.length === 2) {
+                return 3;
+              }
+              if (checkedArray.length === 0) {
+                return 0;
+              }
+              return JSON.stringify(checkedArray) === JSON.stringify(['半双工']) ? 1 : 2;
+            };
+            const duplexType = getDuplexType(checkedValue);
+            return onCheckboxChange({
+              id: record.id,
+              key: 'duplexType',
+              value: duplexType,
+              ruleConfig: record.ruleConfig,
+            });
+          }}
+        />
+      );
+    },
+  }, {
     title: '语序调整',
     width: 80,
     render: (record) => (
@@ -319,10 +318,10 @@ const result = ({
             columns={columns}
             rowKey="id"
             pagination={pagination}
-            // scroll={{
-            //   x: 500,
-            //   // y: 500,
-            // }}
+            scroll={{
+              x: 500,
+              // y: 500,
+            }}
           />
         </div>
       </div>
