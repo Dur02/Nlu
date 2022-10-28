@@ -156,7 +156,7 @@ const result = ({
     },
   }, {
     title: '全双工/半双工',
-    width: 130,
+    width: 150,
     render: (record) => {
       const options = [
         { label: '全双工', value: '全双工' },

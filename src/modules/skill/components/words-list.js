@@ -157,11 +157,12 @@ const result = ({
           <div className={s.AddedWords} key={item.id}>
             <Button
               onClick={() => {
-                if (item.skillId) {
-                  openEditor(item);
-                } else {
-                  message.error('系统词库不可编辑');
-                }
+                openEditor(item);
+                // if (item.skillId) {
+                //   openEditor(item);
+                // } else {
+                //   message.error('系统词库不可编辑');
+                // }
               }}
               size="small"
               ghost
@@ -188,6 +189,12 @@ const result = ({
               type="primary"
             >
               {item}
+            </Button>
+            <Button
+              onClick={() => onDetachWords({ name: item })}
+              size="small"
+            >
+              x
             </Button>
             <span style={{ color: '#FF4D4F' }}>(词库缺失)</span>
           </div>
