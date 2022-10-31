@@ -54,6 +54,7 @@ const result = ({
 
   const onRemoveSelectedRules = useCallback(async () => {
     await Promise.all(map((id) => removeRule({ id }))(selectedIds));
+    setSelectedIds([]);
     message.success('删除成功');
   }, [selectedIds]);
 
@@ -306,12 +307,14 @@ const result = ({
                   setSelectedIds(reject(eq(id))(selectedIds));
                 }
               },
-              onSelectAll: (selected) => {
-                if (selected) {
-                  setSelectedIds(map(prop('id'))(dataSource));
-                } else {
-                  setSelectedIds([]);
-                }
+              onSelectAll: (selected, selectedRows) => {
+                // 此处要求改成点击后只选中当前页所有数据
+                setSelectedIds(map(prop('id'))(selectedRows));
+                // if (selected) {
+                //   setSelectedIds(map(prop('id'))(selectedRows));
+                // } else {
+                //   setSelectedIds([]);
+                // }
               },
               selectedRowKeys: selectedIds,
             }}
