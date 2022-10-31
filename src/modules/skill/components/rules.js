@@ -290,8 +290,9 @@ const result = ({
               <Popconfirm
                 title="确认删除吗？删除操作不可恢复"
                 onConfirm={onRemoveSelectedRules}
+                disabled={selectedIds.length === 0}
               >
-                <Button type="danger" ghost size="small">删除选中</Button>
+                <Button type="danger" ghost size="small" disabled={selectedIds.length === 0}>删除选中</Button>
               </Popconfirm>
             </div>
             {tableHeader}
