@@ -11,7 +11,7 @@ import {
   propOr,
   find,
   prop,
-  isBoolean,
+  isString,
   omit,
   size,
   filter,
@@ -19,6 +19,7 @@ import {
 } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { getCName, getIsDefault } from 'shared/utils/helper';
+import { isBoolean } from 'lodash';
 import NLG from './output-response-nlg';
 import Condition from './output-response-condition';
 import Command from './output-response-command';
@@ -30,12 +31,15 @@ const mapWithIndex = map.convert({ cap: false });
 const { TabPane } = Tabs;
 const DEFAULT_KEY = 'default';
 
-const commandFirstOptions = [{
+const executeSequenceOptions = [{
   label: '回复内容播报完毕，再执行客户端动作',
-  value: 'false',
+  value: 'ttsFirst',
 }, {
   label: '客户端动作执行后，再播报回复内容',
-  value: 'true',
+  value: 'commandFirst',
+}, {
+  label: '播报的同时执行客户端动作',
+  value: 'executeBoth',
 }];
 
 const getDefaultConditionSize = flow(
@@ -141,6 +145,16 @@ const result = ({
     setSorterVisible(false);
   }, [outputId]);
 
+  const getValue = (executeSequence, commandFirst) => {
+    if (isString(executeSequence)) {
+      return executeSequence;
+    }
+    if (isBoolean(commandFirst)) {
+      return commandFirst.toString() === 'true' ? 'commandFirst' : 'ttsFirst';
+    }
+    return undefined;
+  };
+
   return (
     <div>
       <div className={s.Header}>
@@ -208,6 +222,7 @@ const result = ({
           next,
           nextAny,
           isDefault,
+          executeSequence,
         }) => (
           <TabPane
             key={cId}
@@ -250,9 +265,27 @@ const result = ({
             <h4 className={s.Title}>执行时序</h4>
             <Select
               style={{ width: 280 }}
-              options={commandFirstOptions}
-              value={isBoolean(commandFirst) ? commandFirst.toString() : undefined}
-              onChange={(newCommandFirst) => onUpdateResponse({ cId, commandFirst: newCommandFirst === 'true' })}
+              options={executeSequenceOptions}
+              value={getValue(executeSequence, commandFirst)}
+              onChange={(newExecuteSequence) => {
+                const getCommandFirst = () => {
+                  switch (newExecuteSequence) {
+                    case 'executeBoth':
+                      return 'false';
+                    case 'ttsFirst':
+                      return 'false';
+                    default:
+                      return 'true';
+                  }
+                };
+                return (
+                  onUpdateResponse({
+                    cId,
+                    commandFirst: getCommandFirst(),
+                    executeSequence: newExecuteSequence,
+                  })
+                );
+              }}
             />
 
             <h4 className={s.Title}>下一轮对话</h4>

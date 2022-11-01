@@ -1,6 +1,12 @@
 .Root {
   max-height: 100vh;
   overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.Root::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
 }
 
 .Tips {
