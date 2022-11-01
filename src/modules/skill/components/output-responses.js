@@ -59,6 +59,7 @@ const result = ({
   const [sorterVisible, setSorterVisible] = useState(false);
   const [creatorConditionVisible, setCreatorConditionVisible] = useState(false);
   const [editorConditionCId, setEditorConditionCId] = useState(null);
+
   const onCreateResponse = useCallback(async (condition, cnames) => {
     const newResponses = mapWithIndex((item, index) => ({
       ...item,
@@ -81,6 +82,7 @@ const result = ({
     setCreatorConditionVisible(false);
     setSelectedCId(newResponses[0].cId);
   }, [outputId, responses]);
+
   const onUpdateCondition = useCallback(async (condition, cnames) => {
     const newResponses = map((item) => {
       if (editorConditionCId === item.cId) {
@@ -104,6 +106,7 @@ const result = ({
     message.success('编辑成功');
     setEditorConditionCId(null);
   }, [outputId, responses, editorConditionCId]);
+
   const onUpdateResponse = useCallback(async (response) => {
     await updateOutput({
       id: outputId,
@@ -119,6 +122,7 @@ const result = ({
     });
     message.success('编辑成功');
   }, [outputId, responses]);
+
   const onRemoveResponse = useCallback(async ({ cId }) => {
     const newResponses = flow(
       reject(propEq('cId', cId)),
@@ -133,6 +137,7 @@ const result = ({
     });
     setSelectedCId(newResponses[0].cId);
   }, [outputId, responses]);
+
   const onSortResponse = useCallback(async (value) => {
     await updateOutput({
       id: outputId,
@@ -271,11 +276,11 @@ const result = ({
                 const getCommandFirst = () => {
                   switch (newExecuteSequence) {
                     case 'executeBoth':
-                      return 'false';
+                      return false;
                     case 'ttsFirst':
-                      return 'false';
+                      return false;
                     default:
-                      return 'true';
+                      return true;
                   }
                 };
                 return (
