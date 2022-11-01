@@ -139,8 +139,8 @@ const result = ({
 
   const columns = [{
     title: '名称',
-    // width: 60,
-    // fixed: "left",
+    width: 60,
+    fixed: 'left',
     dataIndex: 'name',
   }, {
     title: '必须',
@@ -179,7 +179,7 @@ const result = ({
   }, {
     title: '操作',
     width: 80,
-    // fixed: "right",
+    fixed: 'right',
     render: (record) => (
       <>
         {prop('required')(record) && (
@@ -210,10 +210,10 @@ const result = ({
         columns={columns}
         rowKey="name"
         pagination={pagination}
-        // scroll={{
-        //   // x: "110%",
-        //   y: "600px",
-        // }}
+        scroll={{
+          x: 500,
+          y: 500,
+        }}
       />
       <Drawer
         title="编辑提问"
