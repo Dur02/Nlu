@@ -190,7 +190,7 @@ const result = ({
             };
             await updateOutput({
               id: outputId,
-              responses: [...responses, temp],
+              responses: [temp, ...responses],
             });
           }}
         >

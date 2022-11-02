@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { func, string, array, bool } from 'prop-types';
 import { Modal } from 'antd';
-import { map } from 'lodash/fp';
+import { filter, find, map } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { arrayMoveImmutable } from 'shared/utils/helper';
 
@@ -29,10 +29,14 @@ const result = ({
 }) => {
   useStyles(s);
 
-  const [finalValue, setFinalValue] = useState(value);
+  // 后端要求默认值一直排最后不可变动
+  const [defaultItem] = useState(find((item) => item.isDefault)(value));
+  const [finalValue, setFinalValue] = useState(filter((item) => !item.isDefault)(value));
+
   useEffect(() => {
-    setFinalValue(value || []);
+    setFinalValue(filter((item) => !item.isDefault)(value) || []);
   }, [value]);
+
   const onSortEnd = useCallback(({ oldIndex, newIndex }) => {
     if (oldIndex !== newIndex) {
       setFinalValue((items) => arrayMoveImmutable(items, oldIndex, newIndex));
@@ -44,7 +48,7 @@ const result = ({
       title={title}
       visible={visible}
       onCancel={onClose}
-      onOk={() => onChange(finalValue)}
+      onOk={() => onChange([...finalValue, defaultItem])}
     >
       <SortableList helperClass={s.List} items={finalValue} onSortEnd={onSortEnd} />
     </Modal>
