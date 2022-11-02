@@ -113,7 +113,9 @@ const result = ({
       responses: map((item) => {
         if (response.cId === item.cId) {
           return {
-            ...item,
+            // 执行时序升级新增一个选项，在Selection的value为executeBoth时不传commandFirst这个字段
+            // ...item,
+            ...omit(response.executeSequence === 'executeBoth' ? ['commandFirst'] : [])(item),
             ...omit(['isDefault'])(response),
           };
         }
@@ -275,21 +277,22 @@ const result = ({
               onChange={(newExecuteSequence) => {
                 const getCommandFirst = () => {
                   switch (newExecuteSequence) {
-                    case 'executeBoth':
-                      return false;
-                    case 'ttsFirst':
-                      return false;
-                    default:
+                    case 'commandFirst':
                       return true;
+                    default:
+                      return false;
                   }
                 };
-                return (
-                  onUpdateResponse({
+                return newExecuteSequence === 'executeBoth'
+                  ? onUpdateResponse({
+                    cId,
+                    // commandFirst: getCommandFirst(),
+                    executeSequence: newExecuteSequence,
+                  }) : onUpdateResponse({
                     cId,
                     commandFirst: getCommandFirst(),
                     executeSequence: newExecuteSequence,
-                  })
-                );
+                  });
               }}
             />
 
