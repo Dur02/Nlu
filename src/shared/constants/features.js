@@ -33,6 +33,39 @@ export const features = [{
   link: '/skill',
   text: '技能',
 }, {
+  key: INTERVENTION,
+  link: 'intervention',
+  text: '干预',
+}, {
+  key: AUDIT_LOG,
+  link: 'audit/log',
+  text: '审计',
+}, {
+  key: INTENT_MAP,
+  link: 'intentMap',
+  text: '意图映射',
+}, {
+  key: TEST,
+  link: 'test',
+  text: '测试',
+  items: [{
+    key: CASE,
+    link: 'case',
+    text: '测试用例',
+  }, {
+    key: SUITE,
+    link: 'suite',
+    text: '测试集',
+  }, {
+    key: JOB,
+    link: 'job',
+    text: '测试任务',
+  }],
+}, {
+  key: INFORMATION,
+  link: 'information',
+  text: 'NLU信息',
+}, {
   key: SYSTEM,
   link: '/system',
   text: '系统设置',
@@ -57,39 +90,6 @@ export const features = [{
     link: 'skill-permission',
     text: '技能权限',
   }],
-}, {
-  key: AUDIT_LOG,
-  link: 'audit/log',
-  text: '审计',
-}, {
-  key: INTERVENTION,
-  link: 'intervention',
-  text: '干预',
-}, {
-  key: TEST,
-  link: 'test',
-  text: '测试',
-  items: [{
-    key: CASE,
-    link: 'case',
-    text: '测试用例',
-  }, {
-    key: SUITE,
-    link: 'suite',
-    text: '测试集',
-  }, {
-    key: JOB,
-    link: 'job',
-    text: '测试任务',
-  }],
-}, {
-  key: INTENT_MAP,
-  link: 'intentMap',
-  text: '意图映射',
-}, {
-  key: INFORMATION,
-  link: 'information',
-  text: 'NLU信息',
 }, {
   key: HELP,
   link: 'help',
