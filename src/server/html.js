@@ -14,9 +14,10 @@ const result = ({
   children,
   initialState,
 }) => (
-  <html className="no-js" lang="en">
+  <html className="no-js" lang="zh-CN" translate="no">
     <head>
       <meta charSet="utf-8" />
+      <meta name="google" content="notranslate" />
       <meta httpEquiv="x-ua-compatible" content="ie=edge" />
       <title>{title}</title>
       <meta name="description" content={description} />
