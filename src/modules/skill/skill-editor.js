@@ -30,6 +30,7 @@ import { outputYamlExport } from 'shared/actions/skill';
 import Rules from './components/rules';
 import Intents from './components/intents';
 import Output from './components/output';
+import Migrate from './components/migrate';
 import selector from './skill-editor-selector';
 import s from './skill-editor.less';
 import WordGraph from '../../shared/components/word-graph';
@@ -49,6 +50,7 @@ const result = ({ skillId }) => {
   const [wordGraphVisible, setWordGraphVisible] = useState(false);
   const [globalSearch, setGlobalSearch] = useState(false);
   const [uploadVisible, setUploadVisible] = useState(false);
+  const [migrateVisible, setMigrateVisible] = useState(false);
   const [isText, setIsText] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState([]);
@@ -171,6 +173,15 @@ const result = ({ skillId }) => {
       )}
       addonAfter={(
         <>
+          <Button
+            type="primary"
+            onClick={() => {
+              setMigrateVisible(true);
+            }}
+          >
+            迁移
+          </Button>
+          &nbsp;
           <Button
             type="primary"
             onClick={() => {
@@ -351,6 +362,12 @@ const result = ({ skillId }) => {
           </Button>
         </Upload>
       </Modal>
+      <Migrate
+        skill={skill}
+        intents={intents}
+        migrateVisible={migrateVisible}
+        setMigrateVisible={setMigrateVisible}
+      />
       <Modal
         visible={error.length > 0}
         onOk={closeErrorInfo}

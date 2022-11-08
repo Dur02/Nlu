@@ -15,6 +15,7 @@ export const UPDATE = actionType('UPDATE');
 export const READ_WORD_GRAPH = actionType('READ_WORD_GRAPH');
 export const SKILL_YAML_EXPORT = actionType('SKILL_YAML_EXPORT');
 export const OUTPUT_YAML_EXPORT = actionType('OUTPUT_YAML_EXPORT');
+export const INTENT_MIGRATE = actionType('INTENT_MIGRATE');
 
 export const readAll = createAction(
   READ_ALL,
@@ -79,4 +80,42 @@ export const skillYamlExport = createAction(
 export const outputYamlExport = createAction(
   OUTPUT_YAML_EXPORT,
   ({ skillId }) => read('/skill/edit/skill/output-yaml-export', { skillId }),
+);
+
+export const intentMigrate = createAction(
+  INTENT_MIGRATE,
+  ({
+    intentIds,
+    skillWordIds,
+    sourceSkillId,
+    targetSkillCode,
+    targetSkillId,
+  }) => post('/skill/edit/skill//skill/edit/skill/data-migrate', {
+    intentIds,
+    skillWordIds,
+    sourceSkillId,
+    targetSkillCode,
+    targetSkillId,
+  }),
+);
+
+export const ruleMigrate = createAction(
+  INTENT_MIGRATE,
+  ({
+    skillRuleIds,
+    sourceIntentId,
+    sourceIntentName,
+    sourceSkillId,
+    targetIntentId,
+    targetIntentName,
+    targetSkillId,
+  }) => post('/skill/edit/skill/rule-data-migrate', {
+    skillRuleIds,
+    sourceIntentId,
+    sourceIntentName,
+    sourceSkillId,
+    targetIntentId,
+    targetIntentName,
+    targetSkillId,
+  }),
 );
