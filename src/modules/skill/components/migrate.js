@@ -132,7 +132,13 @@ const result = ({
       <Modal
         visible={migrateVisible}
         onCancel={() => {
+          migrateForm.resetFields();
           setMigrateVisible(false);
+          setTargetIntentOption([]);
+          setInputHidden(false);
+          setVersionOption([]);
+          setRuleOption([]);
+          setMigrateOption('intent');
         }}
         footer={null}
         title="迁移"
@@ -140,8 +146,7 @@ const result = ({
       >
         <Form
           initialValues={{
-            migrateOption,
-            defaultValue: ['a10', 'c12'],
+            migrateOption: 'intent',
           }}
           form={migrateForm}
           onFinish={submitForm}
