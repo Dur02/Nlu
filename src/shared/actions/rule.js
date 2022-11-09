@@ -13,6 +13,7 @@ export const READ_ONE = actionType('READ_ONE');
 export const CREATE = actionType('CREATE');
 export const REMOVE = actionType('REMOVE');
 export const UPDATE = actionType('UPDATE');
+export const RULE_MIGRATE = actionType('RULE_MIGRATE');
 
 export const readAll = createAction(
   READ_ALL,
@@ -74,4 +75,25 @@ export const update = createAction(
 export const remove = createAction(
   REMOVE,
   ({ id, skillId }) => del(`/skill/edit/rule/${id}`, { skillId }),
+);
+
+export const ruleMigrate = createAction(
+  RULE_MIGRATE,
+  ({
+    skillRuleIds,
+    sourceIntentId,
+    sourceIntentName,
+    sourceSkillId,
+    targetIntentId,
+    targetIntentName,
+    targetSkillId,
+  }) => post('/skill/edit/skill/rule-data-migrate', {
+    skillRuleIds,
+    sourceIntentId,
+    sourceIntentName,
+    sourceSkillId,
+    targetIntentId,
+    targetIntentName,
+    targetSkillId,
+  }),
 );
