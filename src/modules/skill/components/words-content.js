@@ -23,6 +23,7 @@ const result = ({
     message.success('新词条已添加，请记得保存');
     return onChange([{ word, synonym }, ...(value || [])]);
   }, [value, onChange]);
+
   const onUpdate = useCallback(({ word, synonym }, formInstance, editItem) => {
     if (any(flow(
       prop('word'),
@@ -38,9 +39,11 @@ const result = ({
       return item;
     })(value));
   }, [value, onChange]);
+
   const onRemove = useCallback(({ word }) => {
     onChange(reject(flow(prop('word'), eq(word)))(value));
   }, [value, onChange]);
+
   const fields = [{
     label: '取值',
     name: 'word',
@@ -51,6 +54,7 @@ const result = ({
     name: 'synonym',
     component: TextArea,
   }];
+
   const {
     tableHeader,
     getDataSource,

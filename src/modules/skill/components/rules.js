@@ -58,6 +58,22 @@ const result = ({
     message.success('删除成功');
   }, [selectedIds]);
 
+  const getCheckboxValue = (checkedArray, type) => {
+    switch (checkedArray.length) {
+      case 2:
+        return 3;
+      case 0:
+        return 0;
+      default:
+        switch (type) {
+          case 'appGroundType':
+            return JSON.stringify(checkedArray) === JSON.stringify(['后台']) ? 1 : 2;
+          default:
+            return JSON.stringify(checkedArray) === JSON.stringify(['半双工']) ? 1 : 2;
+        }
+    }
+  };
+
   const onCheckboxChange = useCallback(async ({ id, key, value, ruleConfig }) => {
     if (ruleConfig == null) {
       await updateRule({
@@ -100,7 +116,7 @@ const result = ({
   const columns = [{
     title: '已添加说法',
     dataIndex: 'sentence',
-    width: 150,
+    width: 130,
     fixed: 'left',
     render: (sentence, { id }) => (
       <EditableInputCell
@@ -135,16 +151,7 @@ const result = ({
             }
           }}
           onChange={(checkedValue) => {
-            const getAppFroundType = (checkedArray) => {
-              if (checkedArray.length === 2) {
-                return 3;
-              }
-              if (checkedArray.length === 0) {
-                return 0;
-              }
-              return JSON.stringify(checkedArray) === JSON.stringify(['后台']) ? 1 : 2;
-            };
-            const appGroundType = getAppFroundType(checkedValue);
+            const appGroundType = getCheckboxValue(checkedValue, 'appGroundType');
             return onCheckboxChange({
               id: record.id,
               key: 'appGroundType',
@@ -182,16 +189,7 @@ const result = ({
             }
           }}
           onChange={(checkedValue) => {
-            const getDuplexType = (checkedArray) => {
-              if (checkedArray.length === 2) {
-                return 3;
-              }
-              if (checkedArray.length === 0) {
-                return 0;
-              }
-              return JSON.stringify(checkedArray) === JSON.stringify(['半双工']) ? 1 : 2;
-            };
-            const duplexType = getDuplexType(checkedValue);
+            const duplexType = getCheckboxValue(checkedValue, 'duplexType');
             return onCheckboxChange({
               id: record.id,
               key: 'duplexType',

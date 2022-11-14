@@ -8,6 +8,7 @@ export const interventionTypeOptions = [{
   label: 'NLU',
   value: NLU,
 }];
+
 export const getInterventionTypeText = (inventionType) => {
   if (inventionType === DM) {
     return 'DM';

@@ -170,6 +170,21 @@ export const getSkillEditorColumns = ({
   dataIndex: 'category',
 }, {
   title: '版本',
+  // sorter: (a, b) => {
+  //   if (
+  //     product.preLoadStatus[`${a.id}`] !== undefined
+  //     && product.preLoadStatus[`${b.id}`] === undefined
+  //   ) {
+  //     return 1;
+  //   }
+  //   if (
+  //     product.preLoadStatus[`${b.id}`] !== undefined
+  //     && product.preLoadStatus[`${a.id}`] === undefined
+  //   ) {
+  //     return -1;
+  //   }
+  //   return 0;
+  // },
   render: (record) => (
     <Operations
       record={record}

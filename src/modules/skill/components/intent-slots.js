@@ -24,6 +24,7 @@ const result = ({
   useStyles(s);
 
   const [promptEditorSlotName, setPromptEditorSlotName] = useState(null);
+
   const onCreateSlot = useCallback(
     (values) => {
       if (any(flow(prop('name'), eq(values.name)))(slots)) {
@@ -34,6 +35,7 @@ const result = ({
     },
     [intentId, slots],
   );
+
   const onUpdatePrompt = useCallback(async (value) => {
     await updateIntent({
       id: intentId,
@@ -74,6 +76,7 @@ const result = ({
     },
     [intentId, slots],
   );
+
   const onRemoveSlot = useCallback(async ({ name }) => {
     await updateIntent({
       id: intentId,
