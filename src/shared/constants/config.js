@@ -23,3 +23,30 @@ export const getConfigValue = (checkedArray, type) => {
       }
   }
 };
+
+export const getCheckboxValue = (value, type) => {
+  switch (type) {
+    case 'appGroundType':
+      switch (value) {
+        case 0:
+          return [];
+        case 1:
+          return ['后台'];
+        case 2:
+          return ['前台'];
+        default:
+          return ['后台', '前台'];
+      }
+    default:
+      switch (value) {
+        case 0:
+          return [];
+        case 1:
+          return ['半双工'];
+        case 2:
+          return ['全双工'];
+        default:
+          return ['半双工', '全双工'];
+      }
+  }
+};

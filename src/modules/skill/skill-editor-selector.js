@@ -2,6 +2,7 @@ import { getEntity, getEntityArray } from 'relient/selectors';
 import { flow, find, filter, propEq, map, orderBy, every, prop, includes, any, compact, split } from 'lodash/fp';
 import { SLOT, TEXT } from 'shared/constants/content-type';
 import { getCName, getIsDefault } from 'shared/utils/helper';
+import { getCheckboxValue } from 'shared/constants/config';
 
 const mapWithIndex = map.convert({ cap: false });
 
@@ -19,33 +20,6 @@ const getContent = (words) => {
     // eslint-disable-next-line no-console
     console.log('words', words);
     return [];
-  }
-};
-
-const getCheckboxValue = (value, type) => {
-  switch (type) {
-    case 'appGroundType':
-      switch (value) {
-        case 0:
-          return [];
-        case 1:
-          return ['后台'];
-        case 2:
-          return ['前台'];
-        default:
-          return ['后台', '前台'];
-      }
-    default:
-      switch (value) {
-        case 0:
-          return [];
-        case 1:
-          return ['半双工'];
-        case 2:
-          return ['全双工'];
-        default:
-          return ['半双工', '全双工'];
-      }
   }
 };
 
