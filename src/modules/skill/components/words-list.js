@@ -6,6 +6,7 @@ import { map, flow, find, propEq, reject, eq, includes, join, prop, compact, dif
 import { useLocalTable } from 'relient-admin/hooks';
 import { useDispatch } from 'react-redux';
 import { readAll as readAllIntent } from 'shared/actions/intent';
+import { appGroundTypeOption, duplexTypeOption, getConfigValue } from 'shared/constants/config';
 
 import WordsContent from './words-content';
 import s from './words-list.less';
@@ -34,20 +35,14 @@ const fields = [{
   labelCol: { span: 6 },
   wrapperCol: { span: 18 },
   component: Checkbox.Group,
-  options: [
-    { label: '后台', value: '后台' },
-    { label: '前台', value: '前台' },
-  ],
+  options: appGroundTypeOption,
 }, {
   label: '全双工/半双工',
   name: 'duplexType',
   labelCol: { span: 6 },
   wrapperCol: { span: 18 },
   component: Checkbox.Group,
-  options: [
-    { label: '全双工', value: '全双工' },
-    { label: '半双工', value: '半双工' },
-  ],
+  options: duplexTypeOption,
 }, {
   label: '词条',
   name: 'content',
@@ -84,22 +79,6 @@ const result = ({
     ({ name }) => onChange([name, ...(value || [])]),
     [value, onChange],
   );
-
-  const getCheckboxValue = (checkedArray, type) => {
-    switch (checkedArray.length) {
-      case 2:
-        return 3;
-      case 0:
-        return 0;
-      default:
-        switch (type) {
-          case 'appGroundType':
-            return JSON.stringify(checkedArray) === JSON.stringify(['后台']) ? 1 : 2;
-          default:
-            return JSON.stringify(checkedArray) === JSON.stringify(['半双工']) ? 1 : 2;
-        }
-    }
-  };
 
   const onCheckboxChange = useCallback(async ({ id, name, key, keyValue, wordConfig }) => {
     if (wordConfig == null) {
@@ -145,8 +124,8 @@ const result = ({
     creator: {
       title: '创建词库',
       onSubmit: async (param) => {
-        const appGroundType = getCheckboxValue(param.appGroundType, 'appGroundType');
-        const duplexType = getCheckboxValue(param.duplexType, 'duplexType');
+        const appGroundType = getConfigValue(param.appGroundType, 'appGroundType');
+        const duplexType = getConfigValue(param.duplexType, 'duplexType');
         await createWords({
           ...param,
           wordConfig: {
@@ -164,8 +143,8 @@ const result = ({
     editor: {
       title: '编辑词库',
       onSubmit: async (param) => {
-        const appGroundType = getCheckboxValue(param.appGroundType, 'appGroundType');
-        const duplexType = getCheckboxValue(param.duplexType, 'duplexType');
+        const appGroundType = getConfigValue(param.appGroundType, 'appGroundType');
+        const duplexType = getConfigValue(param.duplexType, 'duplexType');
         await updateWords({
           ...param,
           wordConfig: {
@@ -190,55 +169,43 @@ const result = ({
   }, {
     title: 'app前台/app后台',
     width: 150,
-    render: (record) => {
-      const options = [
-        { label: '后台', value: '后台' },
-        { label: '前台', value: '前台' },
-      ];
-      return (
-        <Group
-          disabled={record.skillId === null}
-          options={options}
-          value={record.appGroundType}
-          onChange={(checkedValue) => {
-            const appGroundType = getCheckboxValue(checkedValue, 'appGroundType');
-            return onCheckboxChange({
-              id: record.id,
-              name: record.name,
-              key: 'appGroundType',
-              keyValue: appGroundType,
-              wordConfig: record.wordConfig,
-            });
-          }}
-        />
-      );
-    },
+    render: (record) => (
+      <Group
+        disabled={record.skillId === null}
+        options={appGroundTypeOption}
+        value={record.appGroundType}
+        onChange={(checkedValue) => {
+          const appGroundType = getConfigValue(checkedValue, 'appGroundType');
+          return onCheckboxChange({
+            id: record.id,
+            name: record.name,
+            key: 'appGroundType',
+            keyValue: appGroundType,
+            wordConfig: record.wordConfig,
+          });
+        }}
+      />
+    ),
   }, {
     title: '全双工/半双工',
     width: 150,
-    render: (record) => {
-      const options = [
-        { label: '全双工', value: '全双工' },
-        { label: '半双工', value: '半双工' },
-      ];
-      return (
-        <Group
-          disabled={record.skillId === null}
-          options={options}
-          value={record.duplexType}
-          onChange={(checkedValue) => {
-            const duplexType = getCheckboxValue(checkedValue, 'duplexType');
-            return onCheckboxChange({
-              id: record.id,
-              name: record.name,
-              key: 'duplexType',
-              keyValue: duplexType,
-              wordConfig: record.wordConfig,
-            });
-          }}
-        />
-      );
-    },
+    render: (record) => (
+      <Group
+        disabled={record.skillId === null}
+        options={duplexTypeOption}
+        value={record.duplexType}
+        onChange={(checkedValue) => {
+          const duplexType = getConfigValue(checkedValue, 'duplexType');
+          return onCheckboxChange({
+            id: record.id,
+            name: record.name,
+            key: 'duplexType',
+            keyValue: duplexType,
+            wordConfig: record.wordConfig,
+          });
+        }}
+      />
+    ),
   }, {
     title: '词条',
     dataIndex: 'content',

@@ -5,6 +5,7 @@ import { prop, map, size, reject, eq } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { useLocalTable } from 'relient-admin/hooks';
 import EditableInputCell from 'shared/components/editable-input-cell';
+import { appGroundTypeOption, duplexTypeOption, getConfigValue } from 'shared/constants/config';
 
 import IntentSlots from './intent-slots';
 import s from './rules.less';
@@ -57,22 +58,6 @@ const result = ({
     setSelectedIds([]);
     message.success('删除成功');
   }, [selectedIds]);
-
-  const getCheckboxValue = (checkedArray, type) => {
-    switch (checkedArray.length) {
-      case 2:
-        return 3;
-      case 0:
-        return 0;
-      default:
-        switch (type) {
-          case 'appGroundType':
-            return JSON.stringify(checkedArray) === JSON.stringify(['后台']) ? 1 : 2;
-          default:
-            return JSON.stringify(checkedArray) === JSON.stringify(['半双工']) ? 1 : 2;
-        }
-    }
-  };
 
   const onCheckboxChange = useCallback(async ({ id, key, value, ruleConfig }) => {
     if (ruleConfig == null) {
@@ -127,79 +112,67 @@ const result = ({
   }, {
     title: 'app前台/app后台',
     width: 130,
-    render: (record) => {
-      const options = [
-        { label: '后台', value: '后台' },
-        { label: '前台', value: '前台' },
-      ];
-      return (
-        <Group
-          options={options}
-          defaultValue={() => {
-            if (!record.ruleConfig) {
+    render: (record) => (
+      <Group
+        options={appGroundTypeOption}
+        defaultValue={() => {
+          if (!record.ruleConfig) {
+            return [];
+          }
+          switch (record.ruleConfig.appGroundType) {
+            case 1:
+              return ['后台'];
+            case 2:
+              return ['前台'];
+            case 3:
+              return ['后台', '前台'];
+            default:
               return [];
-            }
-            switch (record.ruleConfig.appGroundType) {
-              case 1:
-                return ['后台'];
-              case 2:
-                return ['前台'];
-              case 3:
-                return ['后台', '前台'];
-              default:
-                return [];
-            }
-          }}
-          onChange={(checkedValue) => {
-            const appGroundType = getCheckboxValue(checkedValue, 'appGroundType');
-            return onCheckboxChange({
-              id: record.id,
-              key: 'appGroundType',
-              value: appGroundType,
-              ruleConfig: record.ruleConfig,
-            });
-          }}
-        />
-      );
-    },
+          }
+        }}
+        onChange={(checkedValue) => {
+          const appGroundType = getConfigValue(checkedValue, 'appGroundType');
+          return onCheckboxChange({
+            id: record.id,
+            key: 'appGroundType',
+            value: appGroundType,
+            ruleConfig: record.ruleConfig,
+          });
+        }}
+      />
+    ),
   }, {
     title: '全双工/半双工',
     width: 150,
-    render: (record) => {
-      const options = [
-        { label: '全双工', value: '全双工' },
-        { label: '半双工', value: '半双工' },
-      ];
-      return (
-        <Group
-          options={options}
-          defaultValue={() => {
-            if (!record.ruleConfig) {
+    render: (record) => (
+      <Group
+        options={duplexTypeOption}
+        defaultValue={() => {
+          if (!record.ruleConfig) {
+            return [];
+          }
+          switch (record.ruleConfig.duplexType) {
+            case 1:
+              return ['半双工'];
+            case 2:
+              return ['全双工'];
+            case 3:
+              return ['半双工', '全双工'];
+            default:
               return [];
-            }
-            switch (record.ruleConfig.duplexType) {
-              case 1:
-                return ['半双工'];
-              case 2:
-                return ['全双工'];
-              case 3:
-                return ['半双工', '全双工'];
-              default:
-                return [];
-            }
-          }}
-          onChange={(checkedValue) => {
-            const duplexType = getCheckboxValue(checkedValue, 'duplexType');
-            return onCheckboxChange({
-              id: record.id,
-              key: 'duplexType',
-              value: duplexType,
-              ruleConfig: record.ruleConfig,
-            });
-          }}
-        />
-      );
-    },
+          }
+        }}
+        onChange={(checkedValue) => {
+          const duplexType = getConfigValue(checkedValue, 'duplexType');
+          return onCheckboxChange({
+            id: record.id,
+            key: 'duplexType',
+            value: duplexType,
+            ruleConfig: record.ruleConfig,
+          });
+        }}
+      />
+    ),
   }, {
     title: '语序调整',
     width: 80,
