@@ -22,6 +22,33 @@ const getContent = (words) => {
   }
 };
 
+const getCheckboxValue = (value, type) => {
+  switch (type) {
+    case 'appGroundType':
+      switch (value) {
+        case 0:
+          return [];
+        case 1:
+          return ['后台'];
+        case 2:
+          return ['前台'];
+        default:
+          return ['后台', '前台'];
+      }
+    default:
+      switch (value) {
+        case 0:
+          return [];
+        case 1:
+          return ['半双工'];
+        case 2:
+          return ['全双工'];
+        default:
+          return ['半双工', '全双工'];
+      }
+  }
+};
+
 export default (skillId, tempId) => (state) => {
   if (tempId !== -1 && tempId !== skillId) {
     return {};
@@ -97,6 +124,10 @@ export default (skillId, tempId) => (state) => {
           prop('slots'),
           every(({ lexiconsNames }) => !includes(words.name)(lexiconsNames)),
         ))(intents),
+        appGroundType: words.wordConfig
+          ? getCheckboxValue(words.wordConfig.appGroundType, 'appGroundType') : 0,
+        duplexType: words.wordConfig
+          ? getCheckboxValue(words.wordConfig.duplexType, 'duplexType') : 0,
       })),
     )(state),
     outputs: flow(

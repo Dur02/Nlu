@@ -26,8 +26,28 @@ const fields = [{
       }
     },
   }],
-  labelCol: { span: 2 },
-  wrapperCol: { span: 20 },
+  labelCol: { span: 6 },
+  wrapperCol: { span: 18 },
+}, {
+  label: 'app前台/app后台',
+  name: 'appGroundType',
+  labelCol: { span: 6 },
+  wrapperCol: { span: 18 },
+  component: Checkbox.Group,
+  options: [
+    { label: '后台', value: '后台' },
+    { label: '前台', value: '前台' },
+  ],
+}, {
+  label: '全双工/半双工',
+  name: 'duplexType',
+  labelCol: { span: 6 },
+  wrapperCol: { span: 18 },
+  component: Checkbox.Group,
+  options: [
+    { label: '全双工', value: '全双工' },
+    { label: '半双工', value: '半双工' },
+  ],
 }, {
   label: '词条',
   name: 'content',
@@ -124,7 +144,18 @@ const result = ({
     },
     creator: {
       title: '创建词库',
-      onSubmit: createWords,
+      onSubmit: async (param) => {
+        const appGroundType = getCheckboxValue(param.appGroundType, 'appGroundType');
+        const duplexType = getCheckboxValue(param.duplexType, 'duplexType');
+        await createWords({
+          ...param,
+          wordConfig: {
+            appGroundType,
+            duplexType,
+            skillId,
+          },
+        });
+      },
       fields,
       component: Drawer,
       width: 600,
@@ -133,7 +164,16 @@ const result = ({
     editor: {
       title: '编辑词库',
       onSubmit: async (param) => {
-        await updateWords(param);
+        const appGroundType = getCheckboxValue(param.appGroundType, 'appGroundType');
+        const duplexType = getCheckboxValue(param.duplexType, 'duplexType');
+        await updateWords({
+          ...param,
+          wordConfig: {
+            appGroundType,
+            duplexType,
+            skillId,
+          },
+        });
         await dispatch(readAllIntent({ skillId }));
       },
       fields,
@@ -159,21 +199,7 @@ const result = ({
         <Group
           disabled={record.skillId === null}
           options={options}
-          defaultValue={() => {
-            if (!record.wordConfig) {
-              return [];
-            }
-            switch (record.wordConfig.appGroundType) {
-              case 1:
-                return ['后台'];
-              case 2:
-                return ['前台'];
-              case 3:
-                return ['后台', '前台'];
-              default:
-                return [];
-            }
-          }}
+          value={record.appGroundType}
           onChange={(checkedValue) => {
             const appGroundType = getCheckboxValue(checkedValue, 'appGroundType');
             return onCheckboxChange({
@@ -199,21 +225,7 @@ const result = ({
         <Group
           disabled={record.skillId === null}
           options={options}
-          defaultValue={() => {
-            if (!record.wordConfig) {
-              return [];
-            }
-            switch (record.wordConfig.duplexType) {
-              case 1:
-                return ['半双工'];
-              case 2:
-                return ['全双工'];
-              case 3:
-                return ['半双工', '全双工'];
-              default:
-                return [];
-            }
-          }}
+          value={record.duplexType}
           onChange={(checkedValue) => {
             const duplexType = getCheckboxValue(checkedValue, 'duplexType');
             return onCheckboxChange({
