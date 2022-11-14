@@ -17,6 +17,7 @@ const { Group } = Checkbox;
 const fields = [{
   label: '名称',
   name: 'name',
+  labelAlign: 'left',
   type: 'text',
   rules: [{
     required: true,
@@ -32,6 +33,7 @@ const fields = [{
 }, {
   label: 'app前台/app后台',
   name: 'appGroundType',
+  labelAlign: 'left',
   labelCol: { span: 6 },
   wrapperCol: { span: 18 },
   component: Checkbox.Group,
@@ -39,6 +41,7 @@ const fields = [{
 }, {
   label: '全双工/半双工',
   name: 'duplexType',
+  labelAlign: 'left',
   labelCol: { span: 6 },
   wrapperCol: { span: 18 },
   component: Checkbox.Group,
@@ -46,9 +49,10 @@ const fields = [{
 }, {
   label: '词条',
   name: 'content',
+  labelAlign: 'left',
   component: WordsContent,
   labelCol: { span: 2 },
-  wrapperCol: { span: 20 },
+  wrapperCol: { span: 22 },
 }];
 
 const result = ({
