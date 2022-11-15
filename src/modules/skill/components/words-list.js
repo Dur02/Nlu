@@ -1,59 +1,26 @@
 import React, { useCallback, useState } from 'react';
 import { array, func, number } from 'prop-types';
-import { Drawer, Button, Table, Popconfirm, message, Checkbox } from 'antd';
+import { Button, Drawer, message, Table } from 'antd';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { map, flow, find, propEq, reject, eq, includes, join, prop, compact, difference } from 'lodash/fp';
+import {
+  map,
+  flow,
+  find,
+  propEq,
+  reject,
+  eq,
+  compact,
+  difference,
+} from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
-import { useDispatch } from 'react-redux';
 import { readAll as readAllIntent } from 'shared/actions/intent';
-import { appGroundTypeOption, duplexTypeOption, getConfigValue } from 'shared/constants/config';
-
-import WordsContent from './words-content';
+import { useDispatch } from 'react-redux';
+import { getConfigValue } from 'shared/constants/config';
+import columns from './words-drawer-columns';
+import fields from './words-drawer-fields';
 import s from './words-list.less';
 
 const mapWithIndex = map.convert({ cap: false });
-const { Group } = Checkbox;
-
-const fields = [{
-  label: '名称',
-  name: 'name',
-  labelAlign: 'left',
-  type: 'text',
-  rules: [{
-    required: true,
-  }, {
-    validator: async (_, value) => {
-      if (includes(',')(value)) {
-        throw new Error('词库名不能包含,');
-      }
-    },
-  }],
-  labelCol: { span: 6 },
-  wrapperCol: { span: 18 },
-}, {
-  label: 'app前台/app后台',
-  name: 'appGroundType',
-  labelAlign: 'left',
-  labelCol: { span: 6 },
-  wrapperCol: { span: 18 },
-  component: Checkbox.Group,
-  options: appGroundTypeOption,
-}, {
-  label: '全双工/半双工',
-  name: 'duplexType',
-  labelAlign: 'left',
-  labelCol: { span: 6 },
-  wrapperCol: { span: 18 },
-  component: Checkbox.Group,
-  options: duplexTypeOption,
-}, {
-  label: '词条',
-  name: 'content',
-  labelAlign: 'left',
-  component: WordsContent,
-  labelCol: { span: 2 },
-  wrapperCol: { span: 22 },
-}];
 
 const result = ({
   createWords,
@@ -64,6 +31,8 @@ const result = ({
   value,
   skillId,
 }) => {
+  // words-list组件大部分代码与words-drawer组件相同，words-drawer是技能编辑页工具栏弹出，而words-list作为
+  // intent-slot中一列的数据存在
   useStyles(s);
 
   const dispatch = useDispatch();
@@ -84,30 +53,10 @@ const result = ({
     [value, onChange],
   );
 
-  const onCheckboxChange = useCallback(async ({ id, name, key, keyValue, wordConfig }) => {
-    if (wordConfig == null) {
-      await updateWords({
-        id,
-        name,
-        wordConfig: {
-          appGroundType: key === 'appGroundType' ? keyValue : 0,
-          duplexType: key === 'duplexType' ? keyValue : 0,
-          skillId,
-        },
-      });
-    } else {
-      await updateWords({
-        id,
-        name,
-        wordConfig: {
-          ...wordConfig,
-          appGroundType: key === 'appGroundType' ? keyValue : wordConfig.appGroundType,
-          duplexType: key === 'duplexType' ? keyValue : wordConfig.duplexType,
-        },
-      });
-    }
-    message.success('编辑成功');
-  }, [skillId]);
+  const selectedWords = flow(
+    map((name) => find(propEq('name', name))(words)),
+    compact,
+  )(value);
 
   const {
     tableHeader,
@@ -165,99 +114,6 @@ const result = ({
       className: s.Words,
     },
   });
-
-  const columns = [{
-    title: '词库名',
-    width: 120,
-    dataIndex: 'name',
-  }, {
-    title: 'app前台/app后台',
-    width: 150,
-    render: (record) => (
-      <Group
-        disabled={record.skillId === null}
-        options={appGroundTypeOption}
-        value={record.appGroundType}
-        onChange={(checkedValue) => {
-          const appGroundType = getConfigValue(checkedValue, 'appGroundType');
-          return onCheckboxChange({
-            id: record.id,
-            name: record.name,
-            key: 'appGroundType',
-            keyValue: appGroundType,
-            wordConfig: record.wordConfig,
-          });
-        }}
-      />
-    ),
-  }, {
-    title: '全双工/半双工',
-    width: 150,
-    render: (record) => (
-      <Group
-        disabled={record.skillId === null}
-        options={duplexTypeOption}
-        value={record.duplexType}
-        onChange={(checkedValue) => {
-          const duplexType = getConfigValue(checkedValue, 'duplexType');
-          return onCheckboxChange({
-            id: record.id,
-            name: record.name,
-            key: 'duplexType',
-            keyValue: duplexType,
-            wordConfig: record.wordConfig,
-          });
-        }}
-      />
-    ),
-  }, {
-    title: '词条',
-    dataIndex: 'content',
-    render: flow(
-      map(prop('word')),
-      join(', '),
-      (display) => {
-        if (display && display.length > 100) {
-          return `${display.slice(0, 100)}...`;
-        }
-        return display;
-      },
-    ),
-  }, {
-    title: '操作',
-    width: 80,
-    render: (record) => (
-      <>
-        {record.skillId && (
-          <div className={s.Button}>
-            <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
-          </div>
-        )}
-        <div className={s.Button}>
-          {includes(prop('name')(record))(value) ? (
-            <Button type="primary" size="small" ghost onClick={() => onDetachWords(record)}>去除绑定</Button>
-          ) : (
-            <Button type="primary" size="small" ghost onClick={() => onAttachWords(record)}>添加绑定</Button>
-          )}
-        </div>
-        {prop('canDelete')(record) && (
-          <div className={s.Button}>
-            <Popconfirm
-              title="确认删除吗？删除操作不可恢复"
-              onConfirm={() => onRemoveWords(record)}
-            >
-              <Button type="danger" size="small" ghost>删除</Button>
-            </Popconfirm>
-          </div>
-        )}
-      </>
-    ),
-  }];
-
-  const selectedWords = flow(
-    map((name) => find(propEq('name', name))(words)),
-    compact,
-  )(value);
 
   return (
     <>
@@ -327,7 +183,16 @@ const result = ({
         {tableHeader}
         <Table
           dataSource={getDataSource(words)}
-          columns={columns}
+          columns={columns({
+            updateWords,
+            skillId,
+            value,
+            isAttachable: true,
+            onDetachWords,
+            onAttachWords,
+            openEditor,
+            onRemoveWords,
+          })}
           rowKey="id"
           pagination={pagination}
         />

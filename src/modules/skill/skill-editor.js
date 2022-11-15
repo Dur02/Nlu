@@ -1,8 +1,21 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from 'shared/components/layout';
-import { Tabs, Empty, Input, message, Modal, Button, Upload, Table, Popover, Spin } from 'antd';
-import { DownOutlined, UploadOutlined } from '@ant-design/icons';
+import {
+  Tabs,
+  Empty,
+  Input,
+  message,
+  Modal,
+  Button,
+  Upload,
+  Table,
+  Popover,
+  Spin,
+  Dropdown,
+  Menu,
+} from 'antd';
+import { DownOutlined, ToolOutlined, UploadOutlined } from '@ant-design/icons';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { SEMANTIC } from 'shared/constants/intent-type';
 import {
@@ -37,6 +50,7 @@ import WordGraph from '../../shared/components/word-graph';
 import GlobalSearchRules from './components/global-search-rules';
 import { columns } from './components/skill-test-columns';
 import FloatWindows from '../../shared/components/floating-windows';
+import WordsDrawer from './components/words-drawer';
 
 const { TabPane } = Tabs;
 const { Search } = Input;
@@ -54,8 +68,8 @@ const result = ({ skillId }) => {
   const [isText, setIsText] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState([]);
-  // const [isPush, setIsPush] = useState(false);
   const [tempId, setTempId] = useState(-1);
+  const [wordsDrawerVisible, setWordsDrawerVisible] = useState(false);
 
   const {
     intents,
@@ -158,22 +172,32 @@ const result = ({ skillId }) => {
     }
   }, [uploading, uploadVisible]);
 
-  return (tempId === -1 || tempId === skillId) ? (
-    <Layout
-      subTitle={(
-        <Popover
-          content={<FloatWindows setTempId={setTempId} />}
-          trigger="click"
-          // visible={visible}
-          // onVisibleChange={handleOpenChange}
-        >
-          {`${skill.name}(${skill.version})`}
-          <DownOutlined style={{ paddingLeft: '8px', fontSize: '15px' }} />
-        </Popover>
-      )}
-      addonAfter={(
-        <>
+  const menu = (
+    <Menu
+      items={[{
+        key: 'wordTable',
+        label: (
           <Button
+            style={{
+              width: '100%',
+            }}
+            ghost
+            type="primary"
+            onClick={() => {
+              setWordsDrawerVisible(true);
+            }}
+          >
+            词库
+          </Button>
+        ),
+      }, {
+        key: 'migrate',
+        label: (
+          <Button
+            style={{
+              width: '100%',
+            }}
+            ghost
             type="primary"
             onClick={() => {
               setMigrateVisible(true);
@@ -181,8 +205,15 @@ const result = ({ skillId }) => {
           >
             迁移
           </Button>
-          &nbsp;
+        ),
+      }, {
+        key: 'textImport',
+        label: (
           <Button
+            style={{
+              width: '100%',
+            }}
+            ghost
             type="primary"
             onClick={() => {
               setUploadVisible(true);
@@ -191,8 +222,15 @@ const result = ({ skillId }) => {
           >
             纯文本导入
           </Button>
-          &nbsp;
+        ),
+      }, {
+        key: 'outputImport',
+        label: (
           <Button
+            style={{
+              width: '100%',
+            }}
+            ghost
             type="primary"
             onClick={() => {
               setUploadVisible(true);
@@ -201,8 +239,15 @@ const result = ({ skillId }) => {
           >
             技能回复导入
           </Button>
-          &nbsp;
+        ),
+      }, {
+        key: 'outputExport',
+        label: (
           <Button
+            style={{
+              width: '100%',
+            }}
+            ghost
             type="primary"
             onClick={async () => {
               try {
@@ -232,11 +277,56 @@ const result = ({ skillId }) => {
           >
             技能回复导出
           </Button>
-          &nbsp;
-          <Button type="primary" onClick={() => setGlobalSearch(true)}>全局说法检索</Button>
-          &nbsp;
-          <Button type="primary" onClick={() => setWordGraphVisible(true)}>词图</Button>
-        </>
+        ),
+      }, {
+        key: 'globalSearch',
+        label: (
+          <Button
+            style={{
+              width: '100%',
+            }}
+            ghost
+            type="primary"
+            onClick={() => setGlobalSearch(true)}
+          >
+            全局说法检索
+          </Button>
+        ),
+      }, {
+        key: 'wordGraph',
+        label: (
+          <Button
+            style={{
+              width: '100%',
+            }}
+            ghost
+            type="primary"
+            onClick={() => setWordGraphVisible(true)}
+          >
+            词图
+          </Button>
+        ),
+      }]}
+    />
+  );
+
+  return (tempId === -1 || tempId === skillId) ? (
+    <Layout
+      subTitle={(
+        <Popover
+          content={<FloatWindows setTempId={setTempId} />}
+          trigger="click"
+          // visible={visible}
+          // onVisibleChange={handleOpenChange}
+        >
+          {`${skill.name}(${skill.version})`}
+          <DownOutlined style={{ paddingLeft: '8px', fontSize: '15px' }} />
+        </Popover>
+      )}
+      addonAfter={(
+        <Dropdown overlay={menu} placement="bottom">
+          <span style={{ fontSize: '16px', margin: 0 }}>工具栏<ToolOutlined style={{ paddingLeft: '8px', fontSize: '15px' }} /></span>
+        </Dropdown>
       )}
     >
       <div className={s.Container}>
@@ -367,6 +457,15 @@ const result = ({ skillId }) => {
         intents={intents}
         migrateVisible={migrateVisible}
         setMigrateVisible={setMigrateVisible}
+      />
+      <WordsDrawer
+        tableVisible={wordsDrawerVisible}
+        setTableVisible={setWordsDrawerVisible}
+        createWords={createWords}
+        updateWords={updateWords}
+        removeWords={removeWords}
+        words={words}
+        skillId={skillId}
       />
       <Modal
         visible={error.length > 0}
