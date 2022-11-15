@@ -10,6 +10,8 @@ import s from './words-content.less';
 const { TextArea } = Input;
 
 const result = ({
+  // 如何取得参数参考antd自定义表单控件
+  // https://ant.design/components/form-cn/#components-form-demo-customized-form-controls
   onChange,
   value,
 }) => {

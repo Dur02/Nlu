@@ -1,7 +1,8 @@
+import React, { useCallback } from 'react';
 import { flow, includes, join, map, prop } from 'lodash/fp';
 import { Button, Popconfirm, Checkbox, message } from 'antd';
 import { appGroundTypeOption, duplexTypeOption, getConfigValue } from 'shared/constants/config';
-import React, { useCallback } from 'react';
+import useStyles from 'isomorphic-style-loader/useStyles';
 import s from './words-drawer-columns.less';
 
 const { Group } = Checkbox;
@@ -16,6 +17,8 @@ export default ({
   openEditor,
   onRemoveWords,
 }) => {
+  useStyles(s);
+
   const onCheckboxChange = useCallback(async ({ id, name, key, keyValue, wordConfig }) => {
     if (wordConfig == null) {
       await updateWords({
