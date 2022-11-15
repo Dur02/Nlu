@@ -9,6 +9,7 @@ import EditableSwitchCell from 'shared/components/editable-switch-cell';
 
 import WordsList from './words-list';
 import Prompt from './intent-slot-prompt';
+import WordsInline from './words-inline';
 import s from './intent-slots.less';
 
 const result = ({
@@ -24,6 +25,8 @@ const result = ({
   useStyles(s);
 
   const [promptEditorSlotName, setPromptEditorSlotName] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState({});
 
   const onCreateSlot = useCallback(
     (values) => {
@@ -211,6 +214,12 @@ const result = ({
         size="small"
         dataSource={getDataSource(slots)}
         columns={columns}
+        onRow={(record) => ({
+          onDoubleClick: () => {
+            setIsModalOpen(true);
+            setSelectedSlot(record);
+          },
+        })}
         rowKey="name"
         pagination={pagination}
         scroll={{
@@ -230,6 +239,21 @@ const result = ({
           value={flow(find(propEq('name', promptEditorSlotName)), prop('prompt'))(slots)}
         />
       </Drawer>
+      <WordsInline
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        selectedSlots={selectedSlot}
+        setSelectedSlots={setSelectedSlot}
+        // onChange={
+        //   (value) => onUpdateSlot({ ...record, lexiconsNames: value }, undefined, record)
+        // }
+        // value={lexiconsNames}
+        words={words}
+        createWords={createWords}
+        updateWords={updateWords}
+        removeWords={removeWords}
+        skillId={skillId}
+      />
     </div>
   );
 };
