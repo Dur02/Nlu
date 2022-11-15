@@ -18,6 +18,7 @@ build:
   only:
     - tags
     - dev
+    - test
   artifacts:
     paths:
       - build/
@@ -35,6 +36,7 @@ publish:
   only:
     - tags
     - dev
+    - test
 deploy_staging:
   stage: deploy_staging
   image: ${DEPLOY_IMAGE}
@@ -51,3 +53,4 @@ deploy_staging:
   only:
     - tags
     - dev
+    - test
