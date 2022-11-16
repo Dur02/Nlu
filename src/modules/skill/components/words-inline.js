@@ -1,5 +1,5 @@
-import React from 'react';
-import { Collapse, Form, Modal, Input, Checkbox } from 'antd';
+import React, { useCallback } from 'react';
+import { Collapse, Form, Modal, Input, Checkbox, Button } from 'antd';
 import { array, bool, func, number, object } from 'prop-types';
 import { compact, find, flow, includes, map, propEq } from 'lodash/fp';
 import { appGroundTypeOption, duplexTypeOption } from 'shared/constants/config';
@@ -36,6 +36,11 @@ const result = ({
     compact,
   )(selectedSlots.lexiconsNames);
 
+  const onFinish = useCallback((value) => {
+    // eslint-disable-next-line no-console
+    console.log(value);
+  }, []);
+
   // eslint-disable-next-line no-console
   console.log(selectedWords);
 
@@ -49,13 +54,14 @@ const result = ({
           setIsModalOpen(false);
           setSelectedSlots({});
         }}
-        // width={1000}
+        width={700}
       >
         <Collapse>
           <Panel header="新建意图">
             <Form
               className={s.Words}
               autoComplete="off"
+              onFinish={onFinish}
             >
               <Form.Item
                 label="名称"
@@ -87,10 +93,16 @@ const result = ({
               <Form.Item
                 label="词条"
                 name="content"
-                labelCol={{ span: 1 }}
-                wrapperCol={{ span: 20 }}
+                labelAlign="left"
+                labelCol={{ span: 2 }}
+                wrapperCol={{ span: 22 }}
               >
                 <WordsContent />
+              </Form.Item>
+              <Form.Item wrapperCol={{ offset: 10, span: 14 }}>
+                <Button type="primary" htmlType="submit">
+                  创建词库
+                </Button>
               </Form.Item>
             </Form>
           </Panel>
