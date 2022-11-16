@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 COPY ./build .
 
 # Install Node.js dependencies
-RUN yarn config set registry https://nexus.aitekapp.com/repository/taobao/
+RUN yarn config set registry https://registry.npm.taobao.org
 RUN yarn install --production --no-progress
 
 # Run the container under "node" user by default
