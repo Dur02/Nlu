@@ -48,7 +48,7 @@ const result = ({
       title: '创建词库',
       onSubmit: async (param) => {
         // const appGroundType = getConfigValue(param.appGroundType, 'appGroundType');
-        const duplexType = getConfigValue(param.duplexType, 'duplexType');
+        const duplexType = getConfigValue(param.duplexType || [], 'duplexType');
         await createWords({
           ...param,
           wordConfig: {
@@ -67,7 +67,7 @@ const result = ({
       title: '编辑词库',
       onSubmit: async (param) => {
         // const appGroundType = getConfigValue(param.appGroundType, 'appGroundType');
-        const duplexType = getConfigValue(param.duplexType, 'duplexType');
+        const duplexType = getConfigValue(param.duplexType || [], 'duplexType');
         await updateWords({
           ...param,
           wordConfig: {
