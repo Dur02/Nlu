@@ -17,8 +17,8 @@ export default [{
       }
     },
   }],
-  labelCol: { span: 6 },
-  wrapperCol: { span: 18 },
+  labelCol: { span: 2 },
+  wrapperCol: { offset: 1, span: 18 },
 }, {
   label: 'app前台/app后台',
   name: 'appGroundType',
@@ -31,8 +31,8 @@ export default [{
   label: '全双工/半双工',
   name: 'duplexType',
   labelAlign: 'left',
-  labelCol: { span: 6 },
-  wrapperCol: { span: 18 },
+  labelCol: { span: 5 },
+  wrapperCol: { span: 19 },
   component: Checkbox.Group,
   options: duplexTypeOption,
 }, {
