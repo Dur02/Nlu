@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Collapse, Form, Modal, Input, Checkbox, Button } from 'antd';
 import { array, bool, func, number, object } from 'prop-types';
 import { compact, find, flow, includes, map, propEq } from 'lodash/fp';
-import { appGroundTypeOption, duplexTypeOption } from 'shared/constants/config';
+import { duplexTypeOption, getConfigValue } from 'shared/constants/config';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import WordsContent from './words-content';
 import s from './words-inline.less';
@@ -23,23 +23,25 @@ const result = ({
   useStyles(s);
 
   // eslint-disable-next-line no-console
-  console.log(createWords);
-  // eslint-disable-next-line no-console
   console.log(updateWords);
   // eslint-disable-next-line no-console
   console.log(removeWords);
-  // eslint-disable-next-line no-console
-  console.log(skillId);
 
   const selectedWords = flow(
     map((name) => find(propEq('name', name))(words)),
     compact,
   )(selectedSlots.lexiconsNames);
 
-  const onFinish = useCallback((value) => {
-    // eslint-disable-next-line no-console
-    console.log(value);
-  }, []);
+  const onFinish = useCallback(async (value) => {
+    const duplexType = getConfigValue(value.duplexType, 'duplexType');
+    await createWords({
+      ...value,
+      wordConfig: {
+        duplexType,
+        skillId,
+      },
+    });
+  }, [getConfigValue]);
 
   // eslint-disable-next-line no-console
   console.log(selectedWords);
@@ -77,12 +79,6 @@ const result = ({
                 }]}
               >
                 <Input />
-              </Form.Item>
-              <Form.Item
-                label="app前台/app后台"
-                name="appGroundType"
-              >
-                <Checkbox.Group options={appGroundTypeOption} />
               </Form.Item>
               <Form.Item
                 label="全双工/半双工"
