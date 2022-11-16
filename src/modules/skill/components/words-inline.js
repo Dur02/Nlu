@@ -1,7 +1,11 @@
 import React from 'react';
-import { Collapse, Modal } from 'antd';
+import { Collapse, Form, Modal, Input, Checkbox } from 'antd';
 import { array, bool, func, number, object } from 'prop-types';
-import { compact, find, flow, map, propEq } from 'lodash/fp';
+import { compact, find, flow, includes, map, propEq } from 'lodash/fp';
+import { appGroundTypeOption, duplexTypeOption } from 'shared/constants/config';
+import useStyles from 'isomorphic-style-loader/useStyles';
+import WordsContent from './words-content';
+import s from './words-inline.less';
 
 const { Panel } = Collapse;
 
@@ -16,6 +20,8 @@ const result = ({
   removeWords,
   skillId,
 }) => {
+  useStyles(s);
+
   // eslint-disable-next-line no-console
   console.log(createWords);
   // eslint-disable-next-line no-console
@@ -43,8 +49,51 @@ const result = ({
           setIsModalOpen(false);
           setSelectedSlots({});
         }}
+        // width={1000}
       >
         <Collapse>
+          <Panel header="新建意图">
+            <Form
+              className={s.Words}
+              autoComplete="off"
+            >
+              <Form.Item
+                label="名称"
+                name="name"
+                rules={[{
+                  required: true,
+                }, {
+                  validator: async (_, value) => {
+                    if (includes(',')(value)) {
+                      throw new Error('词库名不能包含,');
+                    }
+                  },
+                }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="app前台/app后台"
+                name="appGroundType"
+              >
+                <Checkbox.Group options={appGroundTypeOption} />
+              </Form.Item>
+              <Form.Item
+                label="全双工/半双工"
+                name="duplexType"
+              >
+                <Checkbox.Group options={duplexTypeOption} />
+              </Form.Item>
+              <Form.Item
+                label="词条"
+                name="content"
+                labelCol={{ span: 1 }}
+                wrapperCol={{ span: 20 }}
+              >
+                <WordsContent />
+              </Form.Item>
+            </Form>
+          </Panel>
           {
             map((item) => (
               <Panel header={item.name} key={item.code}>
