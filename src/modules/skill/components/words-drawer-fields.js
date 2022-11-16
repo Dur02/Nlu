@@ -1,6 +1,7 @@
 import { includes } from 'lodash/fp';
 import { Checkbox } from 'antd';
-import { appGroundTypeOption, duplexTypeOption } from 'shared/constants/config';
+// import { appGroundTypeOption, duplexTypeOption } from 'shared/constants/config';
+import { duplexTypeOption } from 'shared/constants/config';
 import WordsContent from './words-content';
 
 export default [{
@@ -20,14 +21,14 @@ export default [{
   labelCol: { span: 2 },
   wrapperCol: { offset: 1, span: 18 },
 }, {
-  label: 'app前台/app后台',
-  name: 'appGroundType',
-  labelAlign: 'left',
-  labelCol: { span: 6 },
-  wrapperCol: { span: 18 },
-  component: Checkbox.Group,
-  options: appGroundTypeOption,
-}, {
+//   label: 'app前台/app后台',
+//   name: 'appGroundType',
+//   labelAlign: 'left',
+//   labelCol: { span: 6 },
+//   wrapperCol: { span: 18 },
+//   component: Checkbox.Group,
+//   options: appGroundTypeOption,
+// }, {
   label: '全双工/半双工',
   name: 'duplexType',
   labelAlign: 'left',

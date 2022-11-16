@@ -77,12 +77,12 @@ const result = ({
     creator: {
       title: '创建词库',
       onSubmit: async (param) => {
-        const appGroundType = getConfigValue(param.appGroundType, 'appGroundType');
+        // const appGroundType = getConfigValue(param.appGroundType, 'appGroundType');
         const duplexType = getConfigValue(param.duplexType, 'duplexType');
         await createWords({
           ...param,
           wordConfig: {
-            appGroundType,
+            // appGroundType,
             duplexType,
             skillId,
           },
@@ -96,12 +96,12 @@ const result = ({
     editor: {
       title: '编辑词库',
       onSubmit: async (param) => {
-        const appGroundType = getConfigValue(param.appGroundType, 'appGroundType');
+        // const appGroundType = getConfigValue(param.appGroundType, 'appGroundType');
         const duplexType = getConfigValue(param.duplexType, 'duplexType');
         await updateWords({
           ...param,
           wordConfig: {
-            appGroundType,
+            // appGroundType,
             duplexType,
             skillId,
           },
