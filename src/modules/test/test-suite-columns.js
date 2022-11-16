@@ -148,7 +148,9 @@ export const columns = ({
         title="确认删除吗？删除操作不可恢复"
         onConfirm={async () => {
           await onRemove({ id: record.id });
-          if ((pagination.current - 1) * pagination.pageSize < pagination.total - 1) {
+          if (pagination.current === 1 && pagination.total === 1) {
+            reload();
+          } else if ((pagination.current - 1) * pagination.pageSize < pagination.total - 1) {
             reload();
           } else {
             reload(pagination.current - 2);

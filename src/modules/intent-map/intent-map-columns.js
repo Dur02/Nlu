@@ -64,7 +64,9 @@ export default ({
         title="确认删除吗？删除操作不可恢复"
         onConfirm={async () => {
           await onRemove({ id: record.id });
-          if (
+          if (paginationProps.current === 1 && paginationProps.total === 1) {
+            await reload(1);
+          } else if (
             (paginationProps.current - 1) * paginationProps.pageSize < paginationProps.total - 1
           ) {
             await reload(paginationProps.current);

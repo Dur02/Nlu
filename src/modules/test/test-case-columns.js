@@ -131,7 +131,10 @@ export const testCaseColumns = ({
         title="确认删除吗？删除操作不可恢复"
         onConfirm={async () => {
           await delCase({ caseIds: [record.id], suiteId: caseTableItem.id });
-          if ((pagination.current - 1) * pagination.pageSize < pagination.total - 1) {
+          if (pagination.current === 1 && pagination.total === 1) {
+            // 如果只剩一条
+            await caseReload(1);
+          } else if ((pagination.current - 1) * pagination.pageSize < pagination.total - 1) {
             await caseReload(pagination.current);
           } else {
             await caseReload(pagination.current - 1);
