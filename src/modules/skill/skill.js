@@ -18,7 +18,7 @@ import {
 import { useAction } from 'relient/actions';
 import { push as pushAction } from 'relient/actions/history';
 import { find, propEq, flow, prop, map } from 'lodash/fp';
-import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
+// import { skillCategoryOptions, skillCategories } from 'shared/constants/skill-category';
 import WordGraph from 'shared/components/word-graph';
 import { readMine } from 'shared/actions/user';
 import { getColumns, versionColumns } from './skill-columns';
@@ -61,24 +61,31 @@ const result = () => {
     detailsItem: exportItem,
   } = useDetails();
 
-  const editorFields = [{
+  const creatorFields = [{
     label: '名称',
     name: 'name',
+    autoComplete: 'off',
     type: 'text',
     rules: [{ required: true }],
-    // }, {
-    //   label: '图标',
-    //   name: 'iconPath',
-    //   component: Group,
-    //   options: iconPathOptions,
-    //   rules: [{ required: true }],
+  }, {
+    label: '标准名',
+    name: 'category',
+    autoComplete: 'off',
+    type: 'text',
+    rules: [{ required: true }],
   }];
 
-  const creatorFields = [...editorFields, {
-    label: '分类',
+  const editorFields = [{
+    // label: '名称',
+    name: 'id',
+    hidden: true,
+    type: 'text',
+    rules: [{ required: true }],
+  }, {
+    label: '标准名',
     name: 'category',
-    component: Select,
-    options: skillCategoryOptions,
+    autoComplete: 'off',
+    type: 'text',
     rules: [{ required: true }],
   }];
 
@@ -120,15 +127,11 @@ const result = () => {
       title: '创建技能',
       onSubmit: onCreate,
       fields: creatorFields,
-      initialValues: {
-        category: skillCategories[0],
-        // iconPath: iconPaths[0],
-      },
       component: Drawer,
     },
     editor: {
       title: '编辑技能',
-      onSubmit: onUpdate,
+      onSubmit: ({ id, category }) => onUpdate({ skillId: id, category }),
       fields: editorFields,
       component: Drawer,
     },

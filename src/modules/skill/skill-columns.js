@@ -28,6 +28,7 @@ const Operations = ({
   onRemove,
   openWordGraph,
   openExport,
+  openEditor,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -84,15 +85,15 @@ const Operations = ({
 
   return (
     <Spin spinning={loading}>
-      {/* <Button */}
-      {/*  type="primary" */}
-      {/*  size="small" */}
-      {/*  ghost */}
-      {/*  onClick={() => openEditor(record)} */}
-      {/* > */}
-      {/*  基础信息 */}
-      {/* </Button> */}
-      {/* &nbsp;&nbsp; */}
+      <Button
+        type="primary"
+        size="small"
+        ghost
+        onClick={() => openEditor(record)}
+      >
+        基础信息
+      </Button>
+       &nbsp;&nbsp;
       {record.isDraft ? (
         <>
           <Button
@@ -162,10 +163,11 @@ Operations.propTypes = {
     code: string,
   }),
   openExport: func.isRequired,
+  openEditor: func.isRequired,
 };
 
 export const getColumns = ({
-  // openEditor,
+  openEditor,
   onRemove,
   openVersion,
   openWordGraph,
@@ -182,19 +184,20 @@ export const getColumns = ({
   title: '名称',
   dataIndex: 'name',
 }, {
-  title: '类别',
+  title: '标准名',
   dataIndex: 'category',
 }, {
   title: '最新版本',
   dataIndex: 'version',
+  width: 100,
 }, {
   title: '最后更新',
   dataIndex: 'createDate',
   render: time(),
-  width: 200,
+  width: 170,
 }, {
   title: '操作',
-  width: 450,
+  width: 520,
   render: (record) => (
     <Operations
       record={record}
@@ -205,6 +208,7 @@ export const getColumns = ({
       push={push}
       readProfile={readProfile}
       openExport={openExport}
+      openEditor={openEditor}
     />
   ),
 }];

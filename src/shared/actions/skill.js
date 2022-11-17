@@ -3,7 +3,7 @@ import {
   actionTypeCreator,
 } from 'relient/actions';
 import { DEFAULT_CURRENT, DEFAULT_SIZE } from 'shared/constants/pagination';
-import { read, post, del, put } from 'relient/actions/request';
+import { read, post, del } from 'relient/actions/request';
 
 const actionType = actionTypeCreator('actions/skill');
 
@@ -50,14 +50,11 @@ export const create = createAction(
 export const update = createAction(
   UPDATE,
   ({
-    id,
-    name,
+    skillId,
     category,
-    iconPath,
-  }) => put(`/skill/edit/skill/${id}`, {
-    name,
+  }) => post('/skill/edit/skill/standard-name', {
+    skillId,
     category,
-    iconPath,
   }),
 );
 
