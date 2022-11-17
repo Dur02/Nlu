@@ -244,9 +244,7 @@ const result = ({
         setIsModalOpen={setIsModalOpen}
         selectedSlots={selectedSlot}
         setSelectedSlots={setSelectedSlot}
-        // onChange={
-        //   (value) => onUpdateSlot({ ...record, lexiconsNames: value }, undefined, record)
-        // }
+        onUpdateSlot={onUpdateSlot}
         // value={lexiconsNames}
         words={words}
         createWords={createWords}

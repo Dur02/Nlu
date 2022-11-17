@@ -14,6 +14,8 @@ const result = ({
   setIsModalOpen,
   selectedSlots,
   setSelectedSlots,
+  // eslint-disable-next-line no-unused-vars
+  onUpdateSlots,
   words,
   createWords,
   updateWords,
@@ -22,6 +24,10 @@ const result = ({
 }) => {
   useStyles(s);
 
+  // eslint-disable-next-line no-console
+  console.log(words);
+  // eslint-disable-next-line no-console
+  console.log(selectedSlots);
   // eslint-disable-next-line no-console
   console.log(updateWords);
   // eslint-disable-next-line no-console
@@ -59,7 +65,7 @@ const result = ({
         width={700}
       >
         <Collapse>
-          <Panel header="新建意图">
+          <Panel header="新建词库">
             <Form
               className={s.Words}
               autoComplete="off"
@@ -122,6 +128,7 @@ result.propTypes = {
   setIsModalOpen: func.isRequired,
   selectedSlots: object.isRequired,
   setSelectedSlots: func.isRequired,
+  onUpdateSlots: func.isRequired,
   words: array.isRequired,
   createWords: func.isRequired,
   updateWords: func.isRequired,
