@@ -17,8 +17,8 @@ build:
     - NODE_ENV=production yarn build # do not set this env var to variables because yarn install wont install dev packages
   only:
     - tags
-    - dev
-    - test
+#    - dev
+#    - test
   artifacts:
     paths:
       - build/
@@ -35,8 +35,8 @@ publish:
     - . ./citools/publish-image.sh
   only:
     - tags
-    - dev
-    - test
+#    - dev
+#    - test
 deploy_staging:
   stage: deploy_staging
   image: ${DEPLOY_IMAGE}
@@ -52,5 +52,5 @@ deploy_staging:
     - ansible-playbook -i ./ansible/hosts/staging.yml -v ./ansible/deploy.yml
   only:
     - tags
-    - dev
-    - test
+#    - dev
+#    - test
