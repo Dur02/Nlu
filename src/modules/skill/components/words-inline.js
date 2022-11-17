@@ -1,8 +1,10 @@
 import React, { useCallback } from 'react';
-import { Collapse, Form, Modal, Input, Checkbox, Button } from 'antd';
-import { array, bool, func, number, object } from 'prop-types';
-import { compact, find, flow, includes, map, propEq } from 'lodash/fp';
+import { Collapse, Form, Modal, Input, Checkbox, Button, message } from 'antd';
+import { array, bool, func, number, string } from 'prop-types';
+import { compact, eq, find, flow, includes, map, propEq, reject } from 'lodash/fp';
+import { useDispatch } from 'react-redux';
 import { duplexTypeOption, getConfigValue } from 'shared/constants/config';
+import { readAll as readAllIntent } from 'shared/actions/intent';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import WordsContent from './words-content';
 import s from './words-inline.less';
@@ -10,63 +12,93 @@ import s from './words-inline.less';
 const { Panel } = Collapse;
 
 const result = ({
+  slots,
+  slotName,
+  // eslint-disable-next-line no-unused-vars
+  setSlotName,
   isModalOpen,
   setIsModalOpen,
-  selectedSlots,
-  setSelectedSlots,
-  // eslint-disable-next-line no-unused-vars
-  onUpdateSlots,
+  onUpdateSlot,
   words,
   createWords,
+  // eslint-disable-next-line no-unused-vars
   updateWords,
+  // eslint-disable-next-line no-unused-vars
   removeWords,
   skillId,
 }) => {
   useStyles(s);
 
-  // eslint-disable-next-line no-console
-  console.log(words);
-  // eslint-disable-next-line no-console
-  console.log(selectedSlots);
-  // eslint-disable-next-line no-console
-  console.log(updateWords);
-  // eslint-disable-next-line no-console
-  console.log(removeWords);
+  const selectedSlot = flow(
+    find(propEq('name', slotName)),
+  )(slots) || [];
 
   const selectedWords = flow(
     map((name) => find(propEq('name', name))(words)),
     compact,
-  )(selectedSlots.lexiconsNames);
+  )(selectedSlot.lexiconsNames || []);
+
+  const dispatch = useDispatch();
+  const [createWordsForm] = Form.useForm();
+
+  const onAttachWords = useCallback(
+    ({ name }) => onUpdateSlot(
+      { ...selectedSlot, lexiconsNames: [name, ...(selectedSlot.lexiconsNames || [])] },
+      undefined,
+      selectedSlot,
+    ),
+    [selectedSlot, onUpdateSlot],
+  );
+
+  // eslint-disable-next-line no-unused-vars
+  const onDetachWords = useCallback(
+    ({ name }) => onUpdateSlot(
+      {
+        ...selectedSlot,
+        lexiconsNames: [
+          reject(eq(name))(selectedSlot.lexiconsNames),
+          ...(selectedSlot.lexiconsNames || []),
+        ],
+      },
+      undefined,
+      selectedSlot,
+    ),
+    [selectedSlot, onUpdateSlot],
+  );
 
   const onFinish = useCallback(async (value) => {
-    const duplexType = getConfigValue(value.duplexType, 'duplexType');
-    await createWords({
-      ...value,
-      wordConfig: {
-        duplexType,
-        skillId,
-      },
-    });
-  }, [getConfigValue]);
-
-  // eslint-disable-next-line no-console
-  console.log(selectedWords);
+    try {
+      const duplexType = getConfigValue(value.duplexType || [], 'duplexType');
+      await createWords({
+        ...value,
+        wordConfig: {
+          duplexType,
+          skillId,
+        },
+      });
+      await onAttachWords({ name: value.name });
+      await dispatch(readAllIntent({ skillId }));
+      createWordsForm.resetFields();
+    } catch (e) {
+      message.error('出错了');
+    }
+  }, [selectedSlot, getConfigValue, onAttachWords]);
 
   return (
     <>
       <Modal
-        title={selectedSlots.name}
+        title={selectedSlot.name}
         open={isModalOpen}
         footer={null}
         onCancel={() => {
           setIsModalOpen(false);
-          setSelectedSlots({});
         }}
         width={700}
       >
         <Collapse>
           <Panel header="新建词库">
             <Form
+              form={createWordsForm}
               className={s.Words}
               autoComplete="off"
               onFinish={onFinish}
@@ -109,7 +141,7 @@ const result = ({
             </Form>
           </Panel>
           {
-            map((item) => (
+            selectedSlot && map((item) => (
               <Panel header={item.name} key={item.code}>
                 <p>test1</p>
               </Panel>
@@ -124,11 +156,14 @@ const result = ({
 result.displayName = __filename;
 
 result.propTypes = {
+  slots: array.isRequired,
+  slotName: string.isRequired,
+  setSlotName: func.isRequired,
   isModalOpen: bool.isRequired,
   setIsModalOpen: func.isRequired,
-  selectedSlots: object.isRequired,
-  setSelectedSlots: func.isRequired,
-  onUpdateSlots: func.isRequired,
+  // selectedSlot: object.isRequired,
+  // setselectedSlot: func.isRequired,
+  onUpdateSlot: func.isRequired,
   words: array.isRequired,
   createWords: func.isRequired,
   updateWords: func.isRequired,

@@ -26,7 +26,7 @@ const result = ({
 
   const [promptEditorSlotName, setPromptEditorSlotName] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSlot, setSelectedSlot] = useState({});
+  const [slotName, setSlotName] = useState('');
 
   const onCreateSlot = useCallback(
     (values) => {
@@ -217,7 +217,7 @@ const result = ({
         onRow={(record) => ({
           onDoubleClick: () => {
             setIsModalOpen(true);
-            setSelectedSlot(record);
+            setSlotName(record.name);
           },
         })}
         rowKey="name"
@@ -240,12 +240,14 @@ const result = ({
         />
       </Drawer>
       <WordsInline
+        slots={slots}
+        slotName={slotName}
+        setSlotName={setSlotName}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        selectedSlots={selectedSlot}
-        setSelectedSlots={setSelectedSlot}
+        // selectedSlots={selectedSlot}
+        // setSelectedSlots={setSelectedSlot}
         onUpdateSlot={onUpdateSlot}
-        // value={lexiconsNames}
         words={words}
         createWords={createWords}
         updateWords={updateWords}
