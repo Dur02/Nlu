@@ -469,7 +469,7 @@ const result = ({
                 <Form
                   // 当使用useForm控制表单时，resetFields时初始值会是上一次的值而不能动态变化，因为modal和form的生命周期不一致
                   // 当modal内嵌form，而form需要动态变化初始值时
-                  // 使用useForm搭配setFieldsValue或者不使用useForm使modal和form生命一致，通过initialValues设置初始值
+                  // 使用useForm搭配setFieldsValue或者通过initialValues设置初始值
                   form={caseUpdateForm}
                   name="basic"
                   labelCol={{ span: 7 }}

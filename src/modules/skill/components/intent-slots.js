@@ -245,13 +245,10 @@ const result = ({
         setSlotName={setSlotName}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        // selectedSlots={selectedSlot}
-        // setSelectedSlots={setSelectedSlot}
         onUpdateSlot={onUpdateSlot}
         words={words}
         createWords={createWords}
         updateWords={updateWords}
-        removeWords={removeWords}
         skillId={skillId}
       />
     </div>

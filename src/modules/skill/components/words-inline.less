@@ -1,11 +1,22 @@
-.Words {
-  :global(.ant-form-item) {
-    :global(.ant-select) {
-      width: auto;
-    }
+.CollapseContainer {
+  height: 600px;
+  overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 
-    :global(.ant-input-search) {
-      width: 200px !important;
+  .WordsForm {
+    :global(.ant-form-item) {
+      :global(.ant-select) {
+        width: auto;
+      }
+
+      :global(.ant-input-search) {
+        width: 200px !important;
+      }
     }
   }
+}
+
+.CollapseContainer::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
 }
