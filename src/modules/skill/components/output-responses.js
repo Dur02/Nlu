@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
-import { message, Button, Tabs, Tooltip, Popconfirm, Select } from 'antd';
+import { message, Button, Tabs, Tooltip, Popconfirm, Select, Input, Form } from 'antd';
 import { PlusOutlined, SortAscendingOutlined, CloseOutlined } from '@ant-design/icons';
 import {
   map,
@@ -15,8 +15,9 @@ import {
   omit,
   size,
   filter,
-  nth,
+  nth, concat,
 } from 'lodash/fp';
+import { outputComponentOptions } from 'shared/constants/output-component';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { getCName, getIsDefault } from 'shared/utils/helper';
 import { isBoolean } from 'lodash';
@@ -29,6 +30,7 @@ import s from './output-responses.less';
 
 const mapWithIndex = map.convert({ cap: false });
 const { TabPane } = Tabs;
+const { Item } = Form;
 const DEFAULT_KEY = 'default';
 
 const executeSequenceOptions = [{
@@ -55,10 +57,16 @@ const result = ({
 }) => {
   useStyles(s);
 
+  // const [componentForm] = useForm();
+
   const [selectedCId, setSelectedCId] = useState(flow(first, propOr(DEFAULT_KEY, 'cId'))(responses));
   const [sorterVisible, setSorterVisible] = useState(false);
   const [creatorConditionVisible, setCreatorConditionVisible] = useState(false);
   const [editorConditionCId, setEditorConditionCId] = useState(null);
+  const [nameVisible, setNameVisible] = useState(() => {
+    const selectedResponse = flow(first, prop('widgetName'))(responses);
+    return selectedResponse && selectedResponse === 'custom';
+  });
 
   const onCreateResponse = useCallback(async (condition, cnames) => {
     const newResponses = mapWithIndex((item, index) => ({
@@ -212,7 +220,16 @@ const result = ({
         //   justifyContent: 'space-between',
         // }}
         activeKey={selectedCId}
-        onTabClick={setSelectedCId}
+        onTabClick={(value) => {
+          setSelectedCId(value);
+          setNameVisible(() => {
+            const selectedResponse = flow(
+              find(propEq('cId', value)),
+              prop('widgetName'),
+            )(responses);
+            return selectedResponse && selectedResponse === 'custom';
+          });
+        }}
         className={s.Tabs}
         type="editable-card"
         hideAdd
@@ -230,6 +247,8 @@ const result = ({
           nextAny,
           isDefault,
           executeSequence,
+          widgetName,
+          duiWidget,
         }) => (
           <TabPane
             key={cId}
@@ -295,6 +314,61 @@ const result = ({
                   });
               }}
             />
+
+            <h4 className={s.Title}>控件类型</h4>
+            <Form
+              layout="inline"
+              initialValues={{
+                component: widgetName || '',
+                name: duiWidget || '',
+              }}
+              onFinish={async ({ component, name }) => {
+                switch (component) {
+                  case 'custom':
+                    await onUpdateResponse({
+                      cId,
+                      widgetName: component,
+                      duiWidget: name,
+                    });
+                    break;
+                  case 'list':
+                  case 'text':
+                    await onUpdateResponse({
+                      cId,
+                      widgetName: component,
+                      duiWidget: 'default',
+                    });
+                    break;
+                  default:
+                    break;
+                }
+              }}
+            >
+              <Item name="component" label="控件类型">
+                <Select
+                  style={{ width: 100 }}
+                  options={concat([{ label: '无', value: '' }], outputComponentOptions)}
+                  onChange={(value) => {
+                    switch (value) {
+                      case 'custom':
+                        setNameVisible(true);
+                        break;
+                      default:
+                        setNameVisible(false);
+                        break;
+                    }
+                  }}
+                />
+              </Item>
+              {nameVisible && (
+                <Item name="name" label="控件名称" rules={[{ required: true }]}>
+                  <Input type="text" />
+                </Item>
+              )}
+              <Item>
+                <Button type="primary" htmlType="submit">保存</Button>
+              </Item>
+            </Form>
 
             <h4 className={s.Title}>下一轮对话</h4>
             <Next

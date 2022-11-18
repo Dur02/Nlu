@@ -8,7 +8,6 @@ import { readAll as readAllOutput } from 'shared/actions/output';
 import { readAll as readAllSkillVersion } from 'shared/actions/skill-version';
 import { readOne as readOneSkill, readConfig } from 'shared/actions/skill';
 import { readMine as readProfile } from 'shared/actions/user';
-
 import { concat, map } from 'lodash/fp';
 import Skill from './skill';
 import SkillEditor from './skill-editor';
