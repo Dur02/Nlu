@@ -11,6 +11,7 @@ export const READ_ALL = actionType('READ_ALL');
 export const READ_ONE = actionType('READ_ONE');
 export const CREATE = actionType('CREATE');
 export const REMOVE = actionType('REMOVE');
+export const READ_CONFIG = actionType('READ_CONFIG');
 export const UPDATE = actionType('UPDATE');
 export const READ_WORD_GRAPH = actionType('READ_WORD_GRAPH');
 export const SKILL_YAML_EXPORT = actionType('SKILL_YAML_EXPORT');
@@ -61,6 +62,11 @@ export const update = createAction(
 export const remove = createAction(
   REMOVE,
   ({ id }) => del(`/skill/edit/skill/${id}`),
+);
+
+export const readConfig = createAction(
+  READ_CONFIG,
+  () => read('/skill/edit/skill/config'),
 );
 
 export const readWordGraph = createAction(

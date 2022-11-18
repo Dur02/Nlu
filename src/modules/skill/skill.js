@@ -31,7 +31,9 @@ const { Item } = Form;
 
 const { TextArea } = Input;
 
-const result = () => {
+const result = ({
+  standardName,
+}) => {
   const {
     skills,
   } = useSelector(selector);
@@ -70,9 +72,8 @@ const result = () => {
   }, {
     label: '标准名',
     name: 'category',
-    autoComplete: 'off',
-    type: 'text',
-    rules: [{ required: true }],
+    component: Select,
+    options: standardName,
   }];
 
   const editorFields = [{
@@ -82,11 +83,16 @@ const result = () => {
     type: 'text',
     rules: [{ required: true }],
   }, {
-    label: '标准名',
-    name: 'category',
-    autoComplete: 'off',
+    // label: '名称',
+    name: 'name',
+    hidden: true,
     type: 'text',
     rules: [{ required: true }],
+  }, {
+    label: '标准名',
+    name: 'category',
+    component: Select,
+    options: standardName,
   }];
 
   const versionFields = [{
@@ -125,13 +131,26 @@ const result = () => {
     },
     creator: {
       title: '创建技能',
-      onSubmit: onCreate,
+      onSubmit: ({ name, category }) => {
+        if (category !== '') {
+          return onCreate({ name, category });
+        }
+        return onCreate({ name, category: name });
+      },
       fields: creatorFields,
       component: Drawer,
+      initialValues: {
+        category: '',
+      },
     },
     editor: {
-      title: '编辑技能',
-      onSubmit: ({ id, category }) => onUpdate({ skillId: id, category }),
+      title: '编辑技能基础信息',
+      onSubmit: ({ id, name, category }) => {
+        if (category !== '') {
+          return onUpdate({ skillId: id, category });
+        }
+        return onUpdate({ skillId: id, category: name });
+      },
       fields: editorFields,
       component: Drawer,
     },
