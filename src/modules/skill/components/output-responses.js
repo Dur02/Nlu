@@ -30,7 +30,7 @@ import s from './output-responses.less';
 
 const mapWithIndex = map.convert({ cap: false });
 const { TabPane } = Tabs;
-const { Item } = Form;
+const { Item, useForm } = Form;
 const DEFAULT_KEY = 'default';
 
 const executeSequenceOptions = [{
@@ -57,7 +57,7 @@ const result = ({
 }) => {
   useStyles(s);
 
-  // const [componentForm] = useForm();
+  const [componentForm] = useForm();
 
   const [selectedCId, setSelectedCId] = useState(flow(first, propOr(DEFAULT_KEY, 'cId'))(responses));
   const [sorterVisible, setSorterVisible] = useState(false);
@@ -221,14 +221,19 @@ const result = ({
         // }}
         activeKey={selectedCId}
         onTabClick={(value) => {
-          setSelectedCId(value);
-          setNameVisible(() => {
-            const selectedResponse = flow(
-              find(propEq('cId', value)),
-              prop('widgetName'),
-            )(responses);
-            return selectedResponse && selectedResponse === 'custom';
+          const selectedResponse = flow(
+            find(propEq('cId', value)),
+          )(responses);
+          // 控制下一个渲染的panel的componentForm的值，否则带年纪后不提交切换后再切换回来component的值保存了上次修改的值而nameVisible
+          // 会重置导致数据异常。
+          // 也可以不使用表单，把component下拉框和name输入框分离，通过state控制输入值和是否显示？
+          componentForm.setFieldsValue({
+            component: prop('widgetName')(selectedResponse) || '',
+            name: prop('duiWidget')(selectedResponse) || '',
           });
+          setNameVisible(() => prop('widgetName')(selectedResponse) && prop('widgetName')(selectedResponse) === 'custom',
+          );
+          setSelectedCId(value);
         }}
         className={s.Tabs}
         type="editable-card"
@@ -317,6 +322,7 @@ const result = ({
 
             <h4 className={s.Title}>控件类型</h4>
             <Form
+              form={componentForm}
               layout="inline"
               initialValues={{
                 component: widgetName || '',
@@ -340,6 +346,11 @@ const result = ({
                     });
                     break;
                   default:
+                    await onUpdateResponse({
+                      cId,
+                      widgetName: '',
+                      duiWidget: 'default',
+                    });
                     break;
                 }
               }}
