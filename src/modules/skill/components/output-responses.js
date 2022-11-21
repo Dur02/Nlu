@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { func, number, array } from 'prop-types';
-import { message, Button, Tabs, Tooltip, Popconfirm, Select, Input, Form } from 'antd';
+import { message, Button, Tabs, Tooltip, Popconfirm, Select } from 'antd';
 import { PlusOutlined, SortAscendingOutlined, CloseOutlined } from '@ant-design/icons';
 import {
   map,
@@ -15,9 +15,8 @@ import {
   omit,
   size,
   filter,
-  nth, concat,
+  nth,
 } from 'lodash/fp';
-import { outputComponentOptions } from 'shared/constants/output-component';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { getCName, getIsDefault } from 'shared/utils/helper';
 import { isBoolean } from 'lodash';
@@ -25,12 +24,12 @@ import NLG from './output-response-nlg';
 import Condition from './output-response-condition';
 import Command from './output-response-command';
 import Next from './output-response-next';
+import Widget from './output-response-widget';
 import Sorter from './output-response-sorter';
 import s from './output-responses.less';
 
 const mapWithIndex = map.convert({ cap: false });
 const { TabPane } = Tabs;
-const { Item, useForm } = Form;
 const DEFAULT_KEY = 'default';
 
 const executeSequenceOptions = [{
@@ -50,6 +49,7 @@ const getDefaultConditionSize = flow(
 );
 
 const result = ({
+  intentId,
   responses,
   updateOutput,
   outputId,
@@ -57,16 +57,10 @@ const result = ({
 }) => {
   useStyles(s);
 
-  const [componentForm] = useForm();
-
   const [selectedCId, setSelectedCId] = useState(flow(first, propOr(DEFAULT_KEY, 'cId'))(responses));
   const [sorterVisible, setSorterVisible] = useState(false);
   const [creatorConditionVisible, setCreatorConditionVisible] = useState(false);
   const [editorConditionCId, setEditorConditionCId] = useState(null);
-  const [nameVisible, setNameVisible] = useState(() => {
-    const selectedResponse = flow(first, prop('widgetName'))(responses);
-    return selectedResponse && selectedResponse === 'custom';
-  });
 
   const onCreateResponse = useCallback(async (condition, cnames) => {
     const newResponses = mapWithIndex((item, index) => ({
@@ -170,6 +164,9 @@ const result = ({
     return undefined;
   };
 
+  // 切换意图时重置选择的cId到首位回复
+  useEffect(() => setSelectedCId(flow(first, propOr(DEFAULT_KEY, 'cId'))(responses)), [intentId]);
+
   return (
     <div>
       <div className={s.Header}>
@@ -208,31 +205,8 @@ const result = ({
         </Button>
       </div>
       <Tabs
-        // tabBarStyle={{
-        //   maxWidth: '300px',
-        //   display: 'block',
-        //   whiteSpace: 'normal',
-        //   padding: '0',
-        //   wordWrap: 'break-word',
-        //   wordBreak: 'break-all',
-        //   textOverflow: 'ellipsis',
-        //   overflow: 'hidden',
-        //   justifyContent: 'space-between',
-        // }}
         activeKey={selectedCId}
         onTabClick={(value) => {
-          const selectedResponse = flow(
-            find(propEq('cId', value)),
-          )(responses);
-          // 控制下一个渲染的panel的componentForm的值，否则带年纪后不提交切换后再切换回来component的值保存了上次修改的值而nameVisible
-          // 会重置导致数据异常。
-          // 也可以不使用表单，把component下拉框和name输入框分离，通过state控制输入值和是否显示？
-          componentForm.setFieldsValue({
-            component: prop('widgetName')(selectedResponse) || '',
-            name: prop('duiWidget')(selectedResponse) || '',
-          });
-          setNameVisible(() => prop('widgetName')(selectedResponse) && prop('widgetName')(selectedResponse) === 'custom',
-          );
           setSelectedCId(value);
         }}
         className={s.Tabs}
@@ -321,65 +295,16 @@ const result = ({
             />
 
             <h4 className={s.Title}>控件类型</h4>
-            <Form
-              form={componentForm}
-              layout="inline"
-              initialValues={{
-                component: widgetName || '',
-                name: duiWidget || '',
-              }}
-              onFinish={async ({ component, name }) => {
-                switch (component) {
-                  case 'custom':
-                    await onUpdateResponse({
-                      cId,
-                      widgetName: component,
-                      duiWidget: name,
-                    });
-                    break;
-                  case 'list':
-                  case 'text':
-                    await onUpdateResponse({
-                      cId,
-                      widgetName: component,
-                      duiWidget: 'default',
-                    });
-                    break;
-                  default:
-                    await onUpdateResponse({
-                      cId,
-                      widgetName: '',
-                      duiWidget: 'default',
-                    });
-                    break;
-                }
-              }}
-            >
-              <Item name="component" label="控件类型">
-                <Select
-                  style={{ width: 100 }}
-                  options={concat([{ label: '无', value: '' }], outputComponentOptions)}
-                  onChange={(value) => {
-                    switch (value) {
-                      case 'custom':
-                        setNameVisible(true);
-                        break;
-                      default:
-                        setNameVisible(false);
-                        break;
-                    }
-                  }}
-                />
-              </Item>
-              {nameVisible && (
-                <Item name="name" label="控件名称" rules={[{ required: true }]}>
-                  <Input type="text" />
-                </Item>
-              )}
-              <Item>
-                <Button type="primary" htmlType="submit">保存</Button>
-              </Item>
-            </Form>
+            <Widget
+              responses={responses}
+              widgetName={widgetName || ''}
+              duiWidget={duiWidget || ''}
+              onChange={({ newWidgetName, newDuiWidget }) => onUpdateResponse({
+                cId,
+                widgetName: newWidgetName,
+                duiWidget: newDuiWidget,
+              })}
+            />
 
             <h4 className={s.Title}>下一轮对话</h4>
             <Next
@@ -421,6 +346,7 @@ const result = ({
 result.displayName = __filename;
 
 result.propTypes = {
+  intentId: number.isRequired,
   responses: array,
   intents: array,
   updateOutput: func.isRequired,

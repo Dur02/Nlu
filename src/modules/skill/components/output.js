@@ -110,6 +110,7 @@ const result = ({
 
       <h3 className={s.Title}>对话回复</h3>
       <Responses
+        intentId={intentId}
         outputId={output.id}
         updateOutput={updateOutput}
         responses={output.responses}
