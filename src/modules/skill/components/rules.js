@@ -4,7 +4,7 @@ import { Button, Input, message, Popconfirm, Switch, Table, Checkbox } from 'ant
 import { prop, map, size, reject, eq } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { useLocalTable } from 'relient-admin/hooks';
-import EditableInputCell from 'shared/components/editable-input-cell';
+import EditableInputCellForRule from 'shared/components/editable-input-cell-for-rule';
 import { appGroundTypeOption, duplexTypeOption, getConfigValue } from 'shared/constants/config';
 
 import IntentSlots from './intent-slots';
@@ -104,7 +104,7 @@ const result = ({
     width: 130,
     fixed: 'left',
     render: (sentence, { id }) => (
-      <EditableInputCell
+      <EditableInputCellForRule
         value={sentence}
         onSubmit={(value) => onUpdateRule({ sentence: value, id })}
         slotNames={map(({ name }) => name)(slots)}
