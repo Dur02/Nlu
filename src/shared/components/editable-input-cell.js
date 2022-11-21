@@ -5,12 +5,22 @@ import {
 } from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Input, Spin } from 'antd';
+import { flow, compact, map, split, flatten, difference } from 'lodash/fp';
 
 const result = ({
   onSubmit,
   value,
   inputClassName,
+  slotNames,
 }) => {
+  const splitRuleName = flow(
+    split('#'),
+    compact,
+    map((item) => split('｜')(item)),
+    flatten,
+  )(value);
+  const compareArray = difference(splitRuleName, slotNames);
+
   const [editing, setEditing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [editingValue, setEditingValue] = useState(value);
@@ -55,7 +65,7 @@ const result = ({
       />
     </Spin>
   ) : (
-    <div onClick={onClick}>{value}</div>
+    <div style={{ color: compareArray.length === 0 ? '#000' : '#FF8D75' }} onClick={onClick}>{value}</div>
   );
 };
 

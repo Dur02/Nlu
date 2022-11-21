@@ -107,6 +107,7 @@ const result = ({
       <EditableInputCell
         value={sentence}
         onSubmit={(value) => onUpdateRule({ sentence: value, id })}
+        slotNames={map(({ name }) => name)(slots)}
       />
     ),
   }, {
