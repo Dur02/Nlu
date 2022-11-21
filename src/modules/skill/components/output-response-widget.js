@@ -9,63 +9,63 @@ const result = ({
   duiWidget,
   onChange,
 }) => {
-  const [widgetNameValue, setWidgetNameValue] = useState(widgetName);
-  const [duiWidgetVisible, setDuiWidgetVisible] = useState(widgetName === 'custom');
   const [duiWidgetValue, setDuiWidgetValue] = useState(duiWidget);
+  const [widgetVisible, setWidgetVisible] = useState(duiWidget === 'custom');
+  const [widgetNameValue, setWidgetNameValue] = useState(widgetName);
 
   useEffect(() => {
-    setWidgetNameValue(widgetName);
-    setDuiWidgetVisible(widgetName === 'custom');
     setDuiWidgetValue(duiWidget);
-  }, [widgetName, duiWidget]);
+    setWidgetVisible(duiWidget === 'custom');
+    setWidgetNameValue(widgetName);
+  }, [duiWidget, widgetName]);
 
   return (
     <div style={{ display: 'flex' }}>
       <Select
-        value={widgetNameValue}
+        value={duiWidgetValue}
         style={{ width: 100 }}
         options={concat([{ label: '无', value: '' }], outputComponentOptions)}
         onChange={(value) => {
-          setWidgetNameValue(value);
+          setDuiWidgetValue(value);
           switch (value) {
             case 'custom':
-              setDuiWidgetVisible(true);
+              setWidgetVisible(true);
               break;
             default:
-              setDuiWidgetVisible(false);
+              setWidgetVisible(false);
               break;
           }
         }}
       />
-      {duiWidgetVisible && (
+      {widgetVisible && (
         <Input
-          value={duiWidgetValue}
+          value={widgetNameValue}
           // defaultValue={duiWidget || ''}
           type="text"
-          onChange={(e) => setDuiWidgetValue(e.target.value)}
+          onChange={(e) => setWidgetNameValue(e.target.value)}
         />
       )}
       <Button
         type="primary"
         onClick={async () => {
-          switch (widgetNameValue) {
+          switch (duiWidgetValue) {
             case 'custom':
               await onChange({
-                newWidgetName: widgetNameValue,
                 newDuiWidget: duiWidgetValue,
+                newWidgetName: widgetNameValue,
               });
               break;
             case 'list':
             case 'text':
               await onChange({
-                newWidgetName: widgetNameValue,
-                newDuiWidget: 'default',
+                newDuiWidget: duiWidgetValue,
+                newWidgetName: 'default',
               });
               break;
             default:
               await onChange({
-                newWidgetName: '',
-                newDuiWidget: 'default',
+                newDuiWidget: '',
+                newWidgetName: 'default',
               });
               break;
           }

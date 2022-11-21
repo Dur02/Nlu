@@ -299,10 +299,10 @@ const result = ({
               responses={responses}
               widgetName={widgetName || ''}
               duiWidget={duiWidget || ''}
-              onChange={({ newWidgetName, newDuiWidget }) => onUpdateResponse({
+              onChange={({ newDuiWidget, newWidgetName }) => onUpdateResponse({
                 cId,
-                widgetName: newWidgetName,
                 duiWidget: newDuiWidget,
+                widgetName: newWidgetName,
               })}
             />
 
