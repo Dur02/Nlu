@@ -170,21 +170,27 @@ export const getSkillEditorColumns = ({
   dataIndex: 'category',
 }, {
   title: '版本',
-  // sorter: (a, b) => {
-  //   if (
-  //     product.preLoadStatus[`${a.id}`] !== undefined
-  //     && product.preLoadStatus[`${b.id}`] === undefined
-  //   ) {
-  //     return 1;
-  //   }
-  //   if (
-  //     product.preLoadStatus[`${b.id}`] !== undefined
-  //     && product.preLoadStatus[`${a.id}`] === undefined
-  //   ) {
-  //     return -1;
-  //   }
-  //   return 0;
-  // },
+  width: 240,
+  filters: [
+    {
+      text: '已选择',
+      value: true,
+    },
+    {
+      text: '未选择',
+      value: false,
+    },
+  ],
+  // specify the condition of filtering result
+  // here is that finding the name started with `value`
+  onFilter: (value, record) => {
+    switch (value) {
+      case true:
+        return includes(record.code)(product.skillCodes);
+      default:
+        return !includes(record.code)(product.skillCodes);
+    }
+  },
   render: (record) => (
     <Operations
       record={record}

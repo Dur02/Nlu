@@ -126,6 +126,7 @@ const result = () => {
     reset: resetSkillTable,
   } = useLocalTable({
     query: {
+      width: 150,
       fields: [{
         dataKey: 'name',
         label: '名称',
