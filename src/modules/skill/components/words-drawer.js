@@ -6,6 +6,7 @@ import { getConfigValue } from 'shared/constants/config';
 import { readAll as readAllIntent } from 'shared/actions/intent';
 import { useLocalTable } from 'relient-admin/hooks';
 import { useDispatch } from 'react-redux';
+import { map, prop, replace } from 'lodash/fp';
 import columns from './words-drawer-columns';
 import fields from './words-drawer-fields';
 import s from './words-drawer.less';
@@ -47,10 +48,20 @@ const result = ({
     creator: {
       title: '创建词库',
       onSubmit: async (param) => {
+        const formatSynonym = () => (
+          map(({ word, synonym }) => ({
+            word,
+            synonym: replace('，', ',')(synonym),
+          }))(param.content)
+        );
+        const tempParam = {
+          ...param,
+          content: prop('content')(param) ? formatSynonym() : prop('content')(param),
+        };
         // const appGroundType = getConfigValue(param.appGroundType, 'appGroundType');
         const duplexType = getConfigValue(param.duplexType || [], 'duplexType');
         await createWords({
-          ...param,
+          ...tempParam,
           wordConfig: {
             // appGroundType,
             duplexType,
@@ -66,10 +77,20 @@ const result = ({
     editor: {
       title: '编辑词库',
       onSubmit: async (param) => {
+        const formatSynonym = () => (
+          map(({ word, synonym }) => ({
+            word,
+            synonym: replace('，', ',')(synonym),
+          }))(param.content)
+        );
+        const tempParam = {
+          ...param,
+          content: prop('content')(param) ? formatSynonym() : prop('content')(param),
+        };
         // const appGroundType = getConfigValue(param.appGroundType, 'appGroundType');
         const duplexType = getConfigValue(param.duplexType || [], 'duplexType');
         await updateWords({
-          ...param,
+          ...tempParam,
           wordConfig: {
             // appGroundType,
             duplexType,
