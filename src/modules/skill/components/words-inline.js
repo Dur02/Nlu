@@ -28,6 +28,8 @@ const result = ({
 
   const dispatch = useDispatch();
 
+  // 为什么不直接传record，而是通过name寻找选中的槽位？
+  // 如果直接传record，在改变槽位内容后内容还是传过来的值，需要重新设置selectedSlot和selectedWord的值
   const selectedSlot = flow(
     find(propEq('name', slotName)),
   )(slots) || [];
