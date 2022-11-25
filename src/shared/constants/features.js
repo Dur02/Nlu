@@ -2,6 +2,7 @@ import { setFeatures } from 'relient/features';
 
 export const PRODUCT = 'PRODUCT';
 export const SKILL = 'SKILL';
+export const SKILL_APP = 'SKILL_APP';
 
 export const SYSTEM = 'SYSTEM';
 export const ALL_USER = 'ALL_USER';
@@ -33,20 +34,24 @@ export const features = [{
   link: '/skill',
   text: '技能',
 }, {
+  key: SKILL_APP,
+  link: '/skillApp',
+  text: '技能App',
+}, {
   key: INTERVENTION,
-  link: 'intervention',
+  link: '/intervention',
   text: '干预',
 }, {
   key: AUDIT_LOG,
-  link: 'audit/log',
+  link: '/audit/log',
   text: '审计',
 }, {
   key: INTENT_MAP,
-  link: 'intentMap',
+  link: '/intentMap',
   text: '意图映射',
 }, {
   key: TEST,
-  link: 'test',
+  link: '/test',
   text: '测试',
   items: [{
     key: CASE,
@@ -92,7 +97,7 @@ export const features = [{
   }],
 }, {
   key: HELP,
-  link: 'help',
+  link: '/help',
   text: '帮助',
 }];
 

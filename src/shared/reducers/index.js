@@ -23,6 +23,8 @@ import testJobResult from './test-job-result';
 import intentMap from './intent-map';
 import intentMapInfo from './intent-map-info';
 import information from './information';
+import skillAppInfo from './skill-app-info';
+import skillAppSentence from './skill-app-sentence';
 
 export default combineReducers({
   ...createReducer([
@@ -49,5 +51,7 @@ export default combineReducers({
     intentMap,
     intentMapInfo,
     information,
+    skillAppInfo,
+    skillAppSentence,
   ]),
 });

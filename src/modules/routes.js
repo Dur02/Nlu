@@ -48,6 +48,13 @@ const routes = [
   },
 
   {
+    path: '/skillApp',
+    chunks: ['skillApp'],
+    requireAuth: true,
+    load: () => import(/* webpackChunkName: 'skillApp' */ 'modules/skill-app'),
+  },
+
+  {
     path: '/information',
     chunks: ['information'],
     requireAuth: true,
