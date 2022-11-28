@@ -11,7 +11,7 @@ export default {
   skillAppInfo: handleActions({
     [READ_ALL]: merge({
       schema: skillAppInfo,
-      dataKey: 'data.records',
+      dataKey: 'data',
     }),
 
     [combineActions(

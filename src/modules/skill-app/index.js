@@ -1,6 +1,7 @@
 import React from 'react';
 import { SKILL_APP } from 'shared/constants/features';
 import { readMine as readProfile } from 'shared/actions/user';
+import { readAll } from 'shared/actions/skill-app-info';
 import SkillApp from './skill-app';
 
 export default () => [{
@@ -9,6 +10,7 @@ export default () => [{
     try {
       await Promise.all([
         dispatch(readProfile()),
+        dispatch(readAll()),
       ]);
     } catch (e) {
       // ignore

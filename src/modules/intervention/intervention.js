@@ -272,7 +272,7 @@ const result = () => {
   const expandable = {
     expandedRowRender: (record) => {
       const expandedColumns = [{
-        title: '词库名 ',
+        title: '词库名',
         dataIndex: 'entityName',
       }, {
         title: '槽位名',
