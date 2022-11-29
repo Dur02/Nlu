@@ -1,8 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { Modal, Form, Input, Upload, Button, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import { useAction } from 'relient/actions';
-import { readAll, create } from 'shared/actions/skill-app-info';
+import { Modal, Form, Input, Upload, Button, message, Image } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
 const { Item, useForm } = Form;
 
@@ -10,20 +8,24 @@ const result = ({
   createVisible,
   setCreateVisible,
   token,
+  readAllInfo,
+  createInfo,
 }) => {
-  const readAllAction = useAction(readAll);
-  const createAction = useAction(create);
-
   const [createForm] = useForm();
   const [iconFileList, setIconFileList] = useState([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const [previewTitle, setPreviewTitle] = useState('');
 
   const onFinish = useCallback(async (value) => {
-    await createAction({ ...value });
-    await readAllAction();
+    await createInfo({ ...value });
+    await readAllInfo();
     setCreateVisible(false);
-  }, []);
+    setIconFileList([]);
+    createForm.resetFields();
+  }, [createVisible, iconFileList, createForm]);
 
-  const onUpload = useCallback(({ file, fileList }) => {
+  const handleChange = useCallback(({ file, fileList }) => {
     let newFileList = [...fileList];
     if (file.status === 'done') {
       if (file.response.code === 'SUCCESS') {
@@ -32,15 +34,23 @@ const result = ({
       } else {
         message.error(file.response.msg);
         newFileList = [];
-        createForm.setFieldsValue({ skillIcon: null });
+        createForm.setFieldsValue({ uploadIcon: null, skillIcon: null });
       }
     } else if (file.status === 'error') {
       newFileList = [];
-      createForm.setFieldsValue({ skillIcon: null });
+      createForm.setFieldsValue({ uploadIcon: null, skillIcon: null });
       message.error(file.response && file.response.msg ? file.response.msg : '上传失败，检查文件格式或稍后再试');
     }
     setIconFileList(newFileList);
-  }, []);
+  }, [createForm, iconFileList]);
+
+  const handlePreview = useCallback((file) => {
+    if (file.status === 'done' && file.response.code === 'SUCCESS') {
+      setPreviewTitle(file.name);
+      setPreviewImage(file.response.data.resourceUrl);
+    }
+    setPreviewOpen(true);
+  }, [previewTitle, previewImage, previewOpen]);
 
   return (
     <Modal
@@ -83,11 +93,15 @@ const result = ({
             maxCount={1}
             fileList={iconFileList}
             action="/skill/edit/skill-app/resource/upload"
-            listType="picture"
-            onChange={onUpload}
+            listType="picture-card"
+            onChange={handleChange}
             headers={{ token }}
+            onPreview={handlePreview}
           >
-            <Button icon={<UploadOutlined />}>Upload</Button>
+            <div>
+              <PlusOutlined />
+              <div style={{ marginTop: 8 }}>Upload</div>
+            </div>
           </Upload>
         </Item>
 
@@ -105,6 +119,15 @@ const result = ({
           </Button>
         </Item>
       </Form>
+
+      <Modal
+        open={previewOpen}
+        title={previewTitle}
+        footer={null}
+        onCancel={() => setPreviewOpen(false)}
+      >
+        <Image alt="example" style={{ width: '100%', marginTop: '20px' }} src={previewImage} />
+      </Modal>
     </Modal>
   );
 };

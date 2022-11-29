@@ -10,6 +10,7 @@ export const READ_ALL = actionType('READ_ALL');
 export const CREATE = actionType('CREATE');
 export const REMOVE = actionType('REMOVE');
 export const UPDATE = actionType('UPDATE');
+export const CHANGE_ORDER = actionType('CHANGE_ORDER');
 
 export const readAll = createAction(
   READ_ALL,
@@ -47,4 +48,12 @@ export const update = createAction(
 export const remove = createAction(
   REMOVE,
   ({ id }) => del(`/skill/edit/skill-app/skill/${id}`),
+);
+
+export const changeOrder = createAction(
+  CHANGE_ORDER,
+  ({ id, order }) => put('/skill/edit/skill-app/skill/rank', {
+    id,
+    order,
+  }),
 );

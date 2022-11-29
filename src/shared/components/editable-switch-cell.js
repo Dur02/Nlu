@@ -14,6 +14,7 @@ const result = ({
   ...props
 }) => {
   const [submitting, setSubmitting] = useState(false);
+
   const change = useCallback(async (checked) => {
     setSubmitting(true);
     try {

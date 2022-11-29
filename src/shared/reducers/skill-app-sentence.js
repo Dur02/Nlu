@@ -1,6 +1,7 @@
 import { merge, handleActions, remove, combineActions } from 'relient/reducers';
-import { skillAppSentence } from '../schema';
+import { skillAppInfo, skillAppSentence } from '../schema';
 import {
+  READ_ALL,
   REMOVE,
   CREATE,
   UPDATE,
@@ -8,6 +9,11 @@ import {
 
 export default {
   skillAppSentence: handleActions({
+    [READ_ALL]: merge({
+      schema: skillAppInfo,
+      dataKey: 'data',
+    }),
+
     [combineActions(
       UPDATE,
       CREATE,

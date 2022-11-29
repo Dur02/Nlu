@@ -11,21 +11,26 @@ const result = ({
   const [editing, setEditing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [editingValue, setEditingValue] = useState(value);
+
   useEffect(() => {
     setEditingValue(value);
   }, [value]);
+
   const onChange = useCallback(({ target }) => {
     setEditingValue(target.value);
   }, [setEditingValue]);
+
   const onClick = useCallback(({ detail }) => {
     if (detail === 2) {
       setEditing(true);
     }
   }, [setEditing]);
+
   const onBlur = useCallback(() => {
     setEditingValue(value);
     setEditing(false);
   }, [setEditingValue, setEditing, value]);
+
   const onKeyPress = useCallback(async ({ key }) => {
     if (key === 'Enter') {
       setSubmitting(true);
