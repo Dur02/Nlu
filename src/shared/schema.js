@@ -22,5 +22,5 @@ export const testJobResult = new schema.Entity('testJobResult');
 export const intentMap = new schema.Entity('intentMap');
 export const intentMapInfo = new schema.Entity('intentMapInfo');
 export const information = new schema.Entity('information');
-export const skillAppInfo = new schema.Entity('skillAppInfo');
-export const skillAppSentence = new schema.Entity('skillAppSentence');
+export const skillStandard = new schema.Entity('skillStandard');
+export const skillStandardSentence = new schema.Entity('skillStandardSentence');

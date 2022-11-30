@@ -48,10 +48,10 @@ const routes = [
   },
 
   {
-    path: '/skillApp',
-    chunks: ['skillApp'],
+    path: '/skillStandard',
+    chunks: ['skillStandard'],
     requireAuth: true,
-    load: () => import(/* webpackChunkName: 'skillApp' */ 'modules/skill-app'),
+    load: () => import(/* webpackChunkName: 'skillStandard' */ 'modules/skill-standard'),
   },
 
   {

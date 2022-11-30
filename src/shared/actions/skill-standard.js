@@ -14,7 +14,7 @@ export const CHANGE_ORDER = actionType('CHANGE_ORDER');
 
 export const readAll = createAction(
   READ_ALL,
-  () => read('/skill/edit/skill-app/skills'),
+  () => read('/skill/edit/skill-standard/skills'),
 );
 
 export const create = createAction(
@@ -23,7 +23,7 @@ export const create = createAction(
     order,
     skillIcon,
     skillName,
-  }) => post('/skill/edit/skill-app/skill', {
+  }) => post('/skill/edit/skill-standard/skill', {
     order,
     skillIcon,
     skillName,
@@ -37,7 +37,7 @@ export const update = createAction(
     order,
     skillIcon,
     skillName,
-  }) => put('/skill/edit/skill-app/skill', {
+  }) => put('/skill/edit/skill-standard/skill', {
     id,
     order,
     skillIcon,
@@ -47,12 +47,12 @@ export const update = createAction(
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/skill/edit/skill-app/skill/${id}`),
+  ({ id }) => del(`/skill/edit/skill-standard/skill/${id}`),
 );
 
 export const changeOrder = createAction(
   CHANGE_ORDER,
-  ({ id, order }) => put('/skill/edit/skill-app/skill/rank', {
+  ({ id, order }) => put('/skill/edit/skill-standard/skill/rank', {
     id,
     order,
   }),

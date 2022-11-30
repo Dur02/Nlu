@@ -14,6 +14,11 @@ const result = ({
 
   useEffect(() => {
     setEditingValue(value);
+    return () => {
+      setSubmitting(false);
+      setEditing(false);
+      setEditingValue(value);
+    };
   }, [value]);
 
   const onChange = useCallback(({ target }) => {

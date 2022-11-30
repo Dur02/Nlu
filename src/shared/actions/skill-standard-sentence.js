@@ -16,7 +16,7 @@ export const readAll = createAction(
   READ_ALL,
   ({
     id,
-  }) => read(`/skill/edit/skill-app/sentence/${id}`),
+  }) => read(`/skill/edit/skill-standard/sentences/${id}`),
 );
 
 export const create = createAction(
@@ -25,7 +25,7 @@ export const create = createAction(
     appSkillId,
     homePageShow,
     sentenceName,
-  }) => post('/skill/edit/skill-app/sentence', {
+  }) => post('/skill/edit/skill-standard/sentence', {
     appSkillId,
     homePageShow,
     sentenceName,
@@ -38,7 +38,7 @@ export const update = createAction(
     id,
     homePageShow,
     sentenceName,
-  }) => put('/skill/edit/skill-app/sentence', {
+  }) => put('/skill/edit/skill-standard/sentence', {
     id,
     homePageShow,
     sentenceName,
@@ -47,7 +47,7 @@ export const update = createAction(
 
 export const remove = createAction(
   REMOVE,
-  ({ id }) => del(`/skill/edit/skill-app/sentence/${id}`),
+  ({ id }) => del(`/skill/edit/skill-standard/sentence/${id}`),
 );
 
 export const changeOrder = createAction(
@@ -55,7 +55,7 @@ export const changeOrder = createAction(
   ({
     id,
     order,
-  }) => put('/skill/edit/skill-app/sentence/rank', {
+  }) => put('/skill/edit/skill-standard/sentence/rank', {
     id,
     order,
   }),

@@ -4,7 +4,7 @@ import {
   func,
   bool,
 } from 'prop-types';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Switch } from 'antd';
 
 const result = ({
@@ -24,6 +24,10 @@ const result = ({
       setSubmitting(false);
     }
   }, [onChange, setSubmitting]);
+
+  useEffect(() => () => {
+    setSubmitting(false);
+  }, []);
 
   return (
     <Switch

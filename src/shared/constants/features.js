@@ -2,7 +2,7 @@ import { setFeatures } from 'relient/features';
 
 export const PRODUCT = 'PRODUCT';
 export const SKILL = 'SKILL';
-export const SKILL_APP = 'SKILL_APP';
+export const SKILL_STANDARD = 'SKILL_STANDARD';
 
 export const SYSTEM = 'SYSTEM';
 export const ALL_USER = 'ALL_USER';
@@ -34,9 +34,9 @@ export const features = [{
   link: '/skill',
   text: '技能',
 }, {
-  key: SKILL_APP,
-  link: '/skillApp',
-  text: '技能App',
+  key: SKILL_STANDARD,
+  link: '/skillStandard',
+  text: '技能定义',
 }, {
   key: INTERVENTION,
   link: '/intervention',

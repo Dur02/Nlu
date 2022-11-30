@@ -31,6 +31,7 @@ export default ({
   ),
 }, {
   title: '主页展示',
+  width: 80,
   dataIndex: 'homePageShow',
   render: (homePageShow, record) => (
     <EditableSwitchCell

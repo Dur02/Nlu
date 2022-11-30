@@ -4,20 +4,20 @@ import { Form, Input, Button, Switch } from 'antd';
 const { Item, useForm } = Form;
 
 const result = ({
-  appSkillId,
+  standardId,
   createSentence,
-  readAllInfo,
+  readSentenceAction,
 }) => {
   const [createForm] = useForm();
 
   const onFinish = useCallback(async (value) => {
     await createSentence({ ...value });
-    await readAllInfo();
+    await readSentenceAction({ id: standardId });
   }, [createForm]);
 
   useEffect(() => {
-    createForm.setFieldsValue({ homePageShow: true, appSkillId });
-  }, [appSkillId]);
+    createForm.setFieldsValue({ homePageShow: true, appSkillId: standardId });
+  }, [standardId]);
 
   return (
     <Form
