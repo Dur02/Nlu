@@ -4,7 +4,7 @@ import {
 } from 'relient/actions';
 import { read, post, put, del } from 'relient/actions/request';
 
-const actionType = actionTypeCreator('actions/skill-standard');
+const actionType = actionTypeCreator('actions/skill-app-info');
 
 export const READ_ALL = actionType('READ_ALL');
 export const CREATE = actionType('CREATE');
@@ -53,14 +53,6 @@ export const remove = createAction(
 export const changeOrder = createAction(
   CHANGE_ORDER,
   ({ id, order }) => put('/skill/edit/skill-standard/skill/rank', {
-    id,
-    order,
-  }),
-);
-
-export const changeOrder = createAction(
-  CHANGE_ORDER,
-  ({ id, order }) => put('/skill/edit/skill-app/skill/rank', {
     id,
     order,
   }),
