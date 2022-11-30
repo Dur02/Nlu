@@ -142,6 +142,10 @@ export const resultColumns = () => [{
   title: '用户说',
   dataIndex: 'refText',
 }, {
+  title: 'Joss链接',
+  dataIndex: 'jossResult',
+  render: (jossResult) => (jossResult ? <a href={jossResult} target="_blank" rel="noreferrer">点击跳转</a> : '无'),
+}, {
   title: '是否通过',
   dataIndex: 'passed',
   render: (passed) => (
