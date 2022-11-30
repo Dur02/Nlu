@@ -17,7 +17,7 @@ import {
 } from 'antd';
 import { DownOutlined, ToolOutlined, UploadOutlined } from '@ant-design/icons';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { SEMANTIC } from 'shared/constants/intent-type';
+// import { SEMANTIC } from 'shared/constants/intent-type';
 import {
   create as createIntentAction,
   remove as removeIntentAction,
@@ -350,7 +350,7 @@ const result = ({ skillId }) => {
                 value={intentNameText}
                 className={s.IntentNameInput}
                 enterButton="保存"
-                readOnly={selectedIntent.type !== SEMANTIC}
+                // readOnly={selectedIntent.type !== SEMANTIC}
               />
             </div>
           )}
