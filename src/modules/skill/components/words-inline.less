@@ -1,22 +1,33 @@
-.CollapseContainer {
-  height: 600px;
+.Container {
+  height: 500px;
   overflow: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
 
-  .WordsForm {
-    :global(.ant-form-item) {
-      :global(.ant-select) {
-        width: auto;
-      }
+  .ContentArea {
+    width: 552px;
+    margin: 0 auto;
 
-      :global(.ant-input-search) {
-        width: 200px !important;
+    .Search {
+      margin-bottom: 10px;
+    }
+
+    .WordsForm {
+      margin-bottom: 10px;
+
+      :global(.ant-form-item) {
+        :global(.ant-select) {
+          width: auto;
+        }
+
+        :global(.ant-input-search) {
+          width: 200px !important;
+        }
       }
     }
   }
 }
 
-.CollapseContainer::-webkit-scrollbar {
+.Container::-webkit-scrollbar {
   display: none; /* Chrome Safari */
 }
