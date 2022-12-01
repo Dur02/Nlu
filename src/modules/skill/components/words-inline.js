@@ -109,9 +109,10 @@ const result = ({
               setIsModalOpen(false);
             }}
             width={650}
+            className={s.ModalArea}
           >
-            <div className={s.Container}>
-              <div className={s.ContentArea}>
+            <div className={s.ScrollArea}>
+              <div className={s.Container}>
                 <Form
                   layout="inline"
                   form={createWordsForm}

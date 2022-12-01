@@ -62,7 +62,8 @@ const result = ({
       />
     </Spin>
   ) : (
-    <div onClick={onClick}>{value}</div>
+    // 防止value为空，设置与字体等高的高度
+    <div style={{ height: '14px' }} onClick={onClick}>{value}</div>
   );
 };
 

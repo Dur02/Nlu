@@ -1,33 +1,39 @@
-.Container {
-  height: 500px;
-  overflow: scroll;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+.ModalArea {
+  :global(.ant-modal-body) {
+    padding: 0;
+  }
 
-  .ContentArea {
-    width: 552px;
-    margin: 0 auto;
+  .ScrollArea {
+    height: 500px;
+    overflow: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 
-    .Search {
-      margin-bottom: 10px;
-    }
+    .Container {
+      width: 552px;
+      margin: 0 auto;
 
-    .WordsForm {
-      margin-bottom: 10px;
+      .Search {
+        margin-bottom: 10px;
+      }
 
-      :global(.ant-form-item) {
-        :global(.ant-select) {
-          width: auto;
-        }
+      .WordsForm {
+        margin: 10px auto;
 
-        :global(.ant-input-search) {
-          width: 200px !important;
+        :global(.ant-form-item) {
+          :global(.ant-select) {
+            width: auto;
+          }
+
+          :global(.ant-input-search) {
+            width: 200px !important;
+          }
         }
       }
     }
   }
-}
 
-.Container::-webkit-scrollbar {
-  display: none; /* Chrome Safari */
+  .ScrollArea::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
 }

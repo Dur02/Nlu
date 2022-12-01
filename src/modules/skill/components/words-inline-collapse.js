@@ -147,6 +147,8 @@ const result = ({
         dataSource={item.content}
         columns={columns({
           onRemove,
+          updateWords,
+          item,
         })}
         rowKey="word"
         // pagination={false}
@@ -154,34 +156,6 @@ const result = ({
           y: 150,
         }}
       />
-
-      {
-        // <Form
-        //   className={s.WordsForm}
-        //   autoComplete="off"
-        //   onFinish={(value) => {
-        //     console.log(value);
-        //   }}
-        //   initialValues={{
-        //     ...item,
-        //   }}
-        // >
-        //   <Form.Item
-        //     // label="词条"
-        //     name="content"
-        //     labelAlign="left"
-        //     // labelCol={{ span: 22 }}
-        //     wrapperCol={{ span: 24 }}
-        //   >
-        //     <WordsContent />
-        //   </Form.Item>
-        //   <Form.Item wrapperCol={{ offset: 7, span: 17 }}>
-        //     <Button type="primary" htmlType="submit">
-        //       保存
-        //     </Button>
-        //   </Form.Item>
-        // </Form>
-      }
     </>
   );
 };
