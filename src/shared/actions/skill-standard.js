@@ -57,11 +57,3 @@ export const changeOrder = createAction(
     order,
   }),
 );
-
-export const changeOrder = createAction(
-  CHANGE_ORDER,
-  ({ id, order }) => put('/skill/edit/skill-app/skill/rank', {
-    id,
-    order,
-  }),
-);
