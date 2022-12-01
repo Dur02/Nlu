@@ -71,7 +71,7 @@ export default ({
           openSentence(record);
         }}
       >
-        查看说法
+        示例说法
       </Button>
       &nbsp;&nbsp;
       <Popconfirm
