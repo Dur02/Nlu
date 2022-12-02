@@ -52,7 +52,7 @@ const result = ({
           || includes(searchValue)(synonym)
           || includes(searchValue)(name)
         )),
-      )(selectedWord, selectedWord)
+      )(selectedWord)
     ));
     return () => {
       setDataSource([]);
@@ -69,7 +69,7 @@ const result = ({
           updateWords,
           selectedWord,
         })}
-        rowKey="word"
+        rowKey={(record) => `${record.word}${record.id}`}
         // pagination={false}
         scroll={{
           y: 150,
