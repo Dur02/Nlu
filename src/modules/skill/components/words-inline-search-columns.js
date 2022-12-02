@@ -1,29 +1,37 @@
 import React from 'react';
 import { Button, message, Popconfirm } from 'antd';
-import { flow, any, prop, map, eq } from 'lodash/fp';
+import { flow, any, prop, map, eq, filter, propEq, flatten } from 'lodash/fp';
 import EditableInputCell from 'shared/components/editable-input-cell';
 
 export default ({
   onRemove,
   updateWords,
-  item,
+  selectedWord,
 }) => [{
   title: '取值',
-  dataIndex: 'word',
-  render: (word) => (
+  // dataIndex: 'word',
+  render: (record) => (
     <EditableInputCell
-      value={word}
+      value={record.word}
       onSubmit={async (value) => {
-        if (any(flow(prop('word'), eq(value)))(item.content)) {
+        const wordContent = filter(
+          propEq('id', record.id),
+        )(
+          flow(
+            map(({ id, name, content }) => map((item) => ({ ...item, id, name }))(content)),
+            flatten,
+          )(selectedWord),
+        );
+        if (any(flow(prop('word'), eq(value)))(wordContent)) {
           message.error('取值已存在');
         } else {
           await updateWords({
-            id: item.id,
-            name: item.name,
+            id: record.id,
+            name: record.name,
             content: flow(
               map((lexicon) => {
                 switch (lexicon.word) {
-                  case word:
+                  case record.word:
                     return {
                       word: value,
                       synonym: lexicon.synonym,
@@ -32,7 +40,7 @@ export default ({
                     return lexicon;
                 }
               }),
-            )(item.content),
+            )(wordContent),
           });
         }
       }}
@@ -48,9 +56,17 @@ export default ({
     <EditableInputCell
       value={record.synonym}
       onSubmit={async (value) => {
+        const wordContent = filter(
+          propEq('id', record.id),
+        )(
+          flow(
+            map(({ id, name, content }) => map((item) => ({ ...item, id, name }))(content)),
+            flatten,
+          )(selectedWord),
+        );
         await updateWords({
-          id: item.id,
-          name: item.name,
+          id: record.id,
+          name: record.name,
           content: flow(
             map((lexicon) => {
               switch (lexicon.word) {
@@ -63,11 +79,15 @@ export default ({
                   return lexicon;
               }
             }),
-          )(item.content),
+          )(wordContent),
         });
       }}
     />
   ),
+}, {
+  title: '所属词库',
+  dataIndex: 'name',
+  // width: 70,
 }, {
   title: '操作',
   width: 70,

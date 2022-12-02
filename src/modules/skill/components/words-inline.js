@@ -5,6 +5,7 @@ import { compact, eq, find, flow, includes, map, propEq, reject } from 'lodash/f
 import { duplexTypeOption, getConfigValue } from 'shared/constants/config';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import WordsInlineCollapse from './words-inline-collapse';
+import WordsInlineSearch from './words-inline-search';
 import s from './words-inline.less';
 
 const { Panel } = Collapse;
@@ -24,7 +25,7 @@ const result = ({
 }) => {
   useStyles(s);
 
-  const [isSearching, setIsSearching] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   // 为什么不直接传record，而是通过name寻找选中的槽位？
   // 如果直接传record，在改变槽位内容后内容还是传过来的值，需要重新设置selectedSlot和selectedWord的值
@@ -81,14 +82,7 @@ const result = ({
   }, [selectedSlot, getConfigValue, onAttachWords]);
 
   const onSearch = useCallback(async (value) => {
-    switch (value) {
-      case '':
-        setIsSearching(false);
-        break;
-      default:
-        setIsSearching(true);
-        break;
-    }
+    setSearchValue(value);
   }, []);
 
   return (
@@ -107,6 +101,7 @@ const result = ({
               createWordsForm.resetFields();
               setSlotName('');
               setIsModalOpen(false);
+              setSearchValue('');
             }}
             width={650}
             className={s.ModalArea}
@@ -168,7 +163,7 @@ const result = ({
                   onSearch={onSearch}
                 />
                 {
-                  !isSearching ? (
+                  !searchValue ? (
                     <Collapse>
                       {
                         selectedSlot && map((item) => (
@@ -193,14 +188,18 @@ const result = ({
                               item={item}
                               skillId={skillId}
                               updateWords={updateWords}
-                              onUpdateSlot={onUpdateSlot}
                             />
                           </Panel>
                         ))(selectedWord)
                       }
                     </Collapse>
                   ) : (
-                    <p>111</p>
+                    <WordsInlineSearch
+                      searchValue={searchValue}
+                      selectedWord={selectedWord}
+                      // skillId={skillId}
+                      updateWords={updateWords}
+                    />
                   )
                 }
               </div>

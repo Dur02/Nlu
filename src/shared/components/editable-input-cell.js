@@ -50,6 +50,8 @@ const result = ({
     }
   }, [editingValue, submitting]);
 
+  const getHeight = () => (value === '' ? '14px' : '100%');
+
   return editing ? (
     <Spin spinning={submitting}>
       <Input
@@ -63,7 +65,7 @@ const result = ({
     </Spin>
   ) : (
     // 防止value为空，设置与字体等高的高度
-    <div style={{ height: '14px' }} onClick={onClick}>{value}</div>
+    <div style={{ height: getHeight() }} onClick={onClick}>{value}</div>
   );
 };
 
