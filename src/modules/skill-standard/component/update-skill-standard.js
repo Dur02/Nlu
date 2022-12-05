@@ -118,7 +118,7 @@ const result = ({
                 <Upload
                   maxCount={1}
                   fileList={iconFileList}
-                  action="/skill/edit/skill-app/resource/upload"
+                  action="/skill/edit/skill-standard/resource/upload"
                   listType="picture-card"
                   onChange={handleChange}
                   headers={{ token }}

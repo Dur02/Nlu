@@ -4,7 +4,7 @@ import {
 } from 'relient/actions';
 import { read, post, put, del } from 'relient/actions/request';
 
-const actionType = actionTypeCreator('actions/skill-app-info');
+const actionType = actionTypeCreator('actions/skill-standard');
 
 export const READ_ALL = actionType('READ_ALL');
 export const CREATE = actionType('CREATE');
