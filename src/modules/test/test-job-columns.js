@@ -2,20 +2,16 @@ import { getPassed } from 'shared/constants/test-job';
 import { Button, Progress, Tag } from 'antd';
 import { ClockCircleOutlined, CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import React from 'react';
-import { filter, map, prop, propEq, flow, head } from 'lodash/fp';
+import { filter, prop, propEq, flow, head } from 'lodash/fp';
 import { time } from 'relient/formatters';
 
 export const testJobColumns = ({
-  openResult,
-  readAllJobResult,
   onCancel,
   openEditor,
   product,
   caseData,
-  setResultId,
-  readResultNum,
-  setResultDetail,
   openExport,
+  push,
 }) => [{
   title: 'ID',
   dataIndex: 'id',
@@ -88,17 +84,18 @@ export const testJobColumns = ({
               ghost
               size="small"
               onClick={async () => {
-                const {
-                  data: {
-                    data: resultData,
-                  },
-                } = await readAllJobResult({ jobId: record.id, page: 1, pageSize: 100 });
-                setResultId(map(prop('id'))(resultData));
-                openResult(record);
-                const {
-                  data: numData,
-                } = await readResultNum({ jobId: record.id });
-                setResultDetail(numData);
+                push(`/test/job/${record.id}/${record.title}`);
+              //   const {
+              //     data: {
+              //       data: resultData,
+              //     },
+              //   } = await readAllJobResult({ jobId: record.id, page: 1, pageSize: 100 });
+              //   setResultId(map(prop('id'))(resultData));
+              //   openResult(record);
+              //   const {
+              //     data: numData,
+              //   } = await readResultNum({ jobId: record.id });
+              //   setResultDetail(numData);
               }}
             >
               查看

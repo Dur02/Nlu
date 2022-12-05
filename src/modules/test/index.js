@@ -4,13 +4,13 @@ import { readAll as readAllProduct } from 'shared/actions/product';
 import { readAll as readTestCase } from 'shared/actions/test-case';
 import { readAll as readTestSuite } from 'shared/actions/test-suite';
 import { readAll as readTestJob } from 'shared/actions/test-job';
-// import { readAll as readAllSkills } from 'shared/actions/skill';
-// import { readAll as readAllIntents } from 'shared/actions/intent';
+import { readAll as readJobResult, readNum } from 'shared/actions/test-job-result';
 import { readMine as readProfile } from 'shared/actions/user';
 import { map, prop } from 'lodash/fp';
 import Case from './case';
 import Suite from './suite';
 import Job from './job';
+import Result from './result';
 
 export default () => [{
   path: '/case',
@@ -139,6 +139,32 @@ export default () => [{
           current={0}
           size={0}
         />,
+      };
+    }
+  },
+}, {
+  path: '/job/:id/:title',
+  feature: JOB,
+  action: async ({ params: { id, title }, store: { dispatch } }) => {
+    const jobId = Number(id);
+    try {
+      const {
+        data: {
+          data: resultData,
+        },
+      } = await dispatch(readJobResult({ jobId, page: 1, pageSize: 100 }));
+      const { data: numData } = await dispatch(readNum({ jobId }));
+      return {
+        component: <Result
+          jobId={jobId}
+          title={title}
+          numData={numData}
+          initResultId={map(prop('id'))(resultData)}
+        />,
+      };
+    } catch (e) {
+      return {
+        redirect: '/test/job',
       };
     }
   },
