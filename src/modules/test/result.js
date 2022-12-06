@@ -51,16 +51,16 @@ const result = ({
   const expandable = {
     expandedRowRender: (record) => {
       const expandedColumns = [{
-        title: '实际值 ',
-        dataIndex: 'actual',
-        render: (actual) => (
+        title: '测试项',
+        dataIndex: 'assertion',
+        render: (assertion) => (
           <span
             style={{
               color: '#207ab7',
               fontSize: '10px',
             }}
           >
-            {actual}
+            {assertion}
           </span>
         ),
       }, {
@@ -77,16 +77,16 @@ const result = ({
           </span>
         ),
       }, {
-        title: '测试项',
-        dataIndex: 'assertion',
-        render: (assertion) => (
+        title: '实际值 ',
+        dataIndex: 'actual',
+        render: (actual) => (
           <span
             style={{
               color: '#207ab7',
               fontSize: '10px',
             }}
           >
-            {assertion}
+            {actual}
           </span>
         ),
       }, {
