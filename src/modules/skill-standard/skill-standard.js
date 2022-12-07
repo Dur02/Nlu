@@ -111,6 +111,7 @@ const result = () => {
       </Button>
       <Spin spinning={loading}>
         <Table
+          className={s.StandardTable}
           dataSource={info}
           columns={columns({
             DragVisible: s.DragVisible,
