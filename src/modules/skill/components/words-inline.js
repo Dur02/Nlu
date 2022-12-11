@@ -128,17 +128,24 @@ const result = ({
                       },
                     }]}
                   >
-                    <Input placeholder="请输入词库名" />
+                    <Input
+                      style={{
+                        width: 185,
+                      }}
+                      placeholder="请输入词库名"
+                    />
                   </Form.Item>
                   <Form.Item
                     // label="全双工/半双工"
                     name="duplexType"
-                    style={{
-                      width: 180,
-                    }}
-                    wrapperCol={{ offset: 3, span: 21 }}
+                    wrapperCol={{ offset: 4 }}
                   >
-                    <Checkbox.Group options={duplexTypeOption} />
+                    <Checkbox.Group
+                      style={{
+                        width: 170,
+                      }}
+                      options={duplexTypeOption}
+                    />
                   </Form.Item>
                   {
                     // <Form.Item
@@ -151,7 +158,9 @@ const result = ({
                     //   <WordsContent />
                     // </Form.Item>
                   }
-                  <Form.Item wrapperCol={{ offset: 4, span: 20 }}>
+                  <Form.Item
+                    wrapperCol={{ offset: 7 }}
+                  >
                     <Button type="primary" htmlType="submit">
                       创建词库
                     </Button>
