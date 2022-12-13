@@ -30,7 +30,7 @@ const result = () => {
     )(productSkillInfos),
   );
   const [current, setCurrent] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(50);
 
   const paginationProps = {
     defaultCurrent: 1,
