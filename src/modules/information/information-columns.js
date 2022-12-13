@@ -14,6 +14,9 @@ export default [{
   dataIndex: 'version',
   width: 120,
 }, {
+  title: '技能修改时间',
+  dataIndex: 'updateTime',
+}, {
   title: '模型路径',
   dataIndex: 'modelPath',
 }, {

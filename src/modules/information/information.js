@@ -34,7 +34,7 @@ const result = () => {
 
   const paginationProps = {
     defaultCurrent: 1,
-    defaultPageSize: 10,
+    defaultPageSize: 50,
     showSizeChanger: true,
     showQuickJumper: true,
     pageSizeOptions: [10, 20, 50, 100],
