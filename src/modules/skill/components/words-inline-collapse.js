@@ -96,17 +96,14 @@ const result = ({
             },
           }]}
         >
-          <Input placeholder="输入词库名" style={{ width: 175 }} />
+          <Input placeholder="输入词库名" style={{ width: 325 }} />
         </Form.Item>
         <Form.Item
           // label="全双工/半双工"
           name="duplexType"
-          style={{
-            width: 175,
-          }}
           wrapperCol={{ offset: 2, span: 22 }}
         >
-          <Checkbox.Group options={duplexTypeOption} />
+          <Checkbox.Group options={duplexTypeOption} style={{ width: 175 }} />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 7, span: 17 }}>
           <Button type="primary" htmlType="submit">
@@ -127,13 +124,13 @@ const result = ({
           name="word"
           rules={[{ required: true }]}
         >
-          <Input placeholder="输入取值" style={{ width: 130 }} />
+          <Input placeholder="输入取值" style={{ width: 170 }} />
         </Form.Item>
         <Form.Item
           label="同义词"
           name="synonym"
         >
-          <Input placeholder="输入同义词" style={{ width: 165 }} />
+          <Input placeholder="输入同义词" style={{ width: 275 }} />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 7, span: 17 }}>
           <Button type="primary" htmlType="submit">

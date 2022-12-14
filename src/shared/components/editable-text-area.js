@@ -54,13 +54,15 @@ const result = ({
 
   return editing ? (
     <Spin spinning={submitting}>
-      <Input
+      <Input.TextArea
         autoFocus
+        autoSize
         className={inputClassName}
         value={editingValue}
         onChange={onChange}
         onBlur={onBlur}
         onKeyPress={onKeyPress}
+        // style={{ height: "50px" }}
       />
     </Spin>
   ) : (

@@ -103,7 +103,7 @@ const result = ({
               setIsModalOpen(false);
               setSearchValue('');
             }}
-            width={650}
+            width={800}
             className={s.ModalArea}
           >
             <div className={s.ScrollArea}>
@@ -130,7 +130,7 @@ const result = ({
                   >
                     <Input
                       style={{
-                        width: 185,
+                        width: 333,
                       }}
                       placeholder="请输入词库名"
                     />
@@ -173,7 +173,7 @@ const result = ({
                 />
                 {
                   !searchValue ? (
-                    <Collapse>
+                    <Collapse defaultActiveKey={map((item) => item.id)(selectedWord)}>
                       {
                         selectedSlot && map((item) => (
                           <Panel

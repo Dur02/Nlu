@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, message, Popconfirm } from 'antd';
 import { flow, any, prop, map, eq } from 'lodash/fp';
 import EditableInputCell from 'shared/components/editable-input-cell';
+import EditableTextArea from 'shared/components/editable-text-area';
 
 export default ({
   onRemove,
@@ -45,7 +46,7 @@ export default ({
     wordBreak: 'break-all',
   },
   render: (record) => (
-    <EditableInputCell
+    <EditableTextArea
       value={record.synonym}
       onSubmit={async (value) => {
         await updateWords({
