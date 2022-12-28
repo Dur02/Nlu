@@ -96,7 +96,7 @@ const result = ({
             },
           }]}
         >
-          <Input placeholder="输入词库名" style={{ width: 325 }} />
+          <Input placeholder="输入词库名" style={{ width: 525 }} />
         </Form.Item>
         <Form.Item
           // label="全双工/半双工"
@@ -124,13 +124,13 @@ const result = ({
           name="word"
           rules={[{ required: true }]}
         >
-          <Input placeholder="输入取值" style={{ width: 170 }} />
+          <Input placeholder="输入取值" style={{ width: 270 }} />
         </Form.Item>
         <Form.Item
           label="同义词"
           name="synonym"
         >
-          <Input placeholder="输入同义词" style={{ width: 275 }} />
+          <Input placeholder="输入同义词" style={{ width: 375 }} />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 7, span: 17 }}>
           <Button type="primary" htmlType="submit">
@@ -148,10 +148,10 @@ const result = ({
           item,
         })}
         rowKey="word"
-        // pagination={false}
-        scroll={{
-          y: 150,
-        }}
+        pagination={false}
+        // scroll={{
+        //   y: 150,
+        // }}
       />
     </>
   );
