@@ -18,7 +18,7 @@ export const readAll = createAction(
     page,
     pageSize,
     intentMapName,
-  } = {}) => read('/skill/edit/intent-map', {
+  }) => read('/skill/edit/intent-map', {
     page,
     pageSize,
     intentMapName,

@@ -24,3 +24,5 @@ export const intentMapInfo = new schema.Entity('intentMapInfo');
 export const information = new schema.Entity('information');
 export const skillStandard = new schema.Entity('skillStandard');
 export const skillStandardSentence = new schema.Entity('skillStandardSentence');
+export const skillNameMap = new schema.Entity('skillNameMap');
+export const skillNameMapConfig = new schema.Entity('skillNameMapConfig');

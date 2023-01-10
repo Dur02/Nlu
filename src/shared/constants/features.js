@@ -23,6 +23,8 @@ export const INTENT_MAP = 'INTENT_MAP';
 
 export const INFORMATION = 'INFORMATION';
 
+export const SKILL_NAME_MAP = 'SKILLNAMEMAP';
+
 export const HELP = 'HELP';
 
 export const features = [{
@@ -37,6 +39,10 @@ export const features = [{
   key: SKILL_STANDARD,
   link: '/skillStandard',
   text: '技能定义',
+}, {
+  key: SKILL_NAME_MAP,
+  link: '/skillNameMap',
+  text: 'App名关系映射',
 }, {
   key: INTERVENTION,
   link: '/intervention',

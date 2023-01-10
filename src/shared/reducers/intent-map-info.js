@@ -6,10 +6,6 @@ import {
 
 export default {
   intentMapInfo: handleActions({
-    // [READ_INFO]: merge({
-    //   schema: intentMapInfo,
-    //   dataKey: 'data',
-    // }),
 
     [READ_INFO]: (intentMapInfo, { payload }) => ({
       intentMapNames: payload.data.intentMapNames,

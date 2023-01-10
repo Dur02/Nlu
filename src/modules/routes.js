@@ -55,6 +55,13 @@ const routes = [
   },
 
   {
+    path: '/skillNameMap',
+    chunks: ['skillNameMap'],
+    requireAuth: true,
+    load: () => import(/* webpackChunkName: 'skillNameMap' */ 'modules/skill-name-map'),
+  },
+
+  {
     path: '/information',
     chunks: ['information'],
     requireAuth: true,

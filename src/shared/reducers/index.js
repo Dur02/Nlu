@@ -25,6 +25,8 @@ import intentMapInfo from './intent-map-info';
 import information from './information';
 import skillStandard from './skill-standard';
 import skillStandardSentence from './skill-standard-sentence';
+import skillNameMap from './skill-name-map';
+import skillNameMapConfig from './skill-name-map-config';
 
 export default combineReducers({
   ...createReducer([
@@ -53,5 +55,7 @@ export default combineReducers({
     information,
     skillStandard,
     skillStandardSentence,
+    skillNameMap,
+    skillNameMapConfig,
   ]),
 });
