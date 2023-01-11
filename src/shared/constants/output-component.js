@@ -10,7 +10,7 @@ export const OPEN_APP = 'open_app';
 export const textMap = {
   [TEXT]: '文字',
   [LIST]: '列表',
-  [OPEN_APP]: 'open_app',
+  [OPEN_APP]: '打开App',
   [CUSTOM]: '自定义',
 };
 
