@@ -5,10 +5,12 @@ import getOptions from 'relient/get-options';
 export const TEXT = 'text';
 export const LIST = 'list';
 export const CUSTOM = 'custom';
+export const OPEN_APP = 'open_app';
 
 export const textMap = {
   [TEXT]: '文字',
   [LIST]: '列表',
+  [OPEN_APP]: 'open_app',
   [CUSTOM]: '自定义',
 };
 

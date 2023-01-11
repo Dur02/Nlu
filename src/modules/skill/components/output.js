@@ -69,7 +69,7 @@ const result = ({
         form={componentForm}
       >
         <Item name="component" label="控件类型">
-          <Select options={outputComponentOptions} />
+          <Select style={{ width: '120px' }} options={outputComponentOptions} />
         </Item>
         {nameVisible && (
           <Item name="name" label="控件名称" rules={[{ required: true }]}>
