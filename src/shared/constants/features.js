@@ -23,7 +23,7 @@ export const INTENT_MAP = 'INTENT_MAP';
 
 export const INFORMATION = 'INFORMATION';
 
-export const SKILL_NAME_MAP = 'SKILLNAMEMAP';
+export const SKILL_NAME_MAP = 'SKILL_NAME_MAP';
 
 export const HELP = 'HELP';
 
