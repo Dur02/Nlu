@@ -103,8 +103,9 @@ const result = ({
               setIsModalOpen(false);
               setSearchValue('');
             }}
-            width={1000}
+            width={1100}
             className={s.ModalArea}
+            centered
           >
             <div className={s.ScrollArea}>
               <div className={s.Container}>
@@ -130,7 +131,7 @@ const result = ({
                   >
                     <Input
                       style={{
-                        width: 533,
+                        width: 633,
                       }}
                       placeholder="请输入词库名"
                     />
