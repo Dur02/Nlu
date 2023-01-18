@@ -1,6 +1,6 @@
-export const appGroundTypeOption = [
-  { label: '后台', value: '后台' },
-  { label: '前台', value: '前台' },
+export const activatedOption = [
+  { label: '未激活', value: '未激活' },
+  { label: '激活', value: '激活' },
 ];
 
 export const duplexTypeOption = [
@@ -16,8 +16,8 @@ export const getConfigValue = (checkedArray, type) => {
       return 0;
     default:
       switch (type) {
-        case 'appGroundType':
-          return JSON.stringify(checkedArray) === JSON.stringify(['后台']) ? 1 : 2;
+        case 'activated':
+          return JSON.stringify(checkedArray) === JSON.stringify(['未激活']) ? 1 : 2;
         default:
           return JSON.stringify(checkedArray) === JSON.stringify(['半双工']) ? 1 : 2;
       }
@@ -26,16 +26,16 @@ export const getConfigValue = (checkedArray, type) => {
 
 export const getCheckboxValue = (value, type) => {
   switch (type) {
-    case 'appGroundType':
+    case 'activated':
       switch (value) {
         case 0:
           return [];
         case 1:
-          return ['后台'];
+          return ['未激活'];
         case 2:
-          return ['前台'];
+          return ['激活'];
         default:
-          return ['后台', '前台'];
+          return ['未激活', '激活'];
       }
     default:
       switch (value) {

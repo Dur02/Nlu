@@ -99,7 +99,7 @@ export default (skillId, tempId) => (state) => {
           every(({ lexiconsNames }) => !includes(words.name)(lexiconsNames)),
         ))(intents),
         // appGroundType: words.wordConfig
-        //   ? getCheckboxValue(words.wordConfig.appGroundType, 'appGroundType') : 0,
+        //   ? getCheckboxValue(words.wordConfig.appGroundType, 'activated') : 0,
         duplexType: words.wordConfig
           ? getCheckboxValue(words.wordConfig.duplexType, 'duplexType') : 0,
       })),

@@ -5,7 +5,7 @@ import { prop, map, size, reject, eq } from 'lodash/fp';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { useLocalTable } from 'relient-admin/hooks';
 import EditableInputCellForRule from 'shared/components/editable-input-cell-for-rule';
-import { appGroundTypeOption, duplexTypeOption, getConfigValue } from 'shared/constants/config';
+import { activatedOption, duplexTypeOption, getConfigValue } from 'shared/constants/config';
 
 import IntentSlots from './intent-slots';
 import s from './rules.less';
@@ -64,7 +64,7 @@ const result = ({
       await updateRule({
         id,
         ruleConfig: {
-          appGroundType: key === 'appGroundType' ? value : 0,
+          activated: key === 'activated' ? value : 0,
           duplexType: key === 'duplexType' ? value : 0,
           compileFlag: 1,
           skillId,
@@ -75,8 +75,9 @@ const result = ({
         id,
         ruleConfig: {
           ...ruleConfig,
-          appGroundType: key === 'appGroundType' ? value : ruleConfig.appGroundType,
+          activated: key === 'activated' ? value : ruleConfig.activated,
           duplexType: key === 'duplexType' ? value : ruleConfig.duplexType,
+          skillId,
         },
       });
     }
@@ -111,32 +112,32 @@ const result = ({
       />
     ),
   }, {
-    title: 'app前台/app后台',
+    title: 'app是否激活',
     width: 130,
     render: (record) => (
       <Group
-        options={appGroundTypeOption}
+        options={activatedOption}
         defaultValue={() => {
           if (!record.ruleConfig) {
             return [];
           }
-          switch (record.ruleConfig.appGroundType) {
+          switch (record.ruleConfig.activated) {
             case 1:
-              return ['后台'];
+              return ['未激活'];
             case 2:
-              return ['前台'];
+              return ['激活'];
             case 3:
-              return ['后台', '前台'];
+              return ['未激活', '激活'];
             default:
               return [];
           }
         }}
         onChange={(checkedValue) => {
-          const appGroundType = getConfigValue(checkedValue, 'appGroundType');
+          const activated = getConfigValue(checkedValue, 'activated');
           return onCheckboxChange({
             id: record.id,
-            key: 'appGroundType',
-            value: appGroundType,
+            key: 'activated',
+            value: activated,
             ruleConfig: record.ruleConfig,
           });
         }}
@@ -200,7 +201,7 @@ const result = ({
               await updateRule({
                 id: record.id,
                 ruleConfig: {
-                  appGroundType: 0,
+                  activated: 0,
                   duplexType: 0,
                   compileFlag: checked ? 1 : 2,
                   skillId,
