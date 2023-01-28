@@ -138,52 +138,60 @@ const result = ({
   return (
     <>
       <div className={s.WordsList}>
-        {map((item) => (
-          <div className={s.AddedWords} key={item.id}>
-            <Button
-              onClick={() => {
-                openEditor(item);
-                // if (item.skillId) {
-                //   openEditor(item);
-                // } else {
-                //   message.error('系统词库不可编辑');
-                // }
-              }}
-              size="small"
-              ghost
-              type="primary"
-            >
-              {item.name}
-            </Button>
-            <Button
-              onClick={() => onDetachWords(item)}
-              size="small"
-            >
-              x
-            </Button>
-          </div>
-        ))(selectedWords)}
-        {mapWithIndex((item, index) => (
-          <div className={s.AddedWords} key={index}>
-            <Button
-              onClick={() => {
-                message.error('词库缺失');
-              }}
-              size="small"
-              ghost
-              type="primary"
-            >
-              {item}
-            </Button>
-            <Button
-              onClick={() => onDetachWords({ name: item })}
-              size="small"
-            >
-              x
-            </Button>
-            <span style={{ color: '#FF4D4F' }}>(词库缺失)</span>
-          </div>
-        ))(difference(value, map(({ name }) => name)(selectedWords)))}
+        {
+          map((item) => (
+            <div className={s.AddedWords} key={item.id}>
+              <Button
+                onClick={() => {
+                  openEditor(item);
+                  // if (item.skillId) {
+                  //   openEditor(item);
+                  // } else {
+                  //   message.error('系统词库不可编辑');
+                  // }
+                }}
+                size="small"
+                ghost
+                type="primary"
+              >
+                {item.name}
+              </Button>
+              <Button
+                onClick={() => onDetachWords(item)}
+                size="small"
+              >
+                x
+              </Button>
+            </div>
+          ))(selectedWords)
+        }
+        {
+          mapWithIndex((item, index) => (
+            <div className={s.AddedWords} key={index}>
+              <Button
+                onClick={() => {
+                  message.error('词库缺失');
+                }}
+                size="small"
+                ghost
+                type="primary"
+              >
+                {item}
+              </Button>
+              <Button
+                onClick={() => onDetachWords({ name: item })}
+                size="small"
+              >
+                x
+              </Button>
+              <span style={{ color: '#FF4D4F' }}>(词库缺失)</span>
+            </div>
+          ))(difference(value, map(({ name }) => name)(selectedWords)))
+        }
+        {
+          selectedWords.length === 0
+          && <span className={s.AddedWords} style={{ color: '#FF4D4F' }}>(未绑定任何词库)</span>
+        }
         <Button
           className={s.AddedWords}
           type="primary"
