@@ -176,50 +176,50 @@ const result = ({
       />
     ),
   }, {
-    title: '语序调整',
-    width: 80,
-    render: (record) => (
-      <>
-        <Switch
-          style={{
-            color: 'red',
-            width: '68px',
-          }}
-          checkedChildren="是"
-          unCheckedChildren="否"
-          onChange={async (checked) => {
-            if (record.ruleConfig) {
-              await updateRule({
-                id: record.id,
-                ruleConfig: {
-                  ...record.ruleConfig,
-                  compileFlag: checked ? 1 : 2,
-                  skillId,
-                },
-              });
-            } else {
-              await updateRule({
-                id: record.id,
-                ruleConfig: {
-                  activated: 0,
-                  duplexType: 0,
-                  compileFlag: checked ? 1 : 2,
-                  skillId,
-                },
-              });
-            }
-            message.success('编辑成功');
-          }}
-          defaultChecked={() => {
-            if (record.ruleConfig !== null && record.ruleConfig.compileFlag === 2) {
-              return false;
-            }
-            return true;
-          }}
-        />
-      </>
-    ),
-  }, {
+  //   title: '语序调整',
+  //   width: 80,
+  //   render: (record) => (
+  //     <>
+  //       <Switch
+  //         style={{
+  //           color: 'red',
+  //           width: '68px',
+  //         }}
+  //         checkedChildren="是"
+  //         unCheckedChildren="否"
+  //         onChange={async (checked) => {
+  //           if (record.ruleConfig) {
+  //             await updateRule({
+  //               id: record.id,
+  //               ruleConfig: {
+  //                 ...record.ruleConfig,
+  //                 compileFlag: checked ? 1 : 2,
+  //                 skillId,
+  //               },
+  //             });
+  //           } else {
+  //             await updateRule({
+  //               id: record.id,
+  //               ruleConfig: {
+  //                 activated: 0,
+  //                 duplexType: 0,
+  //                 compileFlag: checked ? 1 : 2,
+  //                 skillId,
+  //               },
+  //             });
+  //           }
+  //           message.success('编辑成功');
+  //         }}
+  //         defaultChecked={() => {
+  //           if (record.ruleConfig !== null && record.ruleConfig.compileFlag === 2) {
+  //             return false;
+  //           }
+  //           return true;
+  //         }}
+  //       />
+  //     </>
+  //   ),
+  // }, {
     title: '操作',
     width: 140,
     fixed: 'right',
