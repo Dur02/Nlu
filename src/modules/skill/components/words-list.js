@@ -188,10 +188,6 @@ const result = ({
             </div>
           ))(difference(value, map(({ name }) => name)(selectedWords)))
         }
-        {
-          selectedWords.length === 0
-          && <span className={s.AddedWords} style={{ color: '#FF4D4F' }}>(未绑定任何词库)</span>
-        }
         <Button
           className={s.AddedWords}
           type="primary"
@@ -200,6 +196,12 @@ const result = ({
         >
           添加
         </Button>
+        {
+          (
+            selectedWords.length === 0
+            && difference(value, map(({ name }) => name)(selectedWords)).length === 0
+          ) && <span className={s.AddedWords} style={{ color: '#FF4D4F' }}>(未绑定任何词库)</span>
+        }
       </div>
       <Drawer
         forceRender
