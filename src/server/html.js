@@ -1,6 +1,8 @@
 import React from 'react';
 import { string, arrayOf, shape } from 'prop-types';
 import clientConfig from 'relient/config/client-config';
+import { getWithBaseUrl } from 'relient/url';
+import getConfig from 'relient/config';
 
 /* eslint-disable react/no-danger */
 
@@ -22,6 +24,7 @@ const result = ({
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <link type="image/png" sizes="16x16" rel="icon" href={`${getWithBaseUrl('/images.png', getConfig('baseUrl'))}`} />
       {scripts.map((script) => (
         <link key={script} rel="preload" href={script} as="script" />
       ))}
