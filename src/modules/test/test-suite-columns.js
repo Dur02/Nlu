@@ -1,11 +1,14 @@
 import { time } from 'relient/formatters';
 import { getTestSuiteType } from 'shared/constants/test-suite';
 import { Button, message, Popconfirm, Upload } from 'antd';
-import React from 'react';
-import { includes } from 'lodash/fp';
-// import {DownloadOutlined, UploadOutlined} from '@ant-design/icons';
+import React, { useCallback, useState } from 'react';
+import { flow, includes, map } from 'lodash/fp';
+import { func, object, string } from 'prop-types';
 
-export const columns = ({
+const mapWithIndex = map.convert({ cap: false });
+
+const Operations = ({
+  record,
   onRemove,
   openEditor,
   reload,
@@ -14,38 +17,32 @@ export const columns = ({
   openRunForm,
   readAllTestCase,
   setCaseData,
-  uploading,
-  onUpload,
   token,
   onSuiteExport,
-}) => [{
-  title: 'ID',
-  dataIndex: 'id',
-  width: 70,
-}, {
-  title: '标题',
-  dataIndex: 'title',
-}, {
-  title: '测试集类型',
-  dataIndex: 'suiteType',
-  width: 150,
-  render: (status) => getTestSuiteType(status),
-}, {
-  title: '测试用例个数',
-  // width: 180,
-  dataIndex: 'testCaseNum',
-}, {
-  title: '描述',
-  dataIndex: 'description',
-}, {
-  title: '创建时间',
-  dataIndex: 'createTime',
-  width: 160,
-  render: time(),
-}, {
-  title: '操作',
-  width: 380,
-  render: (record) => (
+  setError,
+}) => {
+  const [uploading, setUploading] = useState(false);
+
+  const onUpload = useCallback(async ({ file: { status, response } }) => {
+    setUploading(true);
+    if (status === 'done') {
+      if (response.code === 'SUCCESS') {
+        message.success('检查完成，测试文件格式正确');
+        await reload();
+        message.success('上传成功');
+      } else if (response.data && response.data.length > 0) {
+        flow(mapWithIndex((item, index) => ({ ...item, key: index + 1 })), setError)(response.data);
+      } else {
+        message.error(response.msg);
+      }
+      setUploading(false);
+    } else if (status === 'error') {
+      message.error(response ? response.msg : '上传失败，请稍后再试');
+      setUploading(false);
+    }
+  }, [setUploading]);
+
+  return (
     <>
       <Button
         type="primary"
@@ -160,6 +157,78 @@ export const columns = ({
         <Button type="danger" size="small" ghost>删除</Button>
       </Popconfirm>
     </>
+  );
+};
+
+Operations.propTypes = {
+  record: object.isRequired,
+  onRemove: func.isRequired,
+  openEditor: func.isRequired,
+  reload: func.isRequired,
+  pagination: object.isRequired,
+  openCaseTable: func.isRequired,
+  openRunForm: func.isRequired,
+  readAllTestCase: func.isRequired,
+  setCaseData: func.isRequired,
+  token: string.isRequired,
+  onSuiteExport: func.isRequired,
+  setError: func.isRequired,
+};
+
+export const columns = ({
+  onRemove,
+  openEditor,
+  reload,
+  pagination,
+  openCaseTable,
+  openRunForm,
+  readAllTestCase,
+  setCaseData,
+  token,
+  onSuiteExport,
+  setError,
+}) => [{
+  title: 'ID',
+  dataIndex: 'id',
+  width: 70,
+}, {
+  title: '标题',
+  dataIndex: 'title',
+}, {
+  title: '测试集类型',
+  dataIndex: 'suiteType',
+  width: 150,
+  render: (status) => getTestSuiteType(status),
+}, {
+  title: '测试用例个数',
+  // width: 180,
+  dataIndex: 'testCaseNum',
+}, {
+  title: '描述',
+  dataIndex: 'description',
+}, {
+  title: '创建时间',
+  dataIndex: 'createTime',
+  width: 160,
+  render: time(),
+}, {
+  title: '操作',
+  width: 400,
+  render: (record) => (
+    <Operations
+      record={record}
+      onRemove={onRemove}
+      openEditor={openEditor}
+      reload={reload}
+      pagination={pagination}
+      openCaseTable={openCaseTable}
+      openRunForm={openRunForm}
+      readAllTestCase={readAllTestCase}
+      setCaseData={setCaseData}
+      token={token}
+      onSuiteExport={onSuiteExport}
+      setError={setError}
+    />
   ),
 }];
 

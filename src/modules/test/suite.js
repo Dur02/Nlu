@@ -1,10 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import Layout from 'shared/components/layout';
 import {
   Modal,
   Radio,
   Table,
-  message,
 } from 'antd';
 import { useAPITable, useDetails } from 'relient-admin/hooks';
 import { readAll, update, remove as removeTestSuite, suiteExport } from 'shared/actions/test-suite';
@@ -22,8 +21,6 @@ import TestSuiteCreate from './component/test-suite-create';
 import { errorColumns } from './component/test-suite-import-columns';
 import UpdateCase from './component/test-suite-update-case';
 import RunForm from './component/test-suite-run-form';
-
-const mapWithIndex = map.convert({ cap: false });
 
 const getDataSource = (state) => flow(
   map((id) => getEntity(`testSuite.${id}`)(state)),
@@ -76,7 +73,6 @@ const result = ({
     pageSize: 10,
   });
   const [error, setError] = useState([]);
-  const [uploading, setUploading] = useState(false);
 
   const {
     detailsVisible: caseTableVisible,
@@ -144,25 +140,6 @@ const result = ({
     }],
   });
 
-  const onUpload = useCallback(async ({ file: { status, response } }) => {
-    setUploading(true);
-    if (status === 'done') {
-      if (response.code === 'SUCCESS') {
-        message.success('检查完成，测试文件格式正确');
-        await reload();
-        message.success('上传成功');
-      } else if (response.data && response.data.length > 0) {
-        flow(mapWithIndex((item, index) => ({ ...item, key: index + 1 })), setError)(response.data);
-      } else {
-        message.error(response.msg);
-      }
-      setUploading(false);
-    } else if (status === 'error') {
-      message.error(response ? response.msg : '上传失败，请稍后再试');
-      setUploading(false);
-    }
-  }, [setUploading]);
-
   return (
     <Layout>
       {tableHeader}
@@ -182,10 +159,9 @@ const result = ({
           openRunForm,
           readAllTestCase,
           setCaseData,
-          uploading,
-          onUpload,
           token,
           onSuiteExport,
+          setError,
         })}
         rowKey="id"
         pagination={pagination}
