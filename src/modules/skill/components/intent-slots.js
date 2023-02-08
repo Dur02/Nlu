@@ -211,6 +211,7 @@ const result = ({
     <div className={s.Root}>
       {tableHeader}
       <Table
+        className={s.IntentSlotTable}
         size="small"
         dataSource={getDataSource(slots)}
         columns={columns}

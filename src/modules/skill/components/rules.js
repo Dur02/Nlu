@@ -271,6 +271,7 @@ const result = ({
             {tableHeader}
           </div>
           <Table
+            className={s.RuleTable}
             size="small"
             dataSource={dataSource}
             rowSelection={{
