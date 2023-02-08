@@ -91,7 +91,7 @@ const result = ({
   const {
     tableHeader,
     getDataSource,
-    pagination,
+    // pagination,
   } = useLocalTable({
     query: {
       fussy: true,
@@ -221,7 +221,8 @@ const result = ({
           },
         })}
         rowKey="name"
-        pagination={pagination}
+        // pagination={pagination}
+        pagination={false}
         scroll={{
           x: 500,
           y: 500,

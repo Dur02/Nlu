@@ -87,7 +87,7 @@ const result = ({
   const {
     tableHeader,
     getDataSource,
-    pagination,
+    // pagination,
   } = useLocalTable({
     query: {
       fields: [{
@@ -294,9 +294,10 @@ const result = ({
             }}
             columns={columns}
             rowKey="id"
-            pagination={pagination}
+            // pagination={pagination}
+            pagination={false}
             scroll={{
-              x: 500,
+              x: 300,
               y: 500,
             }}
           />
