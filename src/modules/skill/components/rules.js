@@ -102,8 +102,8 @@ const result = ({
   const columns = [{
     title: '已添加说法',
     dataIndex: 'sentence',
-    width: 130,
-    fixed: 'left',
+    // width: 130,
+    // fixed: 'left',
     render: (sentence, { id }) => (
       <EditableInputCellForRule
         value={sentence}
@@ -113,7 +113,7 @@ const result = ({
     ),
   }, {
     title: 'app是否激活',
-    width: 130,
+    // width: 130,
     render: (record) => (
       <Group
         options={activatedOption}
@@ -145,7 +145,7 @@ const result = ({
     ),
   }, {
     title: '全双工/半双工',
-    width: 150,
+    // width: 150,
     render: (record) => (
       <Group
         options={duplexTypeOption}
@@ -222,7 +222,7 @@ const result = ({
   // }, {
     title: '操作',
     width: 140,
-    fixed: 'right',
+    // fixed: 'right',
     render: (record) => (
       <>
         <Switch
@@ -298,7 +298,7 @@ const result = ({
             // pagination={pagination}
             pagination={false}
             scroll={{
-              x: 300,
+              // x: 300,
               y: 500,
             }}
           />

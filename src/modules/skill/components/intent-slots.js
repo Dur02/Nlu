@@ -146,7 +146,7 @@ const result = ({
   const columns = [{
     title: '名称',
     width: 60,
-    fixed: 'left',
+    // fixed: 'left',
     dataIndex: 'name',
   }, {
     title: '必须',
@@ -185,7 +185,7 @@ const result = ({
   }, {
     title: '操作',
     width: 80,
-    fixed: 'right',
+    // fixed: 'right',
     render: (record) => (
       <>
         {prop('required')(record) && (
@@ -225,7 +225,7 @@ const result = ({
         // pagination={pagination}
         pagination={false}
         scroll={{
-          x: 500,
+          // x: 500,
           y: 500,
         }}
       />
