@@ -107,11 +107,23 @@ export default ({
     width: 80,
     render: (record) => (
       <>
-        {record.skillId && (
-          <div className={s.Button}>
-            <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
-          </div>
-        )}
+        {
+          // record.skillId && (
+          //   <div className={s.Button}>
+          //     <Button
+          //       type="primary"
+          //       size="small"
+          //       ghost
+          //       onClick={() => openEditor(record)}
+          //     >
+          //       编辑
+          //     </Button>
+          //   </div>
+          // )
+        }
+        <div className={s.Button}>
+          <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
+        </div>
         {
           isAttachable && (
             <div className={s.Button}>
