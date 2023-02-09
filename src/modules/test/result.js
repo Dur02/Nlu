@@ -11,6 +11,7 @@ import { getPassed } from 'shared/constants/test-job';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { resultColumns } from './test-job-columns';
 import s from './result.less';
+import ResuleExpandable from './component/result-expandable';
 
 const { Option } = Select;
 const mapWithIndex = map.convert({ cap: false });
@@ -66,29 +67,55 @@ const result = ({
       }, {
         title: '期待值',
         dataIndex: 'expected',
-        render: (expected) => (
-          <span
-            style={{
-              color: '#207ab7',
-              fontSize: '10px',
-            }}
-          >
-            {expected}
-          </span>
-        ),
+        render: (expected, jobResult) => {
+          switch (jobResult.assertion) {
+            case 'api params':
+            case 'command params':
+              return (
+                <ResuleExpandable
+                  record={jobResult}
+                  isExpected
+                />
+              );
+            default:
+              return (
+                <span
+                  style={{
+                    color: '#207ab7',
+                    fontSize: '10px',
+                  }}
+                >
+                  {expected}
+                </span>
+              );
+          }
+        },
       }, {
         title: '实际值 ',
         dataIndex: 'actual',
-        render: (actual) => (
-          <span
-            style={{
-              color: '#207ab7',
-              fontSize: '10px',
-            }}
-          >
-            {actual}
-          </span>
-        ),
+        render: (actual, jobResult) => {
+          switch (jobResult.assertion) {
+            case 'api params':
+            case 'command params':
+              return (
+                <ResuleExpandable
+                  record={jobResult}
+                  isExpected={false}
+                />
+              );
+            default:
+              return (
+                <span
+                  style={{
+                    color: '#207ab7',
+                    fontSize: '10px',
+                  }}
+                >
+                  {actual}
+                </span>
+              );
+          }
+        },
       }, {
         title: '是否通过',
         dataIndex: 'passed',
