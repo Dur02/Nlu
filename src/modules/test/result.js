@@ -11,7 +11,7 @@ import { getPassed } from 'shared/constants/test-job';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { resultColumns } from './test-job-columns';
 import s from './result.less';
-import ResuleExpandable from './component/result-expandable';
+import ResultExpandable from './component/result-expandable';
 
 const { Option } = Select;
 const mapWithIndex = map.convert({ cap: false });
@@ -72,7 +72,7 @@ const result = ({
             case 'api params':
             case 'command params':
               return (
-                <ResuleExpandable
+                <ResultExpandable
                   record={jobResult}
                   isExpected
                 />
@@ -98,7 +98,7 @@ const result = ({
             case 'api params':
             case 'command params':
               return (
-                <ResuleExpandable
+                <ResultExpandable
                   record={jobResult}
                   isExpected={false}
                 />
