@@ -58,7 +58,7 @@ const result = ({
     defaultPageSize: 10,
     showSizeChanger: true,
     showQuickJumper: true,
-    pageSizeOptions: [10, 20, 50],
+    pageSizeOptions: [10, 20, 50, 100],
     current: caseData.currentPage,
     total: caseData.total,
     pageSize: caseData.pageSize,
@@ -328,7 +328,7 @@ const result = ({
                   autoComplete="off"
                   placeholder="输入用户说"
                   style={{
-                    width: '100px',
+                    width: '120px',
                   }}
                 />
               </Form.Item>
@@ -343,7 +343,7 @@ const result = ({
                   autoComplete="off"
                   placeholder="输入期待技能"
                   style={{
-                    width: '115px',
+                    width: '135px',
                   }}
                 />
               </Form.Item>
@@ -358,7 +358,7 @@ const result = ({
                   autoComplete="off"
                   placeholder="输入期待意图"
                   style={{
-                    width: '115px',
+                    width: '141px',
                   }}
                 />
               </Form.Item>
