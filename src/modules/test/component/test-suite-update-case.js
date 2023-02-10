@@ -429,7 +429,7 @@ const result = ({
                       % paginationProps.pageSize !== 0 ? 1 : 0
                     );
                     // 当修改后剩余的总页数小于当前页码时，把当前页码设为修改后的总页数，否则就重新加载当前页码的内容
-                    if (paginationProps.current > totalPage) {
+                    if (paginationProps.current > totalPage && totalPage !== 0) {
                       await caseReload(totalPage);
                     } else {
                       await caseReload(paginationProps.current);
