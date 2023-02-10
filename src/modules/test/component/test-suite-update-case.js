@@ -7,7 +7,7 @@ import {
   Input,
   message,
   DatePicker,
-  Select,
+  Select, Popconfirm,
 } from 'antd';
 import { readAll, caseDel } from 'shared/actions/test-suite';
 import { create as onCreateCase, readAll as readTestCase, update } from 'shared/actions/test-case';
@@ -412,10 +412,9 @@ const result = ({
           />
           {
             selectedRowKeys.length !== 0 && (
-              <Button
-                type="danger"
-                ghost
-                onClick={async () => {
+              <Popconfirm
+                title="确认删除吗？删除操作不可恢复"
+                onConfirm={async () => {
                   setUpdateLoading(true);
                   try {
                     const { msg } = await delCase({
@@ -442,16 +441,21 @@ const result = ({
                   }
                   setUpdateLoading(false);
                 }}
-                loading={updateLoading}
-                style={{
-                  position: 'relative',
-                  marginTop: '22px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                }}
               >
-                批量删除
-              </Button>
+                <Button
+                  type="danger"
+                  ghost
+                  loading={updateLoading}
+                  style={{
+                    position: 'relative',
+                    marginTop: '22px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                  }}
+                >
+                  批量删除
+                </Button>
+              </Popconfirm>
             )
           }
           {
