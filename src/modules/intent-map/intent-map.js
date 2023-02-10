@@ -108,16 +108,20 @@ const result = ({
   };
 
   const onSearch = useCallback(async (values) => {
-    setSearchValue(values.intentMapName);
-    const {
-      data: dataTemp,
-    } = await readAllIntentMap({
-      // intentMapName: intentMapName === '全部' ? '' : intentMapName,
-      page: 1,
-      pageSize: paginationProps.pageSize,
-      intentMapName: values.intentMapName,
-    });
-    setData(dataTemp);
+    try {
+      const {
+        data: dataTemp,
+      } = await readAllIntentMap({
+        // intentMapName: intentMapName === '全部' ? '' : intentMapName,
+        page: 1,
+        pageSize: paginationProps.pageSize,
+        intentMapName: values.intentMapName,
+      });
+      setSearchValue(values.intentMapName);
+      setData(dataTemp);
+    } catch (e) {
+      setSearchValue('');
+    }
   }, []);
 
   const createSubmit = useCallback(async (values) => {
