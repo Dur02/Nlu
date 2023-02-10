@@ -17,11 +17,11 @@ export const readAll = createAction(
   ({
     page,
     pageSize,
-    intentMapName,
+    keyWord,
   }) => read('/skill/edit/intent-map', {
     page,
     pageSize,
-    intentMapName,
+    keyWord,
   }),
 );
 

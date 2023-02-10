@@ -21,6 +21,7 @@ import columns from './intent-map-columns';
 // import s from './intent-map.less';
 
 const { useForm } = Form;
+const { Search } = Input;
 
 const result = ({
   initialData,
@@ -88,24 +89,24 @@ const result = ({
         page: newPage,
         pageSize: newPageSize,
         // intentMapName: intentMapName === '全部' ? '' : intentMapName,
-        intentMapName: searchValue,
+        keyWord: searchValue,
       });
       setData(dataTemp);
     },
     showTotal: (total) => `共 ${total} 条`,
   };
 
-  const reload = async (current) => {
+  const reload = useCallback(async (current) => {
     const {
       data: dataTemp,
     } = await readAllIntentMap({
       // intentMapName: intentMapName === '全部' ? '' : intentMapName,
       page: current,
       pageSize: paginationProps.pageSize,
-      intentMapName: searchValue,
+      keyWord: searchValue,
     });
     setData(dataTemp);
-  };
+  }, [searchValue]);
 
   const onSearch = useCallback(async (values) => {
     try {
@@ -115,14 +116,14 @@ const result = ({
         // intentMapName: intentMapName === '全部' ? '' : intentMapName,
         page: 1,
         pageSize: paginationProps.pageSize,
-        intentMapName: values.intentMapName,
+        keyWord: values,
       });
-      setSearchValue(values.intentMapName);
+      setSearchValue(values);
       setData(dataTemp);
     } catch (e) {
       setSearchValue('');
     }
-  }, []);
+  }, [searchValue, setSearchValue, data, setData]);
 
   const createSubmit = useCallback(async (values) => {
     setLoading(true);
@@ -172,34 +173,14 @@ const result = ({
         >
           创建映射
         </Button>
-        <Form
+        <Search
+          placeholder="搜索统计意图名或规则意图名"
+          onSearch={onSearch}
           style={{
-            marginTop: '6px',
+            width: 400,
+            marginTop: '4px',
           }}
-          layout="inline"
-          onFinish={onSearch}
-          autoComplete={false}
-        >
-          <Form.Item
-            name="intentMapName"
-            label="统计意图名"
-          >
-            <Input
-              placeholder="输入统计意图名"
-              allowClear
-              autoComplete="off"
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              ghost
-            >
-              查询
-            </Button>
-          </Form.Item>
-        </Form>
+        />
       </div>
       <Table
         // tableLayout="fixed"

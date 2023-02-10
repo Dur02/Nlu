@@ -143,6 +143,9 @@ export const resultColumns = () => [{
   dataIndex: 'jossResult',
   render: (jossResult) => (jossResult ? <a href={jossResult} target="_blank" rel="noreferrer">点击跳转</a> : '无'),
 }, {
+  title: 'error',
+  dataIndex: 'error',
+}, {
   title: '是否通过',
   dataIndex: 'passed',
   render: (passed) => (
