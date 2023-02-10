@@ -14,18 +14,18 @@ import {
 } from 'lodash/fp';
 import { getEntity } from 'relient/selectors';
 import { useSelector } from 'react-redux';
-import { Modal, Table, Select, Tabs, Button, Form, message, Tooltip } from 'antd';
+import { Modal, Table, Select, Button, Form, message, Input } from 'antd';
 import { useDetails } from 'relient-admin/hooks';
-import useStyles from 'isomorphic-style-loader/useStyles';
+// import useStyles from 'isomorphic-style-loader/useStyles';
 import columns from './intent-map-columns';
-import s from './intent-map.less';
+// import s from './intent-map.less';
 
 const { useForm } = Form;
 
 const result = ({
   initialData,
 }) => {
-  useStyles(s);
+  // useStyles(s);
 
   const readAllIntentMap = useAction(readAll);
   const onRemove = useAction(removeIntentMap);
@@ -50,8 +50,9 @@ const result = ({
     size: initialData.size,
   });
   const [createVisible, setCreateVisible] = useState(false);
-  const [intentMapName, setIntentMapName] = useState('');
+  // const [intentMapName, setIntentMapName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   const {
     intentMapInfoOptions,
@@ -86,7 +87,8 @@ const result = ({
       } = await readAllIntentMap({
         page: newPage,
         pageSize: newPageSize,
-        intentMapName: intentMapName === '全部' ? '' : intentMapName,
+        // intentMapName: intentMapName === '全部' ? '' : intentMapName,
+        intentMapName: searchValue,
       });
       setData(dataTemp);
     },
@@ -97,12 +99,26 @@ const result = ({
     const {
       data: dataTemp,
     } = await readAllIntentMap({
-      intentMapName: intentMapName === '全部' ? '' : intentMapName,
+      // intentMapName: intentMapName === '全部' ? '' : intentMapName,
       page: current,
       pageSize: paginationProps.pageSize,
+      intentMapName: searchValue,
     });
     setData(dataTemp);
   };
+
+  const onSearch = useCallback(async (values) => {
+    setSearchValue(values.intentMapName);
+    const {
+      data: dataTemp,
+    } = await readAllIntentMap({
+      // intentMapName: intentMapName === '全部' ? '' : intentMapName,
+      page: 1,
+      pageSize: paginationProps.pageSize,
+      intentMapName: values.intentMapName,
+    });
+    setData(dataTemp);
+  }, []);
 
   const createSubmit = useCallback(async (values) => {
     setLoading(true);
@@ -139,64 +155,65 @@ const result = ({
 
   return (
     <Layout>
-      <Button
-        type="primary"
-        size="large"
-        onClick={() => {
-          setCreateVisible(true);
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+        <Button
+          type="primary"
+          size="large"
+          onClick={() => {
+            setCreateVisible(true);
+          }}
+          style={{
+            marginBottom: '16px',
+          }}
+        >
+          创建映射
+        </Button>
+        <Form
+          style={{
+            marginTop: '6px',
+          }}
+          layout="inline"
+          onFinish={onSearch}
+          autoComplete={false}
+        >
+          <Form.Item
+            name="intentMapName"
+            label="统计意图名"
+          >
+            <Input
+              placeholder="输入统计意图名"
+              allowClear
+              autoComplete="off"
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              ghost
+            >
+              查询
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+      <Table
+        // tableLayout="fixed"
+        dataSource={data.records}
+        columns={columns({
+          onRemove,
+          paginationProps,
+          reload,
+          openEditor,
+          setIntentOption,
+          skillInfos,
+          updateForm,
+        })}
+        scroll={{
+          y: 600,
         }}
-      >
-        创建映射
-      </Button>
-      <Tabs
-        defaultActiveKey="全部"
-        tabPosition="left"
-        className={s.Tabs}
-        tabBarStyle={{
-          textAlign: 'left !important',
-        }}
-        style={{
-          height: 800,
-          position: 'relative',
-          top: 10,
-        }}
-        items={
-          flow(
-            map(({ label }) => ({
-              key: label,
-              label: <Tooltip title={label} placement="topLeft">{label}</Tooltip>,
-              children: <Table
-                // tableLayout="fixed"
-                dataSource={data.records}
-                columns={columns({
-                  onRemove,
-                  paginationProps,
-                  reload,
-                  openEditor,
-                  setIntentOption,
-                  skillInfos,
-                  updateForm,
-                })}
-                scroll={{
-                  y: 600,
-                }}
-                rowKey="id"
-                pagination={paginationProps}
-              />,
-            })),
-          )(intentMapInfoOptions)
-        }
-        onChange={async (activeKey) => {
-          const {
-            data: dataTemp,
-          } = await readAllIntentMap({
-            intentMapName: activeKey === '全部' ? '' : activeKey,
-            page: 1,
-            pageSize: paginationProps.pageSize,
-          });
-          setIntentMapName(activeKey);
-          setData(dataTemp);
-        }}
+        rowKey="id"
+        pagination={paginationProps}
       />
       <Modal
         visible={createVisible}
