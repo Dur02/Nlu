@@ -373,11 +373,15 @@ const result = ({ skillId }) => {
               marginRight: '5px',
             }}
             onClick={() => {
-              openVersion(
-                flow(
-                  find(propEq('id', skillId)),
-                )(skillVersion),
-              );
+              if (skill.status === 1) {
+                message.error('草稿状态的技能才可以发布');
+              } else {
+                openVersion(
+                  flow(
+                    find(propEq('id', skillId)),
+                  )(skillVersion),
+                );
+              }
             }}
           >
             发布
