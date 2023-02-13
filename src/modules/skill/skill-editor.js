@@ -13,7 +13,7 @@ import {
   Popover,
   Spin,
   Dropdown,
-  Menu,
+  Menu, Drawer,
 } from 'antd';
 import { DownOutlined, ToolOutlined, UploadOutlined } from '@ant-design/icons';
 import useStyles from 'isomorphic-style-loader/useStyles';
@@ -39,7 +39,11 @@ import {
   readAll as readAllOutputAction,
   update as updateOutputAction,
 } from 'shared/actions/output';
+import {
+  create as createVersion,
+} from 'shared/actions/skill-version';
 import { outputYamlExport } from 'shared/actions/skill';
+import { useDetails, useLocalTable } from 'relient-admin/hooks';
 import Rules from './components/rules';
 import Intents from './components/intents';
 import Output from './components/output';
@@ -51,13 +55,21 @@ import GlobalSearchRules from './components/global-search-rules';
 import { columns } from './components/skill-test-columns';
 import FloatWindows from '../../shared/components/floating-windows';
 import WordsDrawer from './components/words-drawer';
+import { versionColumns } from './skill-columns';
 
 const { TabPane } = Tabs;
-const { Search } = Input;
+const { Search, TextArea } = Input;
 const mapWithIndex = map.convert({ cap: false });
 
 const result = ({ skillId }) => {
   useStyles(s);
+
+  const {
+    detailsVisible: versionVisible,
+    openDetails: openVersion,
+    closeDetails: closeVersion,
+    detailsItem: versionItem,
+  } = useDetails();
 
   const [selectedIntentId, setSelectedIntentId] = useState(null);
   const [intentNameText, setIntentNameText] = useState('');
@@ -73,6 +85,7 @@ const result = ({ skillId }) => {
 
   const {
     intents,
+    skillVersion,
     skill,
     builtinIntents,
     words,
@@ -171,6 +184,34 @@ const result = ({ skillId }) => {
       setUploadVisible(false);
     }
   }, [uploading, uploadVisible]);
+
+  const onCreateVersion = useCallback(
+    (values) => dispatch(createVersion({ ...values, skillId: versionItem.id })),
+    [versionItem && versionItem.id],
+  );
+
+  const versionFields = [{
+    label: '发布说明',
+    name: 'note',
+    component: TextArea,
+    rules: [{ required: true }],
+  }];
+
+  const {
+    tableHeader: versionTableHeader,
+    getDataSource: versionGetDataSource,
+    pagination: versionPagination,
+  } = useLocalTable({
+    creator: {
+      title: '创建版本',
+      onSubmit: onCreateVersion,
+      fields: versionFields,
+      component: Drawer,
+    },
+    createButton: {
+      text: '发布技能',
+    },
+  });
 
   const menu = (
     <Menu
@@ -324,9 +365,27 @@ const result = ({ skillId }) => {
         </Popover>
       )}
       addonAfter={(
-        <Dropdown overlay={menu} placement="bottom">
-          <span style={{ fontSize: '16px', margin: 0 }}>工具栏<ToolOutlined style={{ paddingLeft: '8px', fontSize: '15px' }} /></span>
-        </Dropdown>
+        <>
+          <Button
+            type="primary"
+            ghost
+            style={{
+              marginRight: '5px',
+            }}
+            onClick={() => {
+              openVersion(
+                flow(
+                  find(propEq('id', skillId)),
+                )(skillVersion),
+              );
+            }}
+          >
+            发布
+          </Button>
+          <Dropdown overlay={menu} placement="bottom">
+            <span style={{ fontSize: '16px', marginTop: '2px' }}>工具栏<ToolOutlined style={{ paddingLeft: '8px', fontSize: '15px' }} /></span>
+          </Dropdown>
+        </>
       )}
     >
       <div className={s.Container}>
@@ -479,6 +538,27 @@ const result = ({ skillId }) => {
           dataSource={error}
         />
       </Modal>
+      {
+        versionItem && (
+          <Drawer
+            open={versionVisible}
+            onClose={closeVersion}
+            title={`${versionItem.name} 发布`}
+            width={800}
+          >
+            {versionTableHeader}
+            <Table
+              dataSource={versionGetDataSource(flow(
+                find(propEq('id', versionItem.id)),
+                prop('skillVersions'),
+              )(skillVersion))}
+              columns={versionColumns}
+              rowKey="id"
+              pagination={versionPagination}
+            />
+          </Drawer>
+        )
+      }
     </Layout>
   ) : (
     <Layout>

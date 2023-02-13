@@ -3,6 +3,7 @@ import { flow, find, filter, propEq, map, orderBy, every, prop, includes, any, c
 import { SLOT, TEXT } from 'shared/constants/content-type';
 import { getCName, getIsDefault } from 'shared/utils/helper';
 import { getCheckboxValue } from 'shared/constants/config';
+import { getCurrentUser, getSkillsWithVersions } from '../../shared/selectors';
 
 const mapWithIndex = map.convert({ cap: false });
 
@@ -27,6 +28,7 @@ export default (skillId, tempId) => (state) => {
   if (tempId !== -1 && tempId !== skillId) {
     return {};
   }
+  const { skillCodes } = getCurrentUser(state);
   const intents = flow(
     getEntityArray('intent'),
     filter(propEq('skillId', skillId)),
@@ -84,6 +86,10 @@ export default (skillId, tempId) => (state) => {
     builtinIntents: flow(
       getEntityArray('builtinIntent'),
       orderBy(['id'], ['asc']),
+    )(state),
+    skillVersion: flow(
+      getSkillsWithVersions,
+      filter(({ code }) => includes(code)(skillCodes)),
     )(state),
     skill: getEntity(`skillVersion.${skillId}`)(state),
     intents,
