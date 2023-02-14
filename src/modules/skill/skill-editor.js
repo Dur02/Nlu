@@ -366,26 +366,30 @@ const result = ({ skillId }) => {
       )}
       addonAfter={(
         <>
-          <Button
-            type="primary"
-            ghost
-            style={{
-              marginRight: '5px',
-            }}
-            onClick={() => {
-              if (skill.status === 1) {
-                message.error('草稿状态的技能才可以发布');
-              } else {
-                openVersion(
-                  flow(
-                    find(propEq('id', skillId)),
-                  )(skillVersion),
-                );
-              }
-            }}
-          >
-            发布
-          </Button>
+          {
+            skill.status === 0 && (
+              <Button
+                type="primary"
+                ghost
+                style={{
+                  marginRight: '25px',
+                }}
+                onClick={() => {
+                  if (skill.status === 1) {
+                    message.error('草稿状态的技能才可以发布');
+                  } else {
+                    openVersion(
+                      flow(
+                        find(propEq('id', skillId)),
+                      )(skillVersion),
+                    );
+                  }
+                }}
+              >
+                技能发布
+              </Button>
+            )
+          }
           <Dropdown overlay={menu} placement="bottom">
             <span style={{ fontSize: '16px', marginTop: '2px' }}>工具栏<ToolOutlined style={{ paddingLeft: '8px', fontSize: '15px' }} /></span>
           </Dropdown>

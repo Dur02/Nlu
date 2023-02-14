@@ -41,12 +41,6 @@ const result = ({
     await createRule({
       intentId,
       sentence: newSentence,
-      ruleConfig: {
-        activated: 3,
-        duplexType: 3,
-        skillId,
-      },
-      taskClassify: true,
     });
     message.success('添加说法成功，请设置槽位');
     setNewSentence('');
