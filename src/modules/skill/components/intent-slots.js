@@ -6,10 +6,10 @@ import { useLocalTable } from 'relient-admin/hooks';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { booleanSwitchOptions } from 'shared/constants/boolean';
 import EditableSwitchCell from 'shared/components/editable-switch-cell';
-
 import WordsList from './words-list';
 import Prompt from './intent-slot-prompt';
 import WordsInline from './words-inline';
+import QuickCreateWords from './quick-create-words';
 import s from './intent-slots.less';
 
 const result = ({
@@ -25,7 +25,8 @@ const result = ({
   useStyles(s);
 
   const [promptEditorSlotName, setPromptEditorSlotName] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [wordsDrawerOpen, setWordsDrawerOpen] = useState(false);
+  const [createWordOpen, setCreateWordOpen] = useState(false);
   const [slotName, setSlotName] = useState('');
 
   const onCreateSlot = useCallback(
@@ -102,6 +103,7 @@ const result = ({
         dataKey: 'lexiconsNamesJoint',
         label: '词库',
       }],
+      width: 200,
     },
     createButton: {
       text: '创建语义槽',
@@ -209,6 +211,16 @@ const result = ({
 
   return (
     <div className={s.Root}>
+      <Button
+        type="primary"
+        style={{
+          position: 'absolute',
+          left: 120,
+        }}
+        onClick={() => setCreateWordOpen(true)}
+      >
+        创建词库
+      </Button>
       {tableHeader}
       <Table
         className={s.IntentSlotTable}
@@ -217,7 +229,7 @@ const result = ({
         columns={columns}
         onRow={(record) => ({
           onDoubleClick: () => {
-            setIsModalOpen(true);
+            setWordsDrawerOpen(true);
             setSlotName(record.name);
           },
         })}
@@ -245,13 +257,19 @@ const result = ({
         slots={slots}
         slotName={slotName}
         setSlotName={setSlotName}
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
+        isModalOpen={wordsDrawerOpen}
+        setIsModalOpen={setWordsDrawerOpen}
         onUpdateSlot={onUpdateSlot}
         words={words}
         createWords={createWords}
         updateWords={updateWords}
         skillId={skillId}
+      />
+      <QuickCreateWords
+        createWordOpen={createWordOpen}
+        setCreateWordOpen={setCreateWordOpen}
+        skillId={skillId}
+        createWords={createWords}
       />
     </div>
   );
