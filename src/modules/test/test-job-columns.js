@@ -2,8 +2,9 @@ import { getPassed } from 'shared/constants/test-job';
 import { Button, Progress, Tag } from 'antd';
 import { ClockCircleOutlined, CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import React from 'react';
-import { filter, prop, propEq, flow, head } from 'lodash/fp';
+import { filter, prop, propEq, flow, head, map, at } from 'lodash/fp';
 import { time } from 'relient/formatters';
+import errorCodeType from 'shared/constants/test-result';
 
 export const testJobColumns = ({
   onCancel,
@@ -145,6 +146,13 @@ export const resultColumns = () => [{
 }, {
   title: 'error',
   dataIndex: 'error',
+  render: (error) => {
+    // error可能用'[]'、''和null表示无错误，或者用json格式的array和字符串表示有错误
+    if (error[0] !== '[' && error !== 'null') {
+      return <span>{String(error)}</span>;
+    }
+    return map((item) => <p key={item}>{at(item)(errorCodeType)}</p>)(JSON.parse(error));
+  },
 }, {
   title: '是否通过',
   dataIndex: 'passed',

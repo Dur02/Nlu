@@ -17,11 +17,13 @@ export const readAll = createAction(
     page,
     pageSize,
     passed,
+    errorCode,
   }) => read('/skill/edit/test/job/result/page', {
     jobId,
     pageSize,
     page,
     passed,
+    errorCode,
   }),
 );
 

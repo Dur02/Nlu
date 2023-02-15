@@ -8,6 +8,7 @@ import { flow, map, prop, propEq, find, concat, filter } from 'lodash/fp';
 import { getEntityArray } from 'relient/selectors';
 import { useSelector } from 'react-redux';
 import { getPassed } from 'shared/constants/test-job';
+import errorCodeType from 'shared/constants/test-result';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { resultColumns } from './test-job-columns';
 import s from './result.less';
@@ -213,35 +214,68 @@ const result = ({
         <Select
           defaultValue={-1}
           style={{
-            width: 120,
+            width: 150,
             margin: '22px auto',
           }}
           onSelect={async (value) => {
             setLoading(true);
             // 切换结果类型后把滚动条重新移动到最上方，否则会进行多次请求直至上次滚动到的页数
             document.querySelector('#resultTable .ant-table-body').scrollTop = 0;
-            const {
-              data: {
-                data: resultData,
-                total: resultTotal,
-              },
-            } = await readAllJobResult({
-              jobId,
-              page: 1,
-              pageSize: 100,
-              passed: value === -1 ? '' : value,
-            });
-            setLoading(false);
-            // setIsMore(testJobResult !== resultTotal);
-            setIsMore(map(prop('id'))(resultData).length !== resultTotal);
-            setPage(1);
-            setPassedFlag(value);
-            setResultId(map(prop('id'))(resultData));
+            if (typeof value === 'number') {
+              try {
+                const {
+                  data: {
+                    data: resultData,
+                    total: resultTotal,
+                  },
+                } = await readAllJobResult({
+                  jobId,
+                  page: 1,
+                  pageSize: 100,
+                  passed: value === -1 ? '' : value,
+                });
+                setLoading(false);
+                // setIsMore(testJobResult !== resultTotal);
+                setIsMore(map(prop('id'))(resultData).length !== resultTotal);
+                setPage(1);
+                setPassedFlag(value);
+                setResultId(map(prop('id'))(resultData));
+              } catch (e) {
+                setLoading(false);
+              }
+            } else {
+              try {
+                const {
+                  data: {
+                    data: resultData,
+                    total: resultTotal,
+                  },
+                } = await readAllJobResult({
+                  jobId,
+                  page: 1,
+                  pageSize: 100,
+                  errorCode: value,
+                });
+                setLoading(false);
+                // setIsMore(testJobResult !== resultTotal);
+                setIsMore(map(prop('id'))(resultData).length !== resultTotal);
+                setPage(1);
+                setPassedFlag(value);
+                setResultId(map(prop('id'))(resultData));
+              } catch (e) {
+                setLoading(false);
+              }
+            }
           }}
         >
           <Option value={-1}>全部</Option>
           <Option value={0}>未通过</Option>
           <Option value={1}>通过</Option>
+          {
+            mapWithIndex((item, index) => (
+              <Option value={index} key={index}>{item}</Option>
+            ))(errorCodeType)
+          }
         </Select>
         <Table
           id="resultTable"
