@@ -42,13 +42,14 @@ const result = ({
   const readAllJobResult = useAction(readAllResult);
 
   const [loading, setLoading] = useState(false);
-  const [isMore, setIsMore] = useState(true);
+  const [isMore, setIsMore] = useState(initResultId.length !== numData.totalNum);
   // 记录滚动到第几页
   const [page, setPage] = useState(1);
   // Select下拉选择框的选项变更会导致passedFlag的变化
   const [passedFlag, setPassedFlag] = useState(-1);
   // result的目前所有数据的id，通过这个state决定要显示的数据
   const [resultId, setResultId] = useState(initResultId);
+  const [total, setTotal] = useState(numData.totalNum);
 
   const expandable = {
     expandedRowRender: (record) => {
@@ -236,6 +237,7 @@ const result = ({
                 });
                 setLoading(false);
                 // setIsMore(testJobResult !== resultTotal);
+                setTotal(resultTotal);
                 setIsMore(map(prop('id'))(resultData).length !== resultTotal);
                 setPage(1);
                 setPassedFlag(value);
@@ -258,6 +260,7 @@ const result = ({
                 });
                 setLoading(false);
                 // setIsMore(testJobResult !== resultTotal);
+                setTotal(resultTotal);
                 setIsMore(map(prop('id'))(resultData).length !== resultTotal);
                 setPage(1);
                 setPassedFlag(value);
@@ -292,6 +295,7 @@ const result = ({
             y: 400,
           }}
         />
+        <div style={{ textAlign: 'center' }}>当前类型共{total}条</div>
         { loading ? <div style={{ textAlign: 'center' }}><LoadingOutlined />加载中...</div> : null }
         { !isMore ? <div style={{ textAlign: 'center' }}>已全部加载</div> : null }
       </div>
