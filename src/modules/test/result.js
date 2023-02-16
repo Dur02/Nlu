@@ -47,6 +47,7 @@ const result = ({
   const [page, setPage] = useState(1);
   // Select下拉选择框的选项变更会导致passedFlag的变化
   const [passedFlag, setPassedFlag] = useState(-1);
+  const [errorCode, setErrorCode] = useState('');
   // result的目前所有数据的id，通过这个state决定要显示的数据
   const [resultId, setResultId] = useState(initResultId);
   const [total, setTotal] = useState(numData.totalNum);
@@ -172,13 +173,14 @@ const result = ({
         page: 1 + Math.floor(e.target.scrollTop / 3400),
         pageSize: 100,
         passed: passedFlag === -1 ? '' : passedFlag,
+        errorCode,
       });
       setLoading(false);
       // setIsMore(testJobResult !== resultTotal);
       setIsMore(concat(resultId, map(prop('id'))(resultData)).length !== resultTotal);
       setResultId(concat(resultId, map(prop('id'))(resultData)));
     }
-  }, [jobId, page, setPage, passedFlag, testJobResult]);
+  }, [jobId, page, setPage, passedFlag, testJobResult, errorCode]);
 
   // const getResultData = useCallback(() => {
   //   switch (passedFlag) {
@@ -241,6 +243,7 @@ const result = ({
                 setIsMore(map(prop('id'))(resultData).length !== resultTotal);
                 setPage(1);
                 setPassedFlag(value);
+                setErrorCode('');
                 setResultId(map(prop('id'))(resultData));
               } catch (e) {
                 setLoading(false);
@@ -263,7 +266,8 @@ const result = ({
                 setTotal(resultTotal);
                 setIsMore(map(prop('id'))(resultData).length !== resultTotal);
                 setPage(1);
-                setPassedFlag(value);
+                setPassedFlag(-1);
+                setErrorCode(value);
                 setResultId(map(prop('id'))(resultData));
               } catch (e) {
                 setLoading(false);
