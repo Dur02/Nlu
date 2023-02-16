@@ -4,7 +4,7 @@ import { Row, Col, Select, Statistic, Table } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAction } from 'relient/actions';
 import { readAll as readAllResult } from 'shared/actions/test-job-result';
-import { flow, map, prop, propEq, find, concat, filter, at, split } from 'lodash/fp';
+import { flow, map, prop, propEq, find, concat, filter, at, split, includes } from 'lodash/fp';
 import { getEntityArray } from 'relient/selectors';
 import { useSelector } from 'react-redux';
 import { getPassed } from 'shared/constants/test-job';
@@ -84,7 +84,7 @@ const result = ({
             case 'slots':
               return (
                 mapWithIndex((item, index) => {
-                  if (find(item)(split(',')(jobResult.actual))) {
+                  if (includes(item)(split(',')(jobResult.actual))) {
                     return (
                       <p
                         style={{
@@ -139,7 +139,7 @@ const result = ({
             case 'slots':
               return (
                 mapWithIndex((item, index) => {
-                  if (find(item)(split(',')(jobResult.expected))) {
+                  if (includes(item)(split(',')(jobResult.expected))) {
                     return (
                       <p
                         style={{
