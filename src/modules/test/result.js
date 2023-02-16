@@ -4,7 +4,7 @@ import { Row, Col, Select, Statistic, Table } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAction } from 'relient/actions';
 import { readAll as readAllResult } from 'shared/actions/test-job-result';
-import { flow, map, prop, propEq, find, concat, filter, at } from 'lodash/fp';
+import { flow, map, prop, propEq, find, concat, filter, at, split } from 'lodash/fp';
 import { getEntityArray } from 'relient/selectors';
 import { useSelector } from 'react-redux';
 import { getPassed } from 'shared/constants/test-job';
@@ -81,6 +81,35 @@ const result = ({
                   isExpected
                 />
               );
+            case 'slots':
+              return (
+                mapWithIndex((item, index) => {
+                  if (find(item)(split(',')(jobResult.actual))) {
+                    return (
+                      <p
+                        style={{
+                          color: '#207ab7',
+                          margin: 0,
+                        }}
+                        key={index}
+                      >
+                        {item}
+                      </p>
+                    );
+                  }
+                  return (
+                    <p
+                      style={{
+                        color: '#ff0000',
+                        margin: 0,
+                      }}
+                      key={index}
+                    >
+                      {item}
+                    </p>
+                  );
+                })(split(',')(expected))
+              );
             default:
               return (
                 <span
@@ -106,6 +135,35 @@ const result = ({
                   record={jobResult}
                   isExpected={false}
                 />
+              );
+            case 'slots':
+              return (
+                mapWithIndex((item, index) => {
+                  if (find(item)(split(',')(jobResult.expected))) {
+                    return (
+                      <p
+                        style={{
+                          color: '#207ab7',
+                          margin: 0,
+                        }}
+                        key={index}
+                      >
+                        {item}
+                      </p>
+                    );
+                  }
+                  return (
+                    <p
+                      style={{
+                        color: '#ff0000',
+                        margin: 0,
+                      }}
+                      key={index}
+                    >
+                      {item}
+                    </p>
+                  );
+                })(split(',')(actual))
               );
             default:
               return (
