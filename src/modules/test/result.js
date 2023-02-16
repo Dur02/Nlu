@@ -4,11 +4,10 @@ import { Row, Col, Select, Statistic, Table } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAction } from 'relient/actions';
 import { readAll as readAllResult } from 'shared/actions/test-job-result';
-import { flow, map, prop, propEq, find, concat, filter } from 'lodash/fp';
+import { flow, map, prop, propEq, find, concat, filter, at } from 'lodash/fp';
 import { getEntityArray } from 'relient/selectors';
 import { useSelector } from 'react-redux';
 import { getPassed } from 'shared/constants/test-job';
-import errorCodeType from 'shared/constants/test-result';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { resultColumns } from './test-job-columns';
 import s from './result.less';
@@ -22,6 +21,8 @@ const result = ({
   title,
   numData,
   initResultId,
+  errorDetail,
+  errorCodeType,
 }) => {
   useStyles(s);
 
@@ -94,7 +95,7 @@ const result = ({
           }
         },
       }, {
-        title: '实际值 ',
+        title: '实际值',
         dataIndex: 'actual',
         render: (actual, jobResult) => {
           switch (jobResult.assertion) {
@@ -154,8 +155,9 @@ const result = ({
   };
 
   const onScrollCapture = useCallback(async (e) => {
-    const { clientHeight, scrollHeight, scrollTop } = e.target;
-    if (scrollHeight - scrollTop - clientHeight === 0 && isMore) {
+    const { scrollHeight, scrollTop, clientHeight } = e.target;
+    // 滑到离底部还有100px时发送请求，isMore避免发送超过总数的页码获得空数据，!loading避免重复发送相同请求
+    if (scrollHeight - scrollTop - clientHeight <= 100 && isMore && !loading) {
       setLoading(true);
       const {
         data: {
@@ -170,22 +172,11 @@ const result = ({
         errorCode,
       });
       setPage(page + 1);
-      setLoading(false);
       setIsMore(concat(resultId, map(prop('id'))(resultData)).length !== resultTotal);
       setResultId(concat(resultId, map(prop('id'))(resultData)));
+      setLoading(false);
     }
   }, [jobId, page, setPage, isMore, setIsMore, passedFlag, errorCode, testJobResult]);
-
-  // const getResultData = useCallback(() => {
-  //   switch (passedFlag) {
-  //     case 1:
-  //       return filter(propEq('passed', true))(testJobResult);
-  //     case 0:
-  //       return filter(propEq('passed', false))(testJobResult);
-  //     default:
-  //       return testJobResult;
-  //   }
-  // }, [passedFlag, testJobResult]);
 
   const getResultData = useCallback(() => map((id) => find(propEq('id', id))(testJobResult))(resultId),
     [resultId, testJobResult, setResultId],
@@ -208,6 +199,25 @@ const result = ({
             <Statistic title="总数" value={numData.totalNum} />
           </Col>
         </Row>
+        <div className={s.ErrorDetail}>
+          {
+            map((item) => (
+              <Statistic
+                key={item.errorCode}
+                title={at(item.errorCode)(errorCodeType)}
+                value={item.failNum}
+                style={{
+                  flex: 1,
+                  textAlign: 'center',
+                }}
+                valueStyle={{
+                  color: '#cf1322',
+                  fontSize: '12px',
+                }}
+              />
+            ))(errorDetail)
+          }
+        </div>
         <Select
           defaultValue={-1}
           style={{
@@ -291,7 +301,7 @@ const result = ({
           rowClassName={() => s.TableTr}
           scroll={{
             scrollToFirstRowOnChange: true,
-            y: '55vh',
+            y: 'calc(90vh - 384px)',
           }}
         />
         <div style={{ textAlign: 'center' }}>当前类型共{total}条</div>

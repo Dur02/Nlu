@@ -4,7 +4,7 @@ import { readAll as readAllProduct } from 'shared/actions/product';
 import { readAll as readTestCase } from 'shared/actions/test-case';
 import { readAll as readTestSuite } from 'shared/actions/test-suite';
 import { readAll as readTestJob } from 'shared/actions/test-job';
-import { readAll as readJobResult, readNum } from 'shared/actions/test-job-result';
+import { readAll as readJobResult, readNum, getErrorCode, getErrorDetail } from 'shared/actions/test-job-result';
 import { readMine as readProfile } from 'shared/actions/user';
 import { map, prop } from 'lodash/fp';
 import Case from './case';
@@ -154,12 +154,16 @@ export default () => [{
         },
       } = await dispatch(readJobResult({ jobId, page: 1, pageSize: 100 }));
       const { data: numData } = await dispatch(readNum({ jobId }));
+      const { data: errorDetail } = await dispatch(getErrorDetail({ jobId }));
+      const { data: errorCodeType } = await dispatch(getErrorCode());
       return {
         component: <Result
           jobId={jobId}
           title={title}
           numData={numData}
           initResultId={map(prop('id'))(resultData)}
+          errorDetail={errorDetail}
+          errorCodeType={errorCodeType}
         />,
       };
     } catch (e) {
