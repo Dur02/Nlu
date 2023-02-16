@@ -153,15 +153,9 @@ const result = ({
     rowExpandable: ({ jobResult }) => jobResult && jobResult !== '' && jobResult !== '[]',
   };
 
-  // 滚动加载的实现，部分存放在redux中已有的数据可能也会重新请求
   const onScrollCapture = useCallback(async (e) => {
-    const flag1 = page;
-    let flag2 = page;
-    if (Math.floor(e.target.scrollTop / 3400) === page) {
-      setPage(page + 1);
-      flag2 += 1;
-    }
-    if (flag2 !== flag1) {
+    const { clientHeight, scrollHeight, scrollTop } = e.target;
+    if (scrollHeight - scrollTop - clientHeight === 0 && isMore) {
       setLoading(true);
       const {
         data: {
@@ -170,17 +164,17 @@ const result = ({
         },
       } = await readAllJobResult({
         jobId,
-        page: 1 + Math.floor(e.target.scrollTop / 3400),
+        page: 1 + page,
         pageSize: 100,
         passed: passedFlag === -1 ? '' : passedFlag,
         errorCode,
       });
+      setPage(page + 1);
       setLoading(false);
-      // setIsMore(testJobResult !== resultTotal);
       setIsMore(concat(resultId, map(prop('id'))(resultData)).length !== resultTotal);
       setResultId(concat(resultId, map(prop('id'))(resultData)));
     }
-  }, [jobId, page, setPage, passedFlag, testJobResult, errorCode]);
+  }, [jobId, page, setPage, isMore, setIsMore, passedFlag, errorCode, testJobResult]);
 
   // const getResultData = useCallback(() => {
   //   switch (passedFlag) {
@@ -286,6 +280,7 @@ const result = ({
         </Select>
         <Table
           id="resultTable"
+          className={s.ResultTable}
           dataSource={getResultData()}
           columns={resultColumns()}
           rowKey="id"
@@ -296,7 +291,7 @@ const result = ({
           rowClassName={() => s.TableTr}
           scroll={{
             scrollToFirstRowOnChange: true,
-            y: 400,
+            y: '55vh',
           }}
         />
         <div style={{ textAlign: 'center' }}>当前类型共{total}条</div>
