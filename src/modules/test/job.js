@@ -11,7 +11,7 @@ import { getEntity } from 'relient/selectors';
 import { useSelector } from 'react-redux';
 import { getAllProduct } from 'shared/selectors';
 import { push as pushAction } from 'relient/actions/history';
-import { testJobColumns } from './test-job-columns';
+import testJobColumns from './test-job-columns';
 
 const getDataSource = (state) => flow(
   map((id) => getEntity(`testJob.${id}`)(state)),

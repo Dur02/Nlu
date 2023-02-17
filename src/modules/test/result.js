@@ -9,7 +9,7 @@ import { getEntityArray } from 'relient/selectors';
 import { useSelector } from 'react-redux';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { passedArray, getPassed } from 'shared/constants/test-result';
-import { resultColumns } from './test-result-columns';
+import resultColumns from './test-result-columns';
 import s from './result.less';
 import ResultExpandable from './component/result-expandable';
 
