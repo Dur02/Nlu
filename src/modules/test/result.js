@@ -7,13 +7,12 @@ import { readAll as readAllResult } from 'shared/actions/test-job-result';
 import { flow, map, prop, propEq, find, concat, filter, at, split, includes } from 'lodash/fp';
 import { getEntityArray } from 'relient/selectors';
 import { useSelector } from 'react-redux';
-import { getPassed } from 'shared/constants/test-job';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import { resultColumns } from './test-job-columns';
+import { passedArray, getPassed } from 'shared/constants/test-result';
+import { resultColumns } from './test-result-columns';
 import s from './result.less';
 import ResultExpandable from './component/result-expandable';
 
-const { Option } = Select;
 const { Search } = Input;
 const mapWithIndex = map.convert({ cap: false });
 
@@ -240,7 +239,7 @@ const result = ({
     }
   }, [jobId, page, isMore, loading, passedFlag, errorCode, searchValue, resultId]);
 
-  const onSelect = useCallback(async (value) => {
+  const onChange = useCallback(async (value) => {
     setLoading(true);
     // 切换结果类型后把滚动条重新移动到最上方，否则会进行多次请求直至上次滚动到的页数
     document.querySelector('#resultTable .ant-table-body').scrollTop = 0;
@@ -372,17 +371,14 @@ const result = ({
               width: 150,
               margin: '22px 10px',
             }}
-            onSelect={onSelect}
-          >
-            <Option value={-1}>全部</Option>
-            <Option value={0}>未通过</Option>
-            <Option value={1}>通过</Option>
-            {
-              mapWithIndex((item, index) => (
-                <Option value={index} key={index}>{item}</Option>
-              ))(errorCodeType)
+            onChange={onChange}
+            options={
+              concat(passedArray, mapWithIndex((item, index) => ({
+                label: item,
+                value: index,
+              }))(errorCodeType))
             }
-          </Select>
+          />
           <Search
             placeholder="搜索用户说"
             onSearch={onSearch}
@@ -396,7 +392,9 @@ const result = ({
           id="resultTable"
           className={s.ResultTable}
           dataSource={getResultData()}
-          columns={resultColumns()}
+          columns={resultColumns({
+            errorCodeType,
+          })}
           rowKey="id"
           size="small"
           pagination={false}
