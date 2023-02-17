@@ -20,12 +20,14 @@ export const readAll = createAction(
     pageSize,
     passed,
     errorCode,
+    refText,
   }) => read('/skill/edit/test/job/result/page', {
     jobId,
     pageSize,
     page,
     passed,
     errorCode,
+    refText,
   }),
 );
 

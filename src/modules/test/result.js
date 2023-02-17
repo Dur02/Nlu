@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import Layout from 'shared/components/layout';
-import { Row, Col, Select, Statistic, Table } from 'antd';
+import { Row, Col, Select, Statistic, Table, Input } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAction } from 'relient/actions';
 import { readAll as readAllResult } from 'shared/actions/test-job-result';
@@ -14,6 +14,7 @@ import s from './result.less';
 import ResultExpandable from './component/result-expandable';
 
 const { Option } = Select;
+const { Search } = Input;
 const mapWithIndex = map.convert({ cap: false });
 
 const result = ({
@@ -46,9 +47,11 @@ const result = ({
   const [isMore, setIsMore] = useState(initResultId.length !== numData.totalNum);
   // 记录滚动到第几页
   const [page, setPage] = useState(1);
-  // Select下拉选择框的选项变更会导致passedFlag的变化
-  const [passedFlag, setPassedFlag] = useState(-1);
+  // Select下拉选择框的选项变更会导致passedFlag或者errorCode的变化
+  const [passedFlag, setPassedFlag] = useState('');
   const [errorCode, setErrorCode] = useState('');
+  // 设置搜索值
+  const [searchValue, setSearchValue] = useState('');
   // result的目前所有数据的id，通过这个state决定要显示的数据
   const [resultId, setResultId] = useState(initResultId);
   const [total, setTotal] = useState(numData.totalNum);
@@ -226,15 +229,101 @@ const result = ({
         jobId,
         page: 1 + page,
         pageSize: 100,
-        passed: passedFlag === -1 ? '' : passedFlag,
+        passed: passedFlag,
         errorCode,
+        refText: searchValue,
       });
       setPage(page + 1);
       setIsMore(concat(resultId, map(prop('id'))(resultData)).length !== resultTotal);
       setResultId(concat(resultId, map(prop('id'))(resultData)));
       setLoading(false);
     }
-  }, [jobId, page, setPage, isMore, setIsMore, passedFlag, errorCode, testJobResult]);
+  }, [jobId, page, isMore, loading, passedFlag, errorCode, searchValue, resultId]);
+
+  const onSelect = useCallback(async (value) => {
+    setLoading(true);
+    // 切换结果类型后把滚动条重新移动到最上方，否则会进行多次请求直至上次滚动到的页数
+    document.querySelector('#resultTable .ant-table-body').scrollTop = 0;
+    if (typeof value === 'number') {
+      try {
+        const {
+          data: {
+            data: resultData,
+            total: resultTotal,
+          },
+        } = await readAllJobResult({
+          jobId,
+          page: 1,
+          pageSize: 100,
+          passed: value === -1 ? '' : value,
+          refText: searchValue,
+        });
+        setLoading(false);
+        setTotal(resultTotal);
+        // 此处setIsMore的逻辑与onScrollCapture的原因是每次下拉框选择查询的都是第一页的数据，只要id数组的长度
+        // 等于resultTotal值就说明一次请求就加载完了数据
+        setIsMore(map(prop('id'))(resultData).length !== resultTotal);
+        setPage(1);
+        setPassedFlag(value === -1 ? '' : value);
+        setErrorCode('');
+        setResultId(map(prop('id'))(resultData));
+      } catch (e) {
+        setLoading(false);
+      }
+    } else {
+      try {
+        const {
+          data: {
+            data: resultData,
+            total: resultTotal,
+          },
+        } = await readAllJobResult({
+          jobId,
+          page: 1,
+          pageSize: 100,
+          errorCode: value,
+          refText: searchValue,
+        });
+        setLoading(false);
+        setTotal(resultTotal);
+        setIsMore(map(prop('id'))(resultData).length !== resultTotal);
+        setPage(1);
+        setPassedFlag('');
+        setErrorCode(value);
+        setResultId(map(prop('id'))(resultData));
+      } catch (e) {
+        setLoading(false);
+      }
+    }
+  }, [searchValue, passedFlag, errorCode, loading, total, isMore, page, resultId]);
+
+  const onSearch = useCallback(async (values) => {
+    setSearchValue(values);
+    setLoading(true);
+    document.querySelector('#resultTable .ant-table-body').scrollTop = 0;
+    try {
+      const {
+        data: {
+          data: resultData,
+          total: resultTotal,
+        },
+      } = await readAllJobResult({
+        jobId,
+        page: 1,
+        pageSize: 100,
+        passed: passedFlag,
+        errorCode,
+        refText: values,
+      });
+      setLoading(false);
+      setTotal(resultTotal);
+      setIsMore(map(prop('id'))(resultData).length !== resultTotal);
+      setPage(1);
+      setResultId(map(prop('id'))(resultData));
+    } catch (e) {
+      setLoading(false);
+    }
+  }, [searchValue, passedFlag, errorCode, loading, total, isMore, page, resultId]);
 
   const getResultData = useCallback(() => map((id) => find(propEq('id', id))(testJobResult))(resultId),
     [resultId, testJobResult, setResultId],
@@ -276,76 +365,33 @@ const result = ({
             ))(errorDetail)
           }
         </div>
-        <Select
-          defaultValue={-1}
-          style={{
-            width: 150,
-            margin: '22px auto',
-          }}
-          onSelect={async (value) => {
-            setLoading(true);
-            // 切换结果类型后把滚动条重新移动到最上方，否则会进行多次请求直至上次滚动到的页数
-            document.querySelector('#resultTable .ant-table-body').scrollTop = 0;
-            if (typeof value === 'number') {
-              try {
-                const {
-                  data: {
-                    data: resultData,
-                    total: resultTotal,
-                  },
-                } = await readAllJobResult({
-                  jobId,
-                  page: 1,
-                  pageSize: 100,
-                  passed: value === -1 ? '' : value,
-                });
-                setLoading(false);
-                // setIsMore(testJobResult !== resultTotal);
-                setTotal(resultTotal);
-                setIsMore(map(prop('id'))(resultData).length !== resultTotal);
-                setPage(1);
-                setPassedFlag(value);
-                setErrorCode('');
-                setResultId(map(prop('id'))(resultData));
-              } catch (e) {
-                setLoading(false);
-              }
-            } else {
-              try {
-                const {
-                  data: {
-                    data: resultData,
-                    total: resultTotal,
-                  },
-                } = await readAllJobResult({
-                  jobId,
-                  page: 1,
-                  pageSize: 100,
-                  errorCode: value,
-                });
-                setLoading(false);
-                // setIsMore(testJobResult !== resultTotal);
-                setTotal(resultTotal);
-                setIsMore(map(prop('id'))(resultData).length !== resultTotal);
-                setPage(1);
-                setPassedFlag(-1);
-                setErrorCode(value);
-                setResultId(map(prop('id'))(resultData));
-              } catch (e) {
-                setLoading(false);
-              }
+        <div style={{ float: 'right' }}>
+          <Select
+            defaultValue={-1}
+            style={{
+              width: 150,
+              margin: '22px 10px',
+            }}
+            onSelect={onSelect}
+          >
+            <Option value={-1}>全部</Option>
+            <Option value={0}>未通过</Option>
+            <Option value={1}>通过</Option>
+            {
+              mapWithIndex((item, index) => (
+                <Option value={index} key={index}>{item}</Option>
+              ))(errorCodeType)
             }
-          }}
-        >
-          <Option value={-1}>全部</Option>
-          <Option value={0}>未通过</Option>
-          <Option value={1}>通过</Option>
-          {
-            mapWithIndex((item, index) => (
-              <Option value={index} key={index}>{item}</Option>
-            ))(errorCodeType)
-          }
-        </Select>
+          </Select>
+          <Search
+            placeholder="搜索用户说"
+            onSearch={onSearch}
+            style={{
+              width: 200,
+              margin: '22px 0',
+            }}
+          />
+        </div>
         <Table
           id="resultTable"
           className={s.ResultTable}
