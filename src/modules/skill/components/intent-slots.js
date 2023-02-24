@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import { func, number, array } from 'prop-types';
-import { Drawer, message, Table, Switch, Button, Popconfirm } from 'antd';
+import { Drawer, message, Table, Switch, Button } from 'antd';
 import { map, any, flow, prop, reject, propEq, eq, find } from 'lodash/fp';
 import { useLocalTable } from 'relient-admin/hooks';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { booleanSwitchOptions } from 'shared/constants/boolean';
-import EditableSwitchCell from 'shared/components/editable-switch-cell';
+import columns from './intent-slots-columns';
 import WordsList from './words-list';
 import Prompt from './intent-slot-prompt';
 import WordsInline from './words-inline';
@@ -145,70 +145,6 @@ const result = ({
     },
   });
 
-  const columns = [{
-    title: '名称',
-    width: 60,
-    // fixed: 'left',
-    dataIndex: 'name',
-  }, {
-    title: '必须',
-    dataIndex: 'required',
-    width: 60,
-    render: (required, record) => (
-      <EditableSwitchCell
-        value={required}
-        onChange={(value) => onUpdateSlot({ ...record, required: value }, undefined, record)}
-      />
-    ),
-  }, {
-    title: '有效',
-    dataIndex: 'isSlot',
-    width: 60,
-    render: (isSlot, record) => (
-      <EditableSwitchCell
-        value={isSlot}
-        onChange={(value) => onUpdateSlot({ ...record, isSlot: value }, undefined, record)}
-      />
-    ),
-  }, {
-    title: '词库',
-    dataIndex: 'lexiconsNames',
-    render: (lexiconsNames, record) => (
-      <WordsList
-        onChange={(value) => onUpdateSlot({ ...record, lexiconsNames: value }, undefined, record)}
-        value={lexiconsNames}
-        words={words}
-        createWords={createWords}
-        updateWords={updateWords}
-        removeWords={removeWords}
-        skillId={skillId}
-      />
-    ),
-  }, {
-    title: '操作',
-    width: 80,
-    // fixed: 'right',
-    render: (record) => (
-      <>
-        {prop('required')(record) && (
-          <div className={s.Button}>
-            <Button type="primary" size="small" ghost onClick={() => setPromptEditorSlotName(record.name)}>提问</Button>
-          </div>
-        )}
-        {prop('canDelete')(record) && (
-          <div className={s.Button}>
-            <Popconfirm
-              title="确认删除吗？删除操作不可恢复"
-              onConfirm={() => onRemoveSlot(record)}
-            >
-              <Button type="danger" size="small" ghost>删除</Button>
-            </Popconfirm>
-          </div>
-        )}
-      </>
-    ),
-  }];
-
   return (
     <div className={s.Root}>
       <Button
@@ -226,7 +162,16 @@ const result = ({
         className={s.IntentSlotTable}
         size="small"
         dataSource={getDataSource(slots)}
-        columns={columns}
+        columns={columns({
+          onUpdateSlot,
+          onRemoveSlot,
+          setPromptEditorSlotName,
+          words,
+          createWords,
+          updateWords,
+          removeWords,
+          skillId,
+        })}
         onRow={(record) => ({
           onDoubleClick: () => {
             setWordsDrawerOpen(true);

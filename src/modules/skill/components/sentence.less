@@ -1,31 +1,33 @@
-@import '~shared/components/varaibles.less';
+.Search {
+  margin-bottom: 20px;
+}
 
-.Root {
-  position: relative;
+.Rules {
+  flex: 1;
   max-height: 100vh;
   overflow: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
-
-  @media @large {
-    border-left: 1px solid @border-color-split;
-    flex: 1;
-    margin-left: 10px;
-    padding-left: 10px;
-  }
-
-  @media @small {
-    border-top: 1px solid @border-color-split;
-    margin-top: 20px;
-    padding-top: 20px;
-  }
 }
 
-.Root::-webkit-scrollbar {
+.Rules::-webkit-scrollbar {
   display: none; /* Chrome Safari */
 }
 
-.IntentSlotTable {
+.Selection {
+  flex-shrink: 0;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.TableHeader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.RuleTable {
   :global {
     .ant-table-body {
       overflow: auto;

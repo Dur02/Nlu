@@ -83,6 +83,16 @@ const result = ({ skillId }) => {
   const [tempId, setTempId] = useState(-1);
   const [wordsDrawerVisible, setWordsDrawerVisible] = useState(false);
 
+  // const {
+  //   intents,
+  //   skillVersion,
+  //   skill,
+  //   builtinIntents,
+  //   words,
+  //   outputs,
+  //   token,
+  // } = useSelector(useMemo(() => selector(skillId, tempId), [skillId, tempId]));
+
   const {
     intents,
     skillVersion,
@@ -131,9 +141,9 @@ const result = ({ skillId }) => {
     setIntentNameText(name);
   }, [selectedIntentId, intentNameText]);
 
-  const onChangeIntentNameText = useCallback(
-    ({ target: { value } }) => setIntentNameText(value),
-    [intentNameText]);
+  const onChangeIntentNameText = useCallback(({ target: { value } }) => {
+    setIntentNameText(value);
+  }, [intentNameText]);
 
   const onSaveIntentNameText = useCallback(async () => {
     if (!flow(
@@ -408,54 +418,52 @@ const result = ({ skillId }) => {
           readAllOutput={readAllOutput}
         />
         <div className={s.Content}>
-          {selectedIntent && (
-            <div className={s.IntentNameWrapper}>
-              当前意图名称：
-              <Search
-                onSearch={onSaveIntentNameText}
-                onChange={onChangeIntentNameText}
-                value={intentNameText}
-                className={s.IntentNameInput}
-                enterButton="保存"
-                // readOnly={selectedIntent.type !== SEMANTIC}
-              />
-            </div>
-          )}
-          {selectedIntent ? (
-            <Tabs>
-              {
-                selectedIntent && (
-                  <>
-                    <TabPane tab="说法" key="1">
-                      <Rules
-                        createRule={createRule}
-                        updateRule={updateRule}
-                        removeRule={removeRule}
-                        createWords={createWords}
-                        updateWords={updateWords}
-                        removeWords={removeWords}
-                        updateIntent={updateIntent}
-                        intentId={selectedIntentId}
-                        slots={selectedIntent.slots}
-                        rules={selectedIntent.rules}
-                        skillId={skillId}
-                        words={words}
-                      />
-                    </TabPane>
-                    <TabPane tab="对话" key="2">
-                      <Output
-                        output={selectedOutput}
-                        updateOutput={updateOutput}
-                        intentName={selectedIntent.name}
-                        intentId={selectedIntentId}
-                        intents={intents}
-                      />
-                    </TabPane>
-                  </>
-                )
-              }
-            </Tabs>
-          ) : (<Empty description="请选择意图" />)}
+          {
+            selectedIntent && (
+              <div className={s.IntentNameWrapper}>
+                当前意图名称：
+                <Search
+                  onSearch={onSaveIntentNameText}
+                  onChange={onChangeIntentNameText}
+                  value={intentNameText}
+                  className={s.IntentNameInput}
+                  enterButton="保存"
+                  // readOnly={selectedIntent.type !== SEMANTIC}
+                />
+              </div>
+            )
+          }
+          {
+            selectedIntent ? (
+              <Tabs>
+                <TabPane tab="说法" key="1">
+                  <Rules
+                    createRule={createRule}
+                    updateRule={updateRule}
+                    removeRule={removeRule}
+                    createWords={createWords}
+                    updateWords={updateWords}
+                    removeWords={removeWords}
+                    updateIntent={updateIntent}
+                    intentId={selectedIntentId}
+                    slots={selectedIntent.slots}
+                    rules={selectedIntent.rules}
+                    skillId={skillId}
+                    words={words}
+                  />
+                </TabPane>
+                <TabPane tab="对话" key="2">
+                  <Output
+                    output={selectedOutput}
+                    updateOutput={updateOutput}
+                    intentName={selectedIntent.name}
+                    intentId={selectedIntentId}
+                    intents={intents}
+                  />
+                </TabPane>
+              </Tabs>
+            ) : (<Empty description="请选择意图" />)
+          }
         </div>
       </div>
       <Modal

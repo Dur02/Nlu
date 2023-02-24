@@ -11,7 +11,7 @@ const result = ({
   inputClassName,
   slotNames,
 }) => {
-  // 为rule.js修改的editable-input-cell组件
+  // 为sentence.js修改的editable-input-cell组件
 
   // 已添加说法的说法名经处理后去除#和|的数组
   const getSplitRuleName = () => {
