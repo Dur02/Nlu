@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Input, message,
 } from 'antd';
@@ -30,6 +30,10 @@ const result = ({
       message.success('编辑意图名称成功');
     }
   }, [intentNameText, selectedIntent, name]);
+
+  useEffect(() => {
+    setName(intentNameText);
+  }, [intentNameText]);
 
   return (
     <div className={s.IntentNameWrapper}>
