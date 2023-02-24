@@ -144,6 +144,7 @@ const result = ({
       width: 600,
     },
   });
+  // console.log('intent-slots.js');
 
   return (
     <div className={s.Root}>

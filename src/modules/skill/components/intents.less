@@ -21,11 +21,23 @@
 
 .Menu {
   max-height: 100vh;
-  overflow: scroll;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  overflow: auto;
+  //scrollbar-width: 10px;
+  //scrollbar-height: 10px;
+  //-ms-overflow-style: none;
 }
 
 .Menu::-webkit-scrollbar {
-  display: none; /* Chrome Safari */
+  width: 10px;
+  height: 10px;
+}
+
+.Menu::-webkit-scrollbar-thumb {
+  border-radius: 1em;
+  background-color: rgba(50, 50, 50, 0.3);
+}
+
+.Menu::-webkit-scrollbar-track {
+  border-radius: 1em;
+  background-color: rgba(50, 50, 50, 0.1);
 }

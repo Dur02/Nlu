@@ -34,7 +34,7 @@ import {
   update as updateWordsAction,
 } from 'shared/actions/words';
 import { useAction } from 'relient/actions';
-import { find, propEq, flow, prop, eq, flatten, map, join } from 'lodash/fp';
+import { find, propEq, flow, prop, flatten, map, join } from 'lodash/fp';
 import {
   readAll as readAllOutputAction,
   update as updateOutputAction,
@@ -49,16 +49,17 @@ import Intents from './components/intents';
 import Output from './components/output';
 import Migrate from './components/migrate';
 import selector from './skill-editor-selector';
-import s from './skill-editor.less';
 import WordGraph from '../../shared/components/word-graph';
 import GlobalSearchRules from './components/global-search-rules';
 import { columns } from './components/skill-test-columns';
 import FloatWindows from '../../shared/components/floating-windows';
 import WordsDrawer from './components/words-drawer';
+import IntentNameInput from './components/intent-name-input';
 import { versionColumns } from './skill-columns';
+import s from './skill-editor.less';
 
 const { TabPane } = Tabs;
-const { Search, TextArea } = Input;
+const { TextArea } = Input;
 const mapWithIndex = map.convert({ cap: false });
 
 const result = ({ skillId }) => {
@@ -140,20 +141,6 @@ const result = ({ skillId }) => {
     setSelectedIntentId(id);
     setIntentNameText(name);
   }, [selectedIntentId, intentNameText]);
-
-  const onChangeIntentNameText = useCallback(({ target: { value } }) => {
-    setIntentNameText(value);
-  }, [intentNameText]);
-
-  const onSaveIntentNameText = useCallback(async () => {
-    if (!flow(
-      prop('name'),
-      eq(intentNameText),
-    )(selectedIntent)) {
-      await updateIntent({ name: intentNameText, id: selectedIntent.id });
-      message.success('编辑意图名称成功');
-    }
-  }, [intentNameText, selectedIntent]);
 
   const closeUpload = useCallback(() => {
     setUploadVisible(false);
@@ -420,17 +407,11 @@ const result = ({ skillId }) => {
         <div className={s.Content}>
           {
             selectedIntent && (
-              <div className={s.IntentNameWrapper}>
-                当前意图名称：
-                <Search
-                  onSearch={onSaveIntentNameText}
-                  onChange={onChangeIntentNameText}
-                  value={intentNameText}
-                  className={s.IntentNameInput}
-                  enterButton="保存"
-                  // readOnly={selectedIntent.type !== SEMANTIC}
-                />
-              </div>
+              <IntentNameInput
+                intentNameText={intentNameText}
+                selectedIntent={selectedIntent}
+                updateIntent={updateIntent}
+              />
             )
           }
           {

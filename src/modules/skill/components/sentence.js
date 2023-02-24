@@ -240,6 +240,7 @@ const result = ({
   }];
 
   const dataSource = getDataSource(rules);
+  // console.log('sentence.js');
 
   return (
     <div className={s.Rules}>

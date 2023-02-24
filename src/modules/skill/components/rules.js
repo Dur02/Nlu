@@ -21,6 +21,7 @@ const result = ({
   slots,
 }) => {
   useStyles(s);
+  // console.log('rules.js');
 
   return (
     <div className={s.Root}>

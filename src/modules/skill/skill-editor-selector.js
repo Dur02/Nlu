@@ -26,8 +26,14 @@ const getContent = (words) => {
 
 export default (skillId, tempId) => (state) => {
   if (tempId !== -1 && tempId !== skillId) {
+    // console.log(tempId);
+    // console.log(skillId);
+    // console.log('1111');
     return {};
   }
+  // console.log(tempId);
+  // console.log(skillId);
+  // console.log('22222');
   const { skillCodes } = getCurrentUser(state);
   const intents = flow(
     getEntityArray('intent'),
