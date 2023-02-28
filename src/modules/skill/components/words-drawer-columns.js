@@ -17,6 +17,7 @@ export default ({
   onAttachWords,
   openEditor,
   onRemoveWords,
+  setFieldRecord,
 }) => {
   useStyles(s);
 
@@ -122,7 +123,17 @@ export default ({
           // )
         }
         <div className={s.Button}>
-          <Button type="primary" size="small" ghost onClick={() => openEditor(record)}>编辑</Button>
+          <Button
+            type="primary"
+            size="small"
+            ghost
+            onClick={() => {
+              setFieldRecord(record);
+              openEditor(record);
+            }}
+          >
+            编辑
+          </Button>
         </div>
         {
           isAttachable && (

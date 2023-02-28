@@ -37,6 +37,8 @@ const result = ({
 
   const dispatch = useDispatch();
   const [tableVisible, setTableVisible] = useState(false);
+  // 后端要求系统词库既要显示，又要不能选择全双工/半双工，以此做判断
+  const [fieldRecord, setFieldRecord] = useState(undefined);
 
   const onRemoveWords = useCallback(async ({ id }) => {
     await removeWords({ id });
@@ -98,10 +100,13 @@ const result = ({
           },
         });
       },
-      fields,
+      fields: fields(fieldRecord),
       component: Drawer,
       width: 600,
       className: s.Words,
+      onClose: () => {
+        setFieldRecord(undefined);
+      },
     },
     editor: {
       title: '编辑词库',
@@ -128,10 +133,13 @@ const result = ({
         });
         await dispatch(readAllIntent({ skillId }));
       },
-      fields,
+      fields: fields(fieldRecord),
       component: Drawer,
       width: 600,
       className: s.Words,
+      onClose: () => {
+        setFieldRecord(undefined);
+      },
     },
   });
 
@@ -143,6 +151,7 @@ const result = ({
             <div className={s.AddedWords} key={item.id}>
               <Button
                 onClick={() => {
+                  setFieldRecord(item);
                   openEditor(item);
                   // if (item.skillId) {
                   //   openEditor(item);
@@ -222,6 +231,7 @@ const result = ({
             onAttachWords,
             openEditor,
             onRemoveWords,
+            setFieldRecord,
           })}
           rowKey="id"
           pagination={pagination}

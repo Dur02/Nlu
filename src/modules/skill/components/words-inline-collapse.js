@@ -103,7 +103,11 @@ const result = ({
           name="duplexType"
           wrapperCol={{ offset: 2, span: 22 }}
         >
-          <Checkbox.Group options={duplexTypeOption} style={{ width: 175 }} />
+          <Checkbox.Group
+            options={duplexTypeOption}
+            style={{ width: 175 }}
+            disabled={item.skillId === null}
+          />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 7, span: 17 }}>
           <Button type="primary" htmlType="submit">

@@ -4,7 +4,7 @@ import { Checkbox } from 'antd';
 import { duplexTypeOption } from 'shared/constants/config';
 import WordsContent from './words-content';
 
-export default [{
+export default (fieldRecord) => [{
   label: '名称',
   name: 'name',
   labelAlign: 'left',
@@ -36,6 +36,7 @@ export default [{
   wrapperCol: { span: 19 },
   component: Checkbox.Group,
   options: duplexTypeOption,
+  disabled: (fieldRecord && fieldRecord.skillId === null),
 }, {
   label: '词条',
   name: 'content',

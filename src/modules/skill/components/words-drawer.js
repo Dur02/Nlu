@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { array, bool, func, number } from 'prop-types';
 import useStyles from 'isomorphic-style-loader/useStyles';
 import { Drawer, message, Table } from 'antd';
@@ -23,6 +23,7 @@ const result = ({
   useStyles(s);
 
   const dispatch = useDispatch();
+  const [fieldRecord, setFieldRecord] = useState(undefined);
 
   const onRemoveWords = useCallback(async ({ id }) => {
     await removeWords({ id });
@@ -69,10 +70,13 @@ const result = ({
           },
         });
       },
-      fields,
+      fields: fields(fieldRecord),
       component: Drawer,
       width: 600,
       className: s.Words,
+      onClose: () => {
+        setFieldRecord(undefined);
+      },
     },
     editor: {
       title: '编辑词库',
@@ -99,10 +103,13 @@ const result = ({
         });
         await dispatch(readAllIntent({ skillId }));
       },
-      fields,
+      fields: fields(fieldRecord),
       component: Drawer,
       width: 600,
       className: s.Words,
+      onClose: () => {
+        setFieldRecord(undefined);
+      },
     },
   });
 
@@ -124,6 +131,7 @@ const result = ({
             isAttachable: false,
             openEditor,
             onRemoveWords,
+            setFieldRecord,
           })}
           rowKey="id"
           pagination={pagination}
