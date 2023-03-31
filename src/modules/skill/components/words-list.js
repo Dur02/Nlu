@@ -23,6 +23,7 @@ import s from './words-list.less';
 const mapWithIndex = map.convert({ cap: false });
 
 const result = ({
+  record,
   createWords,
   updateWords,
   removeWords,
@@ -30,6 +31,8 @@ const result = ({
   onChange,
   value,
   skillId,
+  setWordsDrawerOpen,
+  setSlotName,
 }) => {
   // words-list组件大部分代码与words-drawer组件相同，words-drawer是技能编辑页工具栏弹出，而words-list作为
   // intent-slot中一列的数据存在
@@ -151,8 +154,10 @@ const result = ({
             <div className={s.AddedWords} key={item.id}>
               <Button
                 onClick={() => {
-                  setFieldRecord(item);
-                  openEditor(item);
+                  setWordsDrawerOpen(true);
+                  setSlotName(record.name);
+                  // setFieldRecord(item);
+                  // openEditor(item);
                   // if (item.skillId) {
                   //   openEditor(item);
                   // } else {

@@ -14,6 +14,8 @@ export default ({
   removeWords,
   skillId,
   setPromptEditorSlotName,
+  setWordsDrawerOpen,
+  setSlotName,
 }) => [{
   title: '名称',
   width: 60,
@@ -44,6 +46,7 @@ export default ({
   dataIndex: 'lexiconsNames',
   render: (lexiconsNames, record) => (
     <WordsList
+      record={record}
       onChange={(value) => onUpdateSlot({ ...record, lexiconsNames: value }, undefined, record)}
       value={lexiconsNames}
       words={words}
@@ -51,6 +54,8 @@ export default ({
       updateWords={updateWords}
       removeWords={removeWords}
       skillId={skillId}
+      setWordsDrawerOpen={setWordsDrawerOpen}
+      setSlotName={setSlotName}
     />
   ),
 }, {

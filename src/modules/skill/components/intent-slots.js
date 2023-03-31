@@ -172,13 +172,15 @@ const result = ({
           updateWords,
           removeWords,
           skillId,
+          setWordsDrawerOpen,
+          setSlotName,
         })}
-        onRow={(record) => ({
-          onDoubleClick: () => {
-            setWordsDrawerOpen(true);
-            setSlotName(record.name);
-          },
-        })}
+        // onRow={(record) => ({
+        //   onDoubleClick: () => {
+        //     setWordsDrawerOpen(true);
+        //     setSlotName(record.name);
+        //   },
+        // })}
         rowKey="name"
         // pagination={pagination}
         pagination={false}
