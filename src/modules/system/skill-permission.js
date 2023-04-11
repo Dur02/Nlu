@@ -12,7 +12,7 @@ import { useDetails, useLocalTable } from 'relient-admin/hooks';
 import { update as updateSkillPermission } from 'shared/actions/skill-permission';
 import { getEntityArray } from 'relient/selectors';
 import { getSkillOptions, getSkillsWithCodeKey } from 'shared/selectors';
-import { flow, map, prop, join, difference, concat, find, propEq } from 'lodash/fp';
+import { flow, map, prop, join, difference, concat, find, propEq, eq, reject } from 'lodash/fp';
 import { useAction } from 'relient/actions';
 
 const result = () => {
@@ -106,8 +106,20 @@ const result = () => {
   }];
 
   const rowSelection = {
-    onSelect: (_, __, selectedRows) => {
-      setSelectedRowKeys(map(({ value }) => value)(selectedRows));
+    onSelect: (record, selected) => {
+      if (selected) {
+        setSelectedRowKeys(
+          flow(
+            concat(record.value),
+          )(selectedRowKeys),
+        );
+      } else {
+        setSelectedRowKeys(
+          flow(
+            reject(eq(record.value)),
+          )(selectedRowKeys),
+        );
+      }
     },
     onSelectAll: (selected) => {
       if (selected) {
