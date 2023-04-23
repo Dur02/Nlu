@@ -57,6 +57,7 @@ const result = ({
               break;
             case 'list':
             case 'text':
+            case 'open_app':
               await onChange({
                 newDuiWidget: duiWidgetValue,
                 newWidgetName: 'default',
