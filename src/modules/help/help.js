@@ -28,7 +28,7 @@ const result = () => (
           </Typography>
 
           <Typography>
-            <Title id="system-intent">对话回复API地址</Title>
+            <Title id="response-api">对话回复API地址</Title>
             <Title level={2}>Joypods天气appV2.0.0</Title>
             <Paragraph>
               <Space direction="vertical">
@@ -54,6 +54,7 @@ const result = () => (
       <Col span={2} offset={1}>
         <Anchor>
           <Link href="#system-intent" title="系统词库解说" />
+          <Link href="#response-api" title="对话回复API地址" />
         </Anchor>
       </Col>
     </Row>
